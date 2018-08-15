@@ -1,0 +1,8 @@
+###
+# Run Django's collectstatic command
+###
+- name: Run manage.py collectstatic
+  django_manage:
+    command: collectstatic
+    app_path: "{{ deploy }}"
+    virtualenv: "{{ deploy }}/env"

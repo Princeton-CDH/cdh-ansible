@@ -1,0 +1,30 @@
+###
+# Clone and deploy a project repository
+#
+# This module clones and deploys a project repository to clone_root, which
+# should be specified in the group_vars for a particular project.
+# It provides repo_info and ver, which are both used to produce the folder
+# directory.
+#
+###
+- name: Clone project repository and set to the correct version
+  git:
+    repo: '{{ repo_url }}/'
+    dest: '{{ clone_root }}/{{ repo }}'
+    version: '{{ gitref }}'
+  # register repo_info for group_vars
+  register: repo_info
+- name: Get version information from __init__.py for Django projects
+  # This script is present in get_ver.py, and should be safe for all
+  # system pythons greater than 2.
+  script: get_ver.py {{ clone_root}}/{{ repo }} {{ djangoapp }}
+  register: ver
+  check_mode: no
+  tags:
+    - django
+- name: Sync checkout to deploy directory
+  copy:
+    src: '{{ clone_root }}/{{ repo }}/'
+    # deploy constructed dynamicallly in group_vars
+    dest: '{{ deploy }}'
+    remote_src: yes

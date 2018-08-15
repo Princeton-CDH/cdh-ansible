@@ -1,0 +1,13 @@
+###
+# Backup the database for the current project from our production DB server to
+# /tmp/ *on the production db server*.
+#
+# The host delegation causes it to run not on the production VM, but the
+# centralized DB server. All variables are set at the group_vars level.
+###
+- name: Backup DB for snap restore
+  mysql_db:
+    state: dump
+    db: '{{ project_db }}'
+    user: '{{ project_db_user }}'
+    target: '{{ backup_location }}'

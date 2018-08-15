@@ -1,0 +1,9 @@
+###
+# Install local_settings.py from project repository and add hidden variables
+# variables in the template will be references and defined against vars
+# that should appear in group_vars/ for the particular project
+###
+- name: Install local_settings.py from project template
+  template:
+    src: templates/{{ project }}/local_settings.py
+    dest: {{ project }}/{{ django_app }}/local_settings.py
