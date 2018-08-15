@@ -1,0 +1,8 @@
+###
+# Build node_modules folder and install npm dependencies.
+#
+# This role installs npm packages and depends on there being a package.json
+# present in the project root directory (deploy). It installs both
+# devDependencies and dependencies because both are used in producing
+#
+###
