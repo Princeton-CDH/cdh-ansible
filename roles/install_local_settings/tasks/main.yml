@@ -2,6 +2,15 @@
 # Install local_settings.py from project repository and add hidden variables
 # variables in the template will be references and defined against vars
 # that should appear in group_vars/ for the particular project
+#
+# The variable_xxx_string settings determine what markers denote a print string
+# in the context of this task. Even back references to vault variables in
+# group vars need to use this convention.
+#
+# We're avoiding issues with {} brackets in local_settings.py that aren't
+# part of the jinja2 template.
+#
+# This requires ansible>= 2.4
 ###
 - name: Install local_settings.py from project template
   template:
