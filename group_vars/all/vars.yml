@@ -1,0 +1,3 @@
+---
+# The template directory (as a relative path from the top of repository)
+templates_dir: 'templates/'

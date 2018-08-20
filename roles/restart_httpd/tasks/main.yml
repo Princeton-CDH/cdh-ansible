@@ -2,8 +2,10 @@
 # This role restart Apache and should only be run after all deployment steps
 # have been finalized.
 #
-# Ansible does not have full super user access to use the become directive,
+# Ansible user does not have full super user access to use the become directive,
 # so it runs using the command module rather than privilege elevation.
 ###
 - name: Restart httpd24
   command: "sudo systemctl restart httpd24-httpd"
+  args:
+    warn: false

@@ -1,0 +1,8 @@
+###
+# Run Django database migrations, must be after installing local_settings
+###
+- name: Run database migrations
+  django_manage:
+    command: migrate
+    app_path: "{{ deploy }}"
+    virtualenv: "{{ deploy }}/env"

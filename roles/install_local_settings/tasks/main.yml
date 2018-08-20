@@ -5,5 +5,7 @@
 ###
 - name: Install local_settings.py from project template
   template:
-    src: templates/{{ project }}/local_settings.py
-    dest: {{ project }}/{{ django_app }}/local_settings.py
+    src: 'templates/{{ group_name }}/local_settings.py'
+    dest: '{{ deploy }}/{{ django_app }}/local_settings.py'
+    variable_end_string: ^^
+    variable_start_string: ^^
