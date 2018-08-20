@@ -7,6 +7,10 @@
 # directory.
 #
 ###
+- name: Debug environmental variables early in deploy cycle
+  debug:
+    msg: 'PATH: {{ path }} / LD_LIBRARY_PATH: {{ ld_library_path }} / PYTHONPATH: {{ python_path}}'
+    verbosity: 2
 - name: Clone project repository and set to the correct version
   git:
     repo: '{{ repo_url }}/'
@@ -17,14 +21,16 @@
 - name: Get version information from __init__.py for Django projects
   # This script is present in get_ver.py, and should be safe for all
   # system pythons greater than 2.
-  script: get_ver.py {{ clone_root}}/{{ repo }} {{ djangoapp }}
+  script: get_ver.py {{ clone_root}}/{{ repo }} {{ django_app }}
   register: ver
   check_mode: no
   tags:
     - django
 - name: Sync checkout to deploy directory
-  copy:
+  synchronize:
     src: '{{ clone_root }}/{{ repo }}/'
     # deploy constructed dynamicallly in group_vars
-    dest: '{{ deploy }}'
-    remote_src: yes
+    dest: '{{ deploy }}/'
+  # sync remotely -- inventory_hostname is a magic var that always points
+  # to host where the playbook is being run.
+  delegate_to: '{{ inventory_hostname }}'

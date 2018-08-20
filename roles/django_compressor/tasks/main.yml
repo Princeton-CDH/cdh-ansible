@@ -17,7 +17,7 @@
 # user associated with the WSGI Daemon, in this case a manual call to sudo
 - name: chgrp the CACHE folder to project user
   shell: "sudo chgrp -R {{ project_user }} {{ deploy }}/static/CACHE"
-  when: group | regex_search('*_qa')
+  when: group_name | regex_search('_qa$')
   args:
     warn: False
     executable: /bin/bash

@@ -6,8 +6,6 @@
 # centralized DB server. All variables are set at the group_vars level.
 ###
 - name: Backup DB for snap restore
-  mysql_db:
-    state: dump
-    db: '{{ project_db }}'
-    user: '{{ project_db_user }}'
-    target: '{{ backup_location }}'
+  shell: 'mysqldump --opt {{ db_name }} > {{ db_backup }}'
+  args:
+    executable: /bin/bash

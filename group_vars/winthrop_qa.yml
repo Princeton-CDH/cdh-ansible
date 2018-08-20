@@ -1,0 +1,46 @@
+---
+# These include the path for rh-python35 and nodejs6
+# Paths are picky and spaces for any YAML multiline syntax causes issues
+path: '/opt/rh/rh-python35/root/usr/bin:/opt/rh/rh-nodejs6/root/usr/bin:{{ ansible_env.PATH }}'
+ld_library_path: '/opt/rh/rh-python35/root/usr/lib64:/opt/rh/rh-nodejs6/root/usr/lib64{% if ansible_env.LD_LIBRARY_PATH is defined %}:{{ ansible_env.LD_LIBRARY_PATH }}{% endif %}'
+python_path: '/opt/rh/rh-nodejs6/root/usr/lib/python2.7/site-packages{% if ansible_env.PYTHON_PATH is defined %}:{{ ansible_env.PYTHONPATH }}{% endif %}'
+
+# These variables are the stock configurations that either alias variables
+# from the vault or provide paths that the project itself uses.
+
+# vault variables first
+winthrop_secret_key: '^^ vault_winthrop_qa_secret_key ^^'
+winthrop_mapbox_token: '^^ vault_winthrop_mapbox_token ^^'
+db_name: '^^ vault_winthrop_qa_db_name ^^'
+db_username: '^^ vault_winthrop_qa_db_username ^^'
+db_password: '^^ vault_winthrop_qa_db_password ^^'
+
+# project names, version variables, and directories
+# Name of the group to run this role on for use in templating section
+group_name: winthrop_qa
+# repository name
+repo: 'Princeton-CDH/winthrop-django'
+# repository url
+repo_url: 'https://www.github.com/{{ repo }}.git'
+# version (referenced from build_project_repo role)
+version: '{{ ver.stdout }}'
+# name of main django application
+django_app: winthrop
+# home directory (on remote)
+home: '{{ ansible_env.HOME }}'
+# Git refspec to use, either default or passed by '-e ref=<refspec>
+gitref: '{{ ref | default("develop") }}'
+# Clone root (where deploy user clones repo)
+clone_root: "{{ home }}/repos"
+# Install root (the dir where the repo will be set up on remote)
+install_root: /srv/www/qa/winthrop-django
+# short hash for Git reference
+short_hash: '{{ repo_info.after[0:6] }}'
+# Path of the deploy directory. Generated from vars above and build_project_repo
+deploy: '{{ install_root }}/{{ version }}-{{ short_hash }}'
+# Database backup location
+db_backup: '/tmp/pre-{{ version }}-{{ short_hash }}-{{ djangoapp }}.sql'
+# Symlink for /var/www that Apache expects (often different QA and prod)
+symlink: 'winthrop-django'
+# Set permissions for log file
+project_user: winthrop

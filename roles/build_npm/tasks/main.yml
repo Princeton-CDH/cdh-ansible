@@ -6,3 +6,7 @@
 # devDependencies and dependencies because both are used in producing
 #
 ###
+---
+- name: Do npm install for dependencies
+  npm:
+    path: '{{ deploy }}'
