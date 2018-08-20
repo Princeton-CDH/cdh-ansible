@@ -9,6 +9,9 @@ python_path: '/opt/rh/rh-nodejs6/root/usr/lib/python2.7/site-packages{% if ansib
 # from the vault or provide paths that the project itself uses.
 
 # vault variables first
+# Many of these will use ^^ ^^ print markers because they are referenced
+# in the local_settings template. See the install_local_settings role for
+# details.
 winthrop_secret_key: '^^ vault_winthrop_qa_secret_key ^^'
 winthrop_mapbox_token: '^^ vault_winthrop_mapbox_token ^^'
 db_name: '^^ vault_winthrop_qa_db_name ^^'
