@@ -25,10 +25,10 @@ The overall structure of this repository can be broken down as follows:
   proxy through the QA server to production, with an ssh config stanza
   that looks something like:
   ```
-  Host derridas-margins
+  Host derridas-margins.princeton.edu
       User deploy
-      Hostname derridas-margins.princeton.edu
       Proxycommand ssh QASERVERHOST -W %h:%p
+      Identityfile ~/.ssh/deploy_key
   ```
 
 ### Running a playbook
@@ -80,7 +80,7 @@ N.B. The `^^` avoids an issue in the `install_local_settings` role where `{}`
   duration of that role, the Jinja2 print braces are `^^ myvar ^^`. This
   alternate form needs to be used for ANY variable referenced in
   `local_settings.py` in Django-based projects.
-  
+
 ## Adding a playbook
 
 The rough order of creating a playbook is:
