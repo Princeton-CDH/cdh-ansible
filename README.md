@@ -57,10 +57,10 @@ Variables kept in `group_vars/all/vault.yml` are sensitive configurations
 that should always be kept encrypted on commit. To edit them (in your system
 text editor):
 ```{bash}
-ansible vault edit group_vars/all/vault.yml
+ansible-vault edit group_vars/all/vault.yml
 ```
 
-You can also `ansible vault decrypt` but need to remember to manually `encrypt`.
+You can also `ansible-vault decrypt` but need to remember to manually `encrypt`.
 
 All vault variables should be prefixed with `vault_playbookname_` to keep them
 identifiable and unique.
