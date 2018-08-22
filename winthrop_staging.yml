@@ -7,7 +7,7 @@
     LD_LIBRARY_PATH: '{{ ld_library_path }}'
     PYTHONPATH: '{{ python_path }}'
   roles:
-    - prep_staging
+    - { role: prep_staging, become: true }
     - build_project_repo
     - build_virtualenv
     - build_npm

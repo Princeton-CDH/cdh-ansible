@@ -25,9 +25,11 @@
         - httpd24-httpd
         - mariadb
         - mariadb-server
+        - mariadb-devel
         - MySQL-python
         - lsof
         - java
+        - git
     - name: Get service facts
       service_facts:
     - name: Create deploy user
@@ -35,17 +37,17 @@
         user: deploy
         group: apache
         state: present
+        createhome: yes
     - name: Create wheel group if not present
       group:
         name: wheel
         state: present
-        createhome: yes
     - name: Grant passwordless sudo to wheel
       lineinfile:
         dest: /etc/sudoers
         state: present
-        regexp:'^%wheel'
-        line: '%wheel ALL=(ALL) NOPASSD: ALL'
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
         validate: 'visudo -cf %s'
     - name: Add deploy to wheel
       user:
@@ -65,10 +67,6 @@
         group: apache
         mode: ug+rwx,o+x
         state: directory
-    - name: Recusrively clear the directory of files
-      shell: 'rm -rf /srv/www/*'
-      args:
-        executable: /bin/bash
     - name: Create /var/www if it doesn't exist
       file:
         path: /var/www
@@ -76,10 +74,6 @@
         group: apache
         mode: ug+rwx,o+x
         state: directory
-    - name: Recursively clear the directory of files
-      shell: 'rm -rf /var/www/*'
-      args:
-        executable: /bin/bash
     - name: Symlink in httpd24-httpd to /etc/httpd
       file:
         src: /opt/rh/httpd24/root/etc/httpd

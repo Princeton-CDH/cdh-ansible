@@ -20,7 +20,7 @@ geonames_username: '{{ vault_geonames_username}}'
 
 # project names, version variables, and directories
 # Name of the group to run this role on for use in templating section
-group_name: winthrop
+group_name: winthrop_staging
 # repository name
 repo: 'Princeton-CDH/winthrop-django'
 # repository url
