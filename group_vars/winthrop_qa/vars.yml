@@ -14,6 +14,7 @@ mapbox_token: '{{ vault_mapbox_token }}'
 db_name: '{{ vault_db_name }}'
 db_username: '{{ vault_db_username }}'
 db_password: '{{ vault_db_password }}'
+geonames_username: '{{ vault_geonames_username }}'
 
 # project names, version variables, and directories
 # Name of the group to run this role on for use in templating section
