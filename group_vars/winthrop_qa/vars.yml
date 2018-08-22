@@ -12,11 +12,11 @@ python_path: '/opt/rh/rh-nodejs6/root/usr/lib/python2.7/site-packages{% if ansib
 # Many of these will use ^^ ^^ print markers because they are referenced
 # in the local_settings template. See the install_local_settings role for
 # details.
-winthrop_secret_key: '^^ vault_winthrop_qa_secret_key ^^'
-winthrop_mapbox_token: '^^ vault_winthrop_mapbox_token ^^'
-db_name: '^^ vault_winthrop_qa_db_name ^^'
-db_username: '^^ vault_winthrop_qa_db_username ^^'
-db_password: '^^ vault_winthrop_qa_db_password ^^'
+secret_key: '^^ vault_secret_key ^^'
+mapbox_token: '^^ vault_mapbox_token ^^'
+db_name: '^^ vault_db_name ^^'
+db_username: '^^ vault_db_username ^^'
+db_password: '^^ vault_db_password ^^'
 
 # project names, version variables, and directories
 # Name of the group to run this role on for use in templating section
