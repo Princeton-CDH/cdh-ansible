@@ -35,6 +35,24 @@
         user: deploy
         group: apache
         state: present
+    - name: Create wheel group if not present
+      group:
+        name: wheel
+        state: present
+        createhome: yes
+    - name: Grant passwordless sudo to wheel
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp:'^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSD: ALL'
+        validate: 'visudo -cf %s'
+    - name: Add deploy to wheel
+      user:
+        name: deploy
+        groups: wheel
+        append: yes
+        state: present
     - name: Give deploy insecure pub_key
       authorized_key:
         user: deploy
