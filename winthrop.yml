@@ -14,6 +14,6 @@
     - django_collectstatic
     - django_compressor
     - backup_database
-    # - django_migrate
-    # - finalize_deploy
-    # - restart_httpd
+    - django_migrate
+    - finalize_deploy
+    - restart_httpd
