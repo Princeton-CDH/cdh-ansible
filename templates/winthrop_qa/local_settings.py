@@ -10,13 +10,13 @@ DEBUG = False
 SHOW_TEST_WARNING = True
 
 # Make these unique, and don't share it with anybody.
-SECRET_KEY = '^^ secret_key ^^'
+SECRET_KEY = '{{ secret_key }}'
 
 # username for accessing GeoNames API
 GEONAMES_USERNAME = '{{ geonames_username }}'
 
 # mapbox access token
-MAPBOX_ACCESS_TOKEN = '^^ mapbox_token ^^'
+MAPBOX_ACCESS_TOKEN = '{{ mapbox_token }}'
 
 DATABASES = {
     "default": {
@@ -25,11 +25,11 @@ DATABASES = {
         # "ENGINE": "django.db.backends.sqlite3",
         # DB name or path to database file if using sqlite3.
         # "NAME": "dev.db",
-        "NAME": "^^ db_name ^^",
+        "NAME": "{{ db_name }}",
         # Not used with sqlite3.
-        "USER": "^^ db_username ^^",
+        "USER": "{{ db_username }}",
         # Not used with sqlite3.
-        "PASSWORD": "^^ db_password ^^",
+        "PASSWORD": "{{ db_password }}",
         # Set to empty string for localhost. Not used with sqlite3.
         "HOST": "",
         # Set to empty string for default. Not used with sqlite3.

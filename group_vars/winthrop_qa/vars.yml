@@ -9,14 +9,11 @@ python_path: '/opt/rh/rh-nodejs6/root/usr/lib/python2.7/site-packages{% if ansib
 # from the vault or provide paths that the project itself uses.
 
 # vault variables first
-# Many of these will use ^^ ^^ print markers because they are referenced
-# in the local_settings template. See the install_local_settings role for
-# details.
-secret_key: '^^ vault_secret_key ^^'
-mapbox_token: '^^ vault_mapbox_token ^^'
-db_name: '^^ vault_db_name ^^'
-db_username: '^^ vault_db_username ^^'
-db_password: '^^ vault_db_password ^^'
+secret_key: '{{ vault_secret_key }}'
+mapbox_token: '{{ vault_mapbox_token }}'
+db_name: '{{ vault_db_name }}'
+db_username: '{{ vault_db_username }}'
+db_password: '{{ vault_db_password }}'
 
 # project names, version variables, and directories
 # Name of the group to run this role on for use in templating section
@@ -42,7 +39,7 @@ short_hash: '{{ repo_info.after[0:6] }}'
 # Path of the deploy directory. Generated from vars above and build_project_repo
 deploy: '{{ install_root }}/{{ version }}-{{ short_hash }}'
 # Database backup location
-db_backup: '/tmp/pre-{{ version }}-{{ short_hash }}-{{ djangoapp }}.sql'
+db_backup: '/tmp/pre-{{ version }}-{{ short_hash }}-{{ group_name }}.sql'
 # Symlink for /var/www that Apache expects (often different QA and prod)
 symlink: 'winthrop-django'
 # Set permissions for log file
