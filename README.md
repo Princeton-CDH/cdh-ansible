@@ -93,9 +93,11 @@ The rough order of creating a playbook is:
     [mygroup]
     hostname.of.server.edu
     ```
-  3. Create a YAML file in `group_vars` that has a name mirroring the new
-  playbook: i.e. if the playbook is `my_playbook_qa.yml`, the name should be
-  the same.
+  3. Create a YAML directory in `group_vars` that has a name mirroring the new
+  playbook: i.e. if the playbook is `my_playbook_qa`, the name should be
+  the same, with a `vars.yml` and a `vault.yml` (for encrypted variables) included
   4. Reference any playbook variables and set accordingly. See above under
   vault variables for how to configure those.
   5. Add roles to the list in the new playbook in the order needed.
+  6. N.B. Make sure you set the `group_name` variable appropriately as some QA
+  only steps are skipped based on `_qa` not being in the name.
