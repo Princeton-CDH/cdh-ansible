@@ -1,0 +1,14 @@
+###
+# Prepare vhost and wsgi configurations for staging VM.  This inserts a
+# correctly templated configuration for the Virtual
+###
+---
+
+- name: Create vhost configuration
+  template:
+    src: '{{ templates_dir }}/staging_vagrant/apache_vhost.conf'
+    dest: /etc/httpd/conf.d/apache_vhost.conf
+- name: Create wsgi configuration
+  template:
+    src: '{{ templates_dir }}/staging_vagrant/apache_wsgi.conf'
+    dest: /etc/httpd/conf.d/staging/wsgi.conf
