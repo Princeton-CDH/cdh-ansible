@@ -10,13 +10,13 @@ DEBUG = False
 SHOW_TEST_WARNING = True
 
 # Make these unique, and don't share it with anybody.
-SECRET_KEY = '^^winthrop_secret_key^^'
+SECRET_KEY = '^^ secret_key ^^'
 
 # username for accessing GeoNames API
 GEONAMES_USERNAME = '{{ geonames_username }}'
 
 # mapbox access token
-MAPBOX_ACCESS_TOKEN = '^^winthrop_mapbox_token^^'
+MAPBOX_ACCESS_TOKEN = '^^ mapbox_token ^^'
 
 DATABASES = {
     "default": {
