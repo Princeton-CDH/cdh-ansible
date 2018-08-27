@@ -1,6 +1,12 @@
+[winthrop_prod]
+winthrop.princeton.edu
 [winthrop_qa]
 test-winthrop.cdh.princeton.edu
 [winthrop_staging]
-staging ansible_host=127.0.0.1 ansible_port=2222 ansible_ssh_private_key_file=vagrant/id_rsa
-[winthrop]
-winthrop.princeton.edu
+winthrop_stag ansible_host=127.0.0.1 ansible_port=2222 ansible_ssh_private_key_file=vagrant/id_rsa
+[winthrop:children]
+winthrop_prod
+winthrop_qa
+winthrop_staging
+[staging:children]
+winthrop_staging

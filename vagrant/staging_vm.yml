@@ -1,8 +1,24 @@
+###
+# This playbook provision the Vagrant host so that it can mimic as closely as
+# possible the functioning of the Springdale VMs that host our production
+# Django projects.
+#
+# In addition to stock yum installs, it also installs solr of the version
+# specified in {{ solr_ver }} from Apache's archive and configures it as a
+# systemd service.
+#
+# The script is idempotent, and it will intelligently skip the Solr install
+# if it is found among system services.
+###
+
 ---
 - name: Configure base configurations
   connection: local
   become: true
   hosts: all
+  vars:
+    templates_dir: '../templates'
+    solr_ver: 6.6.5
   tasks:
     - name: Update all packages on the base box
       yum:
@@ -32,6 +48,26 @@
         - git
     - name: Get service facts
       service_facts:
+    - name: Download solr
+      get_url:
+        url: 'https://archive.apache.org/dist/lucene/solr/{{ solr_ver }}/solr-{{ solr_ver }}.tgz'
+        dest: /vagrant
+      when: '"solr" not in services'
+    - name: Extract solr install script
+      command: 'tar xzf /vagrant/solr-6.6.5.tgz
+        solr-6.6.5/bin/install_solr_service.sh --strip-components=2'
+      args:
+        warn: false  
+      when: '"solr" not in services'
+    - name: Run solr install script
+      command: '/vagrant/install_solr_service.sh /vagrant/solr-{{ solr_ver }}.tgz'
+      when: '"solr" not in services'
+    - name: Get the non systemctl managed solr process that just got created
+      shell: 'pgrep -u solr'
+      register: solr_process
+    - name: Kill the unmanaged solr process
+      shell: 'kill {{ item }}'
+      with_items: '{{ solr_process.stdout_lines  }}'
     - name: Create deploy user
       user:
         user: deploy
@@ -93,21 +129,18 @@
       service:
         name: '{{ item }}'
         enabled: yes
-        state: started
+        state: restarted
       with_items:
         - mariadb
         - httpd24-httpd
+        - solr
     - name: Configure MySQL user with privs on staging db
       mysql_user:
         name: staging
         password: staging
         priv: 'staging.*:ALL'
         state: present
-    - name: Remove staging db if exists
-      mysql_db:
-        name: staging
-        state: absent
-    - name: Create staging db
-      mysql_db:
-        name: staging
-        state: present
+    - name: Create a .my.cnf for deploy so it can access database
+      template:
+        dest: /home/deploy/.my.cnf
+        src: my.cnf

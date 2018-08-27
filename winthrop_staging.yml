@@ -17,4 +17,5 @@
     - backup_database
     - django_migrate
     - finalize_deploy
+    - finalize_staging
     - restart_httpd

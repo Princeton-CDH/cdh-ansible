@@ -4,6 +4,15 @@
 ###
 ---
 
+# This task runs on the host machine, because git stores files as 644 or 755
+# and host keys need to be 600, even if we're using a deliberately insecure
+# key for a test box as in this case.
+- name: Set permissions on id_rsa after any git changes
+  local_action:
+    module: file
+    path: vagrant/id_rsa
+    mode: 0600
+  become: false
 - name: Create vhost configuration
   template:
     src: '{{ templates_dir }}/staging_vagrant/apache_vhost.conf'
@@ -13,7 +22,7 @@
     state: directory
     dest: /etc/httpd/conf.d/staging
     owner: root
-    group: root      
+    group: root
 - name: Create wsgi configuration
   template:
     src: '{{ templates_dir }}/staging_vagrant/apache_wsgi.conf'
@@ -22,3 +31,12 @@
   shell: 'rm -rf /var/www/* && rm -rf /srv/www/*'
   args:
     executable: /bin/bash
+    warn: false
+- name: Remove staging db if exists
+  mysql_db:
+    name: staging
+    state: absent
+- name: Create staging db
+  mysql_db:
+    name: staging
+    state: present
