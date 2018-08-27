@@ -1,0 +1,10 @@
+###
+# Common variables for derrida-django
+###
+
+# NOTE: Default paths are acceptable as is from all
+
+# Github repository
+repo: 'Princeton-CDH/derrida-django'
+# name of main django application
+django_app: derrida

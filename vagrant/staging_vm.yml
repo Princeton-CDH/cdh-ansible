@@ -46,6 +46,7 @@
         - lsof
         - java
         - git
+        - 
     - name: Get service facts
       service_facts:
     - name: Download solr
@@ -57,7 +58,7 @@
       command: 'tar xzf /vagrant/solr-6.6.5.tgz
         solr-6.6.5/bin/install_solr_service.sh --strip-components=2'
       args:
-        warn: false  
+        warn: false
       when: '"solr" not in services'
     - name: Run solr install script
       command: '/vagrant/install_solr_service.sh /vagrant/solr-{{ solr_ver }}.tgz'
