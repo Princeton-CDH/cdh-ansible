@@ -1,4 +1,5 @@
-- hosts: winthrop
+- hosts: winthrop_prod
+  # point this at *_prod !important
   connection: ssh
   remote_user: deploy
   # Set environment to use scl rh-python35 in group_vars

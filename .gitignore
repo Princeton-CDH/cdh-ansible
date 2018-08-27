@@ -1,3 +1,8 @@
+# Gitignore SQL related things and gzips
+*.sql
+*.tar.gz
+*.tgz
+
 # Vagrant files
 .vagrant/
 
