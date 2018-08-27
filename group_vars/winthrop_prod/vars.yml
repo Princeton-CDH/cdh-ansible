@@ -14,7 +14,8 @@ geonames_username: '{{ vault_geonames_username}}'
 
 # project names, version variables, and directories
 # Name of the group to run this role on for use in templating section
-group_name: winthrop
+# should match the host group
+group_name: winthrop_prod
 # version (referenced from build_project_repo role)
 version: '{{ ver.stdout }}'
 # Git refspec to use, either default or passed by '-e ref=<refspec>
