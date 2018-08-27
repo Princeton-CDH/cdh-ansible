@@ -17,6 +17,7 @@ The overall structure of this repository can be broken down as follows:
 
 ### Requirements
   - Virtual environment with Ansible 2.4+ installed.
+    - If you use `env`, the `.gitignore` will automatically exclude it.
   - The CDH Ansible vault key. This can be referenced on the command line or
   better set as in the Bash session, i.e.
   `export ANSIBLE_VAULT_PASSWORD_FILE=/path/to/.passwd`
