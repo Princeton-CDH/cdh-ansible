@@ -16,3 +16,6 @@ django_app: winthrop
 solr_collection: winthrop
 solr_url: http://127.0.0.1:8983/solr/
 solr_admin_url: http://127.0.0.1:8983/solr/admin/cores
+# common keys
+mapbox_token: '{{ vault_mapbox_token }}'
+geonames_username: '{{ vault_geonames_username }}'
