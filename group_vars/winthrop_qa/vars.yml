@@ -1,12 +1,4 @@
 ---
-# These variables are the stock configurations that either alias variables
-# from the vault or provide paths that the project itself uses.
-# vault variables first
-secret_key: '{{ vault_secret_key }}'
-db_name: '{{ vault_db_name }}'
-db_username: '{{ vault_db_username }}'
-db_password: '{{ vault_db_password }}'
-
 # project names, version variables, and directories
 # Name of the group to run this role on for use in templating section
 group_name: winthrop_qa
