@@ -32,6 +32,19 @@ The overall structure of this repository can be broken down as follows:
       Identityfile ~/.ssh/deploy_key
   ```
 
+### Precommit hook
+If you plan to contribute to this repository (i.e., you're a member of the CDH
+dev team editing our playbooks), please copy the following in your local instance:
+
+```{bash}
+cp hooks/pre-commit .git/hooks/
+```
+This will add a simple pre-commit hook that will prevent you from commiting a
+file with an uncrypted `vault.yml`. It isn't terribly smart in terms of looking
+for secrets in a `local_settings.py`, but prevents worst case scenarios from
+emerging.
+
+
 ### Running a playbook
 
 To run a playbook, from your virtual environment, simply invoke:
