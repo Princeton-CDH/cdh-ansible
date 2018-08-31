@@ -1,0 +1,30 @@
+---
+# These variables are the stock configurations that either alias variables
+# from the vault or provide paths that the project itself uses.
+# vault variables first
+
+# Secret key for Django application
+secret_key: '{{ vault_secret_key }}'
+# Secret key for Mapbox API
+mapbox_token: '{{ vault_mapbox_token }}'
+# Geoname username
+geonames_username: '{{ vault_geonames_username }}'
+# Plum and figgy tokens
+plum_token: '{{ vault_plum_token }}'
+figgy_token: '{{ vault_figgy_token }}'
+# Database configurations
+db_name: '{{ vault_db_name }}'
+db_username: '{{ vault_db_username }}'
+db_password: '{{ vault_db_password }}'
+
+# project names, version variables, and directories
+# Name of the group to run this role on for use in templating section
+group_name: derrida_qa
+# Git refspec to use, either default or passed by '-e ref=<refspec>
+gitref: '{{ ref | default("develop") }}'
+# Install root (the dir where the repo will be set up on remote)
+install_root: /srv/www/qa/derrida-django
+# Symlink for /var/www that Apache expects (often different QA and prod)
+symlink: 'derrida-django'
+# Set permissions for log file
+project_user: derrida

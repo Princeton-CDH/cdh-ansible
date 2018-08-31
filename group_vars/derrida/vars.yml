@@ -1,0 +1,17 @@
+###
+# Common variables for derrida-django
+###
+
+# NOTE: Default paths are acceptable as is from all
+
+# Github repository
+repo: 'Princeton-CDH/derrida-django'
+# name of main django application
+django_app: derrida
+# tokens for plum and figgy for protected IIIF content
+plum_token: '{{ vault_plum_token }}'
+figgy_token: '{{ vault_figgy_token }}'
+# Secret key for Mapbox API
+mapbox_token: '{{ vault_mapbox_token }}'
+# Geonames user name
+geonames_username: '{{ geonames_username }}'
