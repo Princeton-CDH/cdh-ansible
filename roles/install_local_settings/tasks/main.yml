@@ -15,7 +15,7 @@
 - name: For QA, setfacl so that the Django project group can read it too
   acl:
     path: '{{ deploy }}/{{ django_app }}/local_settings.py'
-    entity: winthrop
+    entity: '{{ project_user }}'
     etype: group
     permissions: r
     state: present
