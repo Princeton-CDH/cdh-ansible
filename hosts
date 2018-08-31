@@ -1,11 +1,10 @@
 [winthrop_prod]
 winthrop.princeton.edu
-
 [winthrop_qa]
 test-winthrop.cdh.princeton.edu
-
 [winthrop_staging]
 winthrop_stg ansible_host=127.0.0.1 ansible_port=2222 ansible_ssh_private_key_file=vagrant/id_rsa
+
 [winthrop:children]
 winthrop_prod
 winthrop_qa
@@ -13,13 +12,17 @@ winthrop_staging
 
 [derrida_qa]
 test-derrida.cdh.princeton.edu
-
 [derrida_prod]
 derridas-margins.princeton.edu
+
+[derrida_staging]
+derrida_stg ansible_host=127.0.0.1 ansible_port=2222 ansible_ssh_private_key_file=vagrant/id_rsa
 
 [derrida:children]
 derrida_qa
 derrida_prod
+derrida_staging
 
 [staging:children]
 winthrop_staging
+derrida_staging
