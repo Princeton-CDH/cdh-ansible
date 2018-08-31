@@ -83,7 +83,7 @@ EMAIL_HOST_USER = 'cdhdevteam'
 EMAIL_HOST_PASSWORD = '{{ email_host_password }}'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_SUBJECT_PREFIX = '[Winthrop Prod] '
+EMAIL_SUBJECT_PREFIX = '[Winthrop Staging] '
 
 LOGGING = {
     'version': 1,

@@ -1,3 +1,23 @@
 ---
 # The template directory (as a relative path from the top of repository)
 templates_dir: 'templates/'
+# standard variable for all repositories that use github
+repo_url: 'https://www.github.com/{{ repo }}.git'
+# home directory (on remote)
+home: '{{ ansible_env.HOME }}'
+# Clone root (where deploy user clones repo)
+clone_root: "{{ home }}/repos"
+# short hash for Git reference
+short_hash: '{{ repo_info.after[0:6] }}'
+# Path of the deploy directory. Generated from vars above and build_project_repo
+deploy: '{{ install_root }}/{{ version }}-{{ short_hash }}'
+# Database backup location
+db_backup: '/tmp/pre-{{ version }}-{{ short_hash }}-{{ group_name }}.sql'
+# version (referenced from build_project_repo role)
+version: '{{ ver.stdout }}'
+# These include the path for rh-python35 and nodejs6
+# Paths are picky and spaces for any YAML multiline syntax causes issues
+# These are defaults for most projects and should be overriden as necessary.
+path: '/opt/rh/rh-python35/root/usr/bin:/opt/rh/rh-nodejs6/root/usr/bin:{{ ansible_env.PATH }}'
+ld_library_path: '/opt/rh/rh-python35/root/usr/lib64:/opt/rh/rh-nodejs6/root/usr/lib64{% if ansible_env.LD_LIBRARY_PATH is defined %}:{{ ansible_env.LD_LIBRARY_PATH }}{% endif %}'
+python_path: '/opt/rh/rh-nodejs6/root/usr/lib/python2.7/site-packages{% if ansible_env.PYTHON_PATH is defined %}:{{ ansible_env.PYTHONPATH }}{% endif %}'

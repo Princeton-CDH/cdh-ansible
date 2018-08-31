@@ -1,5 +1,4 @@
-- hosts: winthrop_prod
-  # point this at *_prod !important
+- hosts: winthrop_staging
   connection: ssh
   remote_user: deploy
   # Set environment to use scl rh-python35 in group_vars
@@ -8,6 +7,7 @@
     LD_LIBRARY_PATH: '{{ ld_library_path }}'
     PYTHONPATH: '{{ python_path }}'
   roles:
+    - { role: prep_staging, become: true }
     - build_project_repo
     - build_virtualenv
     - build_npm
@@ -17,4 +17,5 @@
     - backup_database
     - django_migrate
     - finalize_deploy
+    - finalize_staging
     - restart_httpd

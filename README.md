@@ -17,6 +17,7 @@ The overall structure of this repository can be broken down as follows:
 
 ### Requirements
   - Virtual environment with Ansible 2.4+ installed.
+    - If you use `env`, the `.gitignore` will automatically exclude it.
   - The CDH Ansible vault key. This can be referenced on the command line or
   better set as in the Bash session, i.e.
   `export ANSIBLE_VAULT_PASSWORD_FILE=/path/to/.passwd`
@@ -101,3 +102,20 @@ The rough order of creating a playbook is:
   5. Add roles to the list in the new playbook in the order needed.
   6. N.B. Make sure you set the `group_name` variable appropriately as some QA
   only steps are skipped based on `_qa` not being in the name.
+
+## Staging playbooks
+
+These are adaptable playbooks (which can either be aimed at production or a
+future production release currently in a branch/develop), that require a running
+instance of the staging vagrant VM running with SSH on port 2222.
+
+To configure this, after you have installed [Vagrant](https://www.vagrantup.com/downloads.html)
+and [VirtualBox](https://www.virtualbox.org/wiki/Downloads)from the `CDH_ansible/vagrant` directory,
+run `vagrant up`. This will take
+considerable time the first run, but will download a Centos 7 box, provision it
+with the necessary packages to emulate production VMs, and set up expected
+settings that Puppet manages on the production VMs.
+
+For detailed info on the VM and its accounts, configuration, especially how to
+set up Solr (since deploys do not yet touch it), see the `vagrant` directory
+[README](vagrant/README.md).

@@ -1,0 +1,32 @@
+###
+# Prepare vhost and wsgi configurations for staging VM.  This inserts a
+# correctly templated configuration for the Virtualhost and wsgi.
+###
+---
+- name: Create vhost configuration
+  template:
+    src: '{{ templates_dir }}/staging_vagrant/apache_vhost.conf'
+    dest: /etc/httpd/conf.d/apache_vhost.conf
+- name: Create directory for wsgi settings
+  file:
+    state: directory
+    dest: /etc/httpd/conf.d/staging
+    owner: root
+    group: root
+- name: Create wsgi configuration
+  template:
+    src: '{{ templates_dir }}/staging_vagrant/apache_wsgi.conf'
+    dest: /etc/httpd/conf.d/staging/wsgi.conf
+- name: Clear /var/www/ and /srv/www
+  shell: 'rm -rf /var/www/* && rm -rf /srv/www/*'
+  args:
+    executable: /bin/bash
+    warn: false
+- name: Remove staging db if exists
+  mysql_db:
+    name: staging
+    state: absent
+- name: Create staging db
+  mysql_db:
+    name: staging
+    state: present
