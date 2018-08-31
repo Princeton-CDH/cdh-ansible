@@ -28,8 +28,8 @@ The overall structure of this repository can be broken down as follows:
   ```
   Host derridas-margins.princeton.edu
       User deploy
-      Proxycommand ssh QASERVERHOST -W %h:%p
-      Identityfile ~/.ssh/deploy_key
+      Proxycommand ssh deploy@QASERVERHOST -W %h:%p
+      Identityfile ~/.ssh/key_for_qa_server
   ```
 
 ### Precommit hook
