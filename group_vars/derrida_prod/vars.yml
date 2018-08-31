@@ -1,23 +1,4 @@
 ---
-
-# These variables are the stock configurations that either alias variables
-# from the vault or provide paths that the project itself uses.
-# vault variables first
-
-# Secret key for Django application
-secret_key: '{{ vault_secret_key }}'
-# Secret key for Mapbox API
-plum_token: '{{ vault_plum_token }}'
-figgy_token: '{{ vault_figgy_token }}'
-# Database configurations
-db_name: '{{ vault_db_name }}'
-db_username: '{{ vault_db_username }}'
-db_password: '{{ vault_db_password }}'
-db_host: '{{ vault_db_host }}'
-# Solr configuration
-solr_url: '{{ vault_solr_url }}'
-solr_admin_url: '{{ vault_solr_admin_url }}'
-
 # project names, version variables, and directories
 # Name of the group to run this role on for use in templating section
 group_name: derrida_prod

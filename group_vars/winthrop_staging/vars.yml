@@ -5,16 +5,6 @@ path: '/opt/rh/rh-python35/root/usr/bin:/opt/rh/rh-nodejs8/root/usr/bin:{{ ansib
 ld_library_path: '/opt/rh/rh-python35/root/usr/lib64:/opt/rh/rh-nodejs8/root/usr/lib64{% if ansible_env.LD_LIBRARY_PATH is defined %}:{{ ansible_env.LD_LIBRARY_PATH }}{% endif %}'
 python_path: '/opt/rh/rh-nodejs8/root/usr/lib/python2.7/site-packages{% if ansible_env.PYTHON_PATH is defined %}:{{ ansible_env.PYTHONPATH }}{% endif %}'
 
-# These variables are the stock configurations that either alias variables
-# from the vault or provide paths that the project itself uses.
-
-# vault variables first
-# no values included for the
-secret_key: '{{ vault_secret_key }}'
-mapbox_token: '{{ vault_mapbox_token }}'
-email_host_password: '{{ vault_email_host_password }}'
-geonames_username: '{{ vault_geonames_username}}'
-
 # project names, version variables, and directories
 # Name of the group to run this role on for use in templating section
 group_name: winthrop_staging

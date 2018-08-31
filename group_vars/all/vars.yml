@@ -1,4 +1,20 @@
 ---
+# email_host_password
+email_host_password: '{{ vault_email_host_password }}'
+
+# Secret key -- overriddenin individual vaults
+secret_key: '{{ vault_secret_key }}'
+
+# Database configurations -- overriden by group_vars vaults as needed
+db_name: '{{ vault_db_name }}'
+db_password: '{{ vault_db_password }}'
+db_host: '{{ vault_db_host }}'
+db_username: '{{ vault_db_username }}'
+
+# Solr configurations
+solr_url: '{{ vault_solr_url }}'
+solr_admin_url: '{{ vault_admin_url }}'
+
 # The template directory (as a relative path from the top of repository)
 templates_dir: 'templates/'
 # standard variable for all repositories that use github
