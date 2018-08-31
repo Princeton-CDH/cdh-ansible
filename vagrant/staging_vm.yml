@@ -12,6 +12,10 @@
 ###
 
 ---
+# This task runs on the host machine, because git stores files as 644 or 755
+# and host keys need to be 600, even if we're using a deliberately insecure
+# key for a test box as in this case.
+
 - name: Configure base configurations
   connection: local
   become: true
@@ -20,6 +24,12 @@
     templates_dir: '../templates'
     solr_ver: 6.6.5
   tasks:
+    - name: Set permissions on id_rsa after any git changes
+      local_action:
+        module: file
+        path: id_rsa
+        mode: 0600
+      become: false
     - name: Update all packages on the base box
       yum:
         name: '*'
@@ -57,7 +67,7 @@
       command: 'tar xzf /vagrant/solr-6.6.5.tgz
         solr-6.6.5/bin/install_solr_service.sh --strip-components=2'
       args:
-        warn: false  
+        warn: false
       when: '"solr" not in services'
     - name: Run solr install script
       command: '/vagrant/install_solr_service.sh /vagrant/solr-{{ solr_ver }}.tgz'
