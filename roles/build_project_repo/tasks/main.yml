@@ -26,6 +26,10 @@
   check_mode: no
   tags:
     - django
+- name: Create the deploy directory (to recursively create parent dirs if necessary)
+  file:
+    state: directory
+    dest: '{{ deploy }}'
 - name: Sync checkout to deploy directory
   synchronize:
     src: '{{ clone_root }}/{{ repo }}/'

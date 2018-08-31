@@ -14,3 +14,17 @@ encrypt` and is not recommended.
 
 All variables are named spaced `vault_var_name` and referenced in
 unencrypted `vars.yml` files.
+
+## Folder structure
+The folder structure uses Ansible groups (defined in `hosts`) to include common
+variables as needed (which can then be overridden): The general inheritence is
+as follows:
+
+- all
+  - staging
+  - project
+    - project_qa
+    - project_prod
+    - project_staging
+
+In hosts, `project_staging` inherits from both its project and `staging`, so database variables do not have to be defined for staging playbooks.
