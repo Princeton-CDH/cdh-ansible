@@ -129,7 +129,7 @@ LOGGING = {
         'debug_log': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/var/log/django/derrida.log',
+            'filename': '{{ logging_path }}',
             'formatter': 'basic',
         }
     },

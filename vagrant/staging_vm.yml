@@ -89,9 +89,11 @@
     - name: Get the non systemctl managed solr process that just got created
       shell: 'pgrep -u solr'
       register: solr_process
+      when: '"solr" not in services'
     - name: Kill the unmanaged solr process
       shell: 'kill {{ item }}'
       with_items: '{{ solr_process.stdout_lines  }}'
+      when: '"solr" not in services'
     - name: Create deploy user
       user:
         user: deploy
@@ -147,7 +149,7 @@
         setype: httpd_sys_script_exec_t
     - name: Configure log sefcontext rules
       sefcontext:
-        target: '/srv/www/prod(/.*)?/*.log'
+        target: '/srv/www/prod/logs(/.*)?'
         setype: httpd_log_t
     - name: Enable services
       service:

@@ -7,12 +7,15 @@
     LD_LIBRARY_PATH: '{{ ld_library_path }}'
     PYTHONPATH: '{{ python_path }}'
   roles:
+    - { role: prep_staging, become: true }
     - build_project_repo
     - build_virtualenv
+    - configure_logging
     - install_local_settings
     - django_collectstatic
     - django_compressor
     - backup_database
     - django_migrate
     - finalize_deploy
+    - finalize_staging
     - restart_httpd

@@ -1,0 +1,15 @@
+###
+# This Ansible task creates a logging file with appropriate permissions for
+# Apache to write log files for the Django application.
+###
+---
+- name: Create logging directory
+  file:
+    path: '{{ logging_dir }}'
+    state: directory
+    mode: 0770
+- name: Create logging file with group rw
+  file:
+    path: '{{ logging_path }}'
+    state: touch
+    mode: 0660
