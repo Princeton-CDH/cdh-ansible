@@ -94,7 +94,7 @@ LOGGING = {
         'debug_log': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/srv/www/prod/derrida.log',
+            'filename': '{{ logging_path }}',
             'formatter': 'basic',
         }
     },

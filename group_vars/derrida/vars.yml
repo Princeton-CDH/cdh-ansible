@@ -14,4 +14,8 @@ figgy_token: '{{ vault_figgy_token }}'
 # Secret key for Mapbox API
 mapbox_token: '{{ vault_mapbox_token }}'
 # Geonames user name
-geonames_username: '{{ geonames_username }}'
+geonames_username: '{{ vault_geonames_username }}'
+# QA/staging solr server configuration
+solr_collection: derrida
+solr_url: http://127.0.0.1:8983/solr/
+solr_admin_url: http://127.0.0.1:8983/solr/admin/cores

@@ -31,6 +31,11 @@ deploy: '{{ install_root }}/{{ version }}-{{ short_hash }}'
 db_backup: '/tmp/pre-{{ version }}-{{ short_hash }}-{{ group_name }}.sql'
 # version (referenced from build_project_repo role)
 version: '{{ ver.stdout }}'
+# logging directory
+logging_dir: '{{ install_root }}/logs'
+# logging file
+logging_path: '{{ logging_dir }}/{{ django_app }}.log'
+
 # These include the path for rh-python35 and nodejs6
 # Paths are picky and spaces for any YAML multiline syntax causes issues
 # These are defaults for most projects and should be overriden as necessary.
