@@ -1,0 +1,12 @@
+###
+# Common variables for cdh-web
+###
+
+# NOTE: Default paths are acceptable as is from all
+
+# Github repository
+repo: 'Princeton-CDH/cdh-web'
+# name of main django application
+django_app: cdhweb
+# NEVERCACHE_KEY value used by stock mezzanine
+nevercache_key: '{{ vault_nevercache_key }}'

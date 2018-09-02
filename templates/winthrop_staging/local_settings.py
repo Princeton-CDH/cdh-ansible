@@ -41,7 +41,7 @@ SOLR_CONNECTIONS = {
 }
 
 # include CAS configuration from file
-{% include '/common/cas_configuration.py' %}
+{% include 'templates/common/cas_configuration.py' %}
 
 ###################
 # DEPLOY SETTINGS #
