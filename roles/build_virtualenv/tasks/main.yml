@@ -14,8 +14,23 @@
       path: "{{ deploy }}/env"
       state: directory
       mode: "u+rwx,g+rwx,o-rw"
+- name: Update requirements based on a supplied lock template
+  template:
+    src: '{{ new_requirements }}'
+    dest: '{{ deploy }}/requirements.{{ requirements_type }}'
+  when:
+    new_requirements is defined
+- name: Update requirements dynamically using extravars
+  lineinfile:
+    regexp: '^{{ item | regex_replace("[<=>]{1,2}.*$") }}'
+    line: '{{ item }}'
+    path: '{{ deploy }}/requirements.txt'
+  when:
+    pip_updates is defined
+  with_items:
+    '{{ pip_updates }}'
 - name: Install requirements via pip (MySQLdb should be system version and skipped)
   pip:
     virtualenv: "{{ deploy }}/env"
-    requirements: "{{ deploy }}/requirements.txt"
+    requirements: "{{ deploy }}/requirements.{{ requirements_type }}"
     virtualenv_site_packages: yes
