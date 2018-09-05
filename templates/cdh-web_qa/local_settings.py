@@ -16,7 +16,7 @@ MEDIA_ROOT = '/srv/www/qa/cdh-web/media'
 MEDIA_URL = '/media/'
 
 SHOW_TEST_WARNING = True
-å
+
 DATABASES = {
     "default": {
         # Ends with "postgresql_psycopg2", "mysql", "sqlite3" or "oracle".
