@@ -67,9 +67,19 @@
         - java
         # git for git clones
         - git
-        # libsass for Derrida and ruby gem for sass exectuable
+        # libsass for Derrida and CDH-web
         - libsass
-        - rubygem-sass
+        - ruby-devel
+    # This will install the 3.5 family, which is currently still supported
+    # eventually will want to transition Derrida and cdh-web to Dart sass
+    - name: make sure that the ruby gem isn't installed
+      yum:
+        name: rubygem-sass
+        state: absent
+    - name: Ruby gem for sass
+      gem:
+        name: sass
+        state: present
     - name: Get service facts
       service_facts:
     - name: Download solr
