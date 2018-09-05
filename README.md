@@ -110,7 +110,7 @@ You can also `ansible-vault decrypt` but need to remember to manually `encrypt`.
 These are included in playbooks indirectly. Typically in the appropriate
 `group_vars` YAML file, you'll see a stanza such as:
 ```{yaml}
-db_name: {{ vault__db_name }}
+db_name: {{ vault_db_name }}
 ```
 
 Sometimes the variable will be common across projects, but will be overriden
