@@ -65,6 +65,37 @@ ansible-playbook -e ref=GITREF name_of_playbook.yml
 The playbook will run, noting success and failures. The `-v` flag adjusts verbosity
 (adding more `v`s will produce more verbosity. Debug tasks are usually written at `2`)
 
+
+## Overrides
+
+There are two principal overrides that the roles involved in deployment have
+built-in. One is the override noted above for
+what Git reference should be used to deploy.
+This can be any hash, branch head, or tag that the Git repository knows about.
+
+You can also override any other arbitrary variable, but the other likely one
+is the `requirements` file. You may want to point to a `requirements.lock`,
+for example:
+```{bash}
+ansible-playbook -e requirements_type=lock playbook.yml
+```
+
+You can also pass a list of arbitrary additions or updates to pip:
+```{bash}
+ansible-playbook -e pip_updates='["django-autcomplete-light<3.3", "pandas"]' playbook.yml
+```
+
+These will be automatically added (or updated) to the requirements for the
+application during its deployment.
+
+If you need to make major changes and do not wish to make a patch release for
+whatever reason, you can also entirely replace `requirements.(txt|lock)` with a
+local template:
+
+```{bash}
+ansible-playbook -e new_requirements=/path/to/local/template.txt playbook.yml
+```
+
 ## Vault variables
 
 Variables kept in `group_vars/all/vault.yml` are sensitive configurations
