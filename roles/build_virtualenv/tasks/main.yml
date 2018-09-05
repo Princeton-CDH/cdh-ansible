@@ -14,7 +14,7 @@
       path: "{{ deploy }}/env"
       state: directory
       mode: "u+rwx,g+rwx,o-rw"
-- name: Update requirements based on a supplied lock template
+- name: Update requirements based on a supplied template
   template:
     src: '{{ new_requirements }}'
     dest: '{{ deploy }}/requirements.{{ requirements_type }}'
@@ -24,7 +24,7 @@
   lineinfile:
     regexp: '^{{ item | regex_replace("[<=>]{1,2}.*$") }}'
     line: '{{ item }}'
-    path: '{{ deploy }}/requirements.txt'
+    path: '{{ deploy }}/requirements.{{ requirements_type }}'
   when:
     pip_updates is defined
   with_items:
