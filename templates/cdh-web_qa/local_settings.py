@@ -31,7 +31,7 @@ DATABASES = {
         # Not used with sqlite3.
         "USER": "{{ db_username }}",
         # Not used with sqlite3.
-        "PASSWORD": "{{ db_username }}",
+        "PASSWORD": "{{ db_password }}",
         # Set to empty string for localhost. Not used with sqlite3.
         "HOST": "",
         # Set to empty string for default. Not used with sqlite3.
