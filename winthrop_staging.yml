@@ -7,6 +7,7 @@
     LD_LIBRARY_PATH: '{{ ld_library_path }}'
     PYTHONPATH: '{{ python_path }}'
   roles:
+    # this must be run as root using the 'become' strategy
     - { role: prep_staging, become: true }
     - build_project_repo
     - build_virtualenv
