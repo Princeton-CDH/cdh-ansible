@@ -121,7 +121,9 @@ in a specific `vault.yml`.
 The rough order of creating a playbook is:
 
   1. Copy over an appropriate playbook as a template that is either production
-  or QA.
+  or QA. Generally QA should follow a similar project's QA template, staging should
+  use production (and broadly those will be the same). Staging requires the
+  special roles `prep_staging` and `finalize_staging`.
   2. Create a group in hosts (QA and production
     are or should be separate):
     ```
