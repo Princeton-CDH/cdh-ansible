@@ -98,7 +98,7 @@ ansible-playbook -e new_requirements=/path/to/local/template.txt playbook.yml
 
 ## Vault variables
 
-Variables kept in `group_vars/all/vault.yml` are sensitive configurations
+Variables kept in `group_vars/*/vault.yml` are sensitive configurations
 that should always be kept encrypted on commit. To edit them (in your system
 text editor):
 ```{bash}
@@ -107,24 +107,14 @@ ansible-vault edit group_vars/all/vault.yml
 
 You can also `ansible-vault decrypt` but need to remember to manually `encrypt`.
 
-All vault variables should be prefixed with `vault_playbookname_` to keep them
-identifiable and unique.
-
 These are included in playbooks indirectly. Typically in the appropriate
 `group_vars` YAML file, you'll see a stanza such as:
 ```{yaml}
-db_name: ^^ vault_winthrop_db_name ^^
+db_name: {{ vault__db_name }}
 ```
 
-These use either the standard `{{}}` or alternate `^^ ^^` tags to denote
-printing the referenced vault variable. This aliases the appropriate variable
-in the vault to its more generic name used in the roles.
-
-N.B. The `^^` avoids an issue in the `install_local_settings` role where `{}`
-  are interpreted as Jinja2 templating commands, not valid Python. For the
-  duration of that role, the Jinja2 print braces are `^^ myvar ^^`. This
-  alternate form needs to be used for ANY variable referenced in
-  `local_settings.py` in Django-based projects.
+Sometimes the variable will be common across projects, but will be overriden
+in a specific `vault.yml`.
 
 ## Adding a playbook
 
