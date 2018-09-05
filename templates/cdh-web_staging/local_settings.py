@@ -7,6 +7,9 @@
 
 DEBUG = False
 
+# Django compressor
+COMPRESS_OFFLINE = True
+
 # Make these unique, and don't share it with anybody.
 SECRET_KEY = "{{ secret_key }}"
 NEVERCACHE_KEY = "{{ nevercache_key }}"
@@ -48,8 +51,7 @@ RICHTEXT_ALLOWED_TAGS = (
 ###################
 
 # Domains for public site
-ALLOWED_HOSTS = ["cdh-web.princeton.edu", "cdh.princeton.edu",
-                 "digitalhumanities.princeton.edu"]
+ALLOWED_HOSTS = ["*"]
 
 #
 ADMINS = [('CDH Dev Team', 'cdhdevteam@princeton.edu')]
