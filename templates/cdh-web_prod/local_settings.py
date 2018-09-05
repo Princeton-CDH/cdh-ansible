@@ -7,6 +7,9 @@
 
 DEBUG = False
 
+# compress offline
+COMPRESS_OFFLINE = True
+
 # Make these unique, and don't share it with anybody.
 SECRET_KEY = "{{ secret_key }}"
 NEVERCACHE_KEY = "{{ nevercache_key }}"
@@ -26,20 +29,6 @@ DATABASES = {
         "PORT": "",
     }
 }
-
-# default plus figcaption
-RICHTEXT_ALLOWED_TAGS = (
-    'a', 'abbr', 'acronym', 'address', 'area', 'article',
-    'aside', 'b', 'bdo', 'big', 'blockquote', 'br', 'button', 'caption',
-    'center', 'cite', 'code', 'col', 'colgroup', 'dd', 'del', 'dfn', 'dir',
-    'div', 'dl', 'dt', 'em', 'fieldset', 'figure', 'font', 'footer', 'form',
-    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hr', 'i', 'img', 'input',
-    'ins', 'kbd', 'label', 'legend', 'li', 'map', 'men', 'nav', 'ol',
-    'optgroup', 'option', 'p', 'pre', 'q', 's', 'samp', 'section', 'select',
-    'small', 'span', 'strike', 'strong', 'sub', 'sup', 'table', 'tbody', 'td',
-    'textarea', 'tfoot', 'th', 'thead', 'tr', 'tt', '', 'ul', 'var', 'wbr',
-    'figcaption'
-)
 
 
 
@@ -83,9 +72,6 @@ LOGGING = {
 # Media root settings for production
 MEDIA_ROOT = '/srv/www/media/'
 MEDIA_URL = '/media/'
-
-# Prevent writes to temp dir and issues with group
-FILE_UPLOAD_MAX_MEMORY_SIZE = 50000000
 
 # Allow SVG
 FILEBROWSER_ESCAPED_EXTENSIONS = []

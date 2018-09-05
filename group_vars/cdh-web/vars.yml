@@ -10,3 +10,4 @@ repo: 'Princeton-CDH/cdh-web'
 django_app: cdhweb
 # NEVERCACHE_KEY value used by stock mezzanine
 nevercache_key: '{{ vault_nevercache_key }}'
+symlink: cdh-web

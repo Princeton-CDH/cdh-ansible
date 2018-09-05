@@ -7,6 +7,9 @@
 
 DEBUG = False
 
+# Django compressor
+COMPRESS_OFFLINE = True
+
 # Make these unique, and don't share it with anybody.
 SECRET_KEY = "{{ secret_key }}"
 NEVERCACHE_KEY = "{{ nevercache_key}}"
