@@ -1,0 +1,17 @@
+###
+# Variables for PPA that apply across all deploy groups (prod, qa, and staging)
+###
+---
+# These include the path for rh-python35 and nodejs6
+# Paths are picky and spaces for any YAML multiline syntax causes issues
+path: '/opt/rh/rh-python35/root/usr/bin:/opt/rh/rh-nodejs8/root/usr/bin:{{ ansible_env.PATH }}'
+ld_library_path: '/opt/rh/rh-python35/root/usr/lib64:/opt/rh/rh-nodejs8/root/usr/lib64{% if ansible_env.LD_LIBRARY_PATH is defined %}:{{ ansible_env.LD_LIBRARY_PATH }}{% endif %}'
+python_path: '/opt/rh/rh-nodejs8/root/usr/lib/python2.7/site-packages{% if ansible_env.PYTHON_PATH is defined %}:{{ ansible_env.PYTHONPATH }}{% endif %}'
+# Github repository
+repo: 'Princeton-CDH/ppa-django'
+# name of django application
+django_app: ppa
+# PPA solr settings for QA and staging (production will override)
+solr_collection: ppa
+solr_url: http://127.0.0.1:8983/solr/
+solr_admin_url: http://127.0.0.1:8983/solr/admin/cores

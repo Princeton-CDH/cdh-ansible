@@ -26,3 +26,14 @@ derrida_staging
 [staging:children]
 winthrop_staging
 derrida_staging
+ppa_staging
+
+[ppa_qa]
+test-ppa.cdh.princeton.edu
+
+[ppa:children]
+ppa_qa
+ppa_staging
+
+[ppa_staging]
+ppa_stg ansible_host=127.0.0.1 ansible_port=2222 ansible_ssh_private_key_file=vagrant/id_rsa
