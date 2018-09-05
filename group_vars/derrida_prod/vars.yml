@@ -8,3 +8,7 @@ install_root: /srv/www/prod
 gitref: '{{ ref | default("master") }}'
 # Symlink for /var/www that Apache expects (often different QA and prod)
 symlink: 'derridas-margins'
+# vaulted override for solr
+solr_url: '{{ vault_solr_url }}'
+solr_admin_url: '{{ vault_solr_admin_url }}'
+solr_collection: '{{ vauled_solr_collection }}'
