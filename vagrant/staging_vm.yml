@@ -145,7 +145,7 @@
         state: link
     - name: Configure virtualenv sefcontext rules
       sefcontext:
-        target: '/srv/www/prod(/.*)?env(/.*)?'
+        target: '/srv/www/prod(/.*)?/env(/.*)?'
         setype: httpd_sys_script_exec_t
     - name: Configure log sefcontext rules
       sefcontext:
