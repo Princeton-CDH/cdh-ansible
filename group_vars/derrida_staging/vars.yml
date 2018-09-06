@@ -5,7 +5,3 @@ install_root: /srv/www/prod
 gitref: '{{ ref | default("master") }}'
 # Symlink for /var/www that Apache expects (often different QA and prod)
 symlink: 'derridas-margins'
-# allowed host settings
-allowed_hosts: '["*"]'
-# email prefix for admin emails
-email_prefix: '[Derridas Margins Staging]'
