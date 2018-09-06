@@ -6,7 +6,7 @@
 ###
 - name: Install local_settings.py from project template
   template:
-    src: 'templates/{{ group_name }}/local_settings.py'
+    src: 'templates/{{ template_path }}/local_settings.py'
     dest: '{{ deploy }}/{{ django_app }}/local_settings.py'
 - name: Set permissions on local_settings to be unreadable by other
   file:
@@ -19,4 +19,4 @@
     etype: group
     permissions: r
     state: present
-  when: group_name | regex_search('_qa$')
+  when: qa is defined
