@@ -6,6 +6,8 @@
 
 # Github repository
 repo: 'Princeton-CDH/derrida-django'
+# path for templates
+template_path: derrida
 # name of main django application
 django_app: derrida
 # tokens for plum and figgy for protected IIIF content
