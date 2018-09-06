@@ -32,6 +32,13 @@ The overall structure of this repository can be broken down as follows:
       Identityfile ~/.ssh/key_for_qa_server
   ```
 
+  And for deploying to the QA server:
+  ```
+  Host test-*.cdh.princeton.edu
+      User deploy
+      Identityfile ~/.ssh/key_for_qa_server
+  ```
+
 ### Precommit hook
 If you plan to contribute to this repository (i.e., you're a member of the CDH
 dev team editing our playbooks), please copy the following in your local instance:
