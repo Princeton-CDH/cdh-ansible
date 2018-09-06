@@ -21,6 +21,9 @@ templates_dir: 'templates/'
 repo_url: 'https://www.github.com/{{ repo }}.git'
 # home directory (on remote)
 home: '{{ ansible_env.HOME }}'
+# default to using master unless set otherwise
+gitref: '{{ ref | default("master") }}'
+
 # Clone root (where deploy user clones repo)
 clone_root: "{{ home }}/repos"
 # short hash for Git reference

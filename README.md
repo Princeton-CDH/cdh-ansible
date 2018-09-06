@@ -121,20 +121,28 @@ in a specific `vault.yml`.
 The rough order of creating a playbook is:
 
   1. Copy over an appropriate playbook as a template that is either production
-  or QA.
+  or QA. Generally QA should follow a similar project's QA template, staging should
+  use production (and broadly those will be the same). Staging requires the
+  special roles `prep_staging` and `finalize_staging`.
   2. Create a group in hosts (QA and production
     are or should be separate):
     ```
     [mygroup]
     hostname.of.server.edu
     ```
-  3. Create a YAML directory in `group_vars` that has a name mirroring the new
+  4. You will also want to make sure that the group names match and that staging and your project's child files are properly grouped, i.e. all children of staging need to be in
+  `[staging:children]` and all children of your project need to be in
+  `[project:children]`.
+  5. Create a YAML directory in `group_vars` that has a name mirroring the new
   playbook: i.e. if the playbook is `my_playbook_qa`, the name should be
-  the same, with a `vars.yml` and a `vault.yml` (for encrypted variables) included
-  4. Reference any playbook variables and set accordingly. See above under
+  the same, with a `vars.yml` and a `vault.yml` (for encrypted variables).
+  You will also want to create a `group_vars` folder for the project to hold
+  variables common to production, qa and staging. It should have the same name
+  as the `project:children` you defined earlier in `hosts`.
+  6. Reference any playbook variables and set accordingly. See above under
   vault variables for how to configure those.
-  5. Add roles to the list in the new playbook in the order needed.
-  6. N.B. Make sure you set the `group_name` variable appropriately as some QA
+  6. Add roles to the list in the new playbook in the order needed.
+  7. N.B. Make sure you set the `group_name` variable appropriately as some QA
   only steps are skipped based on `_qa` not being in the name.
 
 ## Staging playbooks

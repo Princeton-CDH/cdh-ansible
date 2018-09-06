@@ -1,0 +1,5 @@
+---
+# group name
+group_name: cdh-web_staging
+# install root directory
+install_root: /srv/www/prod

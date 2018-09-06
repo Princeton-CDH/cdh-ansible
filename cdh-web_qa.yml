@@ -1,4 +1,4 @@
-- hosts: derrida_prod
+- hosts: cdh-web_qa
   connection: ssh
   remote_user: deploy
   # Set environment to use scl rh-python35 in group_vars
@@ -10,7 +10,6 @@
     - build_project_repo
     - build_virtualenv
     - install_local_settings
-    - configure_logging
     - django_collectstatic
     - django_compressor
     - backup_database
