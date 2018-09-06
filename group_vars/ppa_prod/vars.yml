@@ -1,2 +1,6 @@
 allowed_hosts: '["ppa.princeton.edu"]'
 email_prefix: '[PPA] '
+
+# ppa is on python 3.6
+path: '/opt/rh/rh-python35/root/usr/bin:/opt/rh/rh-nodejs8/root/usr/bin:{{ ansible_env.PATH }}'
+ld_library_path: '/opt/rh/rh-python36/root/usr/lib64:/opt/rh/rh-nodejs8/root/usr/lib64{% if ansible_env.LD_LIBRARY_PATH is defined %}:{{ ansible_env.LD_LIBRARY_PATH }}{% endif %}'
