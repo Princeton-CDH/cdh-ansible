@@ -6,7 +6,11 @@ group_name: cdh-web_qa
 gitref: '{{ ref | default("develop") }}'
 # Install root (the dir where the repo will be set up on remote)
 install_root: /srv/www/qa/cdh-web
-# Symlink for /var/www that Apache expects (often different QA and prod)
-symlink: 'cdh-web'
-# Set permissions for log file
+# Set permissions for local_settings
 project_user: cdhweb
+# flag as qa by setting qa variable
+qa: yes
+# email prefix for admin emails
+email_prefix: '[CDH Web 2.0+ QA]'
+# allowed_hosts for Django
+allowed_hosts: '["test-web.cdh.princeton.edu"]'
