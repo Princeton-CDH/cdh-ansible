@@ -26,6 +26,8 @@ repo_url: 'https://www.github.com/{{ repo }}.git'
 home: '{{ ansible_env.HOME }}'
 # default to using master unless set otherwise
 gitref: '{{ ref | default("master") }}'
+# set default install root for all but qa
+install_root: /srv/www/prod
 
 # Clone root (where deploy user clones repo)
 clone_root: "{{ home }}/repos"
