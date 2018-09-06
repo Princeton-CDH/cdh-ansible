@@ -1,18 +1,5 @@
 ---
-
-# These variables are the stock configurations that either alias variables
-# from the vault or provide paths that the project itself uses.
-# vault variables first
-secret_key: '{{ vault_secret_key }}'
-email_host_password: '{{ vault_email_host_password }}'
-
-# project names, version variables, and directories
-# Name of the group to run this role on for use in templating section
-# should match the host group
-group_name: winthrop_prod
-# install root for repository checkout
-install_root: /srv/www/prod
-# Git refspec to use, either default or passed by '-e ref=<refspec>
-gitref: '{{ ref | default("master") }}'
-# Symlink for /var/www that Apache expects (often different QA and prod)
-symlink: 'winthrop'
+# Allowed hosts for Django
+allowed_hosts: '["winthrop.princeton.edu"]'
+# email prefix for admin emails
+email_prefix: '[Winthrop Prod]'
