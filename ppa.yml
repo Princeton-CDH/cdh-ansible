@@ -1,4 +1,4 @@
-- hosts: ppa_qa
+- hosts: ppa_prod
   connection: ssh
   remote_user: deploy
   # Set environment to use scl rh-python35 in group_vars

@@ -5,7 +5,7 @@
 # It assumes the standard configuration /srv/www symlinks to /var/www
 # used in CDH Django projects.
 ---
-- name: Check for current symlink as previous
+- name: Check for current symlink; if present, store as previous
   stat:
     path: "{{ install_root }}/current"
   register: previous
@@ -14,7 +14,7 @@
     src: "{{ deploy }}"
     dest: "{{ install_root }}/current"
     state: link
-- name: Register current symlink
+- name: Create "current" symlink for new deploy
   stat:
     path: "{{ install_root }}/current"
   register: current
