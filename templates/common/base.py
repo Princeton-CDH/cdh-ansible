@@ -36,7 +36,9 @@ DATABASES = {
 {% block cas_config %}
 CAS_SERVER_URL = 'https://fed.princeton.edu/cas/'
 
+{% if qa is not defined %}
 CAS_VERSION = '3'
+{% endif %}
 
 PUCAS_LDAP.update({
     'SERVERS': [
