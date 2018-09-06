@@ -2,6 +2,9 @@
 # email_host_password
 email_host_password: '{{ vault_email_host_password }}'
 
+# debug setting, False for all unless overriden explicitly
+debug_setting: 'False'
+
 # Secret key -- overriddenin individual vaults
 secret_key: '{{ vault_secret_key }}'
 
@@ -31,7 +34,7 @@ short_hash: '{{ repo_info.after[0:6] }}'
 # Path of the deploy directory. Generated from vars above and build_project_repo
 deploy: '{{ install_root }}/{{ version }}-{{ short_hash }}'
 # Database backup location
-db_backup: '/tmp/pre-{{ version }}-{{ short_hash }}-{{ group_name }}.sql'
+db_backup: '/tmp/pre-{{ version }}-{{ short_hash }}-{{ inventory_hostname_short }}.sql'
 # version (referenced from build_project_repo role)
 version: '{{ ver.stdout }}'
 # logging directory
