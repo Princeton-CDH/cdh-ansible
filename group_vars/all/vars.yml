@@ -11,7 +11,8 @@ secret_key: '{{ vault_secret_key }}'
 # Database configurations -- overriden by group_vars vaults as needed
 db_name: '{{ vault_db_name }}'
 db_password: '{{ vault_db_password }}'
-db_host: '{{ vault_db_host }}'
+# include a blank default for QA when we want localhost
+db_host: '{{ vault_db_host | default("") }}'
 db_username: '{{ vault_db_username }}'
 
 # Solr configurations
