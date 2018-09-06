@@ -13,7 +13,6 @@ SECRET_KEY = '{{ secret_key }}'
 SHOW_TEST_WARNING = True
 {% endif %}
 
-
 {% endblock %}
 
 {% block database %}

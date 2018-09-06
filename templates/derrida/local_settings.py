@@ -26,7 +26,9 @@ DJIFFY_AUTH_TOKENS = {
 }
 # set compress offline for Django Compressor
 COMPRESS_OFFLINE = True
+{% if qa is not defined %}
 # turn on google analytics
 INCLUDE_ANALYTICS = True
+{% endif %}
 
 {% endblock %}
