@@ -6,3 +6,7 @@ db_name: 'staging'
 db_username: 'staging'
 db_password: 'staging'
 db_host: 'localhost'
+# allowed hosts for Django
+allowed_hosts: '["*"]'
+# email prefix for admin emails
+email_prefix: '[Staging]'
