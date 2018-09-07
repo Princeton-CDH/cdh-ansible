@@ -153,6 +153,11 @@
         owner: root
         group: root
         state: link
+    - name: Allow httpd to network connect
+      seboolean:
+        name: httpd_can_network_connect
+        state: yes
+        persistent: yes
     - name: Configure virtualenv sefcontext rules
       sefcontext:
         target: '/srv/www/prod(/.*)?/env(/.*)?'
