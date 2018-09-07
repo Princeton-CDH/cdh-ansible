@@ -24,7 +24,7 @@ LOGGING = {
 COMPRESS_OFFLINE = True
 
 # Media root settings for production
-MEDIA_ROOT = '/srv/www/media/'
+MEDIA_ROOT = '{{ media_root }}'
 MEDIA_URL = '/media/'
 
 # Allow SVG

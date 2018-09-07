@@ -14,3 +14,5 @@ nevercache_key: '{{ vault_nevercache_key }}'
 symlink: cdh-web
 # template path
 template_path: cdh-web
+# media_root settings
+media_root: /srv/www/media
