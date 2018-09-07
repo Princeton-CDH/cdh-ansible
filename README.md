@@ -32,6 +32,13 @@ The overall structure of this repository can be broken down as follows:
       Identityfile ~/.ssh/key_for_qa_server
   ```
 
+  And for deploying to the QA server:
+  ```
+  Host test-*.cdh.princeton.edu
+      User deploy
+      Identityfile ~/.ssh/key_for_qa_server
+  ```
+
 ### Precommit hook
 If you plan to contribute to this repository (i.e., you're a member of the CDH
 dev team editing our playbooks), please copy the following in your local instance:
@@ -161,3 +168,7 @@ settings that Puppet manages on the production VMs.
 For detailed info on the VM and its accounts, configuration, especially how to
 set up Solr (since deploys do not yet touch it), see the `vagrant` directory
 [README](vagrant/README.md).
+
+The `prep_staging` role includes an optional task to clear out the www
+directories and database. By default, this is skipped. To enable it,
+specify `-e clear_staging=1`.

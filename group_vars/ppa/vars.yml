@@ -1,0 +1,20 @@
+###
+# Variables for PPA that apply across all deploy groups (prod, qa, and staging)
+###
+---
+# NOTE: ppa is on python 3.6 and nodejs8, but on production only for now
+
+# Github repository
+repo: 'Princeton-CDH/ppa-django'
+# name of django application
+django_app: ppa
+# apache symlink
+symlink: 'ppa'
+# Solr settings for QA and staging (production will override)
+solr_collection: ppa
+solr_url: http://127.0.0.1:8983/solr/
+solr_admin_url: http://127.0.0.1:8983/solr/admin/cores
+# path to hathitree pairtree data
+hathitrust_pairtree_path: '/home/deploy/ppa/ht_text_pd/'
+# ansible template path for local settings file
+template_path: ppa

@@ -10,3 +10,6 @@ db_host: 'localhost'
 allowed_hosts: '["*"]'
 # email prefix for admin emails
 email_prefix: '[Staging]'
+
+# clear staging - off by default
+clear_staging: false
