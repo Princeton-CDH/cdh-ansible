@@ -30,16 +30,7 @@
   stat:
     path: "{{ install_root }}/previous"
   register: previous
-- name: >
-        If previous did not exist (and therefore wasn't reset above),
-        create it with current
-# should only trigger on first run of deploy script
-  file:
-    src: "{{ deploy }}"
-    dest: "{{ install_root }}/previous"
-    state: link
-  when: previous.stat.exists == False
-- name: Update /var/www/ symlink to make the new live
+- name: Update /var/www/ symlink to make the new version live
   file:
     src: "{{ deploy }}"
     dest: "/var/www/{{ symlink }}"
