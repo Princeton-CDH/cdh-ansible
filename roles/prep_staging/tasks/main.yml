@@ -32,10 +32,12 @@
   args:
     executable: /bin/bash
     warn: false
+  when: clear_staging
 - name: Remove staging db if exists
   mysql_db:
     name: staging
     state: absent
+  when: clear_staging
 - name: Create staging db
   mysql_db:
     name: staging
