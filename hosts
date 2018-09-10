@@ -1,3 +1,25 @@
+######
+# The configuration of hosts depends on groups and child groups to ensure
+# the least redundant configuration of group variables
+#
+#
+# The usual configuration stanza for a project will be to have a project_prod,
+# project_qa, and project_staging (in the format of those already configured),
+# followed by a stanza beginning [project:children], which groups the three
+# project configurations a child groups of the larger project group. These
+# correspond exactly to their entries in group_vars
+#
+# After the project declarations, you will find more global group:children
+# declarations, such as [stating:children], which is the group that holds all
+# global variables for staging deploys.
+#
+# Inheritance has some potential gotchas. All top level groups inherit from
+# group_vars/all, but when two groups inherit from a group on the same level
+# (i.e. staging and winthrop), any overlapping variables are resolved with the
+# group last in alphabetical order 'winning':
+# See https://docs.ansible.com/ansible/2.5/user_guide/intro_inventory.html#how-variables-are-merged
+######
+
 [winthrop_prod]
 winthrop.princeton.edu
 [winthrop_qa]
@@ -34,18 +56,11 @@ cdh-web_qa
 cdh-web_prod
 cdh-web_staging
 
-[staging:children]
-winthrop_staging
-derrida_staging
-ppa_staging
-cdh-web_staging
 
 [ppa_qa]
 test-ppa.cdh.princeton.edu
-
 [ppa_prod]
 ppa.princeton.edu
-
 [ppa_staging]
 ppa_stg ansible_host=127.0.0.1 ansible_port=2222 ansible_ssh_private_key_file=vagrant/id_rsa
 
@@ -54,4 +69,9 @@ ppa_prod
 ppa_qa
 ppa_staging
 
-
+### staging, prod, and qa stanzas
+[staging:children]
+winthrop_staging
+derrida_staging
+ppa_staging
+cdh-web_staging
