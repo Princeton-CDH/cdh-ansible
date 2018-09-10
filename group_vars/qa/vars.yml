@@ -1,0 +1,7 @@
+###
+# This file stores variables shared by all QA deploys
+###
+---
+# solr configurations for a local Solr instance
+solr_url: http://127.0.0.1:8983/solr/
+solr_admin_url: http://127.0.0.1:8983/solr/admin/cores
