@@ -69,9 +69,15 @@ ppa_prod
 ppa_qa
 ppa_staging
 
-### staging, prod, and qa stanzas
+### staging, prod, and qa stanzas to create shared groups
 [staging:children]
 winthrop_staging
 derrida_staging
 ppa_staging
 cdh-web_staging
+
+[qa:children]
+winthrop_qa
+derrida_qa
+ppa_qa
+cdh-web_qa
