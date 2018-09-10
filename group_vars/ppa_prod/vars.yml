@@ -2,7 +2,8 @@
 # PPA production configurations
 ###
 
-allowed_hosts: '["ppa.princeton.edu"]'
+allowed_hosts:
+  - 'ppa.princeton.edu'
 email_prefix: '[PPA] '
 
 # running on python 3.6 in production
