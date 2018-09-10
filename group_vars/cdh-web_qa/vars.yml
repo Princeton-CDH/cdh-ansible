@@ -13,6 +13,7 @@ qa: yes
 # email prefix for admin emails
 email_prefix: '[CDH Web 2.0+ QA]'
 # allowed_hosts for Django
-allowed_hosts: '["test-web.cdh.princeton.edu"]'
+allowed_hosts:
+    - 'test-web.cdh.princeton.edu'
 # media_root for QA
 media_root: '/srv/www/qa/cdh-web/media'
