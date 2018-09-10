@@ -11,6 +11,7 @@ project_user: winthrop
 # Set qa flag by defining 'qa' variable
 qa: yes
 # allowed hosts for Django
-allowed_hosts: '["test-winthrop.cdh.princeton.edu"]'
+allowed_hosts:
+  - 'test-winthrop.cdh.princeton.edu'
 # email_prefix
 email_prefix: '[Winthrop QA]'
