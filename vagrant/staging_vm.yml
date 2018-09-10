@@ -45,11 +45,10 @@
         name: '{{ item }}'
         state: present
       with_items:
-        # all the python versions and mod_wsgi's in use
+        # rh-python35 for now, as that version syncs with the most projects
+        # if needed can be upgraded at a later date.
         - rh-python35
-        - rh-python36
         - rh-python35-mod_wsgi
-        - rh-python36-mod_wsgi
         # all versions of nodejs in use in CDH projects
         - rh-nodejs8
         - rh-nodejs6
