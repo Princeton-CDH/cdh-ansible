@@ -6,5 +6,5 @@ email_prefix: '[CDH Web 2.0+ Prod]'
 # allowed hosts for Django
 allowed_hosts:
   - 'cdh-web.princeton.edu'
-  - 'cdh.princeotn.edu'
-  - 'digitalhumanities.princeton.edu' 
+  - 'cdh.princeton.edu'
+  - 'digitalhumanities.princeton.edu'
