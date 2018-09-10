@@ -13,3 +13,6 @@ email_prefix: '[Staging]'
 
 # clear staging - off by default
 clear_staging: false
+# solr configurations for a local Solr instance
+solr_url: http://127.0.0.1:8983/solr/
+solr_admin_url: '{{ solr_url }}admin/cores'
