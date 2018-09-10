@@ -12,10 +12,6 @@
 ###
 
 ---
-# This task runs on the host machine, because git stores files as 644 or 755
-# and host keys need to be 600, even if we're using a deliberately insecure
-# key for a test box as in this case.
-
 - name: Configure base configurations
   connection: local
   become: true
@@ -24,6 +20,9 @@
     templates_dir: '../templates'
     solr_ver: 6.6.5
   tasks:
+    # This task runs on the host machine, because git stores files as 644 or 755
+    # and host keys need to be 600, even if we're using a deliberately insecure
+    # key for a test box as in this case.
     - name: Set permissions on id_rsa after any git changes
       local_action:
         module: file
