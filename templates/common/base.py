@@ -1,8 +1,7 @@
 {% block basic_settings %}
 DEBUG = {{ debug_setting }}
 
-# Insecure setting for staging vagrant isntance only!
-ALLOWED_HOSTS = {{ allowed_hosts }}
+ALLOWED_HOSTS = [{% for host in allowed_hosts %}'{{ host }}', {% endfor %}]
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # http://www.miniwebtool.com/django-secret-key-generator/

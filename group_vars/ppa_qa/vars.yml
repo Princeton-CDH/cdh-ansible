@@ -1,2 +1,3 @@
-allowed_hosts: '["test-ppa.cdh.princeton.edu"]'
+allowed_hosts:
+  - 'test-ppa.cdh.princeton.edu'
 email_prefix: '[PPA QA] '

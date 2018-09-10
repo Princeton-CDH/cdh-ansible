@@ -9,7 +9,8 @@ symlink: 'derrida-django'
 # Set permissions for local settings
 project_user: derrida
 # Allowed hosts for Django settings
-allowed_hosts: "['test-derrida.cdh.princeton.edu']"
+allowed_hosts:
+  - 'test-derrida.cdh.princeton.edu'
 # email prefix for admin emails
 email_prefix: '[Derridas Margins QAs]'
 # define this as a qa playbook, any value will set the flag
