@@ -17,7 +17,7 @@ db_username: '{{ vault_db_username }}'
 
 # Solr configurations
 solr_url: '{{ vault_solr_url }}'
-solr_admin_url: '{{ vault_admin_url }}'
+solr_admin_url: '{{ vault_solr_admin_url }}'
 
 # The template directory (as a relative path from the top of repository)
 templates_dir: 'templates/'
