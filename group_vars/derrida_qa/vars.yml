@@ -12,6 +12,6 @@ project_user: derrida
 allowed_hosts:
   - 'test-derrida.cdh.princeton.edu'
 # email prefix for admin emails
-email_prefix: '[Derridas Margins QAs]'
+email_prefix: '[QA Derrida] '
 # define this as a qa playbook, any value will set the flag
 qa: yes

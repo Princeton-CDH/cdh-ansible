@@ -11,7 +11,7 @@ project_user: cdhweb
 # flag as qa by setting qa variable
 qa: yes
 # email prefix for admin emails
-email_prefix: '[CDH Web 2.0+ QA]'
+email_prefix: '[QA CDH Web] '
 # allowed_hosts for Django
 allowed_hosts:
     - 'test-web.cdh.princeton.edu'
