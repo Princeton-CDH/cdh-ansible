@@ -3,4 +3,4 @@
 allowed_hosts:
   - 'winthrop.princeton.edu'
 # email prefix for admin emails
-email_prefix: '[Winthrop Prod]'
+email_prefix: '[Winthrop] '

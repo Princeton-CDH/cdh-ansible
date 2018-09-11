@@ -14,4 +14,4 @@ qa: yes
 allowed_hosts:
   - 'test-winthrop.cdh.princeton.edu'
 # email_prefix
-email_prefix: '[Winthrop QA]'
+email_prefix: '[QA Winthrop] '
