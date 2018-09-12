@@ -36,7 +36,8 @@ DATABASES = {
 CAS_SERVER_URL = 'https://fed.princeton.edu/cas/'
 
 {% if qa is not defined %}
-CAS_VERSION = '3'
+# disable for now due to issues encountered with cdhweb 9/2018
+# CAS_VERSION = '3'
 {% endif %}
 
 PUCAS_LDAP.update({
