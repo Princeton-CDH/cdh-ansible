@@ -1,3 +1,5 @@
+---
+install_root: '{{ install_base }}/ppa-django'
 allowed_hosts:
   - 'test-ppa.cdh.princeton.edu'
 email_prefix: '[QA PPA] '

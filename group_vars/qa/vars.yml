@@ -2,6 +2,11 @@
 # This file stores variables shared by all QA deploys
 ###
 ---
+# set QA to use develop by default
+gitref: '{{ ref | default("develop") }}'
 # solr configurations for a local Solr instance
 solr_url: http://127.0.0.1:8983/solr/
 solr_admin_url: '{{ solr_url }}admin/cores'
+install_base: '/srv/www/qa'
+# qa flag, by setting to any value flags install as QA
+qa: qa
