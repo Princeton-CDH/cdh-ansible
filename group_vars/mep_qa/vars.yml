@@ -5,3 +5,5 @@
 
 # symlink for QA deployments
 symlink: mep-django
+# install root
+install_root: '{{ install_base }}/mep-django'
