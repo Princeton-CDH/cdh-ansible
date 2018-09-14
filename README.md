@@ -87,9 +87,16 @@ for example:
 ansible-playbook -e requirements_type=lock playbook.yml
 ```
 
-You can also pass a list of arbitrary additions or updates to pip:
+You can also pass a list of arbitrary additions or updates to pip (except for
+git pinned requirements):
 ```{bash}
-ansible-playbook -e pip_updates='["django-autcomplete-light<3.3", "pandas"]' playbook.yml
+ansible-playbook -e pip_updates='django-autocomplete-light<3.3' playbook.yml
+```
+
+If you need to do more than one requirement, you can pass references using JSON
+notation (which should also include your other `-e` vars)
+```{bash}
+ansible-playbook -e '{"pip_updates": ["pandas", "colorama"], "ref": "develop"}'
 ```
 
 These will be automatically added (or updated) to the requirements for the
