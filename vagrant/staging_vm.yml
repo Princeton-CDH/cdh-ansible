@@ -73,6 +73,11 @@
       yum:
         name: rubygem-sass
         state: absent
+    - name: Make sure non-universal installs of gem sass aren't installed
+      gem:
+        name: sass
+        user_install: no
+        state: absent
     - name: Ruby gem for sass
       gem:
         name: sass
