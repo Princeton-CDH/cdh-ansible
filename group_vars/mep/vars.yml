@@ -1,0 +1,11 @@
+###
+# Common variables for MEP Django
+###
+# Github repository
+repo: 'Princeton-CDH/mep-django'
+# name of django application
+django_app: mep
+# apache symlink
+symlink: mep2
+# template path
+template_path: mep
