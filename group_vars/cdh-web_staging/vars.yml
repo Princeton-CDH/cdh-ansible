@@ -1,3 +1,2 @@
 ---
-# group name
-group_name: cdh-web_staging
+email_prefix: '[CDH Web Staging]'

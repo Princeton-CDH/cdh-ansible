@@ -1,9 +1,7 @@
 ---
 # project names, version variables, and directories
-# Git refspec to use, either default or passed by '-e ref=<refspec>
-gitref: '{{ ref | default("develop") }}'
 # Install root (the dir where the repo will be set up on remote)
-install_root: /srv/www/qa/derrida-django
+install_root: '{{ install_base }}/derrida-django'
 # Symlink for /var/www that Apache expects (often different QA and prod)
 symlink: 'derrida-django'
 # Set permissions for local settings
@@ -13,5 +11,3 @@ allowed_hosts:
   - 'test-derrida.cdh.princeton.edu'
 # email prefix for admin emails
 email_prefix: '[QA Derrida] '
-# define this as a qa playbook, any value will set the flag
-qa: yes

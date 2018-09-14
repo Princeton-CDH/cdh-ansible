@@ -1,7 +1,2 @@
-# project names, version variables, and directories
-# install root for repository checkout
-install_root: /srv/www/prod
-# Git refspec to use, either default or passed by '-e ref=<refspec>
-gitref: '{{ ref | default("master") }}'
-# Symlink for /var/www that Apache expects (often different QA and prod)
-symlink: 'derridas-margins'
+---
+email_prefix: '[Derrida Staging]'
