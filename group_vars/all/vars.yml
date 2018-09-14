@@ -5,8 +5,12 @@ email_host_password: '{{ vault_email_host_password }}'
 # debug setting, False for all unless overriden explicitly
 debug_setting: 'False'
 
-# Secret key -- overriddenin individual vaults
-secret_key: '{{ vault_secret_key }}'
+# Secret key
+# add a preslugged secret key to avoid needing a vault for staging
+# chooses a random number from 0 to 99999, adds a random salt, and hashes using
+# sha256.
+secret_key: '{{ 99999 |random|string|password_hash("sha256") }}'
+nevercache_key: '{{ 99999 |random|string|password_hash("sha256") }}'
 
 # Database configurations -- overriden by group_vars vaults as needed
 db_name: '{{ vault_db_name }}'

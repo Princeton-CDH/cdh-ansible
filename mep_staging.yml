@@ -1,0 +1,23 @@
+- hosts: mep_staging
+  connection: ssh
+  remote_user: deploy
+  # Set environment to use scl rh-python35 in group_vars
+  environment:
+    PATH: '{{ path }}'
+    LD_LIBRARY_PATH: '{{ ld_library_path }}'
+    PYTHONPATH: '{{ python_path }}'
+  roles:
+    # this should be run as root using the become strategy
+    - { role: prep_staging, become: true }
+    - build_project_repo
+    - build_virtualenv
+    - configure_logging
+    - install_local_settings
+    - django_collectstatic
+    # Not needed as of 0.7
+    # - django_compressor
+    - backup_database
+    - django_migrate
+    - finalize_deploy
+    - finalize_staging
+    - restart_httpd

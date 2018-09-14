@@ -1,0 +1,7 @@
+###
+# QA specific variables for mep-django
+###
+---
+
+# symlink for QA deployments
+symlink: mep-django

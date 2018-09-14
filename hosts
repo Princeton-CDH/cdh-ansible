@@ -69,15 +69,29 @@ ppa_prod
 ppa_qa
 ppa_staging
 
+[mep_qa]
+test-mep.cdh.princeton.edu
+[mep_prod]
+mep2.princeton.edu
+[mep_staging]
+mep_stg ansible_host=127.0.0.1 ansible_port=2222 ansible_ssh_private_key_file=vagrant/id_rsa
+
+[mep:children]
+mep_qa
+mep_prod
+mep_staging
+
 ### staging, prod, and qa stanzas to create shared groups
 [staging:children]
 winthrop_staging
 derrida_staging
 ppa_staging
 cdh-web_staging
+mep_staging
 
 [qa:children]
 winthrop_qa
 derrida_qa
 ppa_qa
 cdh-web_qa
+mep_staging
