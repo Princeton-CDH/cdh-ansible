@@ -9,3 +9,6 @@ django_app: mep
 symlink: mep2
 # template path
 template_path: mep
+# geonames and mapbox usernames
+geonames_username: '{{ vault_geonames_username }}'
+mapbox_token: '{{ vault_mapbox_token }}'
