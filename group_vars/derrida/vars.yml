@@ -3,7 +3,8 @@
 ###
 
 # NOTE: Default paths are acceptable as is from all
-
+# Symlink for /var/www that Apache expects (often different QA and prod)
+symlink: 'derridas-margins'
 # Github repository
 repo: 'Princeton-CDH/derrida-django'
 # path for templates
