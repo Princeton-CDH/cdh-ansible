@@ -10,6 +10,6 @@ install_root: '{{ install_base }}/mep-django'
 allowed_hosts:
     - test-mep.cdh.princeton.edu
 # email prefix for dev account emails
-email_prefix: '[MEP QA]'
+email_prefix: '[QA MEP]'
 # project user
 project_user: mep
