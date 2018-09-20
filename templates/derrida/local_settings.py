@@ -4,7 +4,7 @@
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'derrida.common.solr_backend.RangeSolrEngine',
-        'URL': '{{ solr_url }}',
+        'URL': '{{ solr_url }}{{ solr_collection }}',
         'ADMIN_URL': '{{ solr_admin_url }}'
     },
 }

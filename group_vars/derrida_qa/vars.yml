@@ -11,3 +11,5 @@ allowed_hosts:
   - 'test-derrida.cdh.princeton.edu'
 # email prefix for admin emails
 email_prefix: '[QA Derrida] '
+# solr core - for Derrida/haystack, needed in Solr URL
+solr_collection: 'derrida'
