@@ -17,3 +17,9 @@ clear_staging: false
 # solr configurations for a local Solr instance
 solr_url: http://127.0.0.1:8983/solr/
 solr_admin_url: '{{ solr_url }}admin/cores'
+
+# Secret key
+# add a preslugged secret key to avoid needing a vault for staging
+# chooses a random number from 0 to 99999, adds a random salt, and hashes using
+# sha256.
+secret_key: '{{ 99999 |random|string|password_hash("sha256") }}'
