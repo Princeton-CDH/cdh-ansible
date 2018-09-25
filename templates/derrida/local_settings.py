@@ -11,9 +11,6 @@ HAYSTACK_CONNECTIONS = {
 HAYSTACK_SIGNAL_PROCESSOR = 'derrida.books.signals.RelationSafeRTSP'
 {% endblock %}
 
-{% block logging %}
-{% endblock %}
-
 {% block extra_config %}
 # Separate Geonames for usage reasons
 GEONAMES_USERNAME = '{{ geonames_username }}'
@@ -32,3 +29,48 @@ INCLUDE_ANALYTICS = True
 {% endif %}
 
 {% endblock %}
+
+{% block logging %}
+# FIXME: permissions error on log file
+
+# Solution following https://stackoverflow.com/a/9541647
+# Sends a logging email even when DEBUG is on
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'basic': {
+            'format': '[%(asctime)s] %(levelname)s:%(name)s::%(message)s',
+            'datefmt': '%d/%b/%Y %H:%M:%S',
+        },
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True
+        },
+        'file_log': {
+            'level': 'WARN',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': '{{ logging_path }}',
+            'formatter': 'basic',
+            'maxBytes': 1024,
+            'backupCount': 3
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins', 'file_log'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'derrida': {
+            'handlers': ['file_log'],
+            'level': 'INFO',
+            'propagate': True,
+        }
+    }
+}
+{% endblock %}
+
