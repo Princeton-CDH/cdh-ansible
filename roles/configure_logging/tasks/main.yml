@@ -13,3 +13,9 @@
     path: '{{ logging_path }}'
     state: touch
     mode: 0660
+- name: For QA, set logging directory group to the Django project group
+  file:
+    path: '{{ logging_dir }}'
+    group: '{{ project_user }}'
+    recurse: yes
+  when: qa is defined
