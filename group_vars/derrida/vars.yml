@@ -20,3 +20,6 @@ mapbox_token: '{{ vault_mapbox_token }}'
 geonames_username: '{{ vault_geonames_username }}'
 # QA/staging solr server configuration
 solr_collection: derrida
+# media path for production
+media_root: /srv/www/media
+

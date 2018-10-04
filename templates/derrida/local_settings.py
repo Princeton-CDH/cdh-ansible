@@ -25,6 +25,11 @@ DJIFFY_AUTH_TOKENS = {
     'plum.princeton.edu': '{{ plum_token }}',
     'figgy.princeton.edu': '{{ figgy_token }}',
 }
+
+# Media settings for running under apache in production and QA
+MEDIA_ROOT = '{{ media_root }}'
+MEDIA_URL = '/media/'
+
 # set compress offline for Django Compressor
 COMPRESS_OFFLINE = True
 {% if qa is not defined %}

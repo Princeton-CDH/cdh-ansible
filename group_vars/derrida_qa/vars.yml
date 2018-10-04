@@ -13,3 +13,5 @@ allowed_hosts:
 email_prefix: '[QA Derrida] '
 # solr core - for Derrida/haystack, needed in Solr URL
 solr_collection: 'derrida'
+# media file path for QA
+media_root: '/srv/www/qa/derrida-django/media'
