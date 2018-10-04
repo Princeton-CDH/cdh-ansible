@@ -17,6 +17,10 @@ GEONAMES_USERNAME = '{{ geonames_username }}'
 # Mapbox token shared with Winthrop
 MAPBOX_ACCESS_TOKEN = '{{ mapbox_token }}'
 
+# Zotero API key and Group library for exporting book data
+ZOTERO_API_KEY = '{{ zotero_api_key }}'
+ZOTERO_LIBRARY_ID = '{{ zotero_library_id }}'
+
 DJIFFY_AUTH_TOKENS = {
     'plum.princeton.edu': '{{ plum_token }}',
     'figgy.princeton.edu': '{{ figgy_token }}',
