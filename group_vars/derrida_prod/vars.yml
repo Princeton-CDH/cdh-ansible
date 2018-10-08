@@ -3,7 +3,7 @@
 # vaulted override for solr
 solr_url: '{{ vault_solr_url }}'
 solr_admin_url: '{{ vault_solr_admin_url }}'
-solr_collection: '{{ vauled_solr_collection }}'
+solr_collection: '{{ vault_solr_collection }}'
 # allowed hosts
 allowed_hosts:
   # for some internal scrapes, should usually be blocked by Apache anyway
