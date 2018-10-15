@@ -19,3 +19,4 @@ solr_collection: ppa
 hathitrust_pairtree_path: '/home/deploy/ppa/ht_text_pd/'
 # ansible template path for local settings file
 template_path: ppa
+technical_contact: cdhdevteam@princeton.edu

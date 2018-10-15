@@ -62,6 +62,11 @@ LOGGING = {
 # Set local path to HathiTrust pairtree data provided via rsync
 HATHI_DATA = '{{ hathitrust_pairtree_path }}'
 
+# Email address for a technical contact.
+# Will be used in From header for HathiTrust API requests
+TECHNICAL_CONTACT = '{{ technical_contact }}'
+
+
 # Turn on Google Analytics
 INCLUDE_ANALYTICS = True
 
