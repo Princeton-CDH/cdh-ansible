@@ -4,3 +4,4 @@ allowed_hosts:
   - 'test-ppa.cdh.princeton.edu'
 email_prefix: '[QA PPA] '
 project_user: ppa
+symlink: ppa-django
