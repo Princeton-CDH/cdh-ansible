@@ -8,16 +8,15 @@
     path: '{{ logging_dir }}'
     state: directory
     mode: 0770
-- name: Create logging directory default acl
-  acl:
-    default: yes
-    etype: group
-    path: '{{ logging_dir }}'
-    permissions: rw
-    state: present
 - name: For QA, set logging directory group to the Django project group
   file:
     path: '{{ logging_dir }}'
     group: '{{ project_user }}'
-    recurse: yes
   when: qa is defined
+- name: Create logging directory default acl & set sticky bit
+  shell: 'chmod g+s {{ logging_dir }} && setfacl -d -m g::rw {{ logging_dir }}'
+  args:
+    warn: false
+  # using a command because the individual module's functionality (esp acl and file)
+  # are misbehaving when used in concert
+  # The sticky bit is really only needed in qa, but is nice insurance on prod  
