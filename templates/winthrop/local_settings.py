@@ -14,13 +14,39 @@ SOLR_CONNECTIONS = {
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'basic': {
+            'format': '[%(asctime)s] %(levelname)s:%(name)s::%(message)s',
+            'datefmt': '%d/%b/%Y %H:%M:%S',
+        },
+    },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
-            'include_html': True,
+            'include_html': True
         },
+        'debug_log': {
+            'level': 'DEBUG',
+            'class': 'logging.RotatingFileHandler',
+            'filename': '{{ logging_path }}',
+            'formatter': 'basic',
+            'maxBytes': 1024,
+            'backupCount': 3
+        }
     },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins', 'debug_log'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'winthrop': {
+            'handlers': ['debug_log'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    }
 }
 {% endblock %}
 
