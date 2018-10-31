@@ -8,11 +8,13 @@
     path: '{{ logging_dir }}'
     state: directory
     mode: 0770
-- name: Create logging file with group rw
-  file:
-    path: '{{ logging_path }}'
-    state: touch
-    mode: 0660
+- name: Create logging directory default acl
+  acl:
+    default: yes
+    etype: group
+    path: '{{ logging_dir }}'
+    permissions: rw
+    state: present
 - name: For QA, set logging directory group to the Django project group
   file:
     path: '{{ logging_dir }}'
