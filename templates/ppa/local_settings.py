@@ -33,9 +33,11 @@ LOGGING = {
         },
         'debug_log': {
             'level': 'DEBUG',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': '{{ logging_path }}',
             'formatter': 'basic',
+            'maxBytes': 1024,
+            'backupCount': 3
         }
     },
     'loggers': {
@@ -78,5 +80,3 @@ COMPRESS_OFFLINE = True
 INCLUDE_ANALYTICS = True
 {% endif %}
 {% endblock %}
-
-

@@ -1,6 +1,8 @@
 {% extends 'templates/common/base.py' %}
 
 {% block solr_config %}
+{# temmporarily restrict to QA #}
+    {% if qa is not defined %}
 SOLR_CONNECTIONS = {
     'default': {
         'COLLECTION': '{{ solr_collection }}',
@@ -8,6 +10,7 @@ SOLR_CONNECTIONS = {
         'ADMIN_URL': '{{ solr_admin_url }}'
     },
 }
+    {% endif %}
 {% endblock %}
 
 {% block logging %}
@@ -28,7 +31,7 @@ LOGGING = {
         },
         'debug_log': {
             'level': 'DEBUG',
-            'class': 'logging.RotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': '{{ logging_path }}',
             'formatter': 'basic',
             'maxBytes': 1024,

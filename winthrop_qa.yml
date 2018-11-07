@@ -10,6 +10,7 @@
     - build_project_repo
     - build_virtualenv
     - build_npm
+    - configure_logging
     - install_local_settings
     - django_collectstatic
     - django_compressor
