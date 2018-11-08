@@ -29,4 +29,9 @@ MEDIA_URL = '/media/'
 
 # Allow SVG
 FILEBROWSER_ESCAPED_EXTENSIONS = []
+
+# managers for broken email 404s
+MANAGERS = [('CDH Dev Team', 'cdhdevteam@princeton.edu'),]
+# ignore .php and as(p|x), also handle trailing slash being appended
+IGNORABLE_404_URLS = ['(\.php|\.as\w)(\/$|$)']
 {% endblock %}
