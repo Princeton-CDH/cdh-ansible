@@ -5,3 +5,4 @@ allowed_hosts:
 email_prefix: '[QA PPA] '
 project_user: ppa
 symlink: ppa-django
+media_root: '/srv/www/qa/ppa-django/media'
