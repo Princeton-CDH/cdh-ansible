@@ -31,13 +31,13 @@ LOGGING = {
             'class': 'django.utils.log.AdminEmailHandler',
             'include_html': True
         },
+        {# This configuration lets logrotate and its proper permissions #}
+        {# handle this problem #}
         'debug_log': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.WatchedFileHandler',
             'filename': '{{ logging_path }}',
             'formatter': 'basic',
-            'maxBytes': 1024,
-            'backupCount': 3
         }
     },
     'loggers': {
@@ -74,6 +74,11 @@ INCLUDE_ANALYTICS = True
 
 # Add offline compression for QA/PROD servers
 COMPRESS_OFFLINE = True
+# Media settings for running under apache in production and QA
+MEDIA_ROOT = '{{ media_root }}'
+MEDIA_URL = '/media/'
+
+
 
 {% if qa is not defined %}
 # turn on google analytics
