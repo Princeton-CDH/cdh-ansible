@@ -82,6 +82,6 @@ MEDIA_URL = '/media/'
 
 {% if qa is not defined %}
 # turn on google analytics
-INCLUDE_ANALYTICS = True
+GTAGS_ANALYTICS_ID = 'UA-87887700-5'
 {% endif %}
 {% endblock %}
