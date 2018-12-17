@@ -4,6 +4,7 @@
 
 allowed_hosts:
   - 'ppa.princeton.edu'
+  - 'prosody.princeton.edu'
 email_prefix: '[PPA] '
 
 # running on python 3.6 in production
