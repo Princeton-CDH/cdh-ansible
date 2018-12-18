@@ -12,7 +12,7 @@
   file:
     path: '{{ logging_dir }}'
     group: '{{ project_user }}'
-    recursive: true
+    recurse: true
   when: qa is defined
 - name: Create logging directory default acl & set sticky bit
   shell: 'chmod g+s {{ logging_dir }} && setfacl -d -m g::rw {{ logging_dir }}'
