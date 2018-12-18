@@ -14,7 +14,6 @@
     group: '{{ project_user }}'
     recursive: true
   when: qa is defined
-- name: For QA, if log file exists
 - name: Create logging directory default acl & set sticky bit
   shell: 'chmod g+s {{ logging_dir }} && setfacl -d -m g::rw {{ logging_dir }}'
   args:
