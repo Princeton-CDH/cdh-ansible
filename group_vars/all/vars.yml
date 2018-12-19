@@ -1,4 +1,8 @@
 ---
+
+# GitHub token
+github_token: '{{ lookup("env", "ANSIBLE_GITHUB_TOKEN") | default("") }}'
+
 # email_host_password
 email_host_password: '{{ vault_email_host_password }}'
 

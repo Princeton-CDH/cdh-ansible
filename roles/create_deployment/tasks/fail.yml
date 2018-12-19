@@ -1,0 +1,3 @@
+- name: Force an unhandled failure to stop deploy
+  fail:
+      msg: "Deploy did not complete successfully."

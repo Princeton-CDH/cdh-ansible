@@ -5,44 +5,48 @@
 # It assumes the standard configuration /srv/www symlinks to /var/www
 # used in CDH Django projects.
 ---
-- name: Check for "current" symlink; if present, save path
-  stat:
-    path: "{{ install_root }}/current"
-  register: previous
-- name: Set current symlink
-  file:
-    src: "{{ deploy }}"
-    dest: "{{ install_root }}/current"
-    state: link
-- name: Create "current" symlink for new deploy
-  stat:
-    path: "{{ install_root }}/current"
-  register: current
-- name: If deploy path differs from last "current", update "previous" symlink
-  file:
-    src: "{{ previous.stat.lnk_target }}"
-    dest: "{{ install_root }}/previous"
-    state: link
-  when: >
-    previous.stat.exists == True and
-    previous.stat.lnk_source != current.stat.lnk_source
-- name: Register there is now a previous symlink
-  stat:
-    path: "{{ install_root }}/previous"
-  register: previous
-- name: Update /var/www/ symlink to make the new version live
-  file:
-    src: "{{ deploy }}"
-    dest: "/var/www/{{ symlink }}"
-    state: link
+- name: Do final configurations and restart apache
+  block:
+    - name: Check for "current" symlink; if present, save path
+      stat:
+        path: "{{ install_root }}/current"
+      register: previous
+    - name: Set current symlink
+      file:
+        src: "{{ deploy }}"
+        dest: "{{ install_root }}/current"
+        state: link
+    - name: Create "current" symlink for new deploy
+      stat:
+        path: "{{ install_root }}/current"
+      register: current
+    - name: If deploy path differs from last "current", update "previous" symlink
+      file:
+        src: "{{ previous.stat.lnk_target }}"
+        dest: "{{ install_root }}/previous"
+        state: link
+      when: >
+        previous.stat.exists == True and
+        previous.stat.lnk_source != current.stat.lnk_source
+    - name: Register there is now a previous symlink
+      stat:
+        path: "{{ install_root }}/previous"
+      register: previous
+    - name: Update /var/www/ symlink to make the new version live
+      file:
+        src: "{{ deploy }}"
+        dest: "/var/www/{{ symlink }}"
+        state: link
 
-# This makes sure that any server side settings that handle autoconfiguring
-# SELinux permissions (that we would otherwise need to be root for) are
-# put in place on newly created directories
+    # This makes sure that any server side settings that handle autoconfiguring
+    # SELinux permissions (that we would otherwise need to be root for) are
+    # put in place on newly created directories
 
-# It uses the shell modules rather than the SELinux or Apache modules
-# because we only have limited sudo and rights for both these statements
-- name: Call restorecon to set permissions for install_root
-  shell: '/usr/sbin/restorecon -R {{ install_root }}'
-  args:
-    executable: /bin/bash
+    # It uses the shell modules rather than the SELinux or Apache modules
+    # because we only have limited sudo and rights for both these statements
+    - name: Call restorecon to set permissions for install_root
+      shell: '/usr/sbin/restorecon -R {{ install_root }}'
+      args:
+        executable: /bin/bash
+  rescue:
+    - include_tasks: roles/create_deployment/tasks/fail.yml
