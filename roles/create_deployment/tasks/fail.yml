@@ -1,3 +1,14 @@
+- name: Close a deploy as a failure
+  uri:
+      url: '{{ deployment.json.url }}/statuses'
+      body_format: json
+      method: POST
+      status_code: 201
+      body:
+          state: "error"
+          description: "Deployment failed, check Ansible logs"
+      headers:
+          Authorization: "token {{ github_token }}"
 - name: Force an unhandled failure to stop deploy
   fail:
       msg: "Deploy did not complete successfully."
