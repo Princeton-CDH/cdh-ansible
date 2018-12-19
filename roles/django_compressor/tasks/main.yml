@@ -6,14 +6,18 @@
 # so that Apache can use the result.
 ###
 # Ownership needs to deploy/apache for production
-- name: Configure CACHE for django-compressor
-  file:
-    path: '{{ deploy }}/static/CACHE'
-    state: directory
-    owner: deploy
-    group: apache
-- name: run ./manage.py compress to build CSS
-  django_manage:
-    command: compress
-    app_path: "{{ deploy }}"
-    virtualenv: "{{ deploy }}/env"
+- name: Configure for django compressor
+  block:
+    - name: Configure CACHE for django-compressor
+      file:
+        path: '{{ deploy }}/static/CACHE'
+        state: directory
+        owner: deploy
+        group: apache
+    - name: run ./manage.py compress to build CSS
+      django_manage:
+        command: compress
+        app_path: "{{ deploy }}"
+        virtualenv: "{{ deploy }}/env"
+  rescue:
+    - include_tasks: roles/create_deployment/tasks/fail.yml

@@ -5,7 +5,11 @@
 # The host delegation causes it to run not on the production VM, but the
 # centralized DB server. All variables are set at the group_vars level.
 ###
-- name: Backup DB for snap restore
-  shell: 'mysqldump --opt {{ db_name }} > {{ db_backup }}'
-  args:
-    executable: /bin/bash
+- name: Database backup
+  block:
+    - name: Backup DB for snap restore
+      shell: 'mysqldump --opt {{ db_name }} > {{ db_backup }}'
+      args:
+        executable: /bin/bash
+  rescue:
+    - include_tasks: roles/create_deployment/tasks/fail.yml

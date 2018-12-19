@@ -1,0 +1,12 @@
+## Create a GitHub Deployment
+- name: Create a GitHub deployment
+  block:
+    - name: Check for GitHub token, and fail if not present
+      fail:
+          msg: "Pass a GitHub API token to -e github_token or set in environment as ANSIBLE_GITHUB_TOKEN"
+      when: github_token == ""
+    - name: Just fail to prevent this from actually doing anything at all.
+      fail:
+          msg: "Hard stop"
+  rescue:
+        - include_tasks: roles/create_deployment/tasks/fail.yml

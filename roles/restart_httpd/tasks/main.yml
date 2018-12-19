@@ -5,7 +5,10 @@
 # Ansible user does not have full super user access to use the become directive,
 # so it runs using the command module rather than privilege elevation.
 ###
-- name: Restart httpd24
-  command: "sudo systemctl restart httpd24-httpd"
-  args:
-    warn: false
+- block:
+    - name: Restart httpd24
+      command: "sudo systemctl restart httpd24-httpd"
+      args:
+        warn: false
+  rescue:
+     - include_tasks: roles/create_deployment/tasks/fail.yml

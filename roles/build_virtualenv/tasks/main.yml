@@ -3,36 +3,40 @@
 # from requirements.txt.
 #
 ##
-- name: Upgrade pip to latest in virtualenv
-  pip:
-    name: pip
-    state: latest
-    virtualenv: "{{ deploy }}/env"
-    virtualenv_site_packages: yes
-- name: Set perms
-  file:
-      path: "{{ deploy }}/env"
-      state: directory
-      mode: "u+rwx,g+rwx,o-rw"
-# The following two stanzas only run when override variables are defined
-# and allow the user to dynamically update requirements files if necessary.      
-- name: Update requirements based on a supplied template
-  template:
-    src: '{{ new_requirements }}'
-    dest: '{{ deploy }}/requirements.{{ requirements_type }}'
-  when:
-    new_requirements is defined
-- name: Update requirements dynamically using extravars
-  lineinfile:
-    regexp: '^{{ item | regex_replace("[<=>]{1,2}.*$") }}'
-    line: '{{ item }}'
-    path: '{{ deploy }}/requirements.{{ requirements_type }}'
-  when:
-    pip_updates is defined
-  with_items:
-    '{{ pip_updates }}'
-- name: Install requirements via pip (MySQLdb should be system version and skipped)
-  pip:
-    virtualenv: "{{ deploy }}/env"
-    requirements: "{{ deploy }}/requirements.{{ requirements_type }}"
-    virtualenv_site_packages: yes
+- name: Create and build python virtual environment
+  block:
+    - name: Upgrade pip to latest in virtualenv
+      pip:
+        name: pip
+        state: latest
+        virtualenv: "{{ deploy }}/env"
+        virtualenv_site_packages: yes
+    - name: Set perms
+      file:
+          path: "{{ deploy }}/env"
+          state: directory
+          mode: "u+rwx,g+rwx,o-rw"
+    # The following two stanzas only run when override variables are defined
+    # and allow the user to dynamically update requirements files if necessary.
+    - name: Update requirements based on a supplied template
+      template:
+        src: '{{ new_requirements }}'
+        dest: '{{ deploy }}/requirements.{{ requirements_type }}'
+      when:
+        new_requirements is defined
+    - name: Update requirements dynamically using extravars
+      lineinfile:
+        regexp: '^{{ item | regex_replace("[<=>]{1,2}.*$") }}'
+        line: '{{ item }}'
+        path: '{{ deploy }}/requirements.{{ requirements_type }}'
+      when:
+        pip_updates is defined
+      with_items:
+        '{{ pip_updates }}'
+    - name: Install requirements via pip (MySQLdb should be system version and skipped)
+      pip:
+        virtualenv: "{{ deploy }}/env"
+        requirements: "{{ deploy }}/requirements.{{ requirements_type }}"
+        virtualenv_site_packages: yes
+  rescue:
+    - include_tasks: roles/create_deployment/tasks/fail.yml
