@@ -5,8 +5,31 @@
       fail:
           msg: "Pass a GitHub API token to -e github_token or set in environment as ANSIBLE_GITHUB_TOKEN"
       when: github_token == ""
-    - name: Just fail to prevent this from actually doing anything at all.
-      fail:
-          msg: "Hard stop"
+    - name: Create a deployment
+      uri:
+        url: '{{ deployments_endpoint }}'
+        body_format: json
+        method: POST
+        status_code: 201
+        body:
+          ref: '{{ gitref }}'
+          environment: '{{ deploy_environment }}'
+          description: '{{ deploy_description }}'
+          auto_merge: false
+        headers:
+          Authorization: "token {{ github_token }}"
+        return_content: true
+      register: deployment
+    - name: Set status to in progress
+      uri:
+        url: '{{ deployment.json.url }}/statuses'
+        body_format: json
+        method: POST
+        status_code: 201
+        body:
+          state: "pending"
+          description: "Deployment in progress"
+        headers:
+          Authorization: "token {{ github_token }}"
   rescue:
         - include_tasks: roles/create_deployment/tasks/fail.yml
