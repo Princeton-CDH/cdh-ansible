@@ -48,16 +48,5 @@
       shell: '/usr/sbin/restorecon -R {{ install_root }}'
       args:
         executable: /bin/bash
-    - name: Close GitHub deployment as a success.
-      uri:
-          url: '{{ deployment.json.url }}/statuses'
-          body_format: json
-          method: POST
-          status_code: 201
-          body:
-              state: "success"
-              description: "Deployment succeeded"
-          headers:
-              Authorization: "token {{ github_token }}"
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
