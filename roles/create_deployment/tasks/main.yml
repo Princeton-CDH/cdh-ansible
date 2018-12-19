@@ -1,4 +1,8 @@
-## Create a GitHub Deployment
+###
+# Create a GitHub deployment for project and set its status to pending.
+# Requires close_deployment task to be added also to close deployment as
+# a success.
+###
 - name: Create a GitHub deployment
   block:
     - name: Check for GitHub token, and fail if not present
@@ -31,5 +35,5 @@
           description: "Deployment in progress"
         headers:
           Authorization: "token {{ github_token }}"
-  rescue:
-        - include_tasks: roles/create_deployment/tasks/fail.yml
+# No rescue because again, if either of these fail, the error status will
+# likely also fail out.

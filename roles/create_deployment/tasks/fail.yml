@@ -9,6 +9,7 @@
           description: "Deployment failed, check Ansible logs"
       headers:
           Authorization: "token {{ github_token }}"
+  when: deployment is defined
 - name: Force an unhandled failure to stop deploy
   fail:
       msg: "Deploy did not complete successfully."
