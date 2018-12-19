@@ -4,19 +4,23 @@
 # that should appear in group_vars/ for the particular project
 #
 ###
-- name: Install local_settings.py from project template
-  template:
-    src: 'templates/{{ template_path }}/local_settings.py'
-    dest: '{{ deploy }}/{{ django_app }}/local_settings.py'
-- name: Set permissions on local_settings to be unreadable by other
-  file:
-    path: '{{ deploy }}/{{ django_app }}/local_settings.py'
-    mode: u+rw,g+r,o-rwx
-- name: For QA, setfacl so that the Django project group can read it too
-  acl:
-    path: '{{ deploy }}/{{ django_app }}/local_settings.py'
-    entity: '{{ project_user }}'
-    etype: group
-    permissions: r
-    state: present
-  when: qa is defined
+- name: Install local_settings in Django project
+  block:
+    - name: Install local_settings.py from project template
+      template:
+        src: 'templates/{{ template_path }}/local_settings.py'
+        dest: '{{ deploy }}/{{ django_app }}/local_settings.py'
+    - name: Set permissions on local_settings to be unreadable by other
+      file:
+        path: '{{ deploy }}/{{ django_app }}/local_settings.py'
+        mode: u+rw,g+r,o-rwx
+    - name: For QA, setfacl so that the Django project group can read it too
+      acl:
+        path: '{{ deploy }}/{{ django_app }}/local_settings.py'
+        entity: '{{ project_user }}'
+        etype: group
+        permissions: r
+        state: present
+      when: qa is defined
+  rescue:
+    - include_tasks: roles/create_deployment/tasks/fail.yml

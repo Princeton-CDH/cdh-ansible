@@ -7,34 +7,38 @@
 # directory.
 #
 ###
-- name: Debug environmental variables early in deploy cycle
-  debug:
-    msg: 'PATH: {{ path }} / LD_LIBRARY_PATH: {{ ld_library_path }} / PYTHONPATH: {{ python_path}}'
-    verbosity: 2
-- name: Clone project repository and set to the correct version
-  git:
-    repo: '{{ repo_url }}/'
-    dest: '{{ clone_root }}/{{ repo }}'
-    version: '{{ gitref }}'
-  # register repo_info for group_vars
-  register: repo_info
-- name: Get version information from __init__.py for Django projects
-  # This script is present in get_ver.py, and should be safe for all
-  # system pythons greater than 2.
-  script: get_ver.py {{ clone_root}}/{{ repo }} {{ django_app }}
-  register: ver
-  check_mode: no
-  tags:
-    - django
-- name: Create the deploy directory (to recursively create parent dirs if necessary)
-  file:
-    state: directory
-    dest: '{{ deploy }}'
-- name: Sync checkout to deploy directory
-  synchronize:
-    src: '{{ clone_root }}/{{ repo }}/'
-    # deploy constructed dynamicallly in group_vars
-    dest: '{{ deploy }}/'
-  # sync remotely -- inventory_hostname is a magic var that always points
-  # to host where the playbook is being run.
-  delegate_to: '{{ inventory_hostname }}'
+- name: Clone and deploy a project repository
+  block:
+    - name: Debug environmental variables early in deploy cycle
+      debug:
+        msg: 'PATH: {{ path }} / LD_LIBRARY_PATH: {{ ld_library_path }} / PYTHONPATH: {{ python_path}}'
+        verbosity: 2
+    - name: Clone project repository and set to the correct version
+      git:
+        repo: '{{ repo_url }}/'
+        dest: '{{ clone_root }}/{{ repo }}'
+        version: '{{ gitref }}'
+      # register repo_info for group_vars
+      register: repo_info
+    - name: Get version information from __init__.py for Django projects
+      # This script is present in get_ver.py, and should be safe for all
+      # system pythons greater than 2.
+      script: get_ver.py {{ clone_root}}/{{ repo }} {{ django_app }}
+      register: ver
+      check_mode: no
+      tags:
+        - django
+    - name: Create the deploy directory (to recursively create parent dirs if necessary)
+      file:
+        state: directory
+        dest: '{{ deploy }}'
+    - name: Sync checkout to deploy directory
+      synchronize:
+        src: '{{ clone_root }}/{{ repo }}/'
+        # deploy constructed dynamicallly in group_vars
+        dest: '{{ deploy }}/'
+      # sync remotely -- inventory_hostname is a magic var that always points
+      # to host where the playbook is being run.
+      delegate_to: '{{ inventory_hostname }}'
+  rescue:
+    - include_tasks: roles/create_deployment/tasks/fail.yml

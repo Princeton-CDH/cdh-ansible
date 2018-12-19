@@ -1,8 +1,12 @@
 ###
 # Run Django's collectstatic command
 ###
-- name: Run manage.py collectstatic
-  django_manage:
-    command: collectstatic
-    app_path: "{{ deploy }}"
-    virtualenv: "{{ deploy }}/env"
+- name: Run collectstatic and any associated tasks
+  block:
+    - name: Run manage.py collectstatic
+      django_manage:
+        command: collectstatic
+        app_path: "{{ deploy }}"
+        virtualenv: "{{ deploy }}/env"
+  rescue:
+    - include_tasks: roles/create_deployment/tasks/fail.yml

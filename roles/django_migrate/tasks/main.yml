@@ -1,8 +1,11 @@
 ###
 # Run Django database migrations, must be after installing local_settings
 ###
-- name: Run database migrations
-  django_manage:
-    command: migrate
-    app_path: "{{ deploy }}"
-    virtualenv: "{{ deploy }}/env"
+- block:
+    - name: Run database migrations
+      django_manage:
+        command: migrate
+        app_path: "{{ deploy }}"
+        virtualenv: "{{ deploy }}/env"
+  rescue:
+    - include_tasks: roles/create_deployment/tasks/fail.yml
