@@ -19,6 +19,7 @@
           ref: '{{ gitref }}'
           environment: '{{ deploy_environment }}'
           description: '{{ deploy_description }}'
+          required_contexts: '{{ deploy_contexts }}'
           auto_merge: false
         headers:
           Authorization: "token {{ github_token }}"
