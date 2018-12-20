@@ -12,7 +12,7 @@ repo: 'Princeton-CDH/ppa-django'
 # name of django application
 django_app: ppa
 # apache symlink
-symlink: 'ppa'
+symlink: 'prosody'
 # Solr settings for QA and staging (production will override)
 solr_collection: ppa
 # path to hathitree pairtree data
