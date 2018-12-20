@@ -70,3 +70,9 @@ python_path: '/opt/rh/rh-nodejs6/root/usr/lib/python2.7/site-packages{% if ansib
 
 # custom hook for requirements, allows for override to use lock or txt
 requirements_type: 'txt'
+
+# CSP configuration -- two urls, one for readOnly, one for enforce
+# first is used in QA, rest in production
+# set csp_enabled: true in project vars to enable
+csp_reportonly_uri: '{{ vault_csp_reportonly_uri}}'
+csp_enforce_uri: '{{ vault_csp_enforce_uri }}'
