@@ -10,3 +10,5 @@ solr_admin_url: '{{ solr_url }}admin/cores'
 install_base: '/srv/www/qa'
 # qa flag, by setting to any value flags install as QA
 qa: qa
+# allow any deploy contexts
+deploy_contexts: []

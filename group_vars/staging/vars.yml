@@ -24,3 +24,5 @@ solr_admin_url: '{{ solr_url }}admin/cores'
 # sha256.
 secret_key: '{{ 99999 |random|string|password_hash("sha256") }}'
 staging: staging
+# allow any deploy contexts to fail
+deploy_contexts: []

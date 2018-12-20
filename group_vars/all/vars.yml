@@ -6,6 +6,11 @@ api_base: https://api.github.com
 deployments_endpoint: '{{api_base}}/repos/{{ repo }}/deployments'
 deploy_environment: '{{ staging|default(None) or qa|default(None) or production }}'
 deploy_description: 'Deploying {{ gitref }} to {{ deploy_environment }}'
+# default for production contexts
+deploy_contexts:
+    - 'continuous-integration/travis-ci/push'
+    - 'codecov/project'
+    - 'codecov/patch'
 
 # email_host_password
 email_host_password: '{{ vault_email_host_password }}'
