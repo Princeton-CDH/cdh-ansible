@@ -74,6 +74,20 @@ EMAIL_SUBJECT_PREFIX = '{{ email_prefix }}'
 
 {% endblock %}
 
+{% block csp %}
+
+{% if csp_enabled is defined and csp_enabled %}
+
+{% if qa is defined %}
+CSP_REPORT_ONLY = True
+CSP_REPORT_URI = '{{ csp_reportonly_uri }}'
+{% else %}
+CSP_REPORT_URI = '{{ csp_enforce_uri }}'
+{% endif %}
+
+{% endif %}
+{% endblock %}
+
 {% block logging %}{% endblock %}
 
 {% block extra_config %}{% endblock %}
