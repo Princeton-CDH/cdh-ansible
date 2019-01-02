@@ -8,12 +8,15 @@
     LD_LIBRARY_PATH: '{{ ld_library_path }}'
     PYTHONPATH: '{{ python_path }}'
   roles:
+    - create_deployment
     - build_project_repo
     - build_virtualenv
     - install_local_settings
+    - configure_media
     - django_collectstatic
     - django_compressor
     - backup_database
     - django_migrate
     - finalize_deploy
     - restart_httpd
+    - close_deployment

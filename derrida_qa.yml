@@ -12,8 +12,8 @@
     - build_virtualenv
     - configure_logging
     - install_local_settings
+    - configure_media
     - configure_logging
-    - derrida_fonts
     - django_collectstatic
     - django_compressor
     - backup_database

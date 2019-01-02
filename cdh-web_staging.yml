@@ -12,6 +12,7 @@
     - build_project_repo
     - build_virtualenv
     - install_local_settings
+    - configure_media
     - django_collectstatic
     - django_compressor
     - backup_database
