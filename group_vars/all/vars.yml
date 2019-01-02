@@ -4,7 +4,7 @@
 github_token: '{{ lookup("env", "ANSIBLE_GITHUB_TOKEN") | default("") }}'
 api_base: https://api.github.com
 deployments_endpoint: '{{api_base}}/repos/{{ repo }}/deployments'
-deploy_environment: '{{ staging|default(None) or qa|default(None) or production }}'
+deploy_environment: '{{ staging|default(None) or qa|default(None) or "production" }}'
 deploy_description: 'Deploying {{ gitref }} to {{ deploy_environment }}'
 # default for production contexts
 deploy_contexts:
@@ -37,7 +37,7 @@ solr_admin_url: '{{ vault_solr_admin_url }}'
 
 # The template directory (as a relative path from the top of repository)
 templates_dir: 'templates/'
-# standard variable for all repositories that use github
+# standard variable for all repositories that use GitHub
 repo_url: 'https://www.github.com/{{ repo }}.git'
 # home directory (on remote)
 home: '{{ ansible_env.HOME }}'
