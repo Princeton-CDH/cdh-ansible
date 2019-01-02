@@ -7,7 +7,7 @@ gitref: '{{ ref | default("develop") }}'
 # Install root (the dir where the repo will be set up on remote)
 install_root: '{{ install_base }}/cdh-web'
 # Set permissions for local_settings
-project_user: cdhweb
+project_user: apache
 # email prefix for admin emails
 email_prefix: '[QA CDH Web] '
 # allowed_hosts for Django
