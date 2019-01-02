@@ -54,8 +54,6 @@ LOGGING = {
 {% endblock %}
 
 {% block extra_config %}
-# Add Google Analytics
-INCLUDE_ANALYTICS = True
 # username for accessing GeoNames API
 GEONAMES_USERNAME = '{{ geonames_username }}'
 # mapbox access token
