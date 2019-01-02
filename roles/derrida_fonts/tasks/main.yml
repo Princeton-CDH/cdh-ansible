@@ -1,0 +1,14 @@
+###
+#  Turn on font view tracker in Derrida production only
+#  by editing CSS file.
+###
+
+- block:
+    - name: uncomment font tracking line to CSS
+      lineinfile:
+          path: "{{ deploy }}/sitemedia/css/MyFontsWebfontsKit.css"
+          state: present
+          line: '@import url("//hello.myfonts.net/count/345674")'
+          regexp: '^/\* @import url\("//hello'
+- rescue:
+    - include_tasks: roles/create_deployment/tasks/fail.yml
