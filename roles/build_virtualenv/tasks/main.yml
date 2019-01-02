@@ -11,6 +11,8 @@
         state: latest
         virtualenv: "{{ deploy }}/env"
         virtualenv_site_packages: yes
+    - name: Set name of venv to project-name-short-hash-version
+      command: "virtualenv {{ deploy }}/env --prompt '({{ repo | project_name }}-{{ short_hash }}-{{ version }}) '"
     - name: Set perms
       file:
           path: "{{ deploy }}/env"
