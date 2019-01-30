@@ -11,10 +11,9 @@
     - build_project_repo
     - build_virtualenv
     - configure_logging
+    - build_npm
     - install_local_settings
     - django_collectstatic
-    # Not needed as of 0.7
-    # - django_compressor
     - backup_database
     - django_migrate
     - finalize_deploy
