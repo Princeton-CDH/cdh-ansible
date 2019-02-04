@@ -56,7 +56,7 @@ for secrets in a `local_settings.py`, but prevents worst case scenarios from
 emerging.
 
 
-### Running a playbook
+## Running a playbook
 
 To run a playbook, from your virtual environment, simply invoke:
 
@@ -76,6 +76,14 @@ ansible-playbook -e ref=GITREF name_of_playbook.yml
 The playbook will run, noting success and failures. The `-v` flag adjusts verbosity
 (adding more `v`s will produce more verbosity. Debug tasks are usually written at `2`)
 
+## Reverst last deploy
+
+To revert to previous deploy (which toggles the two), run, e.g.:
+
+```{bash}
+ansible-playbook -e host_group=mep_qa revert_deployment.yml
+```
+If you run this a subsequent time, it should revert itself seamlessly.
 
 ## Overrides
 
