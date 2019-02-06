@@ -11,7 +11,9 @@
     - build_virtualenv
     - configure_logging
     - install_local_settings
-    - build_npm
+    - role: build_npm
+      vars:
+        webpack_build: true
     - django_collectstatic
     - backup_database
     - django_migrate
