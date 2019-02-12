@@ -8,7 +8,7 @@ symlink: mep-django
 # install root
 install_root: '{{ install_base }}/mep-django'
 allowed_hosts:
-    - test-mep.cdh.princeton.edu
+    - test-shakespeareandco.cdh.princeton.edu
 # email prefix for dev account emails
 email_prefix: '[QA MEP] '
 # project user
