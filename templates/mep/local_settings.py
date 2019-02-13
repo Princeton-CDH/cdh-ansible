@@ -49,4 +49,11 @@ LOGGING = {
         },
     }
 }
+
+SOLR_CONNECTIONS = {
+    'default': {
+        'URL': '{{ solr_url }}',
+        'COLLECTION': '{{ solr_collection }}'
+    }
+}
 {% endblock %}
