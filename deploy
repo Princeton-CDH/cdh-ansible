@@ -1,0 +1,58 @@
+#!/bin/bash
+# This simple script wraps ansible playbook and passes argument along
+# such that master is checked out and a git pull occurs.
+
+# It also attempts to make sure you don't have unstaged or uncommitted files
+# lest they pollute a run. If you want to do that, run ansible-playbook manually
+
+
+# Usage: ./deploy <ansible-playbook args>
+
+# Checkout master and then git pull to get latest changes
+if ! git checkout master
+then
+    exit 1
+fi
+git pull
+if [ $? -ne 0 ]
+then
+    exit 1
+fi
+
+
+# Update the index
+git update-index -q --ignore-submodules --refresh
+
+# check for unstaged changes
+if ! git diff-files --quiet --ignore-submodules --
+then
+    cat >&2 <<EOM
+You have unstaged changes.
+Please commit them or run ansible-playbook manually.
+EOM
+    exit 1
+fi
+
+# check index containing uncommited files.
+if ! git diff-index --cached --quiet HEAD --ignore-submodules --
+then
+    cat >&2 <<EOM
+Your index contain uncommited files.
+Please commit them or run ansible-playbook manually.
+EOM
+    exit 1
+fi
+
+
+# check for files not added to index or otherwise committed.
+if [ ! -z `git ls-files --other --directory --exclude-standard` ]
+then
+    cat >&2 <<-EOM
+You have uncommited files in the repository that are not gitignored.
+Please commit them or run ansible-playbook manually.
+EOM
+    exit 1
+fi
+
+# At last, if everything is good, run ansible-playbook with args as passed
+ansible-playbook "$@"

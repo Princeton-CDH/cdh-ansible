@@ -56,6 +56,24 @@ for secrets in a `local_settings.py`, but prevents worst case scenarios from
 emerging.
 
 
+### Running a deploy
+
+To make running deployments easier, you can use the provided `deploy` script
+to wrap `ansible-playbook`. By default, `deploy` switches you to `master`,
+runs `git pull` and checks for uncommited changes to files, etc. If any appear,
+it aborts.
+
+Once you have loaded your virtual environment, you may use it to wrap a
+deploy more safely with all of the parmaters passed
+as if for `ansible-playbook`:
+
+```{bash}
+./deploy name_of_playbook.yml arg1=foo
+```
+
+If the `./` is annoying, you can `ln -s `pwd`/deploy /path/to/virtualenv/bin/`
+to add it to your `$PATH` while the virtual environment is loaded.
+
 ### Running a playbook
 
 To run a playbook, from your virtual environment, simply invoke:
