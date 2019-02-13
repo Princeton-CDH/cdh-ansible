@@ -13,3 +13,6 @@ allowed_hosts:
 email_prefix: '[QA MEP] '
 # project user
 project_user: mep
+
+# - solr settings
+solr_url: http://localhost:8983/solr
