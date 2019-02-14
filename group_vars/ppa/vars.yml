@@ -22,3 +22,6 @@ template_path: ppa
 technical_contact: cdhdevteam@princeton.edu
 # flag that csp is enabled
 csp_enabled: true
+# set a default media root for prod and staging
+media_root: '/srv/www/prod/media'
+
