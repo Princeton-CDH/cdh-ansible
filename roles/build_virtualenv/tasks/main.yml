@@ -5,19 +5,18 @@
 ##
 - name: Create and build python virtual environment
   block:
-    - name: Upgrade pip to latest in virtualenv
-      pip:
-        name: pip
-        state: latest
-        virtualenv: "{{ deploy }}/env"
-        virtualenv_site_packages: yes
-    - name: Set name of venv to project-name-short-hash-version
-      command: "virtualenv {{ deploy }}/env --prompt '({{ repo | project_name }}-{{ short_hash }}-{{ version }}) '"
+    - name: Create venv with project-name-short-hash-version
+      command: "virtualenv --system-site-packages {{ deploy }}/env --prompt '({{ repo | project_name }}-{{ short_hash }}-{{ version }}) '"
     - name: Set perms
       file:
           path: "{{ deploy }}/env"
           state: directory
           mode: "u+rwx,g+rwx,o-rw"
+    - name: Upgrade pip in virtualenvironment
+      pip:
+        name: pip
+        state: latest
+        virtualenv: "{{ deploy }}/env"
     # The following two stanzas only run when override variables are defined
     # and allow the user to dynamically update requirements files if necessary.
     - name: Update requirements based on a supplied template
