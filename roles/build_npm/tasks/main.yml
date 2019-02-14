@@ -23,13 +23,13 @@
         - qa is defined
         - webpack_build is defined
         - webpack_build
-    - name: Do a QA build if the role variable is set and in QA
+    - name: Do a prod build if QA is not set.
       shell: 'npm run build:prod'
       args:
         chdir: '{{ deploy }}'
         executable: /bin/bash
       when:
-        - prod is defined
+        - qa is not defined
         - webpack_build is defined
         - webpack_build
   rescue:
