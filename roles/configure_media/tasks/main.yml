@@ -8,7 +8,6 @@
           path: '{{ media_root }}'
           state: directory
           mode: "u=rwX,g=rwX,o=X"
-          recurse: yes
     - name: if on qa, set acls appropriately so apache can access
       acl:
           entity: apache
