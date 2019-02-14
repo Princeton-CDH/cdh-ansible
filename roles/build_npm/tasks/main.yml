@@ -14,23 +14,5 @@
     - name: Do npm install for dependencies
       npm:
         path: '{{ deploy }}'
-    - name: Do a QA build if the role variable is set and in QA
-      shell: 'npm run build:qa'
-      args:
-        chdir: '{{ deploy }}'
-        executable: /bin/bash
-      when:
-        - qa is defined
-        - webpack_build is defined
-        - webpack_build
-    - name: Do a QA build if the role variable is set and in QA
-      shell: 'npm run build:prod'
-      args:
-        chdir: '{{ deploy }}'
-        executable: /bin/bash
-      when:
-        - prod is defined
-        - webpack_build is defined
-        - webpack_build
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml

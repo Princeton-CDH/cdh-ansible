@@ -12,8 +12,10 @@
     - build_project_repo
     - build_virtualenv
     - configure_logging
+    - configure_media
     - install_local_settings
     - build_npm
+    - run_webpack
     - django_collectstatic
     - backup_database
     - django_migrate

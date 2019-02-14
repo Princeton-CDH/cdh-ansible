@@ -10,10 +10,10 @@
     - build_project_repo
     - build_virtualenv
     - configure_logging
+    - configure_media
     - install_local_settings
-    - role: build_npm
-      vars:
-        webpack_build: true
+    - build_npm
+    - run_webpack
     - django_collectstatic
     - backup_database
     - django_migrate
