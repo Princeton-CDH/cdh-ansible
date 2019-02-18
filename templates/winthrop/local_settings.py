@@ -2,7 +2,7 @@
 
 {% block solr_config %}
 {# temmporarily restrict to QA #}
-    {% if qa is not defined %}
+{% if qa is defined %}
 SOLR_CONNECTIONS = {
     'default': {
         'COLLECTION': '{{ solr_collection }}',
@@ -10,7 +10,7 @@ SOLR_CONNECTIONS = {
         'ADMIN_URL': '{{ solr_admin_url }}'
     },
 }
-    {% endif %}
+{% endif %}
 {% endblock %}
 
 {% block logging %}
