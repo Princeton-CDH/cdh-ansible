@@ -9,7 +9,7 @@
 # package.json and callable via `npm run build:qa` and `npm run build:prod`.
 ###
 ---
-- name: webpack tasks
+- name: Run webpack build tasks for static assets
   block:
     - name: Do a QA build if in QA
       shell: 'npm run build:qa'
