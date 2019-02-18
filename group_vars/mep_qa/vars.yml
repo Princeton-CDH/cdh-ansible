@@ -16,3 +16,5 @@ project_user: mep
 
 # - solr settings
 solr_url: http://localhost:8983/solr
+# media
+media_root: '/srv/www/qa/mep-django/media'

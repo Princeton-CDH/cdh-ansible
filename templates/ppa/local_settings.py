@@ -72,12 +72,9 @@ TECHNICAL_CONTACT = '{{ technical_contact }}'
 # Turn on Google Analytics
 INCLUDE_ANALYTICS = True
 
-# Add offline compression for QA/PROD servers
-COMPRESS_OFFLINE = True
 # Media settings for running under apache in production and QA
 MEDIA_ROOT = '{{ media_root }}'
 MEDIA_URL = '/media/'
-
 
 
 {% if qa is not defined %}
