@@ -7,6 +7,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 GEONAMES_USERNAME = '{{ geonames_username }}'
 # Mapbox token shared with Winthrop
 MAPBOX_ACCESS_TOKEN = '{{ mapbox_token }}'
+# Media settings for running under apache in production and QA
+MEDIA_ROOT = '{{ media_root }}'
+MEDIA_URL = '/media/'
 {% endblock %}
 
 {% block logging %}
