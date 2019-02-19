@@ -10,6 +10,19 @@ MAPBOX_ACCESS_TOKEN = '{{ mapbox_token }}'
 # Media settings for running under apache in production and QA
 MEDIA_ROOT = '{{ media_root }}'
 MEDIA_URL = '/media/'
+
+# font settings so that licensed fonts are copied over
+{% if qa is defined and qa %}
+STATICFILES_DIRS += [
+    '/srv/www/qa/mep-django/fonts'
+]
+{% else %}
+STATICFILES_DIRS += [
+    '/srv/www/prod/fonts'
+]
+{% endif %}
+
+
 {% endblock %}
 
 {% block logging %}
