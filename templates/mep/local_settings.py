@@ -22,6 +22,13 @@ STATICFILES_DIRS += [
 ]
 {% endif %}
 
+SOLR_CONNECTIONS = {
+    'default': {
+        'URL': '{{ solr_url }}',
+        'COLLECTION': '{{ solr_collection }}',
+        'CONFIGSET': '{{ solr_configset }}'
+    }
+}
 
 {% endblock %}
 
@@ -63,13 +70,6 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
-    }
-}
-
-SOLR_CONNECTIONS = {
-    'default': {
-        'URL': '{{ solr_url }}',
-        'COLLECTION': '{{ solr_collection }}'
     }
 }
 {% endblock %}
