@@ -21,7 +21,7 @@ python_path: '/opt/rh/rh-nodejs8/root/usr/lib/python2.7/site-packages{% if ansib
 
 # - solr settings
 solr_collection: sco
-solr_configset: 'solr_conf_sco'
+solr_configset: solr_conf_sco
 
 # set a default media root for prod and staging
 media_root: '/srv/www/prod/media'
