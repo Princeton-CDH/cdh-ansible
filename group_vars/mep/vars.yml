@@ -20,8 +20,8 @@ ld_library_path: '/opt/rh/rh-python35/root/usr/lib64:/opt/rh/rh-nodejs8/root/usr
 python_path: '/opt/rh/rh-nodejs8/root/usr/lib/python2.7/site-packages{% if ansible_env.PYTHON_PATH is defined %}:{{ ansible_env.PYTHONPATH }}{% endif %}'
 
 # - solr settings
-solr_collection: sco
-solr_configset: solr_conf_sco
+solr_collection: sandco
+solr_configset: sandco
 
 # set a default media root for prod and staging
 media_root: '/srv/www/prod/media'
