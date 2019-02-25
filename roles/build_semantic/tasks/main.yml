@@ -1,0 +1,12 @@
+###
+# Run the build for Semantic UI for PPA prior to Webpack and other build steps
+###
+---
+- name: Build Semantic UI
+  block:
+    - shell: 'npm run build:semantic'
+      args:
+        chdir: '{{ deploy }}'
+        executable: /bin/bash
+  rescue:
+    - include_tasks: roles/create_deployment/tasks/fail.yml
