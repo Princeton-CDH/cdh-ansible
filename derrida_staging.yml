@@ -14,7 +14,6 @@
     - configure_logging
     - configure_media
     - install_local_settings
-    - derrida_fonts
     - django_collectstatic
     - django_compressor
     - backup_database
