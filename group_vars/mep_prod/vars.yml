@@ -6,6 +6,6 @@
 email_prefix: '[MEP] '
 # allowed hosts for Django
 allowed_hosts:
-  - mep2.princeton.edu
+  - shakespeareandco.princeton.edu
 # - solr settings
 solr_url: http://index.cdh.princeton.edu:8983/solr
