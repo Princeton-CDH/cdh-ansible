@@ -11,6 +11,13 @@ MAPBOX_ACCESS_TOKEN = '{{ mapbox_token }}'
 MEDIA_ROOT = '{{ media_root }}'
 MEDIA_URL = '/media/'
 
+# OCLC API key
+OCLC_WSKEY = '{{ oclc_wskey }}'
+
+# Email address for a technical contact.
+# Will be used in From header for OCLC API requests
+TECHNICAL_CONTACT = '{{ technical_contact }}'
+
 # font settings so that licensed fonts are copied over
 {% if qa is defined and qa %}
 STATICFILES_DIRS += [

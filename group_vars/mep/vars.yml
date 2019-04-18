@@ -25,3 +25,5 @@ solr_configset: sandco
 
 # set a default media root for prod and staging
 media_root: '/srv/www/prod/media'
+
+technical_contact: cdhdevteam@princeton.edu
