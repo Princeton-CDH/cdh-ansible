@@ -3,7 +3,7 @@
 ###
 ---
 # email_prefix for admin emails
-email_prefix: '[MEP] '
+email_prefix: '[S&co] '
 # allowed hosts for Django
 allowed_hosts:
   - shakespeareandco.princeton.edu
