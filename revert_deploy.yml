@@ -1,6 +1,5 @@
 ###
-# Toggle between two most recent deploys (if two exist) of a project,
-# allowing for a quick reversion to a previous iteration.
+#  Set to previous deploy in case of an error or problem.
 #
 # Example usage:
 # ansible-playbook -e host_group=prosody_qa revert_deployment.yml
@@ -10,7 +9,7 @@
 # proceed.
 #
 # NOTE: You will need the password file loaded for any secrets encrypted in
-# the vaults used by the host_group specified..
+# the vaults used by the host_group specified.
 ###
 
 - hosts: '{{ host_group }}'
@@ -40,11 +39,6 @@
   - fail:
       msg: "Current symlink does not exist."
     when: current.stat.islnk is not defined
-  - name: Set active symlink to previous.
-    file:
-      src: "{{ previous.stat.lnk_source }}"
-      dest: "/var/www/{{ symlink }}"
-      state: link
   - name: Set previous to current
     file:
       src: "{{ current.stat.lnk_source }}"
@@ -55,7 +49,7 @@
       src: "{{ previous.stat.lnk_source }}"
       dest: "{{ install_root }}/current"
       state: link
-  - name: Restart httpd24
+  - name: Restart httpd24\
     command: "sudo systemctl restart httpd24-httpd"
     args:
       warn: false
