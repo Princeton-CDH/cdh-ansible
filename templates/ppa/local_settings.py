@@ -34,7 +34,7 @@ LOGGING = {
         {# This configuration lets logrotate and its proper permissions #}
         {# handle this problem #}
         'debug_log': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.handlers.WatchedFileHandler',
             'filename': '{{ logging_path }}',
             'formatter': 'basic',
@@ -48,7 +48,7 @@ LOGGING = {
         },
         'ppa': {
             'handlers': ['debug_log'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True,
         },
         'SolrClient':  {
