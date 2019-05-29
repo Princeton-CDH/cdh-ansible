@@ -4,9 +4,9 @@
 # Example usage:
 # ansible-playbook -e host_group=prosody_qa revert_deployment.yml
 #
-# The script will ask for confirmation before making any breaking changes.
-# ctrl+c and then 'a 'will break execution, enter or ctrl+c and then 'c' will
-# proceed.
+# WARNING: Reverting deploys that employed migrations may require manual
+# reversion of the database; likewise, deploys that involve changes to Solr
+# schema changes or re-indexing may not be immediately useable.
 #
 # NOTE: You will need the password file loaded for any secrets encrypted in
 # the vaults used by the host_group specified.
