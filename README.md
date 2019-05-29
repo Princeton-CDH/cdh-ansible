@@ -76,14 +76,14 @@ ansible-playbook -e ref=GITREF name_of_playbook.yml
 The playbook will run, noting success and failures. The `-v` flag adjusts verbosity
 (adding more `v`s will produce more verbosity. Debug tasks are usually written at `2`)
 
-## Reverst last deploy
+## Revert last deploy
 
-To revert to previous deploy (which toggles the two), run, e.g.:
+To revert to previous deploy run, e.g.:
 
 ```{bash}
 ansible-playbook -e host_group=mep_qa revert_deployment.yml
 ```
-If you run this a subsequent time, it should revert itself seamlessly.
+This is not idempotent. Reversing it will require manual intervention.
 
 ## Overrides
 
