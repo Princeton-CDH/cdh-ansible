@@ -12,38 +12,56 @@
 # the vaults used by the host_group specified.
 ###
 
-- hosts: '{{ host_group }}'
-  connection: ssh
-  remote_user: deploy
-  environment:
-    PATH: '{{ path }}'
-    LD_LIBRARY_PATH: '{{ ld_library_path }}'
-    PYTHONPATH: '{{ python_path }}'
-  tasks:
-  - name: Check that previous symlink exists.
-    stat:
-      path: "{{ install_root }}/previous"
-    register: previous
-  - fail:
-      msg: "No previous deploy available."
-    when: previous.stat.islnk is not defined
-  - name: Set current to previous deploy
-    file:
-      src: "{{ previous.stat.lnk_source }}"
-      dest: "{{ install_root }}/current"
-      state: link
-  - name: Make current live
-    file:
-      src: "{{ previous.stat.lnk_source }}"
-      # uses symlink set in group_vars
-      dest: "/var/www/{{ symlink }}"
-      state: link
-  - name: Restart Apache (httpd24-httpd)
-    command: "sudo systemctl restart httpd24-httpd"
-    args:
-      warn: false
-  - name: Delete old previous symlink
-    file:
-      state: absent
-      path: "{{ install_root }}/previous"
+  - hosts: '{{ host_group }}'
+    connection: ssh
+    remote_user: deploy
+    environment:
+      PATH: '{{ path }}'
+      LD_LIBRARY_PATH: '{{ ld_library_path }}'
+      PYTHONPATH: '{{ python_path }}'
+    tasks:
+      - block:
+        - name: Check that previous symlink exists.
+          stat:
+            path: "{{ install_root }}/previous"
+          register: previous
+        - fail:
+            msg: "No previous deploy available."
+          when: previous.stat.islnk is not defined
+        - name: Get git hash for use in creating deployment.
+          shell: git rev-parse HEAD
+          args:
+            executable: /bin/bash
+            chdir: '{{ install_root}}/previous'
+          register: git_info
+        - name: Register a github deployment
+          import_role:
+            name: create_deployment
+          vars:
+            gitref: '{{ git_info.stdout }}'
+        - name: Set current to previous deploy
+          file:
+            src: "{{ previous.stat.lnk_source }}"
+            dest: "{{ install_root }}/current"
+            state: link
+        - name: Make current live
+          file:
+            src: "{{ previous.stat.lnk_source }}"
+            # uses symlink set in group_vars
+            dest: "/var/www/{{ symlink }}"
+            state: link
+        - name: Restart Apache (httpd24-httpd)
+          command: "sudo systemctl restart httpd24-httpd"
+          args:
+            warn: false
+        - name: Delete old previous symlink
+          file:
+            state: absent
+            path: "{{ install_root }}/previous"
+        - name: Close out deployment as a success
+          import_role:
+            name: close_deployment
+      - rescue:
+        - include_tasks: roles/create_deployment/tasks/fail.yml
+
 
