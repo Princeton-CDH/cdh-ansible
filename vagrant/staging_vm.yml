@@ -81,6 +81,8 @@
     - name: Ruby gem for sass
       gem:
         name: sass
+        # old version to match Centos/RHEL/Springdale Ruby
+        version: 3.4.25
         # we want this globally
         user_install: no
         state: present
