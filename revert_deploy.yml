@@ -20,36 +20,30 @@
     LD_LIBRARY_PATH: '{{ ld_library_path }}'
     PYTHONPATH: '{{ python_path }}'
   tasks:
-  - name: Pause and let user make sure command looks right.
-    pause:
-      prompt: >
-               You are about to revert {{ host_group | upper }}.
-               Press enter to proceed or ctrl+c then a to abort.
   - name: Check that previous symlink exists.
     stat:
       path: "{{ install_root }}/previous"
     register: previous
   - fail:
-      msg: "Previous symlink does not exist."
+      msg: "No previous deploy available."
     when: previous.stat.islnk is not defined
-  - name: Get current symlink path
-    stat:
-      path: "{{ install_root }}/current"
-    register: current
-  - fail:
-      msg: "Current symlink does not exist."
-    when: current.stat.islnk is not defined
-  - name: Set previous to current
-    file:
-      src: "{{ current.stat.lnk_source }}"
-      dest: "{{ install_root }}/previous"
-      state: link
-  - name: Set current to reflect actual symlink
+  - name: Set current to previous deploy
     file:
       src: "{{ previous.stat.lnk_source }}"
       dest: "{{ install_root }}/current"
       state: link
-  - name: Restart httpd24\
+  - name: Make current live
+    file:
+      src: "{{ previous.stat.lnk_source }}"
+      # uses symlink set in group_vars
+      dest: "/var/www/{{ symlink }}"
+      state: link
+  - name: Restart Apache (httpd24-httpd)
     command: "sudo systemctl restart httpd24-httpd"
     args:
       warn: false
+  - name: Delete old previous symlink
+    file:
+      state: absent
+      path: "{{ install_root }}/previous"
+
