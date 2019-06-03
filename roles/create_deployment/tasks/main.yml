@@ -36,5 +36,6 @@
           description: "Deployment in progress"
         headers:
           Authorization: "token {{ github_token }}"
+  when: not staging
 # No rescue because again, if either of these fail, the error status will
 # likely also fail out.
