@@ -1,0 +1,112 @@
+#!/bin/bash
+#
+# sync_prod - 0.1
+#
+#
+# sync_prod is a utility to sync database dumps from production and and to
+# sync media files (if applicable) for a Django application that are
+# user managed (i.e. uploaded photos for a CMS). Assumes that a proper
+# .my.cnf with credentials exists on target hosts for mysqldump.
+#
+# Dependencies:
+# - jq (system install via package manager for JSON parsing)
+#
+# Usage: sync_prod [-h] [-d] config.json
+# -h    Display this help message
+# -d    Dry-run
+
+printUsage() {
+  echo "Usage: ${0} [-h] [-d] config.json"
+  echo "-h    Display this help message"
+  echo "-d    Dry-run"
+}
+
+# Parse usage option flags, with \? as a backstop against invalid options.
+while getopts ":hd" opt; do
+  case ${opt} in
+    h )
+      printUsage
+      exit 0
+      ;;
+    d )
+      dryrun=true
+      ;;
+    \? )
+      echo "Invalid option: -${OPTARG}" 1>&2
+      printUsage 1>&2
+      exit 1
+      ;;
+  esac
+done;
+# Shift past any options that were consumed
+shift $((OPTIND -1))
+
+# Check if there is still a path to config.json
+if [ -z "${1}" ]
+    then
+      echo "No config file supplied."
+      echo ""
+      printUsage 1>&2
+      exit 1
+fi
+
+# Configurations
+config="$1"
+# Use tmp for temporary dumps
+tmp_file=/tmp/db_tmp.sql
+applications=()
+# Get configured storage dir, or if not, assume PWD
+storageDir=$(jq -r ".storageDir" "${config}")
+if [[ storageDir == "null" ]]
+  then
+    storageDir=${PWD}
+fi
+# This loop avoids issues with spaces in values, although they probably
+# shouldn't be there in the first place
+while IFS= read -r line
+do
+  applications+=( "${line}" )
+done < <( jq -c ".applications | .[]" "${config}" )
+
+for i in "${applications[@]}"
+do
+  host=$(echo ${i} | jq -r ".host")
+  db=$(echo ${i} | jq -r ".database")
+  if [[ $host = "null" ]] || [[ $db = "null" ]]
+    then
+      echo "Missing host or database key in ${i}." 1>&2
+      exit 1
+  fi
+  # On a dry run, just say what it ough tto connect to
+  # and also what files would be deleted based on the configured
+  # storageDir
+  if  [[ $dryrun ]]
+    then
+      echo "Would connect to host: $host, database: ${db}"
+      find "${storageDir}" -maxdepth 1 -type f -iname "*-${db}.sql" \
+      -exec echo "Would delete: " {} \;
+
+  else
+    # Otherwise, connect to host, dump to tmp file
+    echo "Connecting to ${host}..."
+    ssh -o ConnectTimeout=5 "${host}" mysqldump --opt "${db}" > "${tmp_file}"
+    retVal=$?
+    if [[ $retVal -ne 0 ]]
+      then
+        echo "Could not dump database $db for $host" 1>&2
+        error=true
+        break
+    fi
+    dateString=$(date +%Y-%m-%d)
+    dumpName="${dateString}-${db}.sql"
+    # find a previously labeled file with a different/same date
+    # and delete it.
+    find "${storageDir}" -maxdepth 1 -type f -iname "*-${db}.sql" \
+    -exec rm -f {} \;
+    # Move the tmp file in and give it a YYYY-MM-DD-db.sql name
+    mv "${tmp_file}" "${storageDir}/${dumpName}"
+  fi
+done
+
+# if SSH error was logged, bubble it up via exit code.
+if [[ $error ]]; then exit 1; fi
