@@ -61,7 +61,7 @@ LOGGING = {
         },
         'file_log': {
             'level': 'WARN',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.WatchedFileHandler',
             'filename': '{{ logging_path }}',
             'formatter': 'basic',
             'maxBytes': 1024,
