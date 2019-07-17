@@ -64,8 +64,6 @@ LOGGING = {
             'class': 'logging.handlers.WatchedFileHandler',
             'filename': '{{ logging_path }}',
             'formatter': 'basic',
-            'maxBytes': 1024,
-            'backupCount': 3
         }
     },
     'loggers': {
