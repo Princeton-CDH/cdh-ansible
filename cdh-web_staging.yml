@@ -11,6 +11,7 @@
     - { role: prep_staging, become: true }
     - build_project_repo
     - build_virtualenv
+    - configure_logging
     - install_local_settings
     - configure_media
     - django_collectstatic
