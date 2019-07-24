@@ -35,16 +35,13 @@
         state: latest
     - name: Install SCL and EPEL repo
       yum:
-        name: '{{ item }}'
+        name:
+          - centos-release-scl
+          - epel-release
         state: present
-      with_items:
-        - centos-release-scl
-        - epel-release
     - name: Install base packages
       yum:
-        name: '{{ item }}'
-        state: present
-      with_items:
+        name:
         # rh-python35 for now, as that version syncs with the most projects
         # if needed can be upgraded at a later date.
         - rh-python35
@@ -68,6 +65,8 @@
         # libsass for Derrida and CDH-web
         - libsass
         - ruby-devel
+        state: present
+
     # This will install the 3.5 family, which is currently still supported
     - name: make sure that the ruby gem isn't installed
       yum:
