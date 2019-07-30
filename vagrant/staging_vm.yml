@@ -35,39 +35,37 @@
         state: latest
     - name: Install SCL and EPEL repo
       yum:
-        name: '{{ item }}'
+        name:
+          - centos-release-scl
+          - epel-release
         state: present
-      with_items:
-        - centos-release-scl
-        - epel-release
     - name: Install base packages
       yum:
-        name: '{{ item }}'
+        name:
+          # rh-python35 for now, as that version syncs with the most projects
+          # if needed can be upgraded at a later date.
+          - rh-python35
+          - rh-python35-mod_wsgi
+          # all versions of nodejs in use in CDH projects
+          - rh-nodejs8
+          - rh-nodejs6
+          # webserver with a python3 implementation of mod_wsgi
+          - httpd24-httpd
+          # mariadb and development headers
+          - mariadb
+          - mariadb-server
+          - mariadb-devel
+          # adapter for use with Ansible
+          - MySQL-python
+          # needed packages for Solr
+          - lsof
+          - java
+          # git for git clones
+          - git
+          # libsass for Derrida and CDH-web
+          - libsass
+          - ruby-devel
         state: present
-      with_items:
-        # rh-python35 for now, as that version syncs with the most projects
-        # if needed can be upgraded at a later date.
-        - rh-python35
-        - rh-python35-mod_wsgi
-        # all versions of nodejs in use in CDH projects
-        - rh-nodejs8
-        - rh-nodejs6
-        # webserver with a python3 implementation of mod_wsgi
-        - httpd24-httpd
-        # mariadb and development headers
-        - mariadb
-        - mariadb-server
-        - mariadb-devel
-        # adapter for use with Ansible
-        - MySQL-python
-        # needed packages for Solr
-        - lsof
-        - java
-        # git for git clones
-        - git
-        # libsass for Derrida and CDH-web
-        - libsass
-        - ruby-devel
     # This will install the 3.5 family, which is currently still supported
     - name: make sure that the ruby gem isn't installed
       yum:
@@ -81,6 +79,8 @@
     - name: Ruby gem for sass
       gem:
         name: sass
+        # old version to match Centos/RHEL/Springdale Ruby
+        version: 3.4.25
         # we want this globally
         user_install: no
         state: present
