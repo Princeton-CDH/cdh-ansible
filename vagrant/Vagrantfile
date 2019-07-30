@@ -73,7 +73,5 @@ Vagrant.configure("2") do |config|
     ansible.pip_install_cmd = "curl https://bootstrap.pypa.io/get-pip.py | sudo python"
 	  ansible.playbook = "staging_vm.yml"
 	  ansible.install_mode = "pip"
-    # Explicitly require to fix vagrant 2.2.5 regression
-    ansible.pip_install_cmd = "curl https://bootstrap.pypa.io/get-pip.py | sudo python"
     end
 end
