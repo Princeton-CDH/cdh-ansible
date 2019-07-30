@@ -78,12 +78,12 @@ The playbook will run, noting success and failures. The `-v` flag adjusts verbos
 
 ## Revert last deploy
 
-To revert to previous deploy run call the `revert_deployment`
+To revert to previous deploy run call the `revert_deploy`
 playbook with a `host_group` matching the deploy you want to
 revert, e.g.:
 
 ```{bash}
-ansible-playbook -e host_group=mep_qa revert_deployment.yml
+ansible-playbook -e host_group=mep_qa revert_deploy.yml
 ```
 
 ## Overrides
