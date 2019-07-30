@@ -58,6 +58,7 @@ FILEBROWSER_ESCAPED_EXTENSIONS = []
 
 # managers for broken email 404s
 MANAGERS = [('CDH Dev Team', 'cdhdevteam@princeton.edu'),]
-# ignore .php and as(p|x), also handle trailing slash being appended
-IGNORABLE_404_URLS = ['(\.php|\.asp|\.aspx)(\/$|$)']
+# ignore php, asp, aspx, jsp, jspa, with or without trailing slash
+import re
+IGNORABLE_404_URLS = [re.compile('\.(php|aspx?|jspa?)(\/$|$)')]
 {% endblock %}
