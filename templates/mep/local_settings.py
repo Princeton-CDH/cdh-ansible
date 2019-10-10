@@ -87,6 +87,7 @@ GTAGS_ANALYTICS_ID = 'UA-87887700-6'
 GTAGS_ANALYTICS_ENV = 'qa'
 {% else %}
 GTAGS_ANALYTICS_ENV = 'prod'
+{% endif %}
 
 # configure content security policy reporting
 {% if qa is defined and qa %}
