@@ -36,6 +36,23 @@ SOLR_CONNECTIONS = {
         'CONFIGSET': '{{ solr_configset }}'
     }
 }
+    
+# turn on google analytics
+GTAGS_ANALYTICS_ID = 'UA-87887700-6'
+{% if qa is defined and qa %}
+GTAGS_ANALYTICS_ENV = 'qa'
+{% else %}
+GTAGS_ANALYTICS_ENV = 'prod'
+{% endif %}
+
+# configure content security policy reporting
+{% if qa is defined and qa %}
+CSP_REPORT_ONLY = True
+CSP_REPORT_URI = '{{ csp_reportonly_uri }}'
+{% else %}
+CSP_REPORT_ONLY = False
+CSP_REPORT_URI = '{{ csp_enforce_uri }}'
+{% endif %}
 
 {% endblock %}
 
@@ -80,20 +97,3 @@ LOGGING = {
     }
 }
 {% endblock %}
-
-# turn on google analytics
-GTAGS_ANALYTICS_ID = 'UA-87887700-6'
-{% if qa is defined and qa %}
-GTAGS_ANALYTICS_ENV = 'qa'
-{% else %}
-GTAGS_ANALYTICS_ENV = 'prod'
-{% endif %}
-
-# configure content security policy reporting
-{% if qa is defined and qa %}
-CSP_REPORT_ONLY = True
-CSP_REPORT_URI = '{{ csp_reportonly_uri }}'
-{% else %}
-CSP_REPORT_ONLY = False
-CSP_REPORT_URI = '{{ csp_enforce_uri }}'
-{% endif %}
