@@ -94,6 +94,6 @@ GTAGS_ANALYTICS_ENV = 'prod'
 CSP_REPORT_ONLY = True
 CSP_REPORT_URI = '{{ csp_reportonly_uri }}'
 {% else %}
-CSP_REPORT_ONLY False
+CSP_REPORT_ONLY = False
 CSP_REPORT_URI = '{{ csp_enforce_uri }}'
 {% endif %}
