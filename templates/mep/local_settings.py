@@ -5,8 +5,6 @@
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # Separate Geonames for usage reasons
 GEONAMES_USERNAME = '{{ geonames_username }}'
-# Mapbox token shared with Winthrop
-MAPBOX_ACCESS_TOKEN = '{{ mapbox_token }}'
 # Media settings for running under apache in production and QA
 MEDIA_ROOT = '{{ media_root }}'
 MEDIA_URL = '/media/'
@@ -36,7 +34,7 @@ SOLR_CONNECTIONS = {
         'CONFIGSET': '{{ solr_configset }}'
     }
 }
-    
+
 # turn on google analytics
 GTAGS_ANALYTICS_ID = 'UA-87887700-6'
 {% if qa is defined and qa %}
@@ -48,6 +46,11 @@ GTAGS_ANALYTICS_ENV = 'prod'
 # configure content security policy reporting
 CSP_REPORT_ONLY = False
 CSP_REPORT_URI = '{{ csp_enforce_uri }}'
+
+# map-related configuration
+MAPBOX_ACCESS_TOKEN = '{{ mapbox_token }}'
+MAPBOX_BASEMAP = '{{ mapbox_basemap }}'
+PARIS_OVERLAY = '{{ paris_overlay }}'
 
 {% endblock %}
 
