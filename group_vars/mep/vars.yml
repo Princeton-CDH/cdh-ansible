@@ -9,9 +9,11 @@ django_app: mep
 symlink: shakespeareandco
 # template path
 template_path: mep
-# geonames and mapbox usernames
+# geonames and mapbox usernames, map-related configs
 geonames_username: '{{ vault_geonames_username }}'
 mapbox_token: '{{ vault_mapbox_token }}'
+mapbox_basemap: 'light-v10'
+paris_overlay: 'https://tiles.arcgis.com/tiles/4Ko8f1mCWFLyY4NV/arcgis/rest/services/Paris_1943/MapServer'
 # These include the path for rh-python35 and nodejs8
 # Paths are picky and spaces for any YAML multiline syntax cause issues
 # These are defaults for most projects and should be overriden as necessary.
