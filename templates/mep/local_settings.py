@@ -21,10 +21,6 @@ TECHNICAL_CONTACT = '{{ technical_contact }}'
 STATICFILES_DIRS += [
     '/srv/www/qa/mep-django/fonts'
 ]
-{% else %}
-STATICFILES_DIRS += [
-    '/srv/www/prod/fonts'
-]
 {% endif %}
 
 SOLR_CONNECTIONS = {
