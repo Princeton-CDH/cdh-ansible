@@ -57,6 +57,10 @@ PUCAS_LDAP.update({
 # Admin email settings for error messages
 ADMINS = [('CDH Dev Team', 'cdhdevteam@princeton.edu')]
 SERVER_EMAIL = 'cdhdevteam@princeton.edu'
+# Email settings for wagtail: see
+# https://docs.wagtail.io/en/latest/reference/settings.html#email-notifications
+WAGTAILADMIN_NOTIFICATION_FROM_EMAIL = SERVER_EMAIL
+WAGTAILADMIN_NOTIFICATION_USE_HTML = True
 
 {% if qa is not defined %}
 # Email configuration for sending messages
