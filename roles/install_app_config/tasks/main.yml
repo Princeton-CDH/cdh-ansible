@@ -1,0 +1,20 @@
+---
+- name: Create app_configs directory
+  file:
+    path: '/home/{{ deploy_user }}/app_configs'
+    state: 'directory'
+    owner: '{{ deploy_user }}'
+    group: '{{ deploy_user }}'
+- name: Install app configuration
+  template:
+    src: 'app_config'
+    dest: '/home/{{ deploy_user }}/app_configs/{{ app_name }}'
+    owner: '{{ deploy_user }}'
+    group: '{{ deploy_user }}'
+- name: Load app configs
+  lineinfile: >
+              dest='/home/{{ deploy_user }}/.bashrc'
+              state=present
+              regexp='^for f in ~/app_configs/\*; do source \$f; done$'
+              line="for f in ~/app_configs/*; do source $f; done"
+              insertbefore=BOF
