@@ -81,6 +81,16 @@ mep_qa
 mep_prod
 mep_staging
 
+[pemm_qa]
+test-pemm.cdh.princeton.edu
+[pemm_prod]
+pemm.cdh.princeton.edu
+
+[pemm:children]
+pemm_qa
+pemm_prod
+
+
 ### staging, prod, and qa stanzas to create shared groups
 [staging:children]
 winthrop_staging
