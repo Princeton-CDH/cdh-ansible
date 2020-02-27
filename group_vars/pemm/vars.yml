@@ -1,0 +1,24 @@
+###
+# Variables for PEMM that apply across all deploy groups (prod, qa, and staging)
+###
+---
+# do we still need these for ubuntu? should use python3.6
+# Using python35 and nodejs8 for QA and staging
+# Paths are picky and spaces for any YAML multiline syntax causes issues
+#path: '/opt/rh/rh-python35/root/usr/bin:/opt/rh/rh-nodejs8/root/usr/bin:{{ ansible_env.PATH }}'
+#ld_library_path: '/opt/rh/rh-python35/root/usr/lib64:/opt/rh/rh-nodejs8/root/usr/lib64{% if ansible_env.LD_LIBRARY_PATH is defined %}:{{ ansible_env.LD_LIBRARY_PATH }}{% endif %}'
+#python_path: '/opt/rh/rh-nodejs8/root/usr/lib/python2.7/site-packages{% if ansible_env.PYTHON_PATH is defined %}:{{ ansible_env.PYTHONPATH }}{% endif %}'
+# GitHub repository
+repo: 'Princeton-CDH/pemm-scripts'
+# name of python application
+django_app: scripts
+# application name
+app_name: pemm
+# apache symlink
+symlink: "{{ app_name }}"
+# Solr settings
+solr_collection: pemm
+# apache location
+apache_app_path: "/var/www/{{ app_name }}"
+# wsgi file relative to apache location
+wsgi_path: "scripts/pemm.wsgi"
