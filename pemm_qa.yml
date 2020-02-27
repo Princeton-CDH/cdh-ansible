@@ -12,6 +12,7 @@
     - build_virtualenv
     - configure_apache
     # - restart_httpd   # handled by configure apache ?
+    - finalize_deploy
     - close_deployment
 
 # cron tab management still to do
