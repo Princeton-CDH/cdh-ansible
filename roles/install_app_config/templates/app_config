@@ -1,0 +1,4 @@
+# environment variables for {{app_name}}
+{% for variable in app_vars %}
+export {{variable.name}}={{variable.value}}
+{% endfor %}

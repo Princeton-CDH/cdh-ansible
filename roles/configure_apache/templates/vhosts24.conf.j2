@@ -1,0 +1,18 @@
+# Default Apache virtualhost template this config file in {{ ansible_managed }}
+
+<VirtualHost *:{{ apache_listen_port }}>
+    ServerAdmin webmaster@localhost
+    DocumentRoot {{ apache.docroot }}
+    ServerName {{ apache.servername }}
+
+    WSGIDaemonProcess {{ app_name }} group={{ app_name }} python-path={{ apache_app_path }}/env/lib/python3.6/site-packages:{{ apache_app_path }} processes=1 threads=2
+    WSGIScriptAlias / {{ apache_app_path }}/{{ wsgi_path }}
+
+    <Directory {{ apache_app_path }}>
+        WSGIProcessGroup {{ app_name }}
+        WSGIApplicationGroup %{GLOBAL}
+        Order deny,allow
+        Allow from all
+    </Directory>
+</VirtualHost>
+
