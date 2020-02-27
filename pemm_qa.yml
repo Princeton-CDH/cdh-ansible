@@ -1,0 +1,19 @@
+- hosts: pemm_qa
+  connection: ssh
+  remote_user: deploy
+  # environment:
+  #   PATH: '{{ path }}'
+  #   LD_LIBRARY_PATH: '{{ ld_library_path }}'
+  #   PYTHONPATH: '{{ python_path }}'
+  roles:
+    - create_deployment
+    - install_app_config
+    - build_project_repo
+    - build_virtualenv
+    - configure_apache
+    # - restart_httpd   # handled by configure apache ?
+    - close_deployment
+
+# cron tab management still to do
+
+

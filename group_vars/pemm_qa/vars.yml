@@ -1,0 +1,7 @@
+app_vars:
+  - name: PEMM_SOLR_URL
+    value: 'https://test-index.cdh.princeton.edu/'
+  - name: PEMM_SOLR_CORE
+    value: 'pemm'
+  - name: FLASK_APP
+    value: 'scripts/server.py'
