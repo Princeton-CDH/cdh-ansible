@@ -82,9 +82,9 @@ mep_prod
 mep_staging
 
 [pemm_qa]
-test-pemm.cdh.princeton.edu
+cdh-test-pemm1.princeton.edu
 [pemm_prod]
-pemm.cdh.princeton.edu
+cdh-pemm1.princeton.edu
 
 [pemm:children]
 pemm_qa
