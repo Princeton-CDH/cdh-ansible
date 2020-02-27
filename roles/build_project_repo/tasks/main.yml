@@ -20,7 +20,7 @@
         version: '{{ gitref }}'
       # register repo_info for group_vars
       register: repo_info
-    - name: Get version information from __init__.py for Django projects
+    - name: Get version information from __init__.py for Python projects
       # This script is present in get_ver.py, and should be safe for all
       # system pythons greater than 2.
       script: get_ver.py {{ clone_root}}/{{ repo }} {{ django_app }}
