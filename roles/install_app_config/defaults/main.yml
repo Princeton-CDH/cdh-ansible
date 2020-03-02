@@ -1,0 +1,6 @@
+---
+deploy_user: '{{ generic_app_user | default("deploy") }}'
+deploy_ssh_users: []
+deploy_user_shell: /bin/bash
+deploy_id_rsa_private_key: 'bogus_rsa_key'
+running_on_server: false

@@ -21,4 +21,4 @@ solr_collection: pemm
 # apache location
 apache_app_path: "/var/www/{{ app_name }}"
 # wsgi file relative to apache location
-wsgi_path: "scripts/pemm.wsgi"
+wsgi_path: "pemm.wsgi"

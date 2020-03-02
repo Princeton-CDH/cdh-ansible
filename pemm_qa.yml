@@ -1,12 +1,14 @@
 - hosts: pemm_qa
   connection: ssh
-  remote_user: deploy
+  remote_user: pulsys
+  become: true
   # environment:
   #   PATH: '{{ path }}'
   #   LD_LIBRARY_PATH: '{{ ld_library_path }}'
   #   PYTHONPATH: '{{ python_path }}'
   roles:
     - create_deployment
+    - build_dependencies
     - install_app_config
     - build_project_repo
     - build_virtualenv

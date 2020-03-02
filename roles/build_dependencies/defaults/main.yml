@@ -1,0 +1,15 @@
+---
+# defaults dependencies common
+configured_dependencies:
+  - acl
+  - build-essential
+  - curl
+  - git
+  - unzip
+  - zip
+  - python-pip
+  - python-setuptools
+  - libssl-dev
+  - wget
+  - tmux
+  - python-virtualenv
