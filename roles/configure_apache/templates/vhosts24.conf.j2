@@ -5,7 +5,7 @@
     DocumentRoot {{ apache.docroot }}
     ServerName {{ apache.servername }}
 
-    WSGIDaemonProcess {{ app_name }} group={{ app_name }} python-path={{ apache_app_path }}/env/lib/python3.6/site-packages:{{ apache_app_path }} processes=1 threads=2
+    WSGIDaemonProcess {{ app_name }} group={{ deploy_user }} python-path={{ apache_app_path }}/env/lib/python3.6/site-packages:{{ apache_app_path }} processes=1 threads=2
     WSGIScriptAlias / {{ apache_app_path }}/{{ wsgi_path }}
 
     <Directory {{ apache_app_path }}>
@@ -15,4 +15,3 @@
         Allow from all
     </Directory>
 </VirtualHost>
-
