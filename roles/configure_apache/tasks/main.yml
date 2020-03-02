@@ -11,9 +11,9 @@
     name: "{{ item }}"
     state: present
   notify: restart apache
-  # with_items:
-  #   - rewrite
-  #   - headers
+  with_items:
+    - rewrite
+    - headers
   #   - expires
   #   - filter
   #   - vhost_alias
@@ -24,13 +24,13 @@
     regexp: 'Listen 80$'
     replace: "Listen {{ apache_listen_port }}"
 
-# - name: check for update of config needed
-#   lineinfile:
-#     dest: "/etc/apache2/sites-available/000-default.conf"
-#     line: "    DocumentRoot {{ apache.docroot }}"
-#     state: present
-#   check_mode: yes
-#   register: update_config
+- name: check for update of config needed
+  lineinfile:
+    dest: "/etc/apache2/sites-available/000-default.conf"
+    line: "    DocumentRoot {{ apache.docroot }}"
+    state: present
+  check_mode: yes
+  register: update_config
 
 - name: modify the default apache site
   template:
