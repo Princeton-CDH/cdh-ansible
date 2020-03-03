@@ -24,4 +24,6 @@ technical_contact: cdhdevteam@princeton.edu
 csp_enabled: true
 # set a default media root for prod and staging
 media_root: '/srv/www/prod/media'
+# use python 3.6 (may not matter for virtualenv creation on RedHat)
+python_version: "python3.6"
 
