@@ -2,21 +2,16 @@
   connection: ssh
   remote_user: pulsys
   become: true
-  # environment:
-  #   PATH: '{{ path }}'
-  #   LD_LIBRARY_PATH: '{{ ld_library_path }}'
-  #   PYTHONPATH: '{{ python_path }}'
   roles:
-    # - create_deployment
+    - create_deployment
     - build_dependencies
     - install_app_config
     - build_project_repo
     - build_virtualenv
     - configure_apache
-    # - restart_httpd   # handled by configure apache ?
     - finalize_deploy
-    # - close_deployment
+    - close_deployment
 
-# cron tab management still to do
+# cron tab management still to do (and solr?)
 
 
