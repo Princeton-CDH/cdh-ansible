@@ -5,18 +5,25 @@
 ##
 - name: Create and build python virtual environment
   block:
+    # NOTE: only explicitly create virtualenv on RedHat
     - name: Create venv with project-name-short-hash-version
       command: "virtualenv --system-site-packages {{ deploy }}/env --prompt '({{ repo | project_name }}-{{ short_hash }}-{{ version }}) '"
+      when: ansible_distribution_release == "RedHat"
+
     - name: Set perms
       file:
           path: "{{ deploy }}/env"
           state: directory
           mode: "u+rwx,g+rwx,o-rw"
-    - name: Upgrade pip in virtualenvironment
+      when: ansible_distribution_release == "RedHat"
+
+    - name: Upgrade pip in virtual environment
       pip:
         name: pip
         state: latest
         virtualenv: "{{ deploy }}/env"
+        virtualenv_python: "{{ python_version }}"
+
     # The following two stanzas only run when override variables are defined
     # and allow the user to dynamically update requirements files if necessary.
     - name: Update requirements based on a supplied template
@@ -25,6 +32,7 @@
         dest: '{{ deploy }}/requirements.{{ requirements_type }}'
       when:
         new_requirements is defined
+
     - name: Update requirements dynamically using extravars
       lineinfile:
         regexp: '^{{ item | regex_replace("[<=>]{1,2}.*$") }}'
@@ -34,10 +42,12 @@
         pip_updates is defined
       with_items:
         '{{ pip_updates }}'
+
     - name: Install requirements via pip (MySQLdb should be system version and skipped)
       pip:
         virtualenv: "{{ deploy }}/env"
         requirements: "{{ deploy }}/requirements.{{ requirements_type }}"
         virtualenv_site_packages: yes
+        virtualenv_python: "{{ python_version }}"
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml

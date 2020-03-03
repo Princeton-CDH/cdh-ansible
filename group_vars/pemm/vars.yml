@@ -22,3 +22,5 @@ solr_collection: pemm
 apache_app_path: "/var/www/{{ app_name }}"
 # wsgi file relative to apache location
 wsgi_path: "pemm.wsgi"
+# use python 3.6
+python_version: "python3.6"
