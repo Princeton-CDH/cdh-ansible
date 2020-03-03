@@ -1,0 +1,11 @@
+- name: "Configure crontab"
+  cron:
+    name: "{{ item.name }}"
+    # minute: "{{ item.minute }}"
+    # hour: "{{ item.hour }}"
+    special_time: "{{ item.special_time }}"
+    job: "{{ item.job }}"
+    user: "{{ deploy_user }}"
+  with_items:
+    "{{ crontab }}"
+
