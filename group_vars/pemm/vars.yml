@@ -24,3 +24,14 @@ apache_app_path: "/var/www/{{ app_name }}"
 wsgi_path: "pemm.wsgi"
 # use python 3.6
 python_version: "python3.6"
+
+# configure scripts to run as cron jobs
+crontab:
+
+  - name: "{{ app_name }} index incipts"
+    special_time: "hourly"
+    job: "{{ apache_app_path }}/env/bin/{{ python_version }} {{ apache_app_path }}/scripts/index_incipits.py"
+
+  - name: "{{ app_name }} synchronize google sheets to git"
+    special_time: "hourly"
+    job: "{{ apache_app_path }}/env/bin/{{ python_version }} {{ apache_app_path }}/scripts/gsheets_to_git.py"
