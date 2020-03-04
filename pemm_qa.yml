@@ -8,10 +8,9 @@
     - install_app_config
     - build_project_repo
     - build_virtualenv
+    - configure_logging
     - configure_apache
+    - configure_crontab
+    - pemm_setup
     - finalize_deploy
     - close_deployment
-
-# cron tab management still to do (and solr?)
-
-
