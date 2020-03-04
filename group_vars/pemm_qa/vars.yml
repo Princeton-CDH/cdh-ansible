@@ -5,3 +5,6 @@ app_vars:
     value: 'pemm'
   - name: FLASK_APP
     value: 'scripts/server.py'
+
+# override credentials file
+credentials_file: pemm_qa_credentials.json
