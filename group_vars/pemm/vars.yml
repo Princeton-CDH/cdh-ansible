@@ -22,3 +22,33 @@ solr_collection: pemm
 apache_app_path: "/var/www/{{ app_name }}"
 # wsgi file relative to apache location
 wsgi_path: "pemm.wsgi"
+# use python 3.6
+python_version: "python3.6"
+# Override clone root to use deploy user home instead of root
+clone_root: "/home/{{ deploy_user }}/repos"
+
+
+# Google credentials
+# - filename in pemm setup role files directory
+credentials_file: pemm_credentials.json
+# - credentials path on the deploy server
+credentials_path: "/home/{{ deploy_user }}/pemm_credentials.json"
+
+# data repository
+data_repo: 'Princeton-CDH/pemm-qa-data'
+# path to checked out repository on the deploy server
+data_repo_path: "{{ clone_root }}/{{ app_name }}-data"
+
+
+# configure scripts to run as cron jobs
+crontab:
+
+  - name: "{{ app_name }} index incipts"
+    special_time: "hourly"
+    job: "{{ apache_app_path }}/env/bin/{{ python_version }} {{ apache_app_path }}/scripts/index_incipits.py >> {{ logging_dir }}/index_incipit.log 2>&1"
+    state: present
+
+  - name: "{{ app_name }} synchronize google sheets to git"
+    special_time: "hourly"
+    job: "{{ apache_app_path }}/env/bin/{{ python_version }} {{ apache_app_path }}/scripts/gsheets_to_git.py  >> {{ logging_dir }}/gsheets_to_git.log 2>&1"
+    state: present

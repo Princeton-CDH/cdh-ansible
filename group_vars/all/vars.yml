@@ -68,6 +68,9 @@ path: '/opt/rh/rh-python35/root/usr/bin:/opt/rh/rh-nodejs6/root/usr/bin:{{ ansib
 ld_library_path: '/opt/rh/rh-python35/root/usr/lib64:/opt/rh/rh-nodejs6/root/usr/lib64{% if ansible_env.LD_LIBRARY_PATH is defined %}:{{ ansible_env.LD_LIBRARY_PATH }}{% endif %}'
 python_path: '/opt/rh/rh-nodejs6/root/usr/lib/python2.7/site-packages{% if ansible_env.PYTHON_PATH is defined %}:{{ ansible_env.PYTHONPATH }}{% endif %}'
 
+# currently default for most projects is 3.5
+python_version: "python3.5"
+
 # custom hook for requirements, allows for override to use lock or txt
 requirements_type: 'txt'
 
