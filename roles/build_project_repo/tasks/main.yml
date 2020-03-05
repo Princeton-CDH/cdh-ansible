@@ -33,6 +33,14 @@
       file:
         state: directory
         dest: '{{ deploy }}'
+
+    - name: Set owner on git data repository
+      file:
+        dest: "{{ deploy }}"
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        recurse: yes
+
     - name: Sync checkout to deploy directory
       synchronize:
         src: '{{ clone_root }}/{{ repo }}/'
