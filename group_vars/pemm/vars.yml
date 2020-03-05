@@ -36,6 +36,8 @@ credentials_path: "/home/{{ deploy_user }}/pemm_credentials.json"
 
 # data repository
 data_repo: 'Princeton-CDH/pemm-qa-data'
+# path to checked out repository on the deploy server
+data_repo_path: "{{ clone_root }}/{{ app_name }}-data"
 
 
 # configure scripts to run as cron jobs
@@ -44,9 +46,9 @@ crontab:
   - name: "{{ app_name }} index incipts"
     special_time: "hourly"
     job: "{{ apache_app_path }}/env/bin/{{ python_version }} {{ apache_app_path }}/scripts/index_incipits.py >> {{ logging_dir }}/index_incipit.log 2>&1"
-    state: absent
+    state: present
 
   - name: "{{ app_name }} synchronize google sheets to git"
     special_time: "hourly"
-    job: "{{ apache_app_path }}/env/bin/{{ python_version }} {{ apache_app_path }}/scripts/gsheets_to_git.py"
-    state: absent
+    job: "{{ apache_app_path }}/env/bin/{{ python_version }} {{ apache_app_path }}/scripts/gsheets_to_git.py  >> {{ logging_dir }}/gsheets_to_git.log 2>&1"
+    state: present
