@@ -1,7 +1,19 @@
+solr_url: 'https://test-index.cdh.princeton.edu/'
+solr_core: 'pemm'
+
 app_vars:
   - name: PEMM_SOLR_URL
-    value: 'https://test-index.cdh.princeton.edu/'
+    value: "{{ solr_url }}"
   - name: PEMM_SOLR_CORE
-    value: 'pemm'
+    value: "{{ solr_core }}"
   - name: FLASK_APP
     value: 'scripts/server.py'
+  - name: PEMM_DATA_REPO_PATH
+    value: "{{ data_repo_path }}"
+  - name: PEMM_GSHEETS_DOCID
+    value: "{{ vault_gsheets_docid }}"
+  - name: PEMM_INCIPIT_CSVPATH
+    value: "{{ data_repo_path }}/data/story_instance.csv"
+
+# override credentials file
+credentials_file: pemm_qa_credentials.json
