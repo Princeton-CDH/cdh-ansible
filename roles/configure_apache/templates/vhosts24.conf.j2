@@ -6,11 +6,6 @@
     DocumentRoot {{ apache.docroot }}
     ServerName {{ apache.servername }}
 
-    # environment variables for {{app_name}}
-    {% for variable in app_vars %}
-    SetEnv {{variable.name}} {{variable.value}}
-    {% endfor %}
-
     WSGIDaemonProcess {{ app_name }} group={{ deploy_user }} python-path={{ apache_app_path }}/env/lib/{{ python_version }}/site-packages:{{ apache_app_path }} python-home={{ apache_app_path }}/env processes=1 threads=2
     WSGIScriptAlias / {{ apache_app_path }}/{{ wsgi_path }}
 

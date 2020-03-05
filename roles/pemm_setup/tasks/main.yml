@@ -10,6 +10,19 @@
 - name: Check out git data repository
   git:
     repo: "https://www.github.com/{{ data_repo }}.git"
-    dest: "{{ clone_root }}/{{ app_name }}-data"
+    dest: "{{ data_repo_path }}"
     version: "{{ data_repo_branch | default('master') }}"
 
+- name: Set owner on git data repository
+  file:
+    dest: "{{ data_repo_path }}"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    recurse: yes
+
+- name: Install local settings for flask
+  template:
+    src: "local_settings.cfg.j2"
+    dest: "{{ apache_app_path }}/scripts/local_settings.cfg"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
