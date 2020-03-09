@@ -1,13 +1,23 @@
 - name: "Configure crontab (special times)"
   cron:
     name: "{{ item.name }}"
-    # minute: "{{ item.minute }}"
-    # hour: "{{ item.hour }}"
     special_time: "{{ item.special_time }}"
     job: "{{ item.job }}"
     user: "{{ deploy_user }}"
     state: "{{ item.state | default('present') }}"
   with_items:   # only include items with special time defined
-    "{{ crontab | selectattr('special_time', 'match', '^\\w+$') | list }}"
+    "{{ crontab | selectattr('special_time', 'defined') | list }}"
 
-# may want a second task for non-special time crontab
+# non-special time cron jobs
+- name: "Configure crontab (scheduled)"
+  cron:
+    name: "{{ item.name }}"
+    minute: "{{ item.minute | default('*') }}"
+    hour: "{{ item.hour | default('*')}}"
+    day: "{{ item.day | default('*')}}"
+    month: "{{ item.month | default('*')}}"
+    job: "{{ item.job }}"
+    user: "{{ deploy_user }}"
+    state: "{{ item.state | default('present') }}"
+  with_items:   # only include items with special time NOT set
+    "{{ crontab | selectattr('special_time', 'undefined') | list }}"
