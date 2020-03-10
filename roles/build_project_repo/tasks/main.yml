@@ -11,7 +11,7 @@
   block:
     - name: Debug environmental variables early in deploy cycle
       debug:
-        msg: 'PATH: {{ path }} / LD_LIBRARY_PATH: {{ ld_library_path }} / PYTHONPATH: {{ python_path}}'
+        msg: 'PATH: {{ path }} / LD_LIBRARY_PATH: {{ ld_library_path }} / PYTHONPATH: {{ python_path}} / ansible ansible_distribution_release: {{ ansible_distribution_release }}'
         verbosity: 2
       when: ansible_distribution_release == "RedHat"
     - name: Clone project repository and set to the correct version
@@ -40,6 +40,9 @@
         owner: "{{ deploy_user }}"
         group: "{{ deploy_user }}"
         recurse: yes
+      # only set owner when deploy user is defined
+      # (i.e. on PUL vms, where deploy user is different than remote user)
+      when: deploy_user is defined
 
     - name: Sync checkout to deploy directory
       synchronize:
