@@ -48,6 +48,6 @@
       shell: '/usr/sbin/restorecon -R {{ install_root }}'
       args:
         executable: /bin/bash
-      when: ansible_distribution_release == "RedHat"
+      when:  ansible_distribution == 'Springdale'
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
