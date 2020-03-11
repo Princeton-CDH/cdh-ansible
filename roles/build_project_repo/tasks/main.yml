@@ -13,7 +13,7 @@
       debug:
         msg: 'PATH: {{ path }} / LD_LIBRARY_PATH: {{ ld_library_path }} / PYTHONPATH: {{ python_path}} / ansible ansible_distribution_release: {{ ansible_distribution_release }}'
         verbosity: 2
-      when: ansible_distribution_release == "RedHat"
+      when:  ansible_distribution == 'Springdale'
     - name: Clone project repository and set to the correct version
       git:
         repo: '{{ repo_url }}/'

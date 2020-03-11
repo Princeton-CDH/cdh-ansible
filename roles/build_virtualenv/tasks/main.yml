@@ -5,17 +5,17 @@
 ##
 - name: Create and build python virtual environment
   block:
-    # NOTE: only explicitly create virtualenv on RedHat
+    # NOTE: only explicitly create virtualenv on Springdale/SELinux
     - name: Create venv with project-name-short-hash-version
       command: "virtualenv --system-site-packages {{ deploy }}/env --prompt '({{ repo | project_name }}-{{ short_hash }}-{{ version }}) '"
-      when: ansible_distribution_release == "RedHat"
+      when:  ansible_distribution == 'Springdale'
 
     - name: Set perms
       file:
           path: "{{ deploy }}/env"
           state: directory
           mode: "u+rwx,g+rwx,o-rw"
-      when: ansible_distribution_release == "RedHat"
+      when:  ansible_distribution == 'Springdale'
 
     - name: Upgrade pip in virtual environment
       pip:

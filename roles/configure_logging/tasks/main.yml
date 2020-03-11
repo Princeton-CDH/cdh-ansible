@@ -19,7 +19,7 @@
       shell: 'chmod g+s {{ logging_dir }} && setfacl -d -m g::rw {{ logging_dir }}'
       args:
         warn: false
-      when: ansible_distribution_release == "RedHat"
+      when:  ansible_distribution == 'Springdale'
       # using a command because the individual module's functionality (esp acl and file)
       # are misbehaving when used in concert
       # The sticky bit is really only needed in qa, but is nice insurance on prod
