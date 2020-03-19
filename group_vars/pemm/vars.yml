@@ -27,6 +27,9 @@ python_version: "python3.6"
 # Override clone root to use deploy user home instead of root
 clone_root: "/home/{{ deploy_user }}/repos"
 
+# override default production contexts (no code coverage for this project yet)
+deploy_contexts:
+    - 'continuous-integration/travis-ci/push'
 
 # Google credentials
 # - filename in pemm setup role files directory
