@@ -49,7 +49,7 @@
 - name: Install local settings for flask
   template:
     src: "local_settings.cfg.j2"
-    dest: "{{ apache_app_path }}/scripts/local_settings.cfg"
+    dest: "{{ deploy }}/scripts/local_settings.cfg"
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
 
