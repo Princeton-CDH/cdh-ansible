@@ -39,6 +39,19 @@ data_repo: 'Princeton-CDH/pemm-qa-data'
 # path to checked out repository on the deploy server
 data_repo_path: "{{ clone_root }}/{{ app_name }}-data"
 
+app_vars:
+  - name: PEMM_SOLR_URL
+    value: "{{ solr_url }}"
+  - name: PEMM_SOLR_CORE
+    value: "{{ solr_collection }}"
+  - name: FLASK_APP
+    value: 'scripts/server.py'
+  - name: PEMM_DATA_REPO_PATH
+    value: "{{ data_repo_path }}"
+  - name: PEMM_GSHEETS_DOCID
+    value: "{{ vault_gsheets_docid }}"
+  - name: PEMM_INCIPIT_CSVPATH
+    value: "{{ data_repo_path }}/data/story_instance.csv"
 
 # configure scripts to run as cron jobs
 crontab:
