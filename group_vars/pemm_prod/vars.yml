@@ -1,0 +1,5 @@
+solr_url: 'https://index.cdh.princeton.edu/'
+
+# production data repository
+data_repo: 'Princeton-CDH/pemm-data'
+
