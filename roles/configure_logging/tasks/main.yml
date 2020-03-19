@@ -15,6 +15,12 @@
         group: '{{ project_user | default(deploy_user) }}'
         recurse: true
       when: qa is defined
+    - name: For PUL VMs, set logging directory group to deploy user
+      file:
+        path: '{{ logging_dir }}'
+        group: '{{ deploy_user }}'
+        recurse: true
+      when: deploy_user is defined
     - name: Create logging directory default acl & set sticky bit
       shell: 'chmod g+s {{ logging_dir }} && setfacl -d -m g::rw {{ logging_dir }}'
       args:
