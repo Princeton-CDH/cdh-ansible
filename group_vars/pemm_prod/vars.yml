@@ -1,4 +1,4 @@
-solr_url: 'https://index.cdh.princeton.edu/'
+solr_url: 'http://index.cdh.princeton.edu:8983/solr'
 
 # production data repository
 data_repo: 'Princeton-CDH/pemm-data'
