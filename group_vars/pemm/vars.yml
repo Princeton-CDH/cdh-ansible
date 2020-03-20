@@ -60,12 +60,12 @@ app_vars:
 crontab:
 
   - name: "{{ app_name }} synchronize google sheets to git"
-    minute: 0,15,30,45
+    minute: 1
     job: "bin/cron-wrapper {{ apache_app_path }}/env/bin/{{ python_version }} {{ apache_app_path }}/scripts/gsheets_to_git.py  >> {{ logging_dir }}/gsheets_to_git.log 2>&1"
     state: present
 
   - name: "{{ app_name }} index incipts"
-    minute: 2,17,32,47
+    minute: 3
     job: "bin/cron-wrapper {{ apache_app_path }}/env/bin/{{ python_version }} {{ apache_app_path }}/scripts/index_incipits.py >> {{ logging_dir }}/index_incipit.log 2>&1"
     state: present
 
