@@ -6,8 +6,8 @@ It takes two variables and depends on system Python 2 or 3
 
 Usage: ger_ver.py repo_path app_name
 '''
-import sys
 import importlib
+import sys
 
 
 def main(repo_path, app_name):
@@ -16,7 +16,7 @@ def main(repo_path, app_name):
     # use importlib to load the module
     app = importlib.import_module(app_name)
     # write version to stdout to capture in Ansible
-    sys.stdout.write(app.__version__)
+    sys.stdout.write(app.__version__.strip())
 
 
 if __name__ == '__main__':
