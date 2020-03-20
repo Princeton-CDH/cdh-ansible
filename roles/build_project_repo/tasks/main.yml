@@ -34,7 +34,16 @@
         state: directory
         dest: '{{ deploy }}'
 
-    - name: Set owner on git data repository
+    - name: Sync checkout to deploy directory
+      synchronize:
+        src: '{{ clone_root }}/{{ repo }}/'
+        # deploy constructed dynamicallly in group_vars
+        dest: '{{ deploy }}/'
+      # sync remotely -- inventory_hostname is a magic var that always points
+      # to host where the playbook is being run.
+      delegate_to: '{{ inventory_hostname }}'
+
+    - name: Set owner on deploy directory
       file:
         dest: "{{ deploy }}"
         owner: "{{ deploy_user }}"
@@ -44,13 +53,5 @@
       # (i.e. on PUL vms, where deploy user is different than remote user)
       when: deploy_user is defined
 
-    - name: Sync checkout to deploy directory
-      synchronize:
-        src: '{{ clone_root }}/{{ repo }}/'
-        # deploy constructed dynamicallly in group_vars
-        dest: '{{ deploy }}/'
-      # sync remotely -- inventory_hostname is a magic var that always points
-      # to host where the playbook is being run.
-      delegate_to: '{{ inventory_hostname }}'
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml

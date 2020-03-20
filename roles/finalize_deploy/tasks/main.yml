@@ -37,6 +37,7 @@
         src: "{{ deploy }}"
         dest: "/var/www/{{ symlink }}"
         state: link
+      notify: restart apache
 
     # This makes sure that any server side settings that handle autoconfiguring
     # SELinux permissions (that we would otherwise need to be root for) are
