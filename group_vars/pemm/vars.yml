@@ -26,6 +26,8 @@ wsgi_path: "pemm.wsgi"
 python_version: "python3.6"
 # Override clone root to use deploy user home instead of root
 clone_root: "/home/{{ deploy_user }}/repos"
+# for PEMM, don't differentiate qa/prod paths
+install_root: '/srv/www/{{ app_name }}'
 
 # override default production contexts (no code coverage for this project yet)
 deploy_contexts:
