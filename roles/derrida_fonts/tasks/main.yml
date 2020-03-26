@@ -3,12 +3,13 @@
 #  by editing CSS file.
 ###
 
-- block:
+- name: Configure purchased fonts for production
+  block:
     - name: uncomment font tracking line to CSS
       lineinfile:
           path: "{{ deploy }}/sitemedia/css/MyFontsWebfontsKit.css"
           state: present
           line: '@import url("//hello.myfonts.net/count/345674")'
           regexp: '^/\* @import url\("//hello'
-- rescue:
+  rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
