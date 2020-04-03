@@ -1,0 +1,18 @@
+---
+
+# Ansible user on Springdale systems does not have full super user access
+# to use the become directive, # so it runs using the command module rather
+# than privilege elevation.
+- name: restart httpd
+  command: "sudo systemctl restart httpd24-httpd"
+  args:
+    warn: false
+  when:  ansible_distribution == 'Springdale'
+
+# Restart for Ubuntu systems
+- name: restart apache
+  service:
+    name: apache2
+    enabled: true
+    state: restarted
+  when:  ansible_distribution == 'Ubuntu'

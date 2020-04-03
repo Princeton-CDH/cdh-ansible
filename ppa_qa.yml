@@ -20,5 +20,4 @@
     - backup_database
     - django_migrate
     - finalize_deploy
-    - restart_httpd
     - close_deployment
