@@ -1,6 +1,6 @@
 ###
-# This role runs all of the tasks needed to make the new code live except
-# restarting Apache.
+# This role runs all of the tasks needed to make the new code live,
+# with a handler to restart apache.
 
 # It assumes the standard configuration /srv/www symlinks to /var/www
 # used in CDH Django projects.
@@ -37,7 +37,9 @@
         src: "{{ deploy }}"
         dest: "/var/www/{{ symlink }}"
         state: link
-      notify: restart apache
+      notify:
+        - restart httpd
+        - restart apache
 
     # This makes sure that any server side settings that handle autoconfiguring
     # SELinux permissions (that we would otherwise need to be root for) are

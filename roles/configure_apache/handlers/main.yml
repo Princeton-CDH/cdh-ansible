@@ -1,9 +1,14 @@
 ---
-- name: restart apache
-  service:
-    name: apache2
-    enabled: true
-    state: restarted
+
+# NOTE: moved this handler to finalize_deploy so it can be
+# referenced in playbooks that don't use this role; may move back
+# eventually when Springdale hosts are no longer used
+
+# - name: restart apache
+#   service:
+#     name: apache2
+#     enabled: true
+#     state: restarted
 
 - name: reload apache
   service:
