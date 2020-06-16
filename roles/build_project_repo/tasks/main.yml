@@ -51,7 +51,7 @@
         recurse: yes
       # only set owner when deploy user is defined
       # (i.e. on PUL vms, where deploy user is different than remote user)
-      when: deploy_user is defined
+      when: deploy_user is defined and ansible_distribution != 'Springdale'
 
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
