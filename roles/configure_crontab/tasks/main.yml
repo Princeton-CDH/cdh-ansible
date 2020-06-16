@@ -10,7 +10,7 @@
     with_items:   # only include items with special time defined
       "{{ crontab | selectattr('special_time', 'defined') | list }}"
   # non-special time cron jobs
-  - name: "Configure crontab — (scheduled"
+  - name: "Configure crontab — scheduled"
     cron:
       name: "{{ item.name }}"
       minute: "{{ item.minute | default('*') }}"
