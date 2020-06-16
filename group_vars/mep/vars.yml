@@ -39,5 +39,6 @@ crontab:
 
   - name: "{{ django_app }} reindex works"
     minute: 45
-    job: "{{ deploy }}/env/bin/{{ python_version }} {{ deploy }}/manage.py index -i work  >> {{ logging_dir }}/index_works.log 2>&1"
+    job: "echo '/srv/www/qa/mep-django/1.1.1-223215/env/bin/python3.5 /srv/www/qa/mep-django/1.1.1-223215/manage.py index -i work --no-progress >> /srv/www/qa/mep-django/logs/index_works.log 2>&1' | scl enable rh-python35 -"
+    job: "scl enable rh-python35 bash && {{ deploy }}/env/bin/{{ python_version }} {{ deploy }}/manage.py index -i work  >> {{ logging_dir }}/index_works.log 2>&1"
     state: present
