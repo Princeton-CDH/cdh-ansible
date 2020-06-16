@@ -19,4 +19,5 @@
     - backup_database
     - django_migrate
     - finalize_deploy
+    - configure_crontab
     - close_deployment
