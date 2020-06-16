@@ -29,3 +29,15 @@ solr_configset: sandco
 media_root: '/srv/www/prod/media'
 
 technical_contact: cdhdevteam@princeton.edu
+
+# explicitly specify deploy user, since mep playbook does not include install_app_config
+# and deploy user is required for crontab role
+deploy_user: "deploy"
+
+# configure scripts to run as cron jobs
+crontab:
+
+  - name: "{{ django_app }} reindex works"
+    minute: 45
+    job: "{{ deploy }}/env/bin/{{ python_version }} {{ deploy }}/manage.py index -i work  >> {{ logging_dir }}/index_works.log 2>&1"
+    state: present
