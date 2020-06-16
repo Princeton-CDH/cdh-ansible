@@ -1,23 +1,26 @@
-- name: "Configure crontab (special times)"
-  cron:
-    name: "{{ item.name }}"
-    special_time: "{{ item.special_time }}"
-    job: "{{ item.job }}"
-    user: "{{ deploy_user }}"
-    state: "{{ item.state | default('present') }}"
-  with_items:   # only include items with special time defined
-    "{{ crontab | selectattr('special_time', 'defined') | list }}"
-
-# non-special time cron jobs
-- name: "Configure crontab (scheduled)"
-  cron:
-    name: "{{ item.name }}"
-    minute: "{{ item.minute | default('*') }}"
-    hour: "{{ item.hour | default('*')}}"
-    day: "{{ item.day | default('*')}}"
-    month: "{{ item.month | default('*')}}"
-    job: "{{ item.job }}"
-    user: "{{ deploy_user }}"
-    state: "{{ item.state | default('present') }}"
-  with_items:   # only include items with special time NOT set
-    "{{ crontab | selectattr('special_time', 'undefined') | list }}"
+- name: Configure cron jobs
+  block:
+  - name: "Configure crontab — special times"
+    cron:
+      name: "{{ item.name }}"
+      special_time: "{{ item.special_time }}"
+      job: "{{ item.job }}"
+      user: "{{ deploy_user }}"
+      state: "{{ item.state | default('present') }}"
+    with_items:   # only include items with special time defined
+      "{{ crontab | selectattr('special_time', 'defined') | list }}"
+  # non-special time cron jobs
+  - name: "Configure crontab — (scheduled"
+    cron:
+      name: "{{ item.name }}"
+      minute: "{{ item.minute | default('*') }}"
+      hour: "{{ item.hour | default('*')}}"
+      day: "{{ item.day | default('*')}}"
+      month: "{{ item.month | default('*')}}"
+      job: "{{ item.job }}"
+      user: "{{ deploy_user }}"
+      state: "{{ item.state | default('present') }}"
+    with_items:   # only include items with special time NOT set
+      "{{ crontab | selectattr('special_time', 'undefined') | list }}"
+  rescue:
+    - include_tasks: roles/create_deployment/tasks/fail.yml
