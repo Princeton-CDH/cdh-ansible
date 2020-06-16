@@ -20,7 +20,7 @@
         path: '{{ logging_dir }}'
         group: '{{ deploy_user }}'
         recurse: true
-      when: deploy_user is defined
+      when: deploy_user is defined and ansible_distribution != 'Springdale'
     - name: Create logging directory default acl & set sticky bit
       shell: 'chmod g+s {{ logging_dir }} && setfacl -d -m g::rw {{ logging_dir }}'
       args:
