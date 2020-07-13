@@ -9,3 +9,13 @@ allowed_hosts:
   - shakespeareandco.princeton.edu
 # - solr settings
 solr_url: http://index.cdh.princeton.edu:8983/solr
+
+
+# configure scripts to run as cron jobs
+crontab:
+
+  - name: "{{ django_app }} schedule 100 years tweets"
+    minute: 30
+    hour: 2
+    job: "bin/cron-wrapper {{ deploy }}/env/bin/python {{ deploy }}/manage.py twitterbot_100years schedule  >> {{ logging_dir }}/twitterbot_100years.log  2>&1"
+    state: present
