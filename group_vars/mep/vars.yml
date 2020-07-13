@@ -34,11 +34,3 @@ technical_contact: cdhdevteam@princeton.edu
 # and deploy user is required for crontab role
 deploy_user: "deploy"
 
-# configure scripts to run as cron jobs
-crontab:
-
-  - name: "{{ django_app }} reindex works"
-    minute: 5
-    hour: 2
-    job: "echo '{{ deploy }}/env/bin/python {{ deploy }}/manage.py index -i work --no-progress >> {{ logging_dir }}/index_works.log 2>&1' | scl enable rh-python35 -"
-    state: present

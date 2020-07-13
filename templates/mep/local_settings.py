@@ -48,6 +48,7 @@ MAPBOX_ACCESS_TOKEN = '{{ mapbox_token }}'
 MAPBOX_BASEMAP = '{{ mapbox_basemap }}'
 PARIS_OVERLAY = '{{ paris_overlay }}'
 
+{% if twitter_100years is defined %}
 TWITTER_100YEARS = {
     'API': {
         'key': '{{ twitter_100years.api.key }}',
@@ -58,6 +59,7 @@ TWITTER_100YEARS = {
         'secret': '{{ twitter_100years.access.secret }}',
     }
 }
+{% endif %}
 
 {% endblock %}
 
