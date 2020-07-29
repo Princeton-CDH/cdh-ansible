@@ -19,5 +19,5 @@
     - backup_database
     - django_migrate
     - finalize_deploy
-    - configure_crontab
+    # - configure_crontab  # used in prod but not in qa
     - close_deployment
