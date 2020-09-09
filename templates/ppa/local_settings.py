@@ -6,10 +6,10 @@
 {% block solr_config %}
 SOLR_CONNECTIONS = {
     'default': {
-        'COLLECTION': '{{ solr_collection }}',
         'URL': '{{ solr_url }}',
-        'ADMIN_URL': '{{ solr_admin_url }}'
-    },
+        'COLLECTION': '{{ solr_collection }}',
+        'CONFIGSET': '{{ solr_configset }}'
+    }
 }
 {% endblock %}
 

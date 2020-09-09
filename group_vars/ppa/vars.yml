@@ -15,6 +15,7 @@ django_app: ppa
 symlink: 'prosody'
 # Solr settings for QA and staging (production will override)
 solr_collection: ppa
+solr_configset: ppa
 # path to hathitree pairtree data
 hathitrust_pairtree_path: '/home/deploy/ppa/ht_text_pd/'
 # ansible template path for local settings file
