@@ -44,17 +44,17 @@ derrida_qa
 derrida_prod
 derrida_staging
 
-[cdh-web_qa]
+[cdhweb_qa]
 test-web.cdh.princeton.edu
-[cdh-web_prod]
+[cdhweb_prod]
 cdh.princeton.edu
-[cdh-web_staging]
-cdh-web_stg ansible_host=127.0.0.1 ansible_port=2222 ansible_ssh_private_key_file=vagrant/id_rsa
+[cdhweb_staging]
+cdhweb_stg ansible_host=127.0.0.1 ansible_port=2222 ansible_ssh_private_key_file=vagrant/id_rsa
 
-[cdh-web:children]
-cdh-web_qa
-cdh-web_prod
-cdh-web_staging
+[cdhweb:children]
+cdhweb_qa
+cdhweb_prod
+cdhweb_staging
 
 
 [ppa_qa]
@@ -96,13 +96,13 @@ pemm_prod
 winthrop_staging
 derrida_staging
 ppa_staging
-cdh-web_staging
+cdhweb_staging
 mep_staging
 
 [qa:children]
 winthrop_qa
 derrida_qa
 ppa_qa
-cdh-web_qa
+cdhweb_qa
 mep_qa
 pemm_qa
