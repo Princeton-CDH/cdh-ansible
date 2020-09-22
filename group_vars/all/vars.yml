@@ -54,8 +54,8 @@ short_hash: '{{ repo_info.after[0:6] }}'
 deploy: '{{ install_root }}/{{ version }}-{{ short_hash }}'
 # Database backup location
 db_backup: '/tmp/pre-{{ version }}-{{ short_hash }}-{{ inventory_hostname_short }}.sql'
-# version (referenced from build_project_repo role)
-version: '{{ ver.stdout }}'
+# python app version. Generated in build_project_repo
+version: '{{ python_app_version.stdout }}'
 # logging directory
 logging_dir: '{{ install_root }}/logs'
 # logging file
