@@ -11,7 +11,7 @@
   block:
     - name: Debug environmental variables early in deploy cycle
       debug:
-        msg: 'PATH: {{ path }} / LD_LIBRARY_PATH: {{ ld_library_path }} / PYTHONPATH: {{ python_path}} / ansible ansible_distribution_release: {{ ansible_distribution_release }}'
+        msg: 'PATH: {{ path }} / LD_LIBRARY_PATH: {{ ld_library_path }} / PYTHONPATH: {{ python_path }} / ansible ansible_distribution_release: {{ ansible_distribution_release }}'
         verbosity: 2
       when:  ansible_distribution == 'Springdale'
     - name: Clone project repository and set to the correct version
@@ -21,12 +21,11 @@
         version: '{{ gitref }}'
       # register repo_info for group_vars
       register: repo_info
-    - name: Get version information from __init__.py for Python projects
-      # This script is present in get_ver.py, and should be safe for all
-      # system pythons greater than 2.
-      script: get_ver.py {{ clone_root}}/{{ repo }} {{ django_app }}
-      register: ver
-      check_mode: no
+    - name: Get python package version
+      shell:
+        cmd: "python -c 'import {{ django_app }}; print({{ django_app }}.__version__)'"
+        chdir: "{{ clone_root}}/{{ repo }}"
+      register: python_app_version
       tags:
         - django
     - name: Create the deploy directory (to recursively create parent dirs if necessary)
