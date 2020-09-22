@@ -1,5 +1,5 @@
 ###
-# Common variables for cdh-web
+# Common variables for cdhweb
 ###
 
 # NOTE: Default paths are acceptable as is from all
@@ -11,7 +11,7 @@ django_app: cdhweb
 # symlink for Apache vhost
 symlink: cdh-web
 # template path
-template_path: cdh-web
+template_path: cdhweb
 # media_root settings
 media_root: /srv/www/media
 
