@@ -1,0 +1,70 @@
+---
+- name: Copy Google credentials file
+  copy:
+    src: "files/{{ credentials_file }}"
+    dest: "{{ credentials_path }}"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: 400
+
+- name: Ensure .ssh directory exists.
+  file:
+    path: "/home/{{ deploy_user }}/.ssh"
+    state: directory
+    mode: 0700
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+
+- name: Ensure GitHub ssh key is present on the server.
+  copy:
+    src: "files/github_id_rsa"
+    dest: "/home/{{ deploy_user }}/.ssh/id_rsa"
+    mode: 0600
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+
+- name: Ensure gitconfig is present on the server.
+  copy:
+    src: "files/gitconfig"
+    dest: "/home/{{ deploy_user }}/.gitconfig"
+    mode: 0600
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+
+- name: Check out git data repository
+  git:
+    repo: "git@github.com:{{ data_repo }}.git"
+    dest: "{{ data_repo_path }}"
+    version: "{{ data_repo_branch | default('master') }}"
+    accept_hostkey: yes
+    key_file: /home/{{ deploy_user }}/.ssh/id_rsa
+
+- name: Set owner on git data repository
+  file:
+    dest: "{{ data_repo_path }}"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    recurse: yes
+
+- name: Install local settings for flask
+  template:
+    src: "local_settings.cfg.j2"
+    dest: "{{ deploy }}/scripts/local_settings.cfg"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+
+- name: Ensure bin directory exists.
+  file:
+    path: "/home/{{ deploy_user }}/bin"
+    state: directory
+    mode: 0700
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+
+- name: Ensure cron wrapper script is present
+  copy:
+    src: "files/cron-wrapper"
+    dest: "/home/{{ deploy_user }}/bin/cron-wrapper"
+    mode: 0700
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
