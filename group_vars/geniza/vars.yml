@@ -1,73 +1,40 @@
 ###
-# Variables for PEMM that apply across all deploy groups (prod, qa, and staging)
+# Variables for Geniza that apply across all deploy groups (prod, qa, and staging)
 ###
 ---
-# do we still need these for ubuntu? should use python3.6
-# Using python35 and nodejs8 for QA and staging
 # Paths are picky and spaces for any YAML multiline syntax causes issues
 #path: '/opt/rh/rh-python35/root/usr/bin:/opt/rh/rh-nodejs8/root/usr/bin:{{ ansible_env.PATH }}'
 #ld_library_path: '/opt/rh/rh-python35/root/usr/lib64:/opt/rh/rh-nodejs8/root/usr/lib64{% if ansible_env.LD_LIBRARY_PATH is defined %}:{{ ansible_env.LD_LIBRARY_PATH }}{% endif %}'
 #python_path: '/opt/rh/rh-nodejs8/root/usr/lib/python2.7/site-packages{% if ansible_env.PYTHON_PATH is defined %}:{{ ansible_env.PYTHONPATH }}{% endif %}'
 # GitHub repository
-repo: 'Princeton-CDH/pemm-scripts'
+repo: 'Princeton-CDH/geniza'
 # name of python application
 django_app: scripts
 # application name
-app_name: pemm
+app_name: geniza
 # apache symlink
 symlink: "{{ app_name }}"
 # Solr settings
-solr_collection: pemm
+solr_collection: geniza
 # apache location
 apache_app_path: "/var/www/{{ app_name }}"
 # wsgi file relative to apache location
-wsgi_path: "pemm.wsgi"
+wsgi_path: "{{ app_name }}.wsgi"
 # use python 3.6
 python_version: "python3.6"
 # Override clone root to use deploy user home instead of root
 clone_root: "/home/{{ deploy_user }}/repos"
-# for PEMM, don't differentiate qa/prod paths
+# for Geniza, do we want to differentiate between qa/prod paths?
 install_root: '/srv/www/{{ app_name }}'
 
 # override default production contexts (no code coverage for this project yet)
 deploy_contexts:
     - 'continuous-integration/travis-ci/push'
 
-# Google credentials
-# - filename in pemm setup role files directory
-credentials_file: pemm_credentials.json
-# - credentials path on the deploy server
-credentials_path: "/home/{{ deploy_user }}/pemm_credentials.json"
-
-# data repository
-data_repo: 'Princeton-CDH/pemm-qa-data'
-# path to checked out repository on the deploy server
-data_repo_path: "{{ clone_root }}/{{ app_name }}-data"
-
 app_vars:
-  - name: PEMM_SOLR_URL
+  - name: GENIZA_SOLR_URL
     value: "{{ solr_url }}"
-  - name: PEMM_SOLR_CORE
+  - name: GENIZA_SOLR_CORE
     value: "{{ solr_collection }}"
   - name: FLASK_APP
     value: 'scripts/server.py'
-  - name: PEMM_DATA_REPO_PATH
-    value: "{{ data_repo_path }}"
-  - name: PEMM_GSHEETS_DOCID
-    value: "{{ vault_gsheets_docid }}"
-  - name: PEMM_INCIPIT_CSVPATH
-    value: "{{ data_repo_path }}/data/story_instance.csv"
-
-# configure scripts to run as cron jobs
-crontab:
-
-  - name: "{{ app_name }} synchronize google sheets to git"
-    minute: 1
-    job: "bin/cron-wrapper {{ apache_app_path }}/env/bin/{{ python_version }} {{ apache_app_path }}/scripts/gsheets_to_git.py  >> {{ logging_dir }}/gsheets_to_git.log 2>&1"
-    state: present
-
-  - name: "{{ app_name }} index incipts"
-    minute: 3
-    job: "bin/cron-wrapper {{ apache_app_path }}/env/bin/{{ python_version }} {{ apache_app_path }}/scripts/index_incipits.py >> {{ logging_dir }}/index_incipit.log 2>&1"
-    state: present
-
