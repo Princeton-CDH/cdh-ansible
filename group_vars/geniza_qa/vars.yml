@@ -1,2 +1,3 @@
 solr_url: 'https://test-index.cdh.princeton.edu/'
-solr_core: 'pemm'
+solr_core: 'geniza_qa'
+gitref: 'experiment/search'
