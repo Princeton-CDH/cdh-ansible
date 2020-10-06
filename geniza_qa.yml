@@ -1,4 +1,4 @@
-- hosts: pemm_qa
+- hosts: geniza_qa
   connection: ssh
   remote_user: pulsys
   become: true
@@ -11,6 +11,6 @@
     - configure_logging
     - configure_apache
     - configure_crontab
-    - pemm_setup
+    - geniza_setup
     - finalize_deploy
     - close_deployment
