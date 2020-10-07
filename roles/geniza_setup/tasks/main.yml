@@ -5,11 +5,3 @@
     dest: "{{ deploy }}/scripts/local_settings.cfg"
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
-
-- name: Ensure bin directory exists.
-  file:
-    path: "/home/{{ deploy_user }}/bin"
-    state: directory
-    mode: 0700
-    owner: "{{ deploy_user }}"
-    group: "{{ deploy_user }}"
