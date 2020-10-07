@@ -11,6 +11,6 @@
     - configure_logging
     - configure_apache
     - configure_crontab
-    - geniza_setup
+    - install_local_settings
     - finalize_deploy
     - close_deployment

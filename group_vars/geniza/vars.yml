@@ -26,19 +26,13 @@ python_version: "python3.6"
 clone_root: "/home/{{ deploy_user }}/repos"
 # for Geniza, we don't distinguish between qa/prod paths
 install_root: '/srv/www/{{ app_name }}'
+# path to dir that holds local_settings.py
+template_path: "{{ app_name }}"
 solr_core: 'geniza'
 
 # override default production contexts (no code coverage for this project yet)
 deploy_contexts:
     - 'continuous-integration/travis-ci/push'
-
-app_vars:
-  - name: GENIZA_SOLR_URL
-    value: "{{ solr_url }}"
-  - name: GENIZA_SOLR_CORE
-    value: "{{ solr_collection }}"
-  - name: FLASK_APP
-    value: 'scripts/server.py'
 
 # configure scripts to run as cron jobs
 crontab:
