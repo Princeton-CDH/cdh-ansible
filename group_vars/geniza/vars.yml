@@ -38,3 +38,10 @@ app_vars:
     value: "{{ solr_collection }}"
   - name: FLASK_APP
     value: 'scripts/server.py'
+
+# configure scripts to run as cron jobs
+crontab:
+  - name: "{{ app_name }} index metadata"
+    minute: 5
+    job: "bin/cron-wrapper {{ deploy }}/env/bin/flask index {{ deploy }}/data/pgp-metadata.csv >> {{ logging_dir }}/index.log  2>&1"
+    state: present
