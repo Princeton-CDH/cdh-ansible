@@ -91,9 +91,9 @@ pemm_qa
 pemm_prod
 
 [geniza_qa]
-test-geniza.cdh.princeton.edu
+cdh-test-geniza1.princeton.edu
 [geniza_prod]
-geniza.cdh.princeton.edu
+cdh-geniza1.princeton.edu
 
 [geniza:children]
 geniza_qa
