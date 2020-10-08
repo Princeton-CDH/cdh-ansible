@@ -31,8 +31,7 @@ template_path: "{{ app_name }}"
 solr_core: 'geniza'
 
 # override default production contexts (no code coverage for this project yet)
-deploy_contexts:
-    - 'continuous-integration/travis-ci/push'
+deploy_contexts: []
 
 # configure environment variables
 app_vars:
