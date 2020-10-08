@@ -34,6 +34,11 @@ solr_core: 'geniza'
 deploy_contexts:
     - 'continuous-integration/travis-ci/push'
 
+# configure environment variables
+app_vars:
+  - name: FLASK_APP
+    value: 'scripts/server.py'
+
 # configure scripts to run as cron jobs
 crontab:
   - name: "{{ app_name }} index metadata"
