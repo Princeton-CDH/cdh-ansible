@@ -23,19 +23,22 @@
     with_items:   # only include items with special time NOT set
       "{{ crontab | selectattr('special_time', 'undefined') | list }}"
 
-  - name: "Ensure bin directory exists."
+  - name: Ensure bin directory exists.
     file:
       path: "/home/{{ deploy_user }}/bin"
       state: directory
       mode: 0700
-    when:  ansible_distribution == 'Springdale'
+      owner: "{{ deploy_user }}"
+      group: "{{ deploy_user }}"
 
-  - name: "Ensure cron wrapper script is present."
+  - name: Ensure cron wrapper script is present
     copy:
       src: "files/cron-wrapper"
       dest: "/home/{{ deploy_user }}/bin/cron-wrapper"
       mode: 0700
-    when:  ansible_distribution == 'Springdale'
+      owner: "{{ deploy_user }}"
+      group: "{{ deploy_user }}"
+
 
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
