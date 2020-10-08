@@ -21,6 +21,6 @@
         etype: group
         permissions: r
         state: present
-      when: qa is defined
+      when: qa is defined and ansible_distribution == 'Springdale'
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
