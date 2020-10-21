@@ -5,9 +5,9 @@
   roles:
     - create_deployment
     - build_dependencies
-    - install_app_config
     - build_project_repo
     - build_virtualenv
+    - install_app_config
     - configure_logging
     - configure_apache
     - configure_crontab
