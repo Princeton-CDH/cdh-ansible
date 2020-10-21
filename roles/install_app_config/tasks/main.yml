@@ -1,41 +1,45 @@
 ---
-- name: Create system user group
-  group:
-    name: "{{ deploy_user }}"
+- name: Install application specific environment variables
+  block:
+  - name: Create system user group
+    group:
+      name: "{{ deploy_user }}"
 
-- name: Create system user
-  user:
-    name: "{{ deploy_user }}"
-    group: "{{ deploy_user }}"
-    home: "/home/{{ deploy_user }}"
-    shell: "{{ deploy_user_shell }}"
+  - name: Create system user
+    user:
+      name: "{{ deploy_user }}"
+      group: "{{ deploy_user }}"
+      home: "/home/{{ deploy_user }}"
+      shell: "{{ deploy_user_shell }}"
 
-- name: Create .bashrc
-  file:
-    path: '/home/{{ deploy_user }}/.bashrc'
-    state: 'touch'
-    owner: '{{ deploy_user }}'
-    group: '{{ deploy_user }}'
+  - name: Create .bashrc
+    file:
+      path: '/home/{{ deploy_user }}/.bashrc'
+      state: 'touch'
+      owner: '{{ deploy_user }}'
+      group: '{{ deploy_user }}'
 
-- name: Create app_configs directory
-  file:
-    path: '/home/{{ deploy_user }}/app_configs'
-    state: 'directory'
-    owner: '{{ deploy_user }}'
-    group: '{{ deploy_user }}'
+  - name: Create app_configs directory
+    file:
+      path: '/home/{{ deploy_user }}/app_configs'
+      state: 'directory'
+      owner: '{{ deploy_user }}'
+      group: '{{ deploy_user }}'
 
-- name: Install app configuration
-  template:
-    src: 'app_config'
-    dest: '/home/{{ deploy_user }}/app_configs/{{ app_name }}'
-    owner: '{{ deploy_user }}'
-    group: '{{ deploy_user }}'
+  - name: Install app configuration
+    template:
+      src: 'app_config'
+      dest: '/home/{{ deploy_user }}/app_configs/{{ app_name }}'
+      owner: '{{ deploy_user }}'
+      group: '{{ deploy_user }}'
 
 
-- name: Load app configs
-  lineinfile: >
-              dest='/home/{{ deploy_user }}/.bashrc'
-              state=present
-              regexp='^for f in ~/app_configs/\*; do source \$f; done$'
-              line="for f in ~/app_configs/*; do source $f; done"
-              insertbefore=BOF
+  - name: Load app configs
+    lineinfile: >
+                dest='/home/{{ deploy_user }}/.bashrc'
+                state=present
+                regexp='^for f in ~/app_configs/\*; do source \$f; done$'
+                line="for f in ~/app_configs/*; do source $f; done"
+                insertbefore=BOF
+  rescue:
+    - include_tasks: roles/create_deployment/tasks/fail.yml
