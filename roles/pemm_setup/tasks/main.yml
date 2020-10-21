@@ -52,19 +52,3 @@
     dest: "{{ deploy }}/scripts/local_settings.cfg"
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
-
-- name: Ensure bin directory exists.
-  file:
-    path: "/home/{{ deploy_user }}/bin"
-    state: directory
-    mode: 0700
-    owner: "{{ deploy_user }}"
-    group: "{{ deploy_user }}"
-
-- name: Ensure cron wrapper script is present
-  copy:
-    src: "files/cron-wrapper"
-    dest: "/home/{{ deploy_user }}/bin/cron-wrapper"
-    mode: 0700
-    owner: "{{ deploy_user }}"
-    group: "{{ deploy_user }}"
