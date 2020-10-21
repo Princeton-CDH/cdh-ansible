@@ -90,6 +90,14 @@ cdh-pemm1.princeton.edu
 pemm_qa
 pemm_prod
 
+[geniza_qa]
+cdh-test-geniza1.princeton.edu
+[geniza_prod]
+cdh-geniza1.princeton.edu
+
+[geniza:children]
+geniza_qa
+geniza_prod
 
 ### staging, prod, and qa stanzas to create shared groups
 [staging:children]
@@ -106,3 +114,4 @@ ppa_qa
 cdhweb_qa
 mep_qa
 pemm_qa
+geniza_qa
