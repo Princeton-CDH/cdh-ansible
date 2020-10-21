@@ -41,8 +41,8 @@ templates_dir: 'templates/'
 repo_url: 'https://www.github.com/{{ repo }}.git'
 # home directory (on remote)
 home: '{{ ansible_env.HOME }}'
-# default to using master unless set otherwise
-gitref: '{{ ref | default("master") }}'
+# default to using main unless set otherwise
+gitref: '{{ ref | default("main") }}'
 # set default install root for all but qa
 install_root: /srv/www/prod
 
