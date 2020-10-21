@@ -1,0 +1,16 @@
+- hosts: geniza_qa
+  connection: ssh
+  remote_user: pulsys
+  become: true
+  roles:
+    - create_deployment
+    - build_dependencies
+    - build_project_repo
+    - build_virtualenv
+    - install_app_config
+    - configure_logging
+    - configure_apache
+    - configure_crontab
+    - install_local_settings
+    - finalize_deploy
+    - close_deployment
