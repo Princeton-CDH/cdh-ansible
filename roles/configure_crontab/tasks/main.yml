@@ -29,7 +29,12 @@
       state: directory
       mode: 0700
       owner: "{{ deploy_user }}"
-      group: "{{ deploy_user }}"
+
+  - name: Set group ownership for bin directory (Ubuntu only)
+    file:
+      path: "/home/{{ deploy_user }}/bin"
+      group: "{{ deploy_user }}"  # deploy group doesn't exist on springdale
+    when: ansible_distribution == 'Ubuntu'
 
   - name: Ensure cron wrapper script is present
     copy:
@@ -37,8 +42,12 @@
       dest: "/home/{{ deploy_user }}/bin/cron-wrapper"
       mode: 0700
       owner: "{{ deploy_user }}"
-      group: "{{ deploy_user }}"
 
+  - name: Set group ownership for cron wrapper script (Ubuntu only)
+    file:
+      path: "/home/{{ deploy_user }}/bin/cron-wrapper"
+      group: "{{ deploy_user }}"  # deploy group doesn't exist on springdale
+    when: ansible_distribution == 'Ubuntu'
 
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
