@@ -19,3 +19,7 @@ media_root: /srv/www/media
 path: '/opt/rh/rh-python35/root/usr/bin:/opt/rh/rh-nodejs10/root/usr/bin:{{ ansible_env.PATH }}'
 ld_library_path: '/opt/rh/rh-python35/root/usr/lib64:/opt/rh/rh-nodejs10/root/usr/lib64{% if ansible_env.LD_LIBRARY_PATH is defined %}:{{ ansible_env.LD_LIBRARY_PATH }}{% endif %}'
 python_path: '/opt/rh/rh-nodejs10/root/usr/lib/python2.7/site-packages{% if ansible_env.PYTHON_PATH is defined %}:{{ ansible_env.PYTHONPATH }}{% endif %}'
+
+# explicitly specify deploy user, since cdhweb playbook does not include install_app_config
+# and deploy user is required for crontab role
+deploy_user: "deploy"
