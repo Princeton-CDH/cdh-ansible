@@ -1,0 +1,14 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: pul-docker
+    image: "pulibrary/puldocker-ubuntu1804-ansible:latest"
+    pre_build_image: true
+provisioner:
+  name: ansible
+  log: true
+verifier:
+  name: ansible
