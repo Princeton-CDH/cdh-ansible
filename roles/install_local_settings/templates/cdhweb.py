@@ -1,4 +1,4 @@
-{% extends 'templates/common/base.py' %}
+{% extends 'base.py' %}
 
 {% block basic_settings %}
 {{ super() }}
