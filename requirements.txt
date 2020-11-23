@@ -1,6 +1,6 @@
-ansible==2.8
-passlib
+ansible
+ansible-base
 molecule[docker]
 ansible-lint
-flake8
 gitpython
+passlib
