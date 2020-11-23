@@ -1,0 +1,27 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - ../../defaults/main.yml
+  tasks:
+    - name: "get installed packages"
+      apt:
+        name: '{{ common_packages }}'
+        state: present
+      check_mode: yes
+      register: pkg_status
+    - name: "check all packages were installed"
+      assert:
+        that:
+          - not pkg_status.changed
+    - name: "look for tmux.conf"
+      stat:
+        path: /etc/tmux.conf
+      register: tmux_conf
+    - name: "check tmux.conf is installed"
+      assert:
+        that:
+          - tmux_conf.stat.exists and tmux_conf.stat.isreg

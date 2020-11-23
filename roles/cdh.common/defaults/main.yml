@@ -1,6 +1,7 @@
 ---
-# defaults dependencies common
-configured_dependencies:
+# defaults file for cdh.common
+configured_dependencies: []
+common_packages:
   - acl
   - build-essential
   - curl

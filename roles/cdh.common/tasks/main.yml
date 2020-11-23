@@ -1,7 +1,8 @@
 ---
-- name: Install configured dependencies
+# tasks file for cdh.common
+- name: install common packages
   apt:
-    name: '{{ configured_dependencies }}'
+    name: '{{ common_packages }}'
     state: present
     update_cache: true
   changed_when: false

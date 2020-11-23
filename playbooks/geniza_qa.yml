@@ -4,7 +4,7 @@
   become: true
   roles:
     - create_deployment
-    - build_dependencies
+    - cdh.common
     - build_project_repo
     - build_virtualenv
     - install_app_config
