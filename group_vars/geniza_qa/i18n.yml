@@ -1,0 +1,17 @@
+# i18n is a separate django app
+app_name: 'geniza_i18n'
+# django app is called "geniza"
+django_app: geniza
+# the i18n prototype is hosted on the "experiment/i18n" branch
+gitref: 'experiment/i18n'
+# wsgi file is inside django app folder
+wsgi_path: "{{ django_app }}/wsgi.py"
+# serve at a different prefix
+apache_app_url: '/i18n'
+# explicitly specify deploy user
+deploy_user: "deploy"
+# allow QA host
+allowed_hosts:
+  - 'test-geniza.cdh.princeton.edu'
+# email prefix
+email_prefix: "[QA Geniza i18n]"
