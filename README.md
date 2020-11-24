@@ -52,7 +52,7 @@ To run a playbook, from your virtual environment, simply invoke:
 ansible-playbook playbooks/name_of_playbook.yml
 ```
 
-QA playbooks should point by default to the develop branch and production playbooks (denoted by an absence of `_qa` suffix) to master.
+QA playbooks should point by default to the develop branch and production playbooks (denoted by an absence of `_qa` suffix) to main.
 
 To deploy a different reference (hash, tag, or branch), use the syntax:
 
