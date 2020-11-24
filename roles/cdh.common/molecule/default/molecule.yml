@@ -1,20 +1,20 @@
 ---
-dependency:
+dependency:   # no dependencies on other roles, so we turn this off
   name: galaxy
   enabled: false
 driver:
   name: docker
-platforms:
+platforms:    # use PUL's provided docker base image with ubuntu
   - name: instance
     image: "pulibrary/puldocker-${MOLECULE_DISTRO:-ubuntu1804}-ansible:latest"
     privileged: true
     pre_build_image: true
 provisioner:
   name: ansible
-  log: true
+  log: true   # useful when testing; otherwise logs aren't shown
 verifier:
   name: ansible
-lint: |
+lint: |       # standard config taken from molecule docs
   set -e
   yamllint .
   ansible-lint
