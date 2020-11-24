@@ -1,4 +1,4 @@
-{% extends 'base.py' %}
+{% extends 'settings.py' %}
 
 {% block solr_config %}
 HAYSTACK_CONNECTIONS = {
