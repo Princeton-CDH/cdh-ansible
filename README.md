@@ -3,21 +3,21 @@
 ## Overall structure
 
 The overall structure of this repository can be broken down as follows:
+  - `playbooks` - collections of roles executed in series against a host.
   - `roles` - the various tasks that Ansible can perform in a group.
   - `group_vars` - the group variables for different deploys
     - `all` - any variables shared by all deploys
       - `vars.yml`- unencrypted all variables
       - `vault.yml` - `ansible vault` encrypted variables
     - Individual project group variables
-  - `templates` - templated files under folder named by group
   - `hosts` - host file with groups and their associated host(s)
-  - top level YAML files for different groups.
 
 ## Using these playbooks
 
 ### Requirements
-  - Virtual environment with Ansible 2.4+ installed.
-    - If you use `env`, the `.gitignore` will automatically exclude it.
+  - Python virtual environment.
+    - See `.python-version` for the recommended version of Python.
+    - If you use `env` or `venv`, the `.gitignore` will exclude it.
   - The CDH Ansible vault key. This can be referenced on the command line or
   better set as in the Bash session, i.e.
   `export ANSIBLE_VAULT_PASSWORD_FILE=/path/to/.passwd`
@@ -61,7 +61,7 @@ emerging.
 To run a playbook, from your virtual environment, simply invoke:
 
 ```{bash}
-ansible-playbook name_of_playbook.yml
+ansible-playbook playbooks/name_of_playbook.yml
 ```
 
 QA playbooks should point by default to the develop branch and production playbooks
@@ -70,7 +70,7 @@ QA playbooks should point by default to the develop branch and production playbo
 To deploy a different reference (hash, tag, or branch), use the syntax:
 
 ```{bash}
-ansible-playbook -e ref=GITREF name_of_playbook.yml
+ansible-playbook -e ref=GITREF playbooks/name_of_playbook.yml
 ```
 
 The playbook will run, noting success and failures. The `-v` flag adjusts verbosity
@@ -83,7 +83,7 @@ playbook with a `host_group` matching the deploy you want to
 revert, e.g.:
 
 ```{bash}
-ansible-playbook -e host_group=mep_qa revert_deploy.yml
+ansible-playbook -e host_group=mep_qa playbooks/revert_deploy.yml
 ```
 
 ## Overrides
@@ -97,13 +97,13 @@ You can also override any other arbitrary variable, but the other likely one
 is the `requirements` file. You may want to point to a `requirements.lock`,
 for example:
 ```{bash}
-ansible-playbook -e requirements_type=lock playbook.yml
+ansible-playbook -e requirements_type=lock playbooks/playbook.yml
 ```
 
 You can also pass a list of arbitrary additions or updates to pip (except for
 git pinned requirements):
 ```{bash}
-ansible-playbook -e pip_updates='django-autocomplete-light<3.3' playbook.yml
+ansible-playbook -e pip_updates='django-autocomplete-light<3.3' playbooks/playbook.yml
 ```
 
 If you need to do more than one requirement, you can pass references using JSON
@@ -120,7 +120,7 @@ whatever reason, you can also entirely replace `requirements.(txt|lock)` with a
 local template:
 
 ```{bash}
-ansible-playbook -e new_requirements=/path/to/local/template.txt playbook.yml
+ansible-playbook -e new_requirements=/path/to/local/template.txt playbooks/playbook.yml
 ```
 
 ## Vault variables
@@ -171,24 +171,3 @@ The rough order of creating a playbook is:
   6. Add roles to the list in the new playbook in the order needed.
   7. N.B. Make sure you set the `group_name` variable appropriately as some QA
   only steps are skipped based on `_qa` not being in the name.
-
-## Staging playbooks
-
-These are adaptable playbooks (which can either be aimed at production or a
-future production release currently in a branch/develop), that require a running
-instance of the staging vagrant VM running with SSH on port 2222.
-
-To configure this, after you have installed [Vagrant](https://www.vagrantup.com/downloads.html)
-and [VirtualBox](https://www.virtualbox.org/wiki/Downloads)from the `CDH_ansible/vagrant` directory,
-run `vagrant up`. This will take
-considerable time the first run, but will download a Centos 7 box, provision it
-with the necessary packages to emulate production VMs, and set up expected
-settings that Puppet manages on the production VMs.
-
-For detailed info on the VM and its accounts, configuration, especially how to
-set up Solr (since deploys do not yet touch it), see the `vagrant` directory
-[README](vagrant/README.md).
-
-The `prep_staging` role includes an optional task to clear out the www
-directories and database. By default, this is skipped. To enable it,
-specify `-e clear_staging=1`.
