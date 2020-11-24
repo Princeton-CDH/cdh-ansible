@@ -1,4 +1,6 @@
 ---
-# defaults for install_local_settings
+# Allow specifying the name of the localsettings template to use manually
+# By default, assume there is one called app_name_settings.py located in
+# the templates/ folder for this role
 template_path: "{{ app_name }}_settings.py"
 db_backend: "mysql"
