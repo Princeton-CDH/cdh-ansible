@@ -1,0 +1,18 @@
+- hosts: geniza_qa
+  connection: ssh
+  remote_user: pulsys
+  become: true
+  vars_files:
+    - ./group_vars/geniza_qa/i18n.yml
+    - ./group_vars/geniza_qa/i18n_vault.yml
+  roles:
+    - create_deployment
+    - build_dependencies
+    - build_project_repo
+    - build_virtualenv
+    - install_local_settings
+    - django_migrate
+    - django_collectstatic
+    - configure_apache
+    - finalize_deploy
+    - close_deployment
