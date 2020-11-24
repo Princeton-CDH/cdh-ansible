@@ -1,0 +1,4 @@
+# Use test-solr for now since we don't have any true "production" indexes
+solr_url: 'https://test-index.cdh.princeton.edu/'
+# Separate core from QA deploys
+solr_core: 'geniza2'
