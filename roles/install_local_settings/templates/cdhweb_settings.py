@@ -1,16 +1,8 @@
-{% extends 'base.py' %}
+{% extends 'settings.py' %}
 
-{% block solr_config %}
-{# temmporarily restrict to QA #}
-{% if qa is defined %}
-SOLR_CONNECTIONS = {
-    'default': {
-        'COLLECTION': '{{ solr_collection }}',
-        'URL': '{{ solr_url }}',
-        'ADMIN_URL': '{{ solr_admin_url }}'
-    },
-}
-{% endif %}
+{% block basic_settings %}
+{{ super() }}
+NEVERCACHE_KEY = "{{ nevercache_key }}"
 {% endblock %}
 
 {% block logging %}
@@ -29,13 +21,13 @@ LOGGING = {
             'class': 'django.utils.log.AdminEmailHandler',
             'include_html': True
         },
+        {# This configuration lets logrotate and its proper permissions #}
+        {# handle this problem #}
         'debug_log': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.WatchedFileHandler',
             'filename': '{{ logging_path }}',
             'formatter': 'basic',
-            'maxBytes': 1024,
-            'backupCount': 3
         }
     },
     'loggers': {
@@ -44,9 +36,9 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        'winthrop': {
+        'cdhweb': {
             'handlers': ['debug_log'],
-            'level': 'DEBUG',
+            'level': 'WARN',
             'propagate': True,
         },
     }
@@ -54,16 +46,19 @@ LOGGING = {
 {% endblock %}
 
 {% block extra_config %}
-# username for accessing GeoNames API
-GEONAMES_USERNAME = '{{ geonames_username }}'
-# mapbox access token
-MAPBOX_ACCESS_TOKEN = '{{ mapbox_token }}'
-# Add offline compression for QA/PROD servers
+# set compress offline for django-compressor
 COMPRESS_OFFLINE = True
-# temporarily disable compression for QA and testing
-COMPRESS_JS_FILTERS = []
-{% if qa is not defined %}
-# turn on google analytics
-INCLUDE_ANALYTICS = True
-{% endif %}
+
+# Media root settings for production
+MEDIA_ROOT = '{{ media_root }}'
+MEDIA_URL = '/media/'
+
+# Allow SVG
+FILEBROWSER_ESCAPED_EXTENSIONS = []
+
+# managers for broken email 404s
+MANAGERS = [('CDH Dev Team', 'cdhdevteam@princeton.edu'),]
+# ignore php, asp, aspx, jsp, jspa, with or without trailing slash
+import re
+IGNORABLE_404_URLS = [re.compile('\.(php|aspx?|jspa?)(\/$|$)')]
 {% endblock %}

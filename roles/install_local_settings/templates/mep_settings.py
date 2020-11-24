@@ -1,4 +1,4 @@
-{% extends 'base.py' %}
+{% extends 'settings.py' %}
 
 {% block extra_config %}
 {# Add static root as needed now because missing from settings.py as of 0.7 #}
