@@ -1,12 +1,8 @@
 ###
-# Build node_modules folder and install npm dependencies.
+# Install JS dependencies using npm.
 #
 # This role installs npm packages and depends on there being a package.json
-# present in the project root directory (deploy). It installs both
-# devDependencies and dependencies because both are used in producing
-#
-# The webpack_build variable determines if true and set, whether or not a
-# a webpack build step of the form `npm run build:<qa|prod>` is run.
+# present in the project root directory (deploy).
 ###
 ---
 - name: npm configuration tasks

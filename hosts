@@ -1,21 +1,19 @@
 ######
 # The configuration of hosts depends on groups and child groups to ensure
-# the least redundant configuration of group variables
+# the least redundant configuration of group variables.
 #
-#
-# The usual configuration stanza for a project will be to have a project_prod,
-# project_qa, and project_staging (in the format of those already configured),
-# followed by a stanza beginning [project:children], which groups the three
-# project configurations a child groups of the larger project group. These
-# correspond exactly to their entries in group_vars
+# The usual configuration stanza for a project will be to have a project_prod
+# and project_qa (in the format of those already configured), followed by a
+# stanza beginning [project:children], which groups the project environments.
+# These correspond exactly to their entries in group_vars/.
 #
 # After the project declarations, you will find more global group:children
-# declarations, such as [stating:children], which is the group that holds all
-# global variables for staging deploys.
+# declarations, such as [qa:children], which is the group that holds all
+# global variables for qa deploys.
 #
 # Inheritance has some potential gotchas. All top level groups inherit from
 # group_vars/all, but when two groups inherit from a group on the same level
-# (i.e. staging and winthrop), any overlapping variables are resolved with the
+# (i.e. qa and winthrop), any overlapping variables are resolved with the
 # group last in alphabetical order 'winning':
 # See https://docs.ansible.com/ansible/2.5/user_guide/intro_inventory.html#how-variables-are-merged
 ######
@@ -24,62 +22,46 @@
 winthrop.princeton.edu
 [winthrop_qa]
 test-winthrop.cdh.princeton.edu
-[winthrop_staging]
-winthrop_stg ansible_host=127.0.0.1 ansible_port=2222 ansible_ssh_private_key_file=vagrant/id_rsa
 
 [winthrop:children]
 winthrop_prod
 winthrop_qa
-winthrop_staging
 
 [derrida_qa]
 test-derrida.cdh.princeton.edu
 [derrida_prod]
 derridas-margins.princeton.edu
-[derrida_staging]
-derrida_stg ansible_host=127.0.0.1 ansible_port=2222 ansible_ssh_private_key_file=vagrant/id_rsa
 
 [derrida:children]
 derrida_qa
 derrida_prod
-derrida_staging
 
 [cdhweb_qa]
 test-web.cdh.princeton.edu
 [cdhweb_prod]
 cdh.princeton.edu
-[cdhweb_staging]
-cdhweb_stg ansible_host=127.0.0.1 ansible_port=2222 ansible_ssh_private_key_file=vagrant/id_rsa
 
 [cdhweb:children]
 cdhweb_qa
 cdhweb_prod
-cdhweb_staging
-
 
 [ppa_qa]
 test-ppa.cdh.princeton.edu
 [ppa_prod]
 ppa.princeton.edu
-[ppa_staging]
-ppa_stg ansible_host=127.0.0.1 ansible_port=2222 ansible_ssh_private_key_file=vagrant/id_rsa
 
 [ppa:children]
 ppa_prod
 ppa_qa
-ppa_staging
 
 [mep_qa]
 test-mep.cdh.princeton.edu
 [mep_prod]
 mep2.princeton.edu
-[mep_staging]
-mep_stg ansible_host=127.0.0.1 ansible_port=2222 ansible_ssh_private_key_file=vagrant/id_rsa
 
 [mep:children]
 mep_qa
 mep_prod
-mep_staging
 
 [pemm_qa]
 cdh-test-pemm1.princeton.edu
@@ -99,13 +81,16 @@ cdh-geniza1.princeton.edu
 geniza_qa
 geniza_prod
 
-### staging, prod, and qa stanzas to create shared groups
-[staging:children]
-winthrop_staging
-derrida_staging
-ppa_staging
-cdhweb_staging
-mep_staging
+### environment-based stanzas to create shared groups
+
+[prod:children]
+winthrop_prod
+derrida_prod
+ppa_prod
+cdhweb_prod
+mep_prod
+pemm_prod
+geniza_prod
 
 [qa:children]
 winthrop_qa

@@ -1,2 +1,6 @@
-ansible>=2.4,<2.7
+ansible
+ansible-base
+molecule[docker]
+ansible-lint
+gitpython
 passlib
