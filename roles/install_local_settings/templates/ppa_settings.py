@@ -1,4 +1,4 @@
-{% extends 'templates/common/base.py' %}
+{% extends 'settings.py' %}
 
 # PPA local settings
 # with configurations that should *not* be checked into version control
