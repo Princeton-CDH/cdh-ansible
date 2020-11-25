@@ -3,8 +3,8 @@
   remote_user: pulsys
   become: true
   vars_files:
-    - ./group_vars/geniza_qa/i18n.yml
-    - ./group_vars/geniza_qa/i18n_vault.yml
+    - ./group_vars/geniza_qa_i18n/vars.yml
+    - ./group_vars/geniza_qa_i18n/vault.yml
   roles:
     - create_deployment
     - build_dependencies

@@ -1,0 +1,39 @@
+# i18n is a separate django app
+app_name: 'geniza_i18n'
+# django app is called "geniza"
+django_app: geniza
+# the i18n prototype is hosted on the "experiment/i18n" branch
+gitref: 'experiment/i18n'
+# wsgi file is inside django app folder
+wsgi_path: "{{ django_app }}/wsgi.py"
+# serve at a different prefix
+apache_app_url: '/i18n'
+# require additional apache modules
+apache_app_modules:
+    - proxy
+    - proxy_http
+# serve on localhost:81
+apache_servername: "localhost"
+apache_port: 81
+
+app_dependencies:
+  - python3-dev
+  - default-libmysqlclient-dev
+
+# configure apache extraconf file for inclusion in main geniza vhost
+apache_extraconf:
+    path: "/etc/apache2/conf-available/geniza_extraconf_{{ app_name }}.conf"
+    content: |
+      ProxyPass "{{ apache_app_url }}"  "http://{{ apache.servername }}:{{ apache.listen_port }}/{{ apache_app_url }}"
+      ProxyPassReverse "{{ apache_app_url }}"  "http://{{ apache.servername }}:{{ apache.listen_port }}/{{ apache_app_url }}"
+
+
+# explicitly specify deploy user
+deploy_user: "deploy"
+# allow QA host
+allowed_hosts:
+  - 'test-geniza.cdh.princeton.edu'
+  - 'localhost'
+# email prefix
+email_prefix: "[QA Geniza i18n]"
+
