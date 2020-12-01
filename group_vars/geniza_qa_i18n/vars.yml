@@ -16,9 +16,11 @@ apache_app_modules:
 apache_servername: "localhost"
 apache_port: 81
 
+# add required deps for mysql connection
 app_dependencies:
   - python3-dev
   - default-libmysqlclient-dev
+  - mysql-client
 
 # configure apache extraconf file for inclusion in main geniza vhost
 apache_extraconf:
