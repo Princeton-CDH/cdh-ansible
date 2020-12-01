@@ -79,3 +79,6 @@ requirements_type: 'txt'
 # set csp_enabled: true in project vars to enable
 csp_reportonly_uri: '{{ vault_csp_reportonly_uri}}'
 csp_enforce_uri: '{{ vault_csp_enforce_uri }}'
+
+# Postgres configuration
+postgres_version: 10
