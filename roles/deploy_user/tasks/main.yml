@@ -1,0 +1,15 @@
+---
+# tasks file for deploy_user
+- name: set up deploy user
+  block:
+    - name: create deploy user group
+      group:
+        name: "{{ deploy_user }}"
+    - name: create deploy user
+      user:
+        name: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        home: "/home/{{ deploy_user }}"
+        shell: "{{ deploy_user_shell }}"
+  rescue:
+    - include_tasks: roles/create_deployment/tasks/fail.yml

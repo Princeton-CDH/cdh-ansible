@@ -1,0 +1,35 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: "get deploy user info"
+      user:
+        name: conan
+      check_mode: yes
+      register: user_info
+    - name: "user account should be set up correctly"
+      assert:
+        that:
+          - user_info.name == "conan"
+          - user_info.home == "/home/conan"
+          - not user_info.changed
+    - name: "get deploy group info"
+      group:
+        name: conan
+      check_mode: yes
+      register: group_info
+    - name: "deploy group should be set up correctly"
+      assert:
+        that:
+          - group_info.name == "conan"
+          - not group_info.changed
+    - name: "get user group memberships"
+      command: groups conan
+      register: user_groups
+    - name: "user should be member of deploy group"
+      assert:
+        that:
+          - "'conan' in '{{ user_groups.stdout.split(':')[1] }}'"
