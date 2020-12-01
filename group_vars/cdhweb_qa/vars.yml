@@ -5,13 +5,9 @@ group_name: cdhweb_qa
 # Git refspec to use, either default or passed by '-e ref=<refspec>
 gitref: '{{ ref | default("develop") }}'
 # Install root (the dir where the repo will be set up on remote)
-install_root: '{{ install_base }}/cdh-web'
-# Set permissions for local_settings
-project_user: apache
+install_root: "/srv/www/cdhweb"
 # email prefix for admin emails
-email_prefix: '[QA CDH Web] '
+email_prefix: "[QA CDH Web] "
 # allowed_hosts for Django
 allowed_hosts:
-    - 'test-web.cdh.princeton.edu'
-# media_root for QA
-media_root: '/srv/www/qa/cdh-web/media'
+    - "test-web.cdh.princeton.edu"
