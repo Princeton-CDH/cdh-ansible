@@ -1,0 +1,13 @@
+---
+- name: create postgresql db user
+  postgresql_user:
+    name: "{{ application_dbuser_name }}"
+    login_host: "{{ postgres_host }}"
+    port: "{{ postgres_port }}"
+    login_user: "{{ postgres_admin_user }}"
+    login_password: "{{ postgres_admin_password }}"
+    password: "{{ application_dbuser_password }}"
+    encrypted: true
+    role_attr_flags: "{{ application_dbuser_role_attr_flags }}"
+    state: "present"
+  tags: create_user
