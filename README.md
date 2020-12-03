@@ -70,33 +70,6 @@ To revert to previous deploy run call the `revert_deploy` playbook with a `host_
 ansible-playbook -e host_group=mep_qa playbooks/revert_deploy.yml
 ```
 
-## Overrides
-
-There are two principal overrides that the roles involved in deployment have built-in. One is the override noted above for what Git reference should be used to deploy. This can be any hash, branch head, or tag that the Git repository knows about.
-
-You can also override any other arbitrary variable, but the other likely one is the `requirements` file. You may want to point to a `requirements.lock`, for example:
-```{bash}
-ansible-playbook -e requirements_type=lock playbooks/playbook.yml
-```
-
-You can also pass a list of arbitrary additions or updates to pip (except for git pinned requirements):
-```{bash}
-ansible-playbook -e pip_updates='django-autocomplete-light<3.3' playbooks/playbook.yml
-```
-
-If you need to do more than one requirement, you can pass references using JSON notation (which should also include your other `-e` vars)
-```{bash}
-ansible-playbook -e '{"pip_updates": ["pandas", "colorama"], "ref": "develop"}'
-```
-
-These will be automatically added (or updated) to the requirements for the application during its deployment.
-
-If you need to make major changes and do not wish to make a patch release for whatever reason, you can also entirely replace `requirements.(txt|lock)` with a local template:
-
-```{bash}
-ansible-playbook -e new_requirements=/path/to/local/template.txt playbooks/playbook.yml
-```
-
 ## Vault variables
 
 Variables kept in `group_vars/*/vault.yml` are sensitive configurations that should always be kept encrypted on commit. To edit them (in your system text editor):
