@@ -10,3 +10,4 @@
   copy:
     src: "tmux.conf"
     dest: "/etc/tmux.conf"
+    mode: u=rw,g=r,o=r
