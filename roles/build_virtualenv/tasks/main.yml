@@ -7,12 +7,12 @@
   block:
     # NOTE: only explicitly create virtualenv on Springdale/SELinux
     - name: Create venv with project-name-short-hash-version
-      command: "virtualenv --system-site-packages {{ deploy }}/env --prompt '({{ repo | project_name }}-{{ short_hash }}-{{ version }}) '"
+      command: "virtualenv --system-site-packages {{ virtualenv_path }} --prompt '({{ repo | project_name }}-{{ short_hash }}-{{ version }}) '"
       when:  ansible_distribution == 'Springdale'
 
     - name: Set perms
       file:
-          path: "{{ deploy }}/env"
+          path: "{{ virtualenv_path }}"
           state: directory
           mode: "u+rwx,g+rwx,o-rw"
       when:  ansible_distribution == 'Springdale'
@@ -21,33 +21,16 @@
       pip:
         name: pip
         state: latest
-        virtualenv: "{{ deploy }}/env"
+        virtualenv: "{{ virtualenv_path }}"
         virtualenv_python: "{{ python_version }}"
 
-    # The following two stanzas only run when override variables are defined
-    # and allow the user to dynamically update requirements files if necessary.
-    - name: Update requirements based on a supplied template
-      template:
-        src: '{{ new_requirements }}'
-        dest: '{{ deploy }}/requirements.{{ requirements_type }}'
-      when:
-        new_requirements is defined
-
-    - name: Update requirements dynamically using extravars
-      lineinfile:
-        regexp: '^{{ item | regex_replace("[<=>]{1,2}.*$") }}'
-        line: '{{ item }}'
-        path: '{{ deploy }}/requirements.{{ requirements_type }}'
-      when:
-        pip_updates is defined
-      with_items:
-        '{{ pip_updates }}'
-
-    - name: Install requirements via pip (MySQLdb should be system version and skipped)
+    - name: Install app requirements via pip
       pip:
-        virtualenv: "{{ deploy }}/env"
+        virtualenv: "{{ virtualenv_path }}"
         requirements: "{{ deploy }}/requirements.{{ requirements_type }}"
         virtualenv_site_packages: yes
         virtualenv_python: "{{ python_version }}"
+      when: install_app_requirements
+      
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
