@@ -29,6 +29,7 @@
     - name: "get user group memberships"
       command: groups conan
       register: user_groups
+      check_mode: yes
     - name: "user should be member of deploy group"
       assert:
         that:

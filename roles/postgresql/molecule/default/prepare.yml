@@ -2,6 +2,8 @@
 - name: Prepare
   hosts: localhost
   gather_facts: false
+  vars:
+    python_version: "python3.6"
   vars_files:
     - ../../defaults/main.yml
   tasks:
