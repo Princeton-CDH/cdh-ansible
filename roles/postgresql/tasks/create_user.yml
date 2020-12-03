@@ -10,4 +10,6 @@
     encrypted: true
     role_attr_flags: "{{ application_dbuser_role_attr_flags }}"
     state: "present"
+  with:
+    ansible_python_interpreter: "{{ deploy_user_venv }}/bin/python"
   tags: create_user

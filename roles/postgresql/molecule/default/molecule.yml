@@ -12,6 +12,9 @@ platforms:
 provisioner:
   name: ansible
   log: true
+  playbooks:
+    prepare: prepare.yml
+    cleanup: cleanup.yml
 verifier:
   name: ansible
 lint: |

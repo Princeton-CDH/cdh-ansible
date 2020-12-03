@@ -9,4 +9,6 @@
     encoding: "UTF-8"
     owner: "{{ application_dbuser_name }}"
     state: "present"
+  with:
+    ansible_python_interpreter: "{{ deploy_user_venv }}/bin/python"
   changed_when: false
