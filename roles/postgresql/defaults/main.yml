@@ -1,7 +1,13 @@
 ---
 # defaults file for postgresql
 postgres_port: 5432
-application_db_name: dbname
-application_dbuser_name: pguser
+postgres_host: localhost
+postgres_version: 12
+postgres_admin_user: postgres
+postgres_admin_password: postgres
+application_db_name: app
+application_dbuser_name: app_user
 application_dbuser_password: changethis
-application_dbuser_role_attr_flags: ''
+application_dbuser_role_attr_flags: ""
+deploy_user: conan
+deploy_user_venv: "/home/{{ deploy_user }}/env"

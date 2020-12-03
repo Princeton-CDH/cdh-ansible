@@ -4,4 +4,4 @@
   tasks:
     - name: "Include postgresql"
       include_role:
-        name: "postgresql"
+        name: postgresql
