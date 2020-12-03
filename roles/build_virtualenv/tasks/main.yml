@@ -31,6 +31,6 @@
         virtualenv_site_packages: yes
         virtualenv_python: "{{ python_version }}"
       when: install_app_requirements
-      
+
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml

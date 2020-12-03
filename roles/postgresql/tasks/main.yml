@@ -2,14 +2,15 @@
 # tasks file for postgresql
 - name: install postgresql python client
   pip:
-    virtualenv: deploy_user_venv
-    name: pyscopg2
+    virtualenv: "{{ deploy_user_venv }}"
+    name: psycopg2-binary
     state: present
 
 - name: ensure access to postgres server
   lineinfile:
-    path: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
+    path: "{{ postgres_hba_conf_path }}"
     line: "host    all             all             {{ ansible_default_ipv4.address }}/32       md5"
+  become: yes
   delegate_to: "{{ postgres_host }}"
 
 - name: reload remote postgres server

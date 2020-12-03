@@ -4,7 +4,25 @@
 - name: Verify
   hosts: all
   gather_facts: false
+  vars:
+    postgres_hba_conf_path: "/var/lib/postgresql/data/pg_hba.conf"
+  vars_files:
+    - ../../defaults/main.yml
   tasks:
-  - name: Example assertion
-    assert:
-      that: true
+
+    - name: ensure postgresql db user can create tables
+      vars:
+        ansible_python_interpreter: "{{ deploy_user_venv }}/bin/python"
+      postgresql_table:
+        login_host: "{{ postgres_host }}"
+        port: "{{ postgres_port }}"
+        login_user: "{{ application_dbuser_name }}"
+        login_password: "{{ application_dbuser_password }}"
+        db: "{{ application_db_name }}"
+        table: "test_table"
+
+      check_mode: yes
+      register: db_user_info
+
+    - name: debug db_user_info
+      debug: "{{ db_user_info }}"

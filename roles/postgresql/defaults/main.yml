@@ -5,6 +5,7 @@ postgres_host: localhost
 postgres_version: 12
 postgres_admin_user: postgres
 postgres_admin_password: postgres
+postgres_hba_conf_path: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
 application_db_name: app
 application_dbuser_name: app_user
 application_dbuser_password: changethis

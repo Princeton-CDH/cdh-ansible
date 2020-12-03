@@ -1,5 +1,7 @@
 ---
 - name: create postgresql db user
+  vars:
+    ansible_python_interpreter: "{{ deploy_user_venv }}/bin/python"
   postgresql_user:
     name: "{{ application_dbuser_name }}"
     login_host: "{{ postgres_host }}"
@@ -10,6 +12,4 @@
     encrypted: true
     role_attr_flags: "{{ application_dbuser_role_attr_flags }}"
     state: "present"
-  with:
-    ansible_python_interpreter: "{{ deploy_user_venv }}/bin/python"
   tags: create_user
