@@ -10,14 +10,12 @@
   lineinfile:
     path: "{{ postgres_hba_conf_path }}"
     line: "host    all             all             {{ ansible_default_ipv4.address }}/32       md5"
-  become: yes
   delegate_to: "{{ postgres_host }}"
 
 - name: reload remote postgres server
   service:
     name: postgresql
     state: reloaded
-  become: yes
   delegate_to: "{{ postgres_host }}"
 
 - include: create_user.yml

@@ -5,6 +5,10 @@ dependency:
 driver:
   name: docker
 platforms:
+  - name: postgres
+    image: pulpostgres
+    privileged: true
+    pre_build_image: true
   - name: instance
     image: "pulibrary/puldocker-ubuntu1804-ansible:latest"
     privileged: true
@@ -12,9 +16,6 @@ platforms:
 provisioner:
   name: ansible
   log: true
-  playbooks:
-    prepare: prepare.yml
-    cleanup: cleanup.yml
 verifier:
   name: ansible
 lint: |
