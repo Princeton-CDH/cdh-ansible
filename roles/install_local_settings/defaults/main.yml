@@ -1,0 +1,4 @@
+---
+# defaults for install_local_settings
+template_path: "{{ app_name }}"
+db_backend: "mysql"
