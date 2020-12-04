@@ -11,3 +11,15 @@ email_prefix: "[QA CDH Web] "
 # allowed_hosts for Django
 allowed_hosts:
     - "test-web.cdh.princeton.edu"
+# postgresql host variable
+postgres_host: lib-postgres-staging1.princeton.edu
+postgres_port: 5432
+postgres_admin_user: postgres
+postgres_admin_password: "{{ vault_postgres_admin_password }}"
+postgresql_is_local: false
+postgres_version: 12
+# postgresql database info
+application_dbuser_name: "{{ vault_db_username }}"
+application_dbuser_password: "{{ vault_db_password }}"
+application_db_name: "{{ vault_db_name }}"
+application_dbuser_role_attr_flags: ""

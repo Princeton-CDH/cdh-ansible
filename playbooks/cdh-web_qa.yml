@@ -6,6 +6,7 @@
     - deploy_user
     - build_project_repo
     - build_virtualenv
+    - postgresql
     - configure_logging
     - configure_apache
     - install_local_settings
