@@ -1,12 +1,14 @@
 ---
 
 - name: ensure required packages are present
+  become: true
   apt:
     name: ['apache2', 'libapache2-mod-wsgi-py3']
     state: present
     update_cache: true
 
 - name: install apache modules
+  become: true
   apache2_module:
     name: "{{ item }}"
     state: present
@@ -19,6 +21,7 @@
   #   - vhost_alias
 
 - name: Install project apache site config to available sites
+  become: true
   template:
     src: "vhosts24.conf.j2"
     dest: "/etc/apache2/sites-available/{{ app_name }}.conf"
@@ -26,6 +29,7 @@
  # todo: only restart when file is changed?
 
 - name: Enable project apache site config
+  become: true
   file:
     src: "/etc/apache2/sites-available/{{ app_name }}.conf"
     dest: "/etc/apache2/sites-enabled/{{ app_name }}.conf"
@@ -33,6 +37,7 @@
   # also restart if link is changed?
 
 - name: Remove default site symlink
+  become: true
   file:
     path: /etc/apache2/sites-enabled/000-default.conf
     state: absent
