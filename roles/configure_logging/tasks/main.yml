@@ -3,6 +3,7 @@
 # Apache to write log files for the Django application.
 ###
 - name: Set up and configure logging
+  become: true
   block:
     - name: Create logging directory
       file:
