@@ -6,20 +6,24 @@
 # used in CDH Django projects.
 ---
 - name: Do final configurations and restart apache
+  become: true
   block:
     - name: Check for "current" symlink; if present, save path
       stat:
         path: "{{ install_root }}/current"
       register: previous
+
     - name: Set current symlink
       file:
         src: "{{ deploy }}"
         dest: "{{ install_root }}/current"
         state: link
+
     - name: Create "current" symlink for new deploy
       stat:
         path: "{{ install_root }}/current"
       register: current
+
     - name: If deploy path differs from last "current", update "previous" symlink
       file:
         src: "{{ previous.stat.lnk_target }}"
@@ -28,10 +32,12 @@
       when: >
         previous.stat.exists == True and
         previous.stat.lnk_source != current.stat.lnk_source
+
     - name: Register there is now a previous symlink
       stat:
         path: "{{ install_root }}/previous"
       register: previous
+
     - name: Update /var/www/ symlink to make the new version live
       file:
         src: "{{ deploy }}"
@@ -52,5 +58,6 @@
       args:
         executable: /bin/bash
       when:  ansible_distribution == 'Springdale'
+
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml

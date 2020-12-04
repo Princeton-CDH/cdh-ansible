@@ -11,6 +11,7 @@
 
 # Restart for Ubuntu systems
 - name: restart apache
+  become: true
   service:
     name: apache2
     enabled: true
