@@ -9,15 +9,20 @@
 - name: Configure for django compressor
   block:
     - name: Configure CACHE for django-compressor
+      become: true
       file:
-        path: '{{ deploy }}/static/CACHE'
+        path: "{{ deploy }}/static/CACHE"
         state: directory
-        owner: deploy
-        group: apache
+        owner: "{{ deploy_user }}"
+        group: "{{ apache_group }}"
+
     - name: run ./manage.py compress to build CSS
+      become: true
+      become_user: "{{ deploy_user }}"
       django_manage:
         command: compress
         app_path: "{{ deploy }}"
         virtualenv: "{{ deploy }}/env"
+
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
