@@ -7,8 +7,21 @@
 ---
 - name: npm configuration tasks
   block:
-    - name: Do npm install for dependencies
+  
+    - name: ensure nodejs and package managers are installed
+      become: true
+      community.general.snap:
+        name: node
+        classic: true
+        channel: "{{ node_version }}"
+        state: present
+      when: ansible_distribution == "Ubuntu"
+
+    - name: install javascript dependencies with npm
+      become: true
+      become_user: "{{ deploy_user }}"
       npm:
-        path: '{{ deploy }}'
+        path: "{{ deploy }}"
+
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
