@@ -20,7 +20,7 @@ The overall structure of this repository can be broken down as follows:
     - If you use `env` or `venv`, the `.gitignore` will exclude it.
     
   -  Install required Ansible galaxy collections:
-    - `ansible-galaxy collection install community.docker`
+    - `ansible-galaxy collection install community.general`
     
   - The CDH Ansible vault key. This can be referenced on the command line or better set as in the Bash session, i.e. `export ANSIBLE_VAULT_PASSWORD_FILE=/path/to/.passwd`
   - A GitHub [personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) for any playbook that uses the `create_deployment` and `close_deployment` roles. You can set this in your Bash session as `ANSIBLE_GITHUB_TOKEN` or pass it on the command line as `-e github_token=`
