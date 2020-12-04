@@ -1,18 +1,45 @@
 ---
 # tasks file for postgresql
-- name: install postgresql python client
-  pip:
-    virtualenv: "{{ deploy_user_venv }}"
-    name: psycopg2-binary
+- name: make sure the CA certificates are available
+  become: true
+  apt:
+    pkg: ca-certificates
     state: present
 
+- name: add postgres repository apt-key
+  become: true
+  apt_key:
+    url: "{{ postgres_apt_key_url }}"
+    state: present
+
+- name: add postgres repository
+  become: true
+  apt_repository:
+    repo: "{{ postgres_apt_repository }}"
+    update_cache: true
+    state: present
+
+- name: install postgres client libraries
+  become: true
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  loop:
+    - libpq-dev
+    - python-psycopg2
+    - python3-psycopg2
+    - postgresql-client-{{ postgres_version }}
+
 - name: ensure access to postgres server
+  become: true
   lineinfile:
-    path: "{{ postgres_hba_conf_path }}"
+    path: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
     line: "host    all             all             {{ ansible_default_ipv4.address }}/32       md5"
   delegate_to: "{{ postgres_host }}"
 
 - name: reload remote postgres server
+  become: true
   service:
     name: postgresql
     state: reloaded
@@ -20,3 +47,4 @@
 
 - include: create_user.yml
 - include: create_db.yml
+- include: backup_db.yml

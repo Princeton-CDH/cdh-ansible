@@ -1,14 +1,15 @@
 ---
-# defaults file for postgresql
+# postgres VM settings
 postgres_port: 5432
+postgres_version: 10
 postgres_host: postgres
-postgres_version: 12
-postgres_admin_user: postgres
-postgres_admin_password: postgres
-postgres_hba_conf_path: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
+vault_postgres_admin_user: postgres
+vault_postgres_admin_password: postgres
+# application settings
 application_db_name: app
 application_dbuser_name: app_user
 application_dbuser_password: changethis
 application_dbuser_role_attr_flags: ""
-deploy_user: conan
-deploy_user_venv: "/home/{{ deploy_user }}/env"
+# apt settings
+postgres_apt_key_url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+postgres_apt_repository: 'deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main {{ postgres_version }}'
