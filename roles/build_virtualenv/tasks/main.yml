@@ -4,6 +4,9 @@
 #
 ##
 - name: Create and build python virtual environment
+  become: true
+  become_user: "{{ deploy_user }}"
+
   block:
     # NOTE: only explicitly create virtualenv on Springdale/SELinux
     - name: Create venv with project-name-short-hash-version
@@ -28,9 +31,8 @@
       pip:
         virtualenv: "{{ virtualenv_path }}"
         requirements: "{{ deploy }}/requirements.{{ requirements_type }}"
-        virtualenv_site_packages: yes
+        virtualenv_site_packages: "{{ virtualenv_site_packages }}"
         virtualenv_python: "{{ python_version }}"
-      when: install_app_requirements
 
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
