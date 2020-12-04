@@ -2,14 +2,11 @@
 # This is an example playbook to execute Ansible tests.
 
 - name: Verify
-  hosts: all
+  hosts: instance
   gather_facts: false
-  vars:
-    postgres_hba_conf_path: "/var/lib/postgresql/data/pg_hba.conf"
   vars_files:
     - ../../defaults/main.yml
   tasks:
-
     - name: ensure postgresql db user can create tables
       vars:
         ansible_python_interpreter: "{{ deploy_user_venv }}/bin/python"
@@ -20,7 +17,6 @@
         login_password: "{{ application_dbuser_password }}"
         db: "{{ application_db_name }}"
         table: "test_table"
-
       check_mode: yes
       register: db_user_info
 

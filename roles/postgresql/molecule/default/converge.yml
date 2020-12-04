@@ -1,9 +1,9 @@
 ---
 - name: Converge
-  hosts: localhost
+  hosts: instance
   vars:
     python_version: "python3.6"
-    postgres_hba_conf_path: "/var/lib/postgresql/data/pg_hba.conf"
+    postgres_version: "10"
   tasks:
     - name: "Include postgresql"
       include_role:
