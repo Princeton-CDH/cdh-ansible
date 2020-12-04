@@ -17,7 +17,7 @@ SHOW_TEST_WARNING = True
 {% block database %}
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.{{ db_backend }}',
         'NAME': '{{ db_name }}',
         'USER': '{{ db_username }}',
         'PASSWORD': '{{ db_password}}',
@@ -25,9 +25,11 @@ DATABASES = {
         'PORT': '',
         'CHARSET': 'utf8',
         'COLLATION': 'utf8_general_ci',
+        {% if db_backend == "mysql" %}
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         }
+        {% endif %}
     },
 }
 {% endblock %}
