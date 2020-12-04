@@ -3,9 +3,11 @@
 - name: set up deploy user
   block:
     - name: create deploy user group
+      become: true
       group:
         name: "{{ deploy_user }}"
     - name: create deploy user
+      become: true
       user:
         name: "{{ deploy_user }}"
         group: "{{ deploy_user }}"
