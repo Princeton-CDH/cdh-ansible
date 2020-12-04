@@ -14,3 +14,4 @@ qa: qa
 deploy_contexts: []
 # PUL staging VM uses postgres 12
 postgres_version: 12
+postgres_host: lib-postgres-staging1.princeton.edu

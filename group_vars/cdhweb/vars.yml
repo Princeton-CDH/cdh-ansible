@@ -8,7 +8,19 @@
 repo: 'Princeton-CDH/cdh-web'
 # name of main django application
 django_app: cdhweb
+app_name: cdhweb
 # symlink for Apache vhost
 symlink: cdhweb
+# apache location
+apache_app_path: "/var/www/{{ app_name }}"
+# apache group uses ubuntu default of "www-data"
+apache_group: "www-data"
 # media_root settings
 media_root: /srv/www/media
+# wsgi path
+wsgi_path: "{{ deploy }}/{{ django_app }}/wsgi.py"
+# nodejs version
+node_version: "10"
+# django database backend
+db_backend: "postgresql"
+db_host: "{{ postgres_host }}"
