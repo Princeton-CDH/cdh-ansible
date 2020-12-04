@@ -2,4 +2,3 @@
 # defaults file for deploy_user
 deploy_user: conan
 deploy_user_shell: /bin/bash
-deploy_user_venv: "/home/{{ deploy_user }}/env"
