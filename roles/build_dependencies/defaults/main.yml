@@ -1,6 +1,6 @@
 ---
-# defaults dependencies common
-configured_dependencies:
+# defaults for build_dependencies
+common_dependencies:
   - acl
   - build-essential
   - curl
@@ -13,3 +13,6 @@ configured_dependencies:
   - wget
   - tmux
   - python-virtualenv
+  - snapd
+# app-specific dependencies: override to install
+app_dependencies: []
