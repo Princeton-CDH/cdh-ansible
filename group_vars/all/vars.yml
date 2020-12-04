@@ -82,3 +82,4 @@ csp_enforce_uri: '{{ vault_csp_enforce_uri }}'
 
 # Postgres configuration
 postgres_version: 10
+postgres_host: lib-postgres3.princeton.edu
