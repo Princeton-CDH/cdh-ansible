@@ -14,6 +14,7 @@
         msg: 'PATH: {{ path }} / LD_LIBRARY_PATH: {{ ld_library_path }} / PYTHONPATH: {{ python_path }} / ansible ansible_distribution_release: {{ ansible_distribution_release }}'
         verbosity: 2
       when:  ansible_distribution == 'Springdale'
+
     - name: Clone project repository and set to the correct version
       git:
         repo: '{{ repo_url }}/'
@@ -21,6 +22,7 @@
         version: '{{ gitref }}'
       # register repo_info for group_vars
       register: repo_info
+
     - name: Get python package version
       shell:
         cmd: "python -c 'import {{ django_app }}; print({{ django_app }}.__version__)'"
@@ -28,12 +30,15 @@
       register: python_app_version
       tags:
         - django
+
     - name: Create the deploy directory (to recursively create parent dirs if necessary)
+      become: true
       file:
         state: directory
         dest: '{{ deploy }}'
 
     - name: Sync checkout to deploy directory
+      become: true
       synchronize:
         src: '{{ clone_root }}/{{ repo }}/'
         # deploy constructed dynamicallly in group_vars
@@ -43,6 +48,7 @@
       delegate_to: '{{ inventory_hostname }}'
 
     - name: Set owner on deploy directory
+      become: true
       file:
         dest: "{{ deploy }}"
         owner: "{{ deploy_user }}"
