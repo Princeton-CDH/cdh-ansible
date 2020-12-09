@@ -18,7 +18,7 @@ apache_group: "www-data"
 # media_root settings
 media_root: /srv/www/media
 # wsgi path
-wsgi_path: "{{ deploy }}/{{ django_app }}/wsgi.py"
+wsgi_path: "{{ django_app }}/wsgi.py"
 # nodejs version
 node_version: "10"
 # django database backend
