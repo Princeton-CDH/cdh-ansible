@@ -11,16 +11,12 @@ email_prefix: "[QA CDH Web] "
 # allowed_hosts for Django
 allowed_hosts:
     - "test-web.cdh.princeton.edu"
+    - "cdh-test-web.princeton.edu"
+    - "localhost"
 # use python 3.6 for now since it's on the target ubuntu VM
 python_version: "python3.6"
 # use PUL deploy user of conan
 deploy_user: "conan"
-# FIXME add system dependency on mysql libs; develop isn't on postgres yet
-# for some reason libmysqlclient-dev requires python dev headers, and we need to
-# install the version specific to our python
-app_dependencies:
-    - "{{ python_version }}-dev"
-    - libmysqlclient-dev
 # postgresql database info
 application_dbuser_name: "{{ vault_db_username }}"
 application_dbuser_password: "{{ vault_db_password }}"
