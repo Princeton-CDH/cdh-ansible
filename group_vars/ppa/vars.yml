@@ -27,4 +27,5 @@ csp_enabled: true
 media_root: '/srv/www/prod/media'
 # use python 3.6 (may not matter for virtualenv creation on RedHat)
 python_version: "python3.6"
-
+# explicitly specify deploy user
+deploy_user: "deploy"
