@@ -19,7 +19,7 @@
     - name: For PUL VMs, set logging directory owner and group to apache
       file:
         path: '{{ logging_dir }}'
-        owner: '{{ apache_group }}'
+        owner: '{{ apache_user }}'
         group: '{{ apache_group }}'
         recurse: true
       when: deploy_user is defined and ansible_distribution != 'Springdale'
