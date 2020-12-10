@@ -52,6 +52,7 @@ COMPRESS_OFFLINE = True
 # Media root settings for production
 MEDIA_ROOT = '{{ media_root }}'
 MEDIA_URL = '/media/'
+STATIC_URL = "{{ apache_app_url }}/static/"
 
 # Allow SVG
 FILEBROWSER_ESCAPED_EXTENSIONS = []

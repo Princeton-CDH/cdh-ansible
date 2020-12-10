@@ -10,7 +10,7 @@
   
     - name: Install local_settings.py from project template
       template:
-        src: '{{ template_path }}_settings.py'
+        src: '{{ template_path }}'
         dest: '{{ deploy }}/{{ django_app }}/local_settings.py'
         owner: "{{ deploy_user }}"
         mode: u+rw,g+r,o-rwx
