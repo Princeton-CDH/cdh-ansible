@@ -7,7 +7,14 @@
     ServerName {{ apache.servername }}
 
     WSGIDaemonProcess {{ app_name }} group={{ deploy_user }} python-path={{ apache_app_path }}/env/lib/{{ python_version }}/site-packages:{{ apache_app_path }} python-home={{ apache_app_path }}/env processes=1 threads=2
-    WSGIScriptAlias / {{ apache_app_path }}/{{ wsgi_path }}
+    WSGIScriptAlias {{ apache_app_url }} {{ apache_app_path }}/{{ wsgi_path }}
+    Alias {{ apache_app_url }}{% if not apache_app_url.endswith('/') %}/{% endif %}static/ {{ apache_app_path }}/static/
+    {% if media_root is defined %}
+    Alias {{ apache_app_url }}{% if not apache_app_url.endswith('/') %}/{% endif %}media/ {{ media_root }}
+    {% endif %}
+
+    # optionally include extra config files, if they exist
+    IncludeOptional /etc/apache2/conf-available/{{ app_name }}_extraconf_*.conf
 
     <Directory {{ apache_app_path }}>
         WSGIProcessGroup {{ app_name }}
