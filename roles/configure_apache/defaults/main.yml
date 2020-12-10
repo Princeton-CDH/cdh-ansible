@@ -1,6 +1,15 @@
 ---
 apache:
-    docroot: '{{apache_app_path |default("/var/www/html")}}'
-    servername: "{{ ansible_hostname }}"
+    docroot: '{{ apache_app_path |default("/var/www/html")}}'
+    servername: '{{ apache_servername | default(ansible_hostname) }}'
     directory_options: ''
-apache_listen_port: 80
+    listen_port: '{{ apache_port | default("80") }}'
+    default_modules:
+      - rewrite
+      - headers
+  #   - expires
+  #   - filter
+  #   - vhost_alias
+apache_app_url: '/'
+# allow apps to require extra apache modules
+apache_app_modules: []
