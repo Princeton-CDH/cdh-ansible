@@ -10,8 +10,8 @@ install_root: "/srv/www/cdhweb"
 email_prefix: "[QA CDH Web] "
 # allowed_hosts for Django
 allowed_hosts:
-    - "test-web.cdh.princeton.edu"
     - "cdh-test-web.princeton.edu"
+    - "cdh-test-web1"
     - "localhost"
 # use python 3.6 for now since it's on the target ubuntu VM
 python_version: "python3.6"
