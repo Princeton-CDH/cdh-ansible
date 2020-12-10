@@ -1,13 +1,18 @@
 # Apache virtualhost config file for {{ app_name }}
 # NOTE: this file is {{ ansible_managed }}
 
-<VirtualHost *:{{ apache_listen_port }}>
+<VirtualHost *:{{ apache_port }}>
     ServerAdmin webmaster@localhost
-    DocumentRoot {{ apache.docroot }}
-    ServerName {{ apache.servername }}
+    DocumentRoot {{ apache_app_path }}
+    ServerName {{ apache_servername }}
 
     WSGIDaemonProcess {{ app_name }} group={{ deploy_user }} python-path={{ apache_app_path }}/env/lib/{{ python_version }}/site-packages:{{ apache_app_path }} python-home={{ apache_app_path }}/env processes=1 threads=2
     WSGIScriptAlias {{ apache_app_url }} {{ apache_app_path }}/{{ wsgi_path }}
+
+    # support serving restricted/purchased webfonts at /static/fonts
+    Alias {{ apache_app_url }}{% if not apache_app_url.endswith('/') %}/{% endif %}static/fonts/ {{ apache_font_path }}
+
+    # set up general /static/ and /media/ serving
     Alias {{ apache_app_url }}{% if not apache_app_url.endswith('/') %}/{% endif %}static/ {{ apache_app_path }}/static/
     {% if media_root is defined %}
     Alias {{ apache_app_url }}{% if not apache_app_url.endswith('/') %}/{% endif %}media/ {{ media_root }}
@@ -17,8 +22,8 @@
     IncludeOptional /etc/apache2/conf-available/{{ app_name }}_extraconf_*.conf
 
     # add more descriptive log file names
-    ErrorLog logs/{{ app_name }}_error_log
-    TransferLog logs/{{ app_name }}_access_log
+    ErrorLog {{ apache_log_path }}/{{ app_name }}_error.log
+    TransferLog {{ apache_log_path }}/{{ app_name }}_access.log
 
     <Directory {{ apache_app_path }}>
         WSGIProcessGroup {{ app_name }}

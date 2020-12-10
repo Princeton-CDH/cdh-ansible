@@ -1,49 +1,56 @@
 ---
-
 - name: install and configure apache
   become: true
   block:
-  - name: ensure required packages are present
-    apt:
-      name: ['apache2', 'libapache2-mod-wsgi-py3']
-      state: present
-      update_cache: true
+    - name: ensure required packages are present
+      apt:
+        name: ["apache2", "libapache2-mod-wsgi-py3"]
+        state: present
+        update_cache: true
 
-  - name: install apache modules
-    apache2_module:
-      name: "{{ item }}"
-      state: present
-    notify: restart apache
-    with_items: "{{ apache.default_modules + apache_app_modules }}"
+    - name: set up webfonts directory
+      file:
+        path: "{{ apache_font_path }}"
+        state: directory
+        owner: "{{ apache_user }}"
+        group: "{{ apache_group }}"
+        recurse: true
 
-  - name: ensure Apache is listening on the configured port
-    lineinfile:
-      path: /etc/apache2/ports.conf
-      regexp: '^Listen {{ apache.listen_port }}$'
-      insertafter: '^Listen 80$'
-      line: Listen {{ apache.listen_port }}
+    - name: install apache modules
+      apache2_module:
+        name: "{{ item }}"
+        state: present
+      notify: restart apache
+      with_items: "{{ apache_default_modules + apache_app_modules }}"
 
-  - name: install project apache site config to available sites
-    template:
-      src: "vhosts24.conf.j2"
-      dest: "/etc/apache2/sites-available/{{ app_name }}.conf"
-    notify: restart apache
-  # todo: only restart when file is changed?
+    - name: ensure apache is listening on the configured port
+      lineinfile:
+        path: /etc/apache2/ports.conf
+        regexp: "^Listen {{ apache_port }}$"
+        insertafter: "^Listen 80$"
+        line: Listen {{ apache_port }}
 
-  - name: create extra apache config file if defined
-    copy:
+    - name: install project apache site config to available sites
+      template:
+        src: "vhosts24.conf.j2"
+        dest: "/etc/apache2/sites-available/{{ app_name }}.conf"
+      notify: restart apache
+    # todo: only restart when file is changed?
+
+    - name: create extra apache config file if defined
+      copy:
         dest: "{{ apache_extraconf.path }}"
         content: "{{ apache_extraconf.content }}"
-    when: apache_extraconf is defined
+      when: apache_extraconf is defined
 
-  - name: enable project apache site config
-    file:
-      src: "/etc/apache2/sites-available/{{ app_name }}.conf"
-      dest: "/etc/apache2/sites-enabled/{{ app_name }}.conf"
-      state: link
-    # also restart if link is changed?
+    - name: enable project apache site config
+      file:
+        src: "/etc/apache2/sites-available/{{ app_name }}.conf"
+        dest: "/etc/apache2/sites-enabled/{{ app_name }}.conf"
+        state: link
 
-  - name: remove default site symlink
-    file:
-      path: /etc/apache2/sites-enabled/000-default.conf
-      state: absent
+      # also restart if link is changed?
+    - name: remove default site symlink
+      file:
+        path: /etc/apache2/sites-enabled/000-default.conf
+        state: absent
