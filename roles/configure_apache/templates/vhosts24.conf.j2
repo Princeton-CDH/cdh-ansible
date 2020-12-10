@@ -16,6 +16,10 @@
     # optionally include extra config files, if they exist
     IncludeOptional /etc/apache2/conf-available/{{ app_name }}_extraconf_*.conf
 
+    # add more descriptive log file names
+    ErrorLog logs/{{ app_name }}_error_log
+    TransferLog logs/{{ app_name }}_access_log
+
     <Directory {{ apache_app_path }}>
         WSGIProcessGroup {{ app_name }}
         WSGIApplicationGroup %{GLOBAL}
