@@ -2,3 +2,4 @@
 # defaults file for deploy_user
 deploy_user: conan
 deploy_user_shell: /bin/bash
+apache_group: www-data  # default on ubuntu

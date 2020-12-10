@@ -10,7 +10,9 @@
       become: true
       user:
         name: "{{ deploy_user }}"
-        group: "{{ deploy_user }}"
+        groups:
+          - "{{ deploy_user }}"
+          - "{{ apache_group }}"
         home: "/home/{{ deploy_user }}"
         shell: "{{ deploy_user_shell }}"
   rescue:

@@ -3,34 +3,38 @@
 
 - name: Verify
   hosts: all
+  check_mode: yes
   gather_facts: false
   tasks:
     - name: "get deploy user info"
       user:
         name: conan
-      check_mode: yes
       register: user_info
+
     - name: "user account should be set up correctly"
       assert:
         that:
           - user_info.name == "conan"
           - user_info.home == "/home/conan"
           - not user_info.changed
+
     - name: "get deploy group info"
       group:
         name: conan
-      check_mode: yes
       register: group_info
+
     - name: "deploy group should be set up correctly"
       assert:
         that:
           - group_info.name == "conan"
-          - not group_info.changed
+
     - name: "get user group memberships"
       command: groups conan
       register: user_groups
-      check_mode: yes
-    - name: "user should be member of deploy group"
+      changed_when: true
+
+    - name: "user should be member of deploy group and apache group"
       assert:
         that:
           - "'conan' in '{{ user_groups.stdout.split(':')[1] }}'"
+          - "'www-data' in '{{ user_groups.stdout.split(':')[1] }}'"
