@@ -11,6 +11,7 @@ The overall structure of this repository can be broken down as follows:
       - `vault.yml` - `ansible vault` encrypted variables
     - Individual project group variables
   - `hosts` - host file with groups and their associated host(s)
+  - `adr` - list of significant architectural decisions, as markdown files
 
 ## Using these playbooks
 
@@ -128,3 +129,9 @@ The rough order of creating a playbook is:
   6. Reference any playbook variables and set accordingly. See above under vault variables for how to configure those.
   6. Add roles to the list in the new playbook in the order needed.
   7. N.B. Make sure you set the `group_name` variable appropriately as some QA only steps are skipped based on `_qa` not being in the name.
+
+## Documenting architectural decisions
+
+We use the [ADR specification](https://github.com/joelparkerhenderson/architecture_decision_record) for documenting architectural decisions made over the course of work on this repository - i.e. conventions around our usage of Ansible. Decision documents are stored in the `adr/` folder as markdown files.
+
+To propose a new decision, copy the `adr/template.md` file and rename it using a sequential number and description of the decision that needs making. Then create a pull request to track discussion on that decision.
