@@ -1,5 +1,7 @@
 ---
-# tasks file for postgresql
+# Based on:
+# https://github.com/pulibrary/princeton_ansible/blob/main/roles/postgresql/tasks/main.yml
+
 - name: make sure the CA certificates are available
   become: true
   apt:

@@ -1,4 +1,7 @@
 ---
+# Based on:
+# https://github.com/pulibrary/princeton_ansible/blob/main/roles/postgresql/tasks/create_db.yml
+
 - name: ensure postgres database for app exists
   postgresql_db:
     name: "{{ application_db_name }}"
