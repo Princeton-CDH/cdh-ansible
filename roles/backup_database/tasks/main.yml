@@ -8,7 +8,7 @@
 - name: Database backup
   block:
     - name: Backup DB for snap restore
-      shell: 'mysqldump --opt {{ db_name }} > {{ db_backup }}'
+      shell: 'mysqldump --opt {{ db_name }} > {{ db_backup_path }}'
       args:
         executable: /bin/bash
   rescue:

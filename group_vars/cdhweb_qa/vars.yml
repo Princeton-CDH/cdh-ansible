@@ -21,7 +21,5 @@ deploy_user: "conan"
 application_dbuser_name: "{{ vault_db_username }}"
 application_dbuser_password: "{{ vault_db_password }}"
 application_db_name: "{{ vault_db_name }}"
-db_host: "{{ postgres_host }}"
-db_name: "{{ vault_db_name }}"
-db_username: "{{ vault_db_username }}"
-db_password: "{{ vault_db_password }}"
+# Database backup location
+db_backup_path: '/home/{{ deploy_user }}/pre-{{ version }}-{{ short_hash }}.sql'
