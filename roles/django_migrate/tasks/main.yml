@@ -3,6 +3,8 @@
 ###
 - block:
     - name: Run database migrations
+      become: true
+      become_user: "{{ deploy_user }}"
       django_manage:
         command: migrate
         app_path: "{{ deploy }}"

@@ -5,18 +5,22 @@
 #
 ###
 - name: Install local_settings in Django/Flask project
+  become: true
   block:
+  
     - name: Install local_settings.py from project template
       template:
-        src: '{{ template_path }}_settings.py'
+        src: '{{ template_path }}'
         dest: '{{ deploy }}/{{ django_app }}/local_settings.py'
         owner: "{{ deploy_user }}"
         mode: u+rw,g+r,o-rwx
+
     - name: Set group ownership for local settings (Ubuntu only)
       file:
         path: '{{ deploy }}/{{ django_app }}/local_settings.py'
         group: "{{ deploy_user }}"  # deploy group doesn't exist on springdale
       when: ansible_distribution == 'Ubuntu'
+
     - name: For QA, setfacl so that the Django project group can read it too
       acl:
         path: '{{ deploy }}/{{ django_app }}/local_settings.py'
@@ -25,5 +29,6 @@
         permissions: r
         state: present
       when: qa is defined and ansible_distribution == 'Springdale'
+
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml

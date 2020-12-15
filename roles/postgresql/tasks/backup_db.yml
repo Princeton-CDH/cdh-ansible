@@ -1,0 +1,13 @@
+---
+# back up the database to a location on the app's host (not the db host)
+- name: backup postgres database
+  postgresql_db:
+    name: "{{ application_db_name }}"
+    login_host: "{{ postgres_host }}"
+    port: "{{ postgres_port  }}"
+    login_user: "{{ application_dbuser_name }}"
+    login_password: "{{ application_dbuser_password }}"
+    encoding: "UTF-8"
+    owner: "{{ application_dbuser_name }}"
+    state: "dump"
+    target: "{{ db_backup_path }}"

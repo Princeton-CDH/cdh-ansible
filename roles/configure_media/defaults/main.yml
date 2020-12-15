@@ -1,0 +1,5 @@
+---
+# default for configure_media
+media_root: "/var/www/media/"
+apache_user: "www-data"
+apache_group: "{{ apache_user }}"

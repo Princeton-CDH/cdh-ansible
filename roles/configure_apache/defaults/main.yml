@@ -1,6 +1,14 @@
 ---
-apache:
-    docroot: '{{apache_app_path |default("/var/www/html")}}'
-    servername: "{{ ansible_hostname }}"
-    directory_options: ''
-apache_listen_port: 80
+apache_app_path: "/var/www/html"
+apache_log_path: "/var/log/apache2"
+apache_font_path: "/var/www/fonts/"
+apache_servername: "{{ ansible_hostname }}"
+apache_port: "80"
+apache_app_url: "/"
+apache_user: "www-data"
+apache_group: "{{ apache_user }}"
+apache_default_modules:
+  - rewrite
+  - headers
+apache_app_modules: []
+media_root: "/var/www/media/"

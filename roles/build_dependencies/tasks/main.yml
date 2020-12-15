@@ -1,12 +1,15 @@
 ---
-- name: Install configured dependencies
+- name: install configured dependencies
+  become: true
   apt:
-    name: '{{ configured_dependencies }}'
+    name: "{{ common_dependencies + app_dependencies }}"
     state: present
     update_cache: true
   changed_when: false
 
-- name: copy tmux.conf
-  template:
-    src: "tmux.conf.j2"
+- name: configure tmux
+  become: true
+  copy:
+    src: "tmux.conf"
     dest: "/etc/tmux.conf"
+    mode: u=rw,g=r,o=r
