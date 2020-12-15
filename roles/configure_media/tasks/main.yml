@@ -10,6 +10,15 @@
         state: directory
         mode: "u=rwX,g=rwX,o=X"
 
+    - name: Make sure media root is group owned by apache user
+      file:
+        path: "{{ media_root }}"
+        owner: "{{ deploy_user }}"
+        group: "{{ apache_group }}"
+        state: directory
+        recurse: true
+      when: ansible_distribution == 'Ubuntu'
+
     - name: if on qa, set acls appropriately so apache can access
       acl:
         entity: "{{ apache_group }}"
