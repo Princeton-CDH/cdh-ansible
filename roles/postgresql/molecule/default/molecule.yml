@@ -1,0 +1,24 @@
+---
+dependency:
+  name: galaxy
+  enabled: false
+driver:
+  name: docker
+platforms:
+  - name: postgres
+    image: pulpostgres
+    privileged: true
+    pre_build_image: true
+  - name: instance
+    image: "pulibrary/puldocker-ubuntu1804-ansible:latest"
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  log: true
+verifier:
+  name: ansible
+lint: |
+  set -e
+  yamllint .
+  ansible-lint

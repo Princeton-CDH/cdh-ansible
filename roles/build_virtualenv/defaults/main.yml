@@ -1,0 +1,4 @@
+---
+# defaults file for build_virtualenv
+virtualenv_path: "{{ deploy }}/env"
+virtualenv_site_packages: false

@@ -52,8 +52,6 @@ clone_root: "{{ home }}/repos"
 short_hash: '{{ repo_info.after[0:6] }}'
 # Path of the deploy directory. Generated from vars above and build_project_repo
 deploy: '{{ install_root }}/{{ version }}-{{ short_hash }}'
-# Database backup location
-db_backup: '/tmp/pre-{{ version }}-{{ short_hash }}-{{ inventory_hostname_short }}.sql'
 # python app version. Generated in build_project_repo
 version: '{{ python_app_version.stdout }}'
 # logging directory
@@ -79,3 +77,7 @@ requirements_type: 'txt'
 # set csp_enabled: true in project vars to enable
 csp_reportonly_uri: '{{ vault_csp_reportonly_uri}}'
 csp_enforce_uri: '{{ vault_csp_enforce_uri }}'
+
+# Postgres configuration
+postgres_version: 10
+postgres_host: lib-postgres3.princeton.edu
