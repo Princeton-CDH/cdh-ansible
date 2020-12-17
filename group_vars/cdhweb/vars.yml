@@ -20,3 +20,6 @@ node_version: "10"
 # django database backend
 db_backend: "postgresql"
 db_host: "{{ postgres_host }}"
+# image libraries needed for mezzanine image handling
+app_dependencies:
+  - python-pil
