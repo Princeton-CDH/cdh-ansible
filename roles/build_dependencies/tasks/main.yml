@@ -1,6 +1,7 @@
 ---
 - name: install configured dependencies
   become: true
+  become_user: "{{ deploy_user }}"
   apt:
     name: "{{ common_dependencies + app_dependencies }}"
     state: present
@@ -9,6 +10,7 @@
 
 - name: configure tmux
   become: true
+  become_user: "{{ deploy_user }}"
   copy:
     src: "tmux.conf"
     dest: "/etc/tmux.conf"

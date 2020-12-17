@@ -2,7 +2,7 @@
 #  Configure MEDIA_ROOT and folders for a Django deploy
 ###
 - name: Configure media folder and set up Django configurations
-  become: true
+  become: "{{ 'true' if ansible_distribution != 'Springdale' else 'false' }}"
   block:
     - name: Create media root if it does not already exist
       file:
