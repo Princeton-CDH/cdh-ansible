@@ -1,6 +1,8 @@
 ---
 # back up the database to a location on the app's host (not the db host)
 - name: backup postgres database
+  become: true
+  become_user: "{{ deploy_user }}"
   postgresql_db:
     name: "{{ application_db_name }}"
     login_host: "{{ postgres_host }}"
