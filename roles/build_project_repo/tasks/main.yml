@@ -33,12 +33,14 @@
 
     - name: Create the deploy directory (to recursively create parent dirs if necessary)
       become: true
+      become_user: "{{ deploy_user }}"
       file:
         state: directory
         dest: '{{ deploy }}'
 
     - name: Sync checkout to deploy directory
       become: true
+      become_user: "{{ deploy_user }}"
       synchronize:
         src: '{{ clone_root }}/{{ repo }}/'
         # deploy constructed dynamicallly in group_vars
