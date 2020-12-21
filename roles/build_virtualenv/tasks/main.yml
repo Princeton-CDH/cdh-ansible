@@ -23,7 +23,7 @@
         virtualenv: "{{ virtualenv_path }}"
         virtualenv_python: "{{ python_version }}"
         # use site packages on springdale for mysql client
-        virtualenv_site_packages: "{{ 'yes' if ansible_distribution == 'Springdale' else 'no' }}"
+        virtualenv_site_packages: "{{ 'true' if ansible_distribution == 'Springdale' else 'false' }}"
         # set custom prompt if supported
         virtualenv_command: "virtualenv --prompt '({{ repo | project_name }}-{{ short_hash }}-{{ version }}) '"
 
