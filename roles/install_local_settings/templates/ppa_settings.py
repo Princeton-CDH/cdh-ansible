@@ -51,7 +51,7 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
-        'SolrClient':  {
+        'parasolr': {
             'handlers': ['debug_log'],
             'level': 'WARN'
         },
@@ -63,10 +63,6 @@ LOGGING = {
 {% block extra_config %}
 # Set local path to HathiTrust pairtree data provided via rsync
 HATHI_DATA = '{{ hathitrust_pairtree_path }}'
-
-# credentials for HathiTrust Data API
-HATHITRUST_OAUTH_KEY = '{{ hathitrust_oauth_key }}'
-HATHITRUST_OAUTH_SECRET = '{{ hathitrust_oauth_secret }}'
 
 # Email address for a technical contact.
 # Will be used in From header for HathiTrust API requests
