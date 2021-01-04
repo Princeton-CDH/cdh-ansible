@@ -105,7 +105,6 @@ The rough order of creating a playbook is:
   5. Create a YAML directory in `group_vars` that has a name mirroring the new playbook: i.e. if the playbook is `my_playbook_qa`, the name should be the same, with a `vars.yml` and a `vault.yml` (for encrypted variables). You will also want to create a `group_vars` folder for the project to hold variables common to production, qa and staging. It should have the same name as the `project:children` you defined earlier in `hosts`.
   6. Reference any playbook variables and set accordingly. See above under vault variables for how to configure those.
   6. Add roles to the list in the new playbook in the order needed.
-  7. N.B. Make sure you set the `group_name` variable appropriately as some QA only steps are skipped based on `_qa` not being in the name.
 
 ## Documenting architectural decisions
 
