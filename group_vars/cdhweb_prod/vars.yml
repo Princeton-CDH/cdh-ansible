@@ -1,10 +1,12 @@
 ---
-# install root directory
-install_root: /srv/www/prod
+# Git refspec to use, either default or passed by "-e ref=<refspec>
+gitref: '{{ ref | default("main") }}'
 # email prefix for admin emails
-email_prefix: '[CDH Web] '
+email_prefix: "[CDH Web] "
 # allowed hosts for Django
 allowed_hosts:
-  - 'cdh-web.princeton.edu'
-  - 'cdh.princeton.edu'
-  - 'digitalhumanities.princeton.edu'
+  - "cdh-web.princeton.edu"
+  - "cdh.princeton.edu"
+  - "digitalhumanities.princeton.edu"
+  - "cdh-web1"
+  - "localhost"

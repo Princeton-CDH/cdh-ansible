@@ -6,11 +6,17 @@
 
 # Github repository
 repo: 'Princeton-CDH/cdh-web'
+# Install root (the dir where the repo will be set up on remote)
+install_root: "/srv/www/cdhweb"
 # name of main django application
 django_app: cdhweb
 app_name: cdhweb
+# python version
+python_version: "python3.6"
 # symlink for Apache vhost
 symlink: cdhweb
+# use PUL deploy user of conan
+deploy_user: "conan"
 # apache location
 apache_app_path: "/var/www/{{ app_name }}"
 # wsgi path
@@ -20,6 +26,12 @@ node_version: "10"
 # django database backend
 db_backend: "postgresql"
 db_host: "{{ postgres_host }}"
-# image libraries needed for mezzanine image handling
+# postgresql database info
+application_dbuser_name: "{{ vault_db_username }}"
+application_dbuser_password: "{{ vault_db_password }}"
+application_db_name: "{{ vault_db_name }}"
+# Database backup location
+db_backup_path: '/home/{{ deploy_user }}/pre-{{ version }}-{{ short_hash }}.sql'
+# app-specific system dependencies
 app_dependencies:
-  - python-pil
+  - python-pil  # for mezzanine image handling
