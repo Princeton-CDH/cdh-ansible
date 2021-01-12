@@ -7,8 +7,8 @@
 symlink: 'derridas-margins'
 # Github repository
 repo: 'Princeton-CDH/derrida-django'
-# path for templates
-template_path: derrida
+# application name
+app_name: derrida
 # name of main django application
 django_app: derrida
 # tokens for plum and figgy for protected IIIF content
@@ -22,4 +22,7 @@ geonames_username: '{{ vault_geonames_username }}'
 solr_collection: derrida
 # media path for production
 media_root: /srv/www/media
-
+# explicitly specify deploy user
+deploy_user: "deploy"
+# explicitly set apache user for Springdale
+apache_user: "apache"
