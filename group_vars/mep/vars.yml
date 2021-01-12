@@ -3,12 +3,12 @@
 ###
 # Github repository
 repo: 'Princeton-CDH/mep-django'
+# application name
+app_name: mep
 # name of django application
 django_app: mep
 # apache symlink
 symlink: shakespeareandco
-# template path
-template_path: mep
 # geonames and mapbox usernames, map-related configs
 geonames_username: '{{ vault_geonames_username }}'
 mapbox_token: '{{ vault_mapbox_token }}'
@@ -33,4 +33,5 @@ technical_contact: cdhdevteam@princeton.edu
 # explicitly specify deploy user, since mep playbook does not include install_app_config
 # and deploy user is required for crontab role
 deploy_user: "deploy"
-
+# explicitly set apache user for Springdale
+apache_user: "apache"
