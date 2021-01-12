@@ -25,7 +25,8 @@
         # use site packages on springdale for mysql client
         virtualenv_site_packages: "{{ 'true' if ansible_distribution == 'Springdale' else 'false' }}"
         # set custom prompt if supported
-        virtualenv_command: "virtualenv --prompt '({{ repo | project_name }}-{{ short_hash }}-{{ version }}) '"
+        # Disable for now; seems to require full path, which is different on springdale and args may not even work!
+        #virtualenv_command: "virtualenv --prompt '({{ repo | project_name }}-{{ short_hash }}-{{ version }}) '"
 
     - name: Install app requirements via pip
       pip:
