@@ -1,16 +1,15 @@
 ---
 - name: install configured dependencies
   become: true
-  become_user: "{{ deploy_user }}"
   apt:
     name: "{{ common_dependencies + app_dependencies }}"
     state: present
     update_cache: true
   changed_when: false
+  when: ansible_distribution == 'Ubuntu'
 
 - name: configure tmux
   become: true
-  become_user: "{{ deploy_user }}"
   copy:
     src: "tmux.conf"
     dest: "/etc/tmux.conf"
