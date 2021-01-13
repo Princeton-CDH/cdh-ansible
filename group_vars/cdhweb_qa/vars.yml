@@ -10,6 +10,7 @@ install_root: "/srv/www/cdhweb"
 email_prefix: "[QA CDH Web] "
 # allowed_hosts for Django
 allowed_hosts:
+    - "test-web.cdh.princeton.edu"
     - "cdh-test-web.princeton.edu"
     - "cdh-test-web1"
     - "localhost"
