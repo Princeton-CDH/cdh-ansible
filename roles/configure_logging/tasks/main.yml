@@ -3,7 +3,7 @@
 # Apache to write log files for the Django application.
 ###
 - name: Set up and configure logging
-  become: true
+  become: "{{ 'true' if ansible_distribution != 'Springdale' else 'false' }}"
   block:
     - name: Create logging directory
       file:

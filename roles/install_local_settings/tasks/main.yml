@@ -6,8 +6,9 @@
 ###
 - name: Install local_settings in Django/Flask project
   become: true
+  become_user: "{{ deploy_user }}"
   block:
-  
+
     - name: Install local_settings.py from project template
       template:
         src: '{{ template_path }}'
