@@ -11,15 +11,15 @@
   block:
     - name: Debug environmental variables early in deploy cycle
       debug:
-        msg: 'PATH: {{ path }} / LD_LIBRARY_PATH: {{ ld_library_path }} / PYTHONPATH: {{ python_path }} / ansible ansible_distribution_release: {{ ansible_distribution_release }}'
+        msg: "PATH: {{ path }} / LD_LIBRARY_PATH: {{ ld_library_path }} / PYTHONPATH: {{ python_path }} / ansible ansible_distribution_release: {{ ansible_distribution_release }}"
         verbosity: 2
-      when:  ansible_distribution == 'Springdale'
+      when: ansible_distribution == 'Springdale'
 
     - name: Clone project repository and set to the correct version
       git:
-        repo: '{{ repo_url }}/'
-        dest: '{{ clone_root }}/{{ repo }}'
-        version: '{{ gitref }}'
+        repo: "{{ repo_url }}/"
+        dest: "{{ clone_root }}/{{ repo }}"
+        version: "{{ gitref }}"
       # register repo_info for group_vars
       register: repo_info
 
@@ -31,34 +31,34 @@
       tags:
         - django
 
-    - name: Create the deploy directory (to recursively create parent dirs if necessary)
-      become: true
-      become_user: "{{ deploy_user }}"
-      file:
-        state: directory
-        dest: '{{ deploy }}'
-
-    - name: Sync checkout to deploy directory
-      become: true
-      become_user: "{{ deploy_user }}"
-      synchronize:
-        src: '{{ clone_root }}/{{ repo }}/'
-        # deploy constructed dynamicallly in group_vars
-        dest: '{{ deploy }}/'
-      # sync remotely -- inventory_hostname is a magic var that always points
-      # to host where the playbook is being run.
-      delegate_to: '{{ inventory_hostname }}'
-
-    - name: Set owner on deploy directory
+    - name: Ensure deploy user has access to install root
       become: true
       file:
-        dest: "{{ deploy }}"
+        dest: "{{ install_root }}"
         owner: "{{ deploy_user }}"
         group: "{{ deploy_user }}"
         recurse: yes
       # only set owner when deploy user is defined
       # (i.e. on PUL vms, where deploy user is different than remote user)
       when: deploy_user is defined and ansible_distribution != 'Springdale'
+
+    - name: Create the deploy directory (to recursively create parent dirs if necessary)
+      become: true
+      become_user: "{{ deploy_user }}"
+      file:
+        state: directory
+        dest: "{{ deploy }}"
+
+    - name: Sync checkout to deploy directory
+      become: true
+      become_user: "{{ deploy_user }}"
+      synchronize:
+        src: "{{ clone_root }}/{{ repo }}/"
+        # deploy constructed dynamicallly in group_vars
+        dest: "{{ deploy }}/"
+      # sync remotely -- inventory_hostname is a magic var that always points
+      # to host where the playbook is being run.
+      delegate_to: "{{ inventory_hostname }}"
 
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml

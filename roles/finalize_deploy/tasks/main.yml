@@ -39,6 +39,20 @@
         path: "{{ install_root }}/previous"
       register: previous
 
+    # On Ubuntu we need to do this with an account that can access both /srv
+    # and /var, so we need to be root
+    - name: Update /var/www/ symlink to make the new version live
+      become_user: root
+      file:
+        src: "{{ deploy }}"
+        dest: "/var/www/{{ symlink }}"
+        state: link
+      notify:
+        - restart httpd
+        - restart apache
+      when: ansible_distribution != 'Springdale'
+
+    # On Springdale we can do this as deploy_user
     - name: Update /var/www/ symlink to make the new version live
       file:
         src: "{{ deploy }}"
@@ -47,6 +61,7 @@
       notify:
         - restart httpd
         - restart apache
+      when: ansible_distribution == 'Springdale'
 
     # This makes sure that any server side settings that handle autoconfiguring
     # SELinux permissions (that we would otherwise need to be root for) are
@@ -55,10 +70,10 @@
     # It uses the shell modules rather than the SELinux or Apache modules
     # because we only have limited sudo and rights for both these statements
     - name: Call restorecon to set permissions for install_root
-      shell: '/usr/sbin/restorecon -R {{ install_root }}'
+      shell: "/usr/sbin/restorecon -R {{ install_root }}"
       args:
         executable: /bin/bash
-      when:  ansible_distribution == 'Springdale'
+      when: ansible_distribution == 'Springdale'
 
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
