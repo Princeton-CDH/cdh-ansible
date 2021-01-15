@@ -8,17 +8,13 @@
   become_user: "{{ deploy_user }}"
 
   block:
-    # NOTE: only explicitly create virtualenv on Springdale/SELinux
-    - name: Create venv with project-name-short-hash-version
-      command: "virtualenv --system-site-packages {{ virtualenv_path }} --prompt '({{ repo | project_name }}-{{ short_hash }}-{{ version }}) '"
-      when:  ansible_distribution == 'Springdale'
-
-    - name: Set perms
-      file:
-          path: "{{ virtualenv_path }}"
-          state: directory
-          mode: "u+rwx,g+rwx,o-rw"
-      when:  ansible_distribution == 'Springdale'
+    # not sure if this still needed
+    # - name: Set perms
+    #   file:
+    #       path: "{{ virtualenv_path }}"
+    #       state: directory
+    #       mode: "u+rwx,g+rwx,o-rw"
+    #   when:  ansible_distribution == 'Springdale'
 
     - name: Upgrade pip in virtual environment
       pip:
@@ -26,6 +22,11 @@
         state: latest
         virtualenv: "{{ virtualenv_path }}"
         virtualenv_python: "{{ python_version }}"
+        # use site packages on springdale for mysql client
+        virtualenv_site_packages: "{{ 'true' if ansible_distribution == 'Springdale' else 'false' }}"
+        # set custom prompt if supported
+        # Disable for now; seems to require full path, which is different on springdale and args may not even work!
+        #virtualenv_command: "virtualenv --prompt '({{ repo | project_name }}-{{ short_hash }}-{{ version }}) '"
 
     - name: Install app requirements via pip
       pip:
