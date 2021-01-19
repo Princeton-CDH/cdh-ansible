@@ -5,9 +5,7 @@ gitref: '{{ ref | default("main") }}'
 email_prefix: "[CDH Web] "
 # allowed hosts for Django
 allowed_hosts:
-  - "cdh-web.princeton.edu"
   - "cdh.princeton.edu"
   - "digitalhumanities.princeton.edu"
-  - "cdh-beta.princeton.edu"
   - "cdh-web1"
   - "localhost"
