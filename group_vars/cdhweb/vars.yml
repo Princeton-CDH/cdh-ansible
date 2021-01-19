@@ -5,7 +5,7 @@
 # NOTE: Default paths are acceptable as is from all
 
 # Github repository
-repo: 'Princeton-CDH/cdh-web'
+repo: "Princeton-CDH/cdh-web"
 # Install root (the dir where the repo will be set up on remote)
 install_root: "/srv/www/cdhweb"
 # name of main django application
@@ -31,7 +31,7 @@ application_dbuser_name: "{{ vault_db_username }}"
 application_dbuser_password: "{{ vault_db_password }}"
 application_db_name: "{{ vault_db_name }}"
 # Database backup location
-db_backup_path: '/home/{{ deploy_user }}/pre-{{ version }}-{{ short_hash }}.sql'
+db_backup_path: "/home/{{ deploy_user }}/backups/pre-{{ version }}-{{ short_hash }}.sql"
 # app-specific system dependencies
 app_dependencies:
-  - python-pil  # for mezzanine image handling
+  - python-pil # for mezzanine image handling
