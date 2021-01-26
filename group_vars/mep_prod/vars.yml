@@ -10,6 +10,14 @@ allowed_hosts:
 # - solr settings
 solr_url: http://index.cdh.princeton.edu:8983/solr
 
+# override default deploy contexts to match current CI on GitHub Actions
+deploy_contexts:
+    - 'codecov/project'
+    - 'codecov/patch'
+    - 'TypeScript unit tests'
+    - 'Python unit tests'
+    - 'Analyze (javascript)'
+    - 'Analyze (python)'
 
 # configure scripts to run as cron jobs
 crontab:
