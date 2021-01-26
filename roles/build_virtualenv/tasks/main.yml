@@ -16,10 +16,11 @@
     #       mode: "u+rwx,g+rwx,o-rw"
     #   when:  ansible_distribution == 'Springdale'
 
-    - name: Upgrade pip in virtual environment
+    - name: Setup virtual environment
       pip:
         name: pip
-        state: latest
+        # pip 0.15 dropped support for python 3.5
+        state: "{{ 'present' if python_version == 'python3.5' else 'latest' }}"
         virtualenv: "{{ virtualenv_path }}"
         virtualenv_python: "{{ python_version }}"
         # use site packages on springdale for mysql client
@@ -27,6 +28,11 @@
         # set custom prompt if supported
         # Disable for now; seems to require full path, which is different on springdale and args may not even work!
         #virtualenv_command: "virtualenv --prompt '({{ repo | project_name }}-{{ short_hash }}-{{ version }}) '"
+
+    - name: Install pip to last version with 3.5 support (if python version == 3.5)
+      pip:
+        name: pip<21
+      when:  python_version == 'python3.5'
 
     - name: Install app requirements via pip
       pip:
