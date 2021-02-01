@@ -26,8 +26,8 @@ application_db_name: "{{ vault_db_name }}"
 apache_extraconf:
   path: "/etc/apache2/conf-available/geniza_extraconf_{{ app_name }}.conf"
   content: |
-    ProxyPass "{{ apache_app_url }}"  "http://{{ apache_servername }}:{{ apache_port }}/{{ apache_app_url }}"
-    ProxyPassReverse "{{ apache_app_url }}"  "http://{{ apache_servername }}:{{ apache_port }}/{{ apache_app_url }}"
+    ProxyPass "{{ apache_app_url }}"  "http://{{ apache_servername }}:{{ apache_port }}{{ apache_app_url }}"
+    ProxyPassReverse "{{ apache_app_url }}"  "http://{{ apache_servername }}:{{ apache_port }}{{ apache_app_url }}"
 # explicitly specify deploy user
 deploy_user: "conan"
 # allow QA host
