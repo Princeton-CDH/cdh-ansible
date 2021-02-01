@@ -1,21 +1,19 @@
 - hosts: cdhweb_prod
   connection: ssh
-  remote_user: deploy
-  # Set environment to use scl rh-python35 in group_vars
-  environment:
-    PATH: '{{ path }}'
-    LD_LIBRARY_PATH: '{{ ld_library_path }}'
-    PYTHONPATH: '{{ python_path }}'
+  remote_user: pulsys
   roles:
     - create_deployment
+    - deploy_user
     - build_project_repo
     - build_virtualenv
+    - postgresql
+    - configure_logging
+    - configure_apache
     - install_local_settings
     - build_npm
     - configure_media
     - django_collectstatic
     - django_compressor
-    - backup_database
     - django_migrate
     - finalize_deploy
     - close_deployment

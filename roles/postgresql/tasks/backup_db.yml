@@ -1,5 +1,14 @@
 ---
 # back up the database to a location on the app's host (not the db host)
+- name: check postgres backup path
+  become: true
+  become_user: "{{ deploy_user }}"
+  file:
+    dest: "{{ db_backup_path | dirname }}"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+
 - name: backup postgres database
   become: true
   become_user: "{{ deploy_user }}"
