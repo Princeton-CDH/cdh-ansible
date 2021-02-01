@@ -5,7 +5,7 @@
     - ./group_vars/geniza_qa_i18n/vars.yml
     - ./group_vars/geniza_qa_i18n/vault.yml
   roles:
-    # - create_deployment
+    - create_deployment
     - deploy_user
     - build_project_repo
     - build_virtualenv
@@ -15,4 +15,4 @@
     - django_collectstatic
     - django_migrate
     - finalize_deploy
-    # - close_deployment
+    - close_deployment
