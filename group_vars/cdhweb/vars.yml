@@ -35,3 +35,4 @@ db_backup_path: "/home/{{ deploy_user }}/backups/pre-{{ version }}-{{ short_hash
 # app-specific system dependencies
 app_dependencies:
   - python-pil # for mezzanine image handling
+  - python-opencv  # for wagtail image feature detection
