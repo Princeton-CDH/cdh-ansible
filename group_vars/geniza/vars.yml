@@ -7,7 +7,7 @@
 #ld_library_path: '/opt/rh/rh-python35/root/usr/lib64:/opt/rh/rh-nodejs8/root/usr/lib64{% if ansible_env.LD_LIBRARY_PATH is defined %}:{{ ansible_env.LD_LIBRARY_PATH }}{% endif %}'
 #python_path: '/opt/rh/rh-nodejs8/root/usr/lib/python2.7/site-packages{% if ansible_env.PYTHON_PATH is defined %}:{{ ansible_env.PYTHONPATH }}{% endif %}'
 # GitHub repository
-repo: 'Princeton-CDH/geniza'
+repo: "Princeton-CDH/geniza"
 # name of python application
 django_app: scripts
 # application name
@@ -25,16 +25,19 @@ python_version: "python3.6"
 # Override clone root to use deploy user home instead of root
 clone_root: "/home/{{ deploy_user }}/repos"
 # for Geniza, we don't distinguish between qa/prod paths
-install_root: '/srv/www/{{ app_name }}'
-solr_core: 'geniza'
+install_root: "/srv/www/{{ app_name }}"
+solr_core: "geniza"
 
 # override default production contexts (no code coverage for this project yet)
 deploy_contexts: []
 
+# pul deploy user
+deploy_user: "conan"
+
 # configure environment variables
 app_vars:
   - name: FLASK_APP
-    value: '{{ deploy }}/scripts/server.py'
+    value: "{{ deploy }}/scripts/server.py"
 
 # configure scripts to run as cron jobs
 crontab:
