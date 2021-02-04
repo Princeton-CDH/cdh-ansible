@@ -1,3 +1,4 @@
+---
 # i18n is a separate django app
 app_name: "geniza_i18n"
 # django app is called "geniza"
@@ -6,15 +7,6 @@ django_app: geniza
 gitref: "experiment/i18n"
 # wsgi file is inside django app folder
 wsgi_path: "{{ django_app }}/wsgi.py"
-# serve at a different prefix
-apache_app_url: "/ml"
-# require additional apache modules
-apache_app_modules:
-  - proxy
-  - proxy_http
-# serve on localhost:81
-apache_servername: "localhost"
-apache_port: 81
 # django database backend
 db_backend: "postgresql"
 db_host: "{{ postgres_host }}"
@@ -22,17 +14,10 @@ db_host: "{{ postgres_host }}"
 application_dbuser_name: "{{ vault_db_username }}"
 application_dbuser_password: "{{ vault_db_password }}"
 application_db_name: "{{ vault_db_name }}"
-# configure apache extraconf file for inclusion in main geniza vhost
-apache_extraconf:
-  path: "/etc/apache2/conf-available/geniza_extraconf_{{ app_name }}.conf"
-  content: |
-    ProxyPass "{{ apache_app_url }}"  "http://{{ apache_servername }}:{{ apache_port }}{{ apache_app_url }}"
-    ProxyPassReverse "{{ apache_app_url }}"  "http://{{ apache_servername }}:{{ apache_port }}{{ apache_app_url }}"
-# explicitly specify deploy user
-deploy_user: "conan"
 # allow QA host
 allowed_hosts:
   - "test-geniza.cdh.princeton.edu"
+  - "cdh-test-geniza1"
   - "localhost"
 # email prefix
 email_prefix: "[QA Geniza i18n]"
