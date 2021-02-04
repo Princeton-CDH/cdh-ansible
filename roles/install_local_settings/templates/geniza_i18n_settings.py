@@ -27,5 +27,6 @@ PUCAS_LDAP = {
 {% endblock %}
 
 {% block extra_config %}
-STATIC_URL = "{{ apache_app_url }}/static/"
+# Use x-forwarded-proto header to tell if request from nginx was https or not
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 {% endblock %}
