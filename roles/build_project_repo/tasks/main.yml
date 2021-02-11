@@ -15,22 +15,6 @@
         verbosity: 2
       when: ansible_distribution == 'Springdale'
 
-    - name: Clone project repository and set to the correct version
-      git:
-        repo: "{{ repo_url }}/"
-        dest: "{{ clone_root }}/{{ repo }}"
-        version: "{{ gitref }}"
-      # register repo_info for group_vars
-      register: repo_info
-
-    - name: Get python package version
-      shell:
-        cmd: "python -c 'import {{ django_app }}; print({{ django_app }}.__version__)'"
-        chdir: "{{ clone_root}}/{{ repo }}"
-      register: python_app_version
-      tags:
-        - django
-
     - name: Ensure deploy user has access to install root
       become: true
       file:
@@ -41,6 +25,26 @@
       # only set owner when deploy user is defined
       # (i.e. on PUL vms, where deploy user is different than remote user)
       when: deploy_user is defined and ansible_distribution != 'Springdale'
+
+    - name: Clone project repository and set to the correct version
+      become: true
+      become_user: "{{ deploy_user }}"
+      git:
+        repo: "{{ repo_url }}/"
+        dest: "{{ clone_root }}/{{ repo }}"
+        version: "{{ gitref }}"
+      # register repo_info for group_vars
+      register: repo_info
+
+    - name: Get python package version
+      become: true
+      become_user: "{{ deploy_user }}"
+      shell:
+        cmd: "python -c 'import {{ django_app }}; print({{ django_app }}.__version__)'"
+        chdir: "{{ clone_root}}/{{ repo }}"
+      register: python_app_version
+      tags:
+        - django
 
     - name: Create the deploy directory (to recursively create parent dirs if necessary)
       become: true
