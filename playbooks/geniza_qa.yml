@@ -10,7 +10,7 @@
     - postgresql
     - configure_apache
     - install_local_settings
-    - django_collectstatic
+#    - django_collectstatic    # disable until we add static content
     - django_migrate
     - finalize_deploy
     - close_deployment
