@@ -32,8 +32,8 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # urls to google sheets data published as csv for import
 DATA_IMPORT_URLS = {
-    'libraries': '',
-    'languages': '',    
+    'libraries': '{{ libraries_csv_url }}',
+    'languages': '{{ languages_csv_url }}',
     'metadata': '{{ metadata_csv_url }}'
 }
 {% endblock %}
