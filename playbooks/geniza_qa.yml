@@ -4,13 +4,14 @@
   become: true
   roles:
     - create_deployment
+    - deploy_user
     - build_dependencies
     - build_project_repo
     - build_virtualenv
     - postgresql
     - configure_apache
     - install_local_settings
-#    - django_collectstatic    # disable until we add static content
+    - django_collectstatic
     - django_migrate
     - finalize_deploy
     - close_deployment
