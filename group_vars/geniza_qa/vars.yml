@@ -1,3 +1,12 @@
-solr_url: 'https://test-index.cdh.princeton.edu/'
-# Instead of deploy, the search prototype is hosted on the "experiment/search" branch
-gitref: 'experiment/search'
+gitref: '{{ ref | default("develop") }}'
+
+# allow QA host
+allowed_hosts:
+  - "test-geniza.cdh.princeton.edu"
+  - "cdh-test-geniza1"
+  - "localhost"
+
+# email prefix for admin emails
+email_prefix: "[QA Geniza] "
+# geniza local settings have a slightly different path
+local_settings_dest: '{{ deploy }}/{{ django_app }}/settings/local_settings.py'

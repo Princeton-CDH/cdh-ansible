@@ -3,44 +3,35 @@
 ###
 ---
 # Paths are picky and spaces for any YAML multiline syntax causes issues
-#path: '/opt/rh/rh-python35/root/usr/bin:/opt/rh/rh-nodejs8/root/usr/bin:{{ ansible_env.PATH }}'
-#ld_library_path: '/opt/rh/rh-python35/root/usr/lib64:/opt/rh/rh-nodejs8/root/usr/lib64{% if ansible_env.LD_LIBRARY_PATH is defined %}:{{ ansible_env.LD_LIBRARY_PATH }}{% endif %}'
-#python_path: '/opt/rh/rh-nodejs8/root/usr/lib/python2.7/site-packages{% if ansible_env.PYTHON_PATH is defined %}:{{ ansible_env.PYTHONPATH }}{% endif %}'
 # GitHub repository
-repo: 'Princeton-CDH/geniza'
+repo: "Princeton-CDH/geniza"
 # name of python application
-django_app: scripts
+django_app: geniza
 # application name
 app_name: geniza
 # apache symlink
 symlink: "{{ app_name }}"
-# Solr settings
-solr_collection: geniza
 # apache location
 apache_app_path: "/var/www/{{ app_name }}"
 # wsgi file relative to apache location
-wsgi_path: "{{ app_name }}.wsgi"
+wsgi_path: "{{ django_app }}/wsgi.py"
 # use python 3.6
 python_version: "python3.6"
 # Override clone root to use deploy user home instead of root
 clone_root: "/home/{{ deploy_user }}/repos"
 # for Geniza, we don't distinguish between qa/prod paths
-install_root: '/srv/www/{{ app_name }}'
-# path to dir that holds local_settings.py
-template_path: "{{ app_name }}"
-solr_core: 'geniza'
+install_root: "/srv/www/{{ app_name }}"
 
 # override default production contexts (no code coverage for this project yet)
 deploy_contexts: []
 
-# configure environment variables
-app_vars:
-  - name: FLASK_APP
-    value: '{{ deploy }}/scripts/server.py'
+# pul deploy user
+deploy_user: "conan"
 
-# configure scripts to run as cron jobs
-crontab:
-  - name: "{{ app_name }} index metadata"
-    minute: 5
-    job: "bin/cron-wrapper {{ deploy }}/env/bin/flask index >> {{ logging_dir }}/index.log  2>&1"
-    state: present
+# django database backend
+db_backend: "postgresql"
+db_host: "{{ postgres_host }}"
+# postgresql database info
+application_dbuser_name: "{{ vault_db_username }}"
+application_dbuser_password: "{{ vault_db_password }}"
+application_db_name: "{{ vault_db_name }}"
