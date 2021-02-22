@@ -1,0 +1,4 @@
+---
+# default for configure_media
+apache_user: "www-data"
+apache_group: "{{ apache_user }}"

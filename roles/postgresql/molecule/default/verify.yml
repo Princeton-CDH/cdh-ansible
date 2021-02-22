@@ -1,0 +1,18 @@
+---
+- name: Verify
+  hosts: instance
+  gather_facts: false
+  vars_files:
+    - ../../defaults/main.yml
+  tasks:
+    - name: ensure postgresql db user can create tables
+      vars:
+        ansible_python_interpreter: "{{ deploy_user_venv }}/bin/python"
+      postgresql_table:
+        login_host: "{{ postgres_host }}"
+        port: "{{ postgres_port }}"
+        login_user: "{{ application_dbuser_name }}"
+        login_password: "{{ application_dbuser_password }}"
+        db: "{{ application_db_name }}"
+        table: "test_table"
+      check_mode: yes

@@ -37,9 +37,9 @@ derrida_qa
 derrida_prod
 
 [cdhweb_qa]
-test-web.cdh.princeton.edu
+cdh-test-web1.princeton.edu
 [cdhweb_prod]
-cdh.princeton.edu
+cdh-web1.princeton.edu
 
 [cdhweb:children]
 cdhweb_qa

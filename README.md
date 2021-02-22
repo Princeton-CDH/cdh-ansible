@@ -11,6 +11,7 @@ The overall structure of this repository can be broken down as follows:
       - `vault.yml` - `ansible vault` encrypted variables
     - Individual project group variables
   - `hosts` - host file with groups and their associated host(s)
+  - `adr` - list of significant architectural decisions, as markdown files
 
 ## Using these playbooks
 
@@ -18,6 +19,10 @@ The overall structure of this repository can be broken down as follows:
   - Python virtual environment.
     - See `.python-version` for the recommended version of Python.
     - If you use `env` or `venv`, the `.gitignore` will exclude it.
+    
+  -  Install required Ansible galaxy collections:
+    - `ansible-galaxy collection install community.general`
+    
   - The CDH Ansible vault key. This can be referenced on the command line or better set as in the Bash session, i.e. `export ANSIBLE_VAULT_PASSWORD_FILE=/path/to/.passwd`
   - A GitHub [personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) for any playbook that uses the `create_deployment` and `close_deployment` roles. You can set this in your Bash session as `ANSIBLE_GITHUB_TOKEN` or pass it on the command line as `-e github_token=`
   - The CDH deploy bot key. This can be added to ssh-agent or in `~/.ssh/config`. All production deploys must be on the campus network (including VPN) and proxy through the QA server to production, with an ssh config stanza that looks something like:
@@ -70,33 +75,6 @@ To revert to previous deploy run call the `revert_deploy` playbook with a `host_
 ansible-playbook -e host_group=mep_qa playbooks/revert_deploy.yml
 ```
 
-## Overrides
-
-There are two principal overrides that the roles involved in deployment have built-in. One is the override noted above for what Git reference should be used to deploy. This can be any hash, branch head, or tag that the Git repository knows about.
-
-You can also override any other arbitrary variable, but the other likely one is the `requirements` file. You may want to point to a `requirements.lock`, for example:
-```{bash}
-ansible-playbook -e requirements_type=lock playbooks/playbook.yml
-```
-
-You can also pass a list of arbitrary additions or updates to pip (except for git pinned requirements):
-```{bash}
-ansible-playbook -e pip_updates='django-autocomplete-light<3.3' playbooks/playbook.yml
-```
-
-If you need to do more than one requirement, you can pass references using JSON notation (which should also include your other `-e` vars)
-```{bash}
-ansible-playbook -e '{"pip_updates": ["pandas", "colorama"], "ref": "develop"}'
-```
-
-These will be automatically added (or updated) to the requirements for the application during its deployment.
-
-If you need to make major changes and do not wish to make a patch release for whatever reason, you can also entirely replace `requirements.(txt|lock)` with a local template:
-
-```{bash}
-ansible-playbook -e new_requirements=/path/to/local/template.txt playbooks/playbook.yml
-```
-
 ## Vault variables
 
 Variables kept in `group_vars/*/vault.yml` are sensitive configurations that should always be kept encrypted on commit. To edit them (in your system text editor):
@@ -127,4 +105,9 @@ The rough order of creating a playbook is:
   5. Create a YAML directory in `group_vars` that has a name mirroring the new playbook: i.e. if the playbook is `my_playbook_qa`, the name should be the same, with a `vars.yml` and a `vault.yml` (for encrypted variables). You will also want to create a `group_vars` folder for the project to hold variables common to production, qa and staging. It should have the same name as the `project:children` you defined earlier in `hosts`.
   6. Reference any playbook variables and set accordingly. See above under vault variables for how to configure those.
   6. Add roles to the list in the new playbook in the order needed.
-  7. N.B. Make sure you set the `group_name` variable appropriately as some QA only steps are skipped based on `_qa` not being in the name.
+
+## Documenting architectural decisions
+
+We use the [ADR specification](https://github.com/joelparkerhenderson/architecture_decision_record) for documenting architectural decisions made over the course of work on this repository - i.e. conventions around our usage of Ansible. Decision documents are stored in the `adr/` folder as markdown files.
+
+To propose a new decision, copy the `adr/template.md` file and rename it using a sequential number and description of the decision that needs making. Then create a pull request to track discussion on that decision.

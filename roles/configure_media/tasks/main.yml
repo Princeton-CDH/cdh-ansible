@@ -2,37 +2,53 @@
 #  Configure MEDIA_ROOT and folders for a Django deploy
 ###
 - name: Configure media folder and set up Django configurations
+  become: "{{ 'true' if ansible_distribution != 'Springdale' else 'false' }}"
   block:
     - name: Create media root if it does not already exist
       file:
-          path: '{{ media_root }}'
-          state: directory
-          mode: "u=rwX,g=rwX,o=X"
+        path: "{{ media_root }}"
+        state: directory
+        mode: "u=rwX,g=rwX,o=X"
+
+    - name: Make sure media root is owned by apache user and group
+      file:
+        path: "{{ media_root }}"
+        owner: "{{ apache_user }}"
+        group: "{{ apache_group }}"
+        state: directory
+        recurse: true
+      when: ansible_distribution == 'Ubuntu'
+
     - name: if on qa, set acls appropriately so apache can access
       acl:
-          entity: apache
-          etype: group
-          permissions: rwx
-          path: '{{ media_root }}'
-          recursive: yes
-          default: yes
-          state: present
+        entity: "{{ apache_group }}"
+        etype: group
+        permissions: rwx
+        path: "{{ media_root }}"
+        recursive: yes
+        default: yes
+        state: present
       when: qa is defined
+
     - name: Give deploy acl rwx over all files in the directory as a fall back
       acl:
-          entity: deploy
-          etype: user
-          permissions: rwx
-          path: '{{ media_root }}'
-          recursive: yes
-          default: yes
-          state: present
+        entity: "{{ deploy_user }}"
+        etype: user
+        permissions: rwx
+        path: "{{ media_root }}"
+        recursive: yes
+        default: yes
+        state: present
+
     - name: Configure selinux permissions (using command to be non-su safe)
       # selinux settings should be made at the server level
-      shell: '/usr/sbin/restorecon -R {{ media_root }}'
+      shell: "/usr/sbin/restorecon -R {{ media_root }}"
       args:
         executable: /bin/bash
+      when: ansible_distribution == "Springdale"
+
   tags:
-      - media
+    - media
+
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml

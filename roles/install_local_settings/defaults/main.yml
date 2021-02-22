@@ -1,0 +1,7 @@
+---
+# defaults for install_local_settings
+template_path: "{{ app_name }}_settings.py"
+# where local settings should be copied
+local_settings_dest: '{{ deploy }}/{{ django_app }}/local_settings.py'
+# default db backend
+db_backend: "mysql"

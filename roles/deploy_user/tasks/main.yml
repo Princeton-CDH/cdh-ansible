@@ -1,0 +1,29 @@
+---
+# tasks file for deploy_user
+- name: set up deploy user
+  block:
+    - name: create deploy user group
+      become: true
+      group:
+        name: "{{ deploy_user }}"
+
+    - name: create deploy user
+      become: true
+      user:
+        name: "{{ deploy_user }}"
+        groups:
+          - "{{ deploy_user }}"
+          - "{{ apache_group }}"
+        home: "/home/{{ deploy_user }}"
+        shell: "{{ deploy_user_shell }}"
+
+    - name: Create bash profile
+      become: true
+      template:
+        src: "bash_profile.j2"
+        dest: "/home/{{ deploy_user }}/.profile"
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+
+  rescue:
+    - include_tasks: roles/create_deployment/tasks/fail.yml

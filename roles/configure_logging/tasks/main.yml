@@ -3,6 +3,7 @@
 # Apache to write log files for the Django application.
 ###
 - name: Set up and configure logging
+  become: "{{ 'true' if ansible_distribution != 'Springdale' else 'false' }}"
   block:
     - name: Create logging directory
       file:
@@ -15,10 +16,11 @@
         group: '{{ project_user | default(deploy_user) }}'
         recurse: true
       when: qa is defined
-    - name: For PUL VMs, set logging directory group to deploy user
+    - name: For PUL VMs, set logging directory owner and group to apache
       file:
         path: '{{ logging_dir }}'
-        group: '{{ deploy_user }}'
+        owner: '{{ apache_user }}'
+        group: '{{ apache_group }}'
         recurse: true
       when: deploy_user is defined and ansible_distribution != 'Springdale'
     - name: Create logging directory default acl & set sticky bit
