@@ -3,6 +3,19 @@
 Django settings for geniza
 """
 
+{% block database %}
+DATABASES = {
+    'default': {
+        'ENGINE': 'psqlextra.backend',
+        'NAME': '{{ db_name }}',
+        'USER': '{{ db_username }}',
+        'PASSWORD': '{{ db_password}}',
+        'HOST': '{{ db_host }}',
+        'PORT': '',
+    }
+}
+{% endblock %}
+
 {% block cas_config %}
 CAS_SERVER_URL = "https://fed.princeton.edu/cas/"
 
