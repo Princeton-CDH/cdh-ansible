@@ -8,6 +8,8 @@
 repo: "Princeton-CDH/cdh-web"
 # Install root (the dir where the repo will be set up on remote)
 install_root: "/srv/www/cdhweb"
+# Clone root (where deploy user clones repo)
+clone_root: "/home/{{ deploy_user }}/repos"
 # name of main django application
 django_app: cdhweb
 app_name: cdhweb
