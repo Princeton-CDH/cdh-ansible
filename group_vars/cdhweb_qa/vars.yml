@@ -9,3 +9,10 @@ allowed_hosts:
     - "cdh-test-web.princeton.edu"
     - "cdh-test-web1"
     - "localhost"
+# configure apache extraconf file with redirects for v2 media
+apache_extraconf:
+  path: "/etc/apache2/conf-available/cdhweb_extraconf_v2redirects.conf"
+  content: |
+    RewriteEngine On
+    RewriteCond "%{REQUEST_URI}"  "^/media/uploads"
+    RewriteRule "/(.*\.(jpg|jpeg|gif|png))$" "/media/original_images/$1" [L,R=301]
