@@ -9,3 +9,10 @@ allowed_hosts:
   - "digitalhumanities.princeton.edu"
   - "cdh-web1"
   - "localhost"
+# configure apache extraconf file with redirects for migrated v2.x images
+apache_extraconf:
+  path: "/etc/apache2/conf-available/cdhweb_extraconf_v2redirects.conf"
+  content: |
+    RewriteEngine On
+    RewriteCond "%{REQUEST_URI}"  "^/media/uploads/(.+)"
+    RewriteRule "^/media/uploads/(.*/)?([^/]+\.(jpg|jpeg|gif|png))$" "https://cdh.princeton.edu/media/original_images/$2" [L,R=301]
