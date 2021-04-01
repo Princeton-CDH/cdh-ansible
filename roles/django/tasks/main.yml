@@ -1,0 +1,7 @@
+---
+# Basic sequence of tasks for setting up a Django app.
+
+- include: install_local_settings.yml
+- include: migrate.yml
+- include: collectstatic.yml
+- include: compilemessages.yml
