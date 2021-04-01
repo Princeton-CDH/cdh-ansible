@@ -16,8 +16,9 @@ deploy_contexts:
     - 'codecov/patch'
     - 'TypeScript unit tests'
     - 'Python unit tests'
-    - 'Analyze (javascript)'
-    - 'Analyze (python)'
+# NOTE: codeql is disabled on repositories that are inactive for 60 days
+#    - 'Analyze (javascript)'
+#    - 'Analyze (python)'
 
 # configure scripts to run as cron jobs
 crontab:
