@@ -9,18 +9,18 @@
   tasks:
     - name: create a testing user
       user:
-        name: python
+        name: "{{ python_user }}"
 
     - name: create project directory
       file:
         path: "{{ python_app_path }}"
         state: directory
-        owner: python
+        owner: "{{ python_user }}"
         mode: 0744
 
     - name: create requirements.txt file
       copy:
         dest: "{{ python_requirements_file }}"
         content: Django==3.1
-        owner: python
+        owner: "{{ python_user }}"
         mode: 0644
