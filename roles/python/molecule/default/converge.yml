@@ -1,0 +1,14 @@
+---
+# Run the main python task sequence for testing.
+
+- name: converge
+  hosts: all
+  gather_facts: false
+  vars_files: ../../defaults/main.yml
+  
+  tasks:
+    - name: include python role
+      include_role:
+        name: python
+      vars:
+        python_version: "3.8"
