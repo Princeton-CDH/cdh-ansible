@@ -1,0 +1,11 @@
+galaxy_info:
+  role_name: python
+  author: cdh
+  description: sets up python with virtual environment
+  license: Apache2
+  platforms:
+    - name: Ubuntu
+      versions:
+      - 18
+  min_ansible_version: 2.10
+dependencies: []
