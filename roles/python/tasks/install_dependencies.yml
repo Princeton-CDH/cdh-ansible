@@ -1,0 +1,29 @@
+---
+# Create a virtual environment and update pip/setuptools. If a requirements.txt
+# file is present, install its contents into the virtual environment.
+
+- name: upgrade pip/setuptools
+  become: true
+  become_user: "{{ python_user }}"
+  pip:
+    virtualenv: "{{ python_venv_path }}"
+    virtualenv_command: python{{ python_version }} -m venv
+    name:
+      - pip
+      - setuptools
+    state: latest
+
+- name: check for requirements.txt file
+  become: true
+  become_user: "{{ python_user }}"
+  stat:
+    path: "{{ python_requirements_file }}"
+  register: _requirements_file
+
+- name: install python requirements
+  when: _requirements_file.stat.exists
+  become: true
+  become_user: "{{ python_user }}"
+  pip:
+    virtualenv: "{{ python_venv_path }}"
+    requirements: "{{ python_requirements_file }}"
