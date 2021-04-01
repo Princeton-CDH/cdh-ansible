@@ -1,0 +1,32 @@
+---
+# Create an example django project for testing.
+
+- name: prepare
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - ../../defaults/main.yml
+  vars:
+    django_version: "3.2"
+    django_user: django
+    python_user: "{{ django_user }}"
+    python_app_path: "{{ django_app_path }}"
+
+  tasks:
+    - name: create a testing user
+      user:
+        name: "{{ django_user }}"
+
+    - name: create project directory
+      copy:
+        src: myapp
+        dest: "/srv/www"
+        owner: "{{ django_user }}"
+        mode: 0744
+
+    - name: create requirements.txt file
+      template:
+        src: requirements.txt.j2
+        dest: "{{ django_app_path }}/requirements.txt"
+        owner: "{{ django_user }}"
+        mode: 0644

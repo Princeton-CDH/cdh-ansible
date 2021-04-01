@@ -1,0 +1,9 @@
+---
+# Runs the `migrate` command for executing database migrations.
+# https://docs.djangoproject.com/en/dev/ref/django-admin/#migrate
+
+- name: run database migrations
+  django_manage:
+    command: migrate
+    app_path: "{{ django_app_path }}"
+    virtualenv: "{{ django_venv_path }}"

@@ -1,3 +1,7 @@
+---
+# Django requires python to run. We assume that Django is already installed in
+# a python virtual environment in django_app_path.
+
 galaxy_info:
   role_name: python
   author: cdh
@@ -11,4 +15,8 @@ galaxy_info:
   min_ansible_version: "2.10"
   galaxy_tags: []
 
-dependencies: []
+dependencies:
+  - role: python
+    vars:
+      python_app_path: "{{ django_app_path }}"
+      python_user: "{{ django_user }}"

@@ -1,0 +1,12 @@
+---
+# Test running main task sequence for django.
+
+- name: converge
+  hosts: all
+  gather_facts: false
+  vars_files: ../../defaults/main.yml
+
+  tasks:
+    - name: include django role
+      include_role:
+        name: django

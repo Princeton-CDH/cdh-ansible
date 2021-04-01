@@ -10,6 +10,7 @@ jobs:
           - deploy_user
           - passenger
           - python
+          - django
           # - postgresql
     steps:
       - uses: actions/checkout@v2
