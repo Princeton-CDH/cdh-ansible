@@ -31,7 +31,8 @@
 
     - name: Install pip to last version with 3.5 support (if python version == 3.5)
       pip:
-        name: pip<21
+        name: "pip>20,<21"
+        virtualenv: "{{ virtualenv_path }}"
       when:  python_version == 'python3.5'
 
     - name: Install app requirements via pip
