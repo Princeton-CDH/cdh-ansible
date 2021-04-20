@@ -9,6 +9,7 @@ allowed_hosts:
     - "cdh-test-web.princeton.edu"
     - "cdh-test-web1"
     - "localhost"
+    - "127.0.0.1"
 # configure apache extraconf file with redirects for migrated v2.x images
 apache_extraconf:
   path: "/etc/apache2/conf-available/cdhweb_extraconf_v2redirects.conf"

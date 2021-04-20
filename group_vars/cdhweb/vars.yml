@@ -15,12 +15,10 @@ django_app: cdhweb
 app_name: cdhweb
 # python version
 python_version: "python3.6"
-# symlink for Apache vhost
+# symlink to current deploy in /var/www
 symlink: cdhweb
 # use PUL deploy user of conan
 deploy_user: "conan"
-# apache location
-apache_app_path: "/var/www/{{ app_name }}"
 # wsgi path
 wsgi_path: "{{ django_app }}/wsgi.py"
 # nodejs version
@@ -38,3 +36,9 @@ db_backup_path: "/home/{{ deploy_user }}/backups/pre-{{ version }}-{{ short_hash
 app_dependencies:
   - python-pil # for mezzanine image handling
   - python-opencv  # for wagtail image feature detection
+
+
+passenger_app_root: "/var/www/{{ app_name }}"
+passenger_server_name: "test-web.cdh.princeton.edu"
+passenger_startup_file: "{{ app_name }}/wsgi.py"
+passenger_python: "{{ virtualenv_path }}/bin/python"
