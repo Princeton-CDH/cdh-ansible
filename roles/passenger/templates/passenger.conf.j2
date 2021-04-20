@@ -1,17 +1,37 @@
 server {
   listen {{ passenger_listen_port }} default_server;
   server_name {{ passenger_server_name }};
-  passenger_enabled {{ passenger_enabled }};
-  passenger_app_env {{ passenger_app_env }};
-  passenger_set_header X-Forwarded-Proto https;
-  passenger_set_header X-Forwarded-For $remote_addr;
-  root {{ passenger_app_root }};
+
   set_real_ip_from 128.112.203.144;
   set_real_ip_from 128.112.203.145;
   set_real_ip_from 128.112.203.146;
   real_ip_header X-Real-IP;
 
   access_log /var/log/nginx/access.log custom;
+
+  location / {
+    passenger_enabled {{ passenger_enabled }};
+    passenger_app_root {{ passenger_app_root }};  
+    passenger_app_type wsgi;
+    passenger_startup_file {{ passenger_startup_file }};
+    passenger_python {{ passenger_python }};
+
+    passenger_set_header X-Forwarded-Proto https;
+    passenger_set_header X-Forwarded-For $remote_addr;
+    root {{ passenger_app_root }};
+  }
+
+  # set up general /static/ and /media/ serving
+  location /static/ {
+    alias {{ passenger_app_root }}/static/;
+  }
+  location /media/ {
+    alias {{ media_root }};  # MUST end with trailing slash
+  }
+  # support serving restricted/purchased webfonts at /static/fonts/
+  location /static/fonts/ {
+    alias {{ font_path }};  # MUST end with trailing slash
+ }
 
   {{passenger_extra_config}}
 }
