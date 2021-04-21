@@ -1,3 +1,9 @@
+---
+- hosts: solr_staging
+  connection: ssh
+  remote_user: pulsys
+  roles:
+    - deploy_user
 - hosts: geniza_qa
   connection: ssh
   remote_user: pulsys
@@ -11,6 +17,7 @@
     - postgresql
     - configure_apache
     - install_local_settings
+    - solr_collection
     - django_collectstatic
     - django_migrate
     - finalize_deploy

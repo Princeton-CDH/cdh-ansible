@@ -74,6 +74,8 @@ pemm_prod
 
 [geniza_qa]
 cdh-test-geniza1.princeton.edu
+[solr_staging]
+lib-solr-staging1.princeton.edu
 [geniza_prod]
 cdh-geniza1.princeton.edu
 
