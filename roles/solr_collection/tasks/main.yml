@@ -1,6 +1,6 @@
 ---
 # tasks file for roles/solr_collection
-- name: create the base directory
+- name: Create the base directory for Solr configsets
   file:
     path: "/solr/cdh_solr/"
     state: directory
@@ -8,6 +8,7 @@
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
   become: true
+  delegate_to: lib-solr-staging1.princeton.edu  # solr_staging
 
 - name: Update and configure Solr configset
   block:
@@ -17,7 +18,7 @@
       become_user: "{{ deploy_user }}"
       synchronize:
         mode: pull
-        src: "{{ deploy }}/solr_conf"
+        src: "{{ deploy }}/solr_conf/"
         dest: "/solr/cdh_solr/cdh_{{ app_name }}_solr_conf"
         private_key: "~/.ssh/id_rsa"
       delegate_to: lib-solr-staging1.princeton.edu  # solr_staging
