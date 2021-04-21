@@ -1,0 +1,48 @@
+---
+# tasks file for roles/solr_collection
+- name: create the base directory
+  file:
+    path: "/solr/cdh_solr/"
+    state: directory
+    mode: 0755
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+  become: true
+  
+- name: Update and configure Solr configset
+  block:
+    - name: Copy project Solr configset files for upload to zookeeper
+      # synchronize configset from deploy
+      synchronize:
+        mode: pull
+        src: "{{ deploy }}/solr_conf"
+        dest: "/solr/cdh_solr/cdh_{{ app_name }}_solr_conf"
+      delegate_to: solr_staging
+
+    - name: Update configset with zookeeper
+      command: "solr zk -upconfig -d /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -n {{ solr_collection }} -z {{ zk_host }}"
+      args:
+          chdir: /opt/solr/bin
+      delegate_to: solr_staging
+
+    - name: Get a list of current Solr collections
+      uri:
+        url: "{{ solr_url }}/admin/collections?action=LIST"
+      register: solr_collections_list
+
+    - name: Create Solr collection if it doesn't already exist
+      uri:
+        url: "{{ solr_url }}/admin/collections?action=CREATE&name={{ solr_collection }}&collection.configName={{ solr_collection }}"  # other opts
+        when:  "{{ solr_collection }} not in {{ solr_collections_list.collections }}"
+    notify:
+      - reload solr
+
+    - name: Apply any managed schema changes by running django solr_schema
+      django_manage:
+        command: "solr_schema --no-input"
+        app_path: "{{ deploy }}"
+        virtualenv: "{{ deploy }}/env"
+        when:  "{{ solr_collection }} not in {{ solr_collections_list.collections }}"
+
+  rescue:
+      - include_tasks: roles/create_deployment/tasks/fail.yml
