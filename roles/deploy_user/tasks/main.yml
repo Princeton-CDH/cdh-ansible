@@ -23,7 +23,7 @@
         owner: "{{ deploy_user }}"
         group: "{{ deploy_user }}"
 
-    - name: deploy_user | create the .ssh directory
+    - name: Create the .ssh directory
       file:
         path: "/home/{{ deploy_user }}/.ssh/"
         state: directory
@@ -31,7 +31,7 @@
         group: "{{ deploy_user }}"
         mode: 0700
 
-    - name: deploy_user | install private ssh key
+    - name: Install private ssh key
       copy:
         src: files/id_rsa
         dest: "/home/{{ deploy_user }}/.ssh/id_rsa"
@@ -39,12 +39,12 @@
         group: "{{ deploy_user }}"
         mode: 0600
 
-    - name: deploy_user | add SSH public key
+    - name: Add SSH public key
       authorized_key:
         user: "{{ deploy_user }}"
         key: "{{ lookup('file', 'files/id_rsa.pub') }}"
 
-    - name: deploy_user | allow "authorized_key" files
+    - name: Allow "authorized_key" files
       lineinfile: >
                   dest=/etc/ssh/sshd_config
                   state=present
