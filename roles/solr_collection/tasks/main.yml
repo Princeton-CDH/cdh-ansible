@@ -39,12 +39,12 @@
       when: solr_collection in solr_collections_list.json.collections
       notify: reload solr
 
-    # TODO: move to django role?
-    - name: Apply any managed schema changes by running django solr_schema
-      django_manage:
-        command: "solr_schema --no-input"
-        app_path: "{{ deploy }}"
-        virtualenv: "{{ deploy }}/env"
+    # NOTE: this should be moved to django role
+    # - name: Apply any managed schema changes by running django solr_schema
+    #   django_manage:
+    #     command: "solr_schema --no-input"
+    #     app_path: "{{ deploy }}"
+    #     virtualenv: "{{ deploy }}/env"
 
   rescue:
       - include_tasks: roles/create_deployment/tasks/fail.yml
