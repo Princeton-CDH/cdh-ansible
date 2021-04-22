@@ -2,8 +2,11 @@
 - hosts: solr_staging
   connection: ssh
   remote_user: pulsys
+  vars:
+    app_name: cdh_solr   # referenced in deploy user bash profile
   roles:
     - deploy_user
+
 - hosts: geniza_qa
   connection: ssh
   remote_user: pulsys
