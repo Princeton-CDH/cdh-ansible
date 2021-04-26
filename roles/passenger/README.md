@@ -1,10 +1,9 @@
 # Passenger
 
-Borrowed from [pulibrary / princeton_ansible](https://github.com/pulibrary/princeton_ansible/tree/main/roles/passenger)
+Borrowed from [pulibrary / princeton_ansible](https://github.com/pulibrary/princeton_ansible/tree/main/roles/passenger), who originally borrowed from Geerling Guy.
 
-Originally borrowed from Geerling Guy
-
-Installs Passenger (with Nginx) Ubuntu linux servers.
+Installs Passenger (with Nginx) Ubuntu linux servers, with configuration
+to serve wsgi application.
 
 ## Requirements
 
@@ -12,24 +11,23 @@ None.
 
 ## Role Variables
 
+Application name variable ``app_name`` must be defined.
+
 Available variables are listed below, along with default values (see `defaults/main.yml`):
 
     passenger_server_name: www.example.com
 
 The server name (used in the Nginx virtual host configuration).
 
-    passenger_app_root: /opt/example/public
+    passenger_app_root: /var/www/app
 
-The `passenger_root` for your application (e.g. the `public` folder in a rails app).
+The wsgi file to use and the path to the python to use (i.e., if you need python within a virtualenv):
+    
+    passenger_startup_file: app/wsgi.py
+    passenger_python: /usr/bin/python
 
-    passenger_app_env: production
 
-The app environment passenger will load.
-
-    passenger_root: /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini
-    passenger_ruby: /usr/local/bin/ruby
-
-Values for passenger configuration directives inside `nginx.conf`. These defaults should generally work correctly, but if you build `ruby` on its own (as an example), the path to ruby may be different.
+Values for passenger configuration directives inside `nginx.conf`. These defaults should generally work correctly.
 
     nginx_worker_processes: "{{ ansible_processor_vcpus | default(ansible_processor_count) }}"
     nginx_worker_connections: "768"
@@ -46,12 +44,15 @@ None.
 
     - hosts: server
       roles:
-        - { role: passenger }
+        - passenger
 
 ## License
 
-MIT / BSD
+See [LICENSE](https://github.com/Princeton-CDH/CDH_ansible/blob/main/LICENSE).
+
 
 ## Author Information
 
-This role was originally created in 2015 by [Jeff Geerling](https://www.jeffgeerling.com/), author of [Ansible for DevOps](https://www.ansiblefordevops.com/). Any changes are now managed locally
+This role was originally created in 2015 by [Jeff Geerling](https://www.jeffgeerling.com/), author of [Ansible for DevOps](https://www.ansiblefordevops.com/); this version is adapted from [pulibrary / princeton_ansible](https://github.com/pulibrary/princeton_ansible/tree/main/roles/passenger); any changes are now managed locally.
+
+

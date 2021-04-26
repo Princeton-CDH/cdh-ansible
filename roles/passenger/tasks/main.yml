@@ -3,69 +3,67 @@
 - name: install and configure nginx+passenger
   become: true
   block:
-      # Variable setup.
-    - name: Phusion | Include OS-specific variables.
+    # Variable setup.
+    - name: Include OS-specific variables.
       include_vars: "main.yml"
 
-    - name: Phusion | Define nginx_user.
+    - name: Define nginx_user.
       set_fact:
         nginx_user: "{{ __nginx_user }}"
       when: nginx_user is not defined
 
     # Passenger repository setup.
-    - name: Phusion | Add Passenger apt key.
+    - name: Add Passenger apt key.
       apt_key:
         keyserver: keyserver.ubuntu.com
         id: 561F9B9CAC40B2F7
         state: present
 
-    - name: Phusion | Add apt HTTPS capabilities.
+    - name: Add apt HTTPS capabilities.
       apt:
         name: apt-transport-https
         state: present
 
-    - name: Phusion | Add Phusion apt repo.
+    - name: Add Phusion apt repo.
       apt_repository:
         repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
         state: present
       ignore_errors: true
 
-    - name: Phusion | update our repos
+    - name: update our repos
       become: true
       apt:
         update_cache: true
-      changed_when: false
-      # TODO: This changed when should be removed when we upgrade to molecule 3
 
     # Nginx and passenger installation.
-    - name: Phusion | Install Nginx and Passenger.
+    - name: Install Nginx and Passenger.
       become: true
       apt:
         name: "{{ nginx_passenger_packages }}"
         state: present
 
     # Nginx and passenger configuration.
-    - name: Phusion | Copy Nginx configuration into place.
+    - name: Copy Nginx configuration into place.
       template:
         src: nginx.conf.j2
         dest: /etc/nginx/nginx.conf
         mode: 0644
       notify: restart nginx
 
-    - name: Phusion | Configure passenger virtual host.
+    - name: Configure passenger virtual host.
       template:
         src: passenger.conf.j2
         dest: /etc/nginx/sites-available/{{ app_name }}.conf
         mode: 0644
       notify: restart nginx
 
-    - name: Phusion | Ensure passenger virtual host is enabled.
+    - name: Ensure passenger virtual host is enabled.
       file:
-        src:  /etc/nginx/sites-available/{{ app_name }}.conf
-        dest:  /etc/nginx/sites-enabled/{{ app_name }}.conf
+        src: /etc/nginx/sites-available/{{ app_name }}.conf
+        dest: /etc/nginx/sites-enabled/{{ app_name }}.conf
         state: link
 
-    - name: Phusion | Ensure default virtual host is removed.
+    - name: Ensure default virtual host is removed.
       file:
         path: /etc/nginx/sites-enabled/default
         state: absent
