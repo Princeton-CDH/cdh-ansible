@@ -2,18 +2,72 @@
 - name: Verify
   hosts: all
   gather_facts: false
+  vars_files:
+    - ../../defaults/main.yml
+  vars:
+    - app_name: molecule_test
   tasks:
-  - name: check passenger package status
-    package:
-      name: "{{ item }}"
-      state: present
-    check_mode: true
-    register: pkg_status
-    loop:
-      - libnginx-mod-http-passenger
-      - nginx-extras
+    - name: check passenger package status
+      package:
+        name: "{{ item }}"
+        state: present
+      check_mode: true
+      register: pkg_status
+      loop:
+        - libnginx-mod-http-passenger
+        - nginx-extras
 
-  - name: test for passenger packages
-    assert:
-      that:
-        - not pkg_status.changed
+    - name: test for passenger packages
+      assert:
+        that:
+          - not pkg_status.changed
+
+    - name: stat application sites-available nginx config file
+      stat:
+        path: "/etc/nginx/sites-available/{{ app_name }}.conf"
+      register: app_config
+
+    - name: assert that application nginx sites-available file is present
+      assert:
+        that:
+          - "app_config.stat.exists"
+          - "app_config.stat.isreg"   # regular file
+
+    - name: stat application sites-enabled nginx config file
+      stat:
+        path: "/etc/nginx/sites-enabled/{{ app_name }}.conf"
+      register: app_config_enabled
+
+    - name: assert that application nginx sites-available file is present
+      assert:
+        that:
+          - "app_config_enabled.stat.exists"
+          - "app_config_enabled.stat.islnk"   # symbolic link
+
+    - name: stat nginx default config file
+      stat:
+        path: /etc/nginx/sites-enabled/default
+      register: nginx_default_config
+
+    - name: assert that default nginx config file is not present
+      assert:
+        that:
+          - "not nginx_default_config.stat.exists"
+
+    - name: check that nginx configtest passes
+      command: nginx -t
+      register: configtest_result
+      changed_when: false
+
+    - name: check that nginx configtest passesp
+      assert:
+        that:
+          - "'syntax is ok' in configtest_result.stderr"
+          - "not configtest_result.failed"
+
+    - name: Test that nginx is running and returns 200
+      uri:
+        url: http://localhost/
+        return_content: yes
+      register: site
+      failed_when: "'Hello World' not in site.content"

@@ -9,7 +9,7 @@ lint: |
   ansible-lint
 platforms:
   - name: instance
-    image: "pulibrary/puldocker-${MOLECULE_DISTRO:-ubuntu1804}-ansible:latest"
+    image: pulibrary/puldocker-ubuntu1804-ansible:latest
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
