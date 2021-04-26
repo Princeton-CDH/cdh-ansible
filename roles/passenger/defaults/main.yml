@@ -2,7 +2,7 @@
 passenger_server_name: www.example.com
 passenger_app_root: /var/www/app
 passenger_listen_port: '80'
-passenger_startup_file: app/wsgi.py;
+passenger_startup_file: wsgi.py
 passenger_python: /usr/bin/python
 
 nginx_worker_processes: "{{ ansible_processor_vcpus | default(ansible_processor_count) }}"
