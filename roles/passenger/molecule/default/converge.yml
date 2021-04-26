@@ -1,14 +1,25 @@
 ---
 - name: Converge
   hosts: all
+  vars_files:
+    - ../../defaults/main.yml
   vars:
     - running_on_server: false
+    - app_name: molecule_test
+    - passenger_startup_file: 'test_wsgi.py'
   become: true
   pre_tasks:
-    - name: update cache
-      apt:
-        update_cache: true
-        cache_valid_time: 600
+    - name: create minimal app dir
+      file:
+        dest: "{{ passenger_app_root }}"
+        state: directory
+        mode: 0644
+    - name: create minimal wsgi file
+      copy:
+        src: "test_wsgi.py"
+        dest: "{{ passenger_app_root }}/{{ passenger_startup_file }}"
+        mode: 0644
+
   tasks:
     - name: "Include passenger"
       include_role:
