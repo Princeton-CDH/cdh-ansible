@@ -2,7 +2,6 @@
 - name: Verify
   hosts: all
   vars_files: ../../defaults/test.yml
-
   gather_facts: false
   tasks:
     - name: "get deploy user info"
