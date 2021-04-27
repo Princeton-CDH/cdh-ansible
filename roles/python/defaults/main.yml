@@ -1,6 +1,6 @@
 ---
 # main config
-python_user: python
+python_user: "{{ ansible_user }}"
 python_version: "3.6"
 python_app_path: /usr/src/app
 python_venv_path: "{{ python_app_path }}/env"
