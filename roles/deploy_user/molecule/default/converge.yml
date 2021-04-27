@@ -1,6 +1,8 @@
 ---
 - name: Converge
   hosts: all
+  vars:
+    app_name: molecule_test
   tasks:
     - name: "Include deploy_user"
       include_role:
