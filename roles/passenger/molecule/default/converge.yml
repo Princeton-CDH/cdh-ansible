@@ -18,7 +18,7 @@
       copy:
         src: "test_wsgi.py"
         dest: "{{ passenger_app_root }}/{{ passenger_startup_file }}"
-        mode: 0644
+        mode: 0655
 
   tasks:
     - name: "Include passenger"
