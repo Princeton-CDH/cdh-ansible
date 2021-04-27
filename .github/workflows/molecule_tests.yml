@@ -8,6 +8,7 @@ jobs:
       matrix:
         role:
           - deploy_user
+          - passenger
           # - postgresql
     steps:
       - uses: actions/checkout@v2
