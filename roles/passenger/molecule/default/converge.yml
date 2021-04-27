@@ -13,12 +13,12 @@
       file:
         dest: "{{ passenger_app_root }}"
         state: directory
-        mode: 0644
+        mode: 0655
     - name: create minimal wsgi file
       copy:
         src: "test_wsgi.py"
         dest: "{{ passenger_app_root }}/{{ passenger_startup_file }}"
-        mode: 0655
+        mode: 0644
 
   tasks:
     - name: "Include passenger"
