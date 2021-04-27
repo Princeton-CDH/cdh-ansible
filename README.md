@@ -1,5 +1,7 @@
 # CDH Ansible Repository
 
+[![Molecule Tests](https://github.com/Princeton-CDH/cdh-ansible/actions/workflows/molecule_tests.yml/badge.svg)](https://github.com/Princeton-CDH/cdh-ansible/actions/workflows/molecule_tests.yml)
+
 ## Overall structure
 
 The overall structure of this repository can be broken down as follows:
