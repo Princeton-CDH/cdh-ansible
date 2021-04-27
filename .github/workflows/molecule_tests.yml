@@ -8,6 +8,7 @@ jobs:
       matrix:
         role:
           - deploy_user
+          - python
           # - postgresql
     steps:
       - uses: actions/checkout@v2
