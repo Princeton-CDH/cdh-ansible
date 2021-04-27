@@ -2,5 +2,5 @@ ansible
 ansible-base
 molecule[docker]
 ansible-lint
-gitpython
 passlib
+wheel
