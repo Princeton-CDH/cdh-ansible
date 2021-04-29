@@ -1,0 +1,5 @@
+---
+# variables for molecule
+passenger_startup_file: 'test_wsgi.py'
+running_on_server: false
+app_name: 'molecule_test'
