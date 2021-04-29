@@ -17,14 +17,14 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
-      - name: Cache pip
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            pip-${{ hashFiles('requirements.txt') }}
-            pip-
+      # - name: Cache pip
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ~/.cache/pip
+      #     key: pip-${{ hashFiles('requirements.txt') }}
+      #     restore-keys: |
+      #       pip-${{ hashFiles('requirements.txt') }}
+      #       pip-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
