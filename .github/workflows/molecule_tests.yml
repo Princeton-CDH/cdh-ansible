@@ -9,6 +9,7 @@ jobs:
         role:
           - deploy_user
           - passenger
+          - python
           # - postgresql
     steps:
       - uses: actions/checkout@v2

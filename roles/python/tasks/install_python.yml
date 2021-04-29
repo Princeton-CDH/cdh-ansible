@@ -1,0 +1,26 @@
+---
+# Install a specified version of python. Uses a repository that provides newer
+# versions of python, since Ubuntu doesn't (deadsnakes).
+# 
+# Note that Ubuntu splits up core python libraries into many packages; most are
+# required to create the venv. Contents may differ depending on the version of
+# python – for example, python3.8-distutils falls back to python3-distutils.
+# 
+# We include the generic python3-setuptools because it's required to create the
+# virtual environment; later we can update pip and setuptools inside it.
+
+- name: add python apt repository
+  become: true
+  apt_repository:
+    repo: ppa:deadsnakes/ppa
+
+- name: install python and core libraries
+  become: true
+  apt:
+    name:
+      - python3-setuptools
+      - python{{ python_version }}
+      - python{{ python_version }}-venv
+      - python{{ python_version }}-distutils
+    state: latest
+    update_cache: true

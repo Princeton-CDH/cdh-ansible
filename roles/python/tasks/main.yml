@@ -1,0 +1,5 @@
+---
+# Basic sequence of tasks for setting up a Python app.
+
+- include: install_python.yml
+- include: install_dependencies.yml
