@@ -1,0 +1,22 @@
+---
+# Create a minimal python wsgi app for testing
+
+- name: prepare
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - ../../defaults/main.yml
+    - ../../vars/test.yml
+  become: true
+  tasks:
+    - name: create minimal app dir
+      file:
+        dest: "{{ passenger_app_root }}"
+        state: directory
+        mode: 0655
+
+    - name: create minimal wsgi file
+      copy:
+        src: "test_wsgi.py"
+        dest: "{{ passenger_app_root }}/{{ passenger_startup_file }}"
+        mode: 0644
