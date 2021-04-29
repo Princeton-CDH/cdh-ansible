@@ -18,7 +18,7 @@
     - build_project_repo
     - build_virtualenv
     - postgresql
-    - configure_apache
+    - passenger
     - install_local_settings
     - solr_collection
     - django_collectstatic

@@ -9,10 +9,8 @@ repo: "Princeton-CDH/geniza"
 django_app: geniza
 # application name
 app_name: geniza
-# apache symlink
+ # symlink to current deploy in /var/www
 symlink: "{{ app_name }}"
-# apache location
-apache_app_path: "/var/www/{{ app_name }}"
 # wsgi file relative to apache location
 wsgi_path: "{{ django_app }}/wsgi.py"
 # use python 3.6
@@ -35,3 +33,10 @@ db_host: "{{ postgres_host }}"
 application_dbuser_name: "{{ vault_db_username }}"
 application_dbuser_password: "{{ vault_db_password }}"
 application_db_name: "{{ vault_db_name }}"
+
+# set defaults for princeton; override for other environments
+passenger_app_root: "/var/www/{{ app_name }}"
+passenger_server_name: "geniza.princeton.edu"
+passenger_startup_file: "{{ app_name }}/wsgi.py"
+passenger_python: "{{ virtualenv_path }}/bin/python"
+

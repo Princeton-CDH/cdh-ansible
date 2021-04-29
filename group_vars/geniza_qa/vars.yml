@@ -5,6 +5,7 @@ allowed_hosts:
   - "test-geniza.cdh.princeton.edu"
   - "cdh-test-geniza1"
   - "localhost"
+  - "127.0.0.1"
 
 # email prefix for admin emails
 email_prefix: "[QA Geniza] "
@@ -14,7 +15,8 @@ local_settings_dest: '{{ deploy }}/{{ django_app }}/settings/local_settings.py'
 # solr admin
 zk_host: "lib-zk-staging1:2181,lib-zk-staging2:2181,lib-zk-staging3:2181/solr8"
 
-
 solr_url: 'http://lib-solr8-staging.princeton.edu:8983/solr/'
 solr_collection: geniza
 solr_configset: geniza
+
+passenger_server_name: "test-geniza.cdh.princeton.edu"
