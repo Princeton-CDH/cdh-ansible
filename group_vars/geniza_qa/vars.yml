@@ -5,8 +5,11 @@ allowed_hosts:
   - "test-geniza.cdh.princeton.edu"
   - "cdh-test-geniza1"
   - "localhost"
+  - "127.0.0.1"
 
 # email prefix for admin emails
 email_prefix: "[QA Geniza] "
 # geniza local settings have a slightly different path
 local_settings_dest: '{{ deploy }}/{{ django_app }}/settings/local_settings.py'
+
+passenger_server_name: "test-geniza.cdh.princeton.edu"
