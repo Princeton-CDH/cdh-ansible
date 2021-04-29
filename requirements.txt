@@ -4,3 +4,4 @@ molecule[docker]
 ansible-lint
 passlib
 wheel
+yamllint
