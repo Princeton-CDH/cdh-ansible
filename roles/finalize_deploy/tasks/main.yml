@@ -50,6 +50,7 @@
       notify:
         - restart httpd
         - restart apache
+        - restart nginx
       when: ansible_distribution != 'Springdale'
 
     # On Springdale we can do this as deploy_user

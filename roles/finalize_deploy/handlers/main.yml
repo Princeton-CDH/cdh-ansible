@@ -9,11 +9,13 @@
     warn: false
   when:  ansible_distribution == 'Springdale'
 
-# Restart for Ubuntu systems
+# Restart apache on Ubuntu systems when apache role is in use
 - name: restart apache
   become: true
   service:
     name: apache2
     enabled: true
     state: restarted
-  when:  ansible_distribution == 'Ubuntu'
+  when:  ansible_distribution == 'Ubuntu' and apache_app_path is defined
+
+# TODO: do we need to restart nginx for the new version to take effect?

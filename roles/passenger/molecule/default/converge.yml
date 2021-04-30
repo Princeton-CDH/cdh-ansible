@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  vars_files:
+    - ../../defaults/main.yml
+    - ../../vars/test.yml
+  tasks:
+    - name: "Include passenger"
+      include_role:
+        name: passenger

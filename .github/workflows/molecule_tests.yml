@@ -8,6 +8,7 @@ jobs:
       matrix:
         role:
           - deploy_user
+          - passenger
           - python
           # - postgresql
     steps:

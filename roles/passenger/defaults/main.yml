@@ -1,0 +1,17 @@
+---
+passenger_server_name: www.example.com
+passenger_app_root: /var/www/app
+passenger_listen_port: '80'
+passenger_startup_file: wsgi.py
+passenger_python: /usr/bin/python
+
+nginx_worker_processes: "{{ ansible_processor_vcpus | default(ansible_processor_count) }}"
+nginx_worker_connections: "768"
+nginx_keepalive_timeout: "65"
+nginx_remove_default_vhost: true
+passenger_extra_config: ''
+passenger_enabled: 'on'
+
+# copied from apache role defaults; should these be defined elsewhere?
+media_root: "/var/www/media/"
+font_path: "/var/www/fonts/"
