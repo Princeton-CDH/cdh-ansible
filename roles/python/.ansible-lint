@@ -1,3 +1,4 @@
+---
 # Ignore "package installs should not use latest" error
 skip_list:
-  - 403  # package-latest
+  - 'package-latest'
