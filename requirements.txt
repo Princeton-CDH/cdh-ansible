@@ -1,4 +1,4 @@
-ansible
+ansible>=3.3
 ansible-base
 molecule[docker]
 ansible-lint

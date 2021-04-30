@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  role_name: passenger
+  author: cdh
+  description: Install nginx passenger
+  company: Center for Digital Humanities at Princeton
+
+  license: Apache 2
+
+  min_ansible_version: 2.10
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - 18.04
