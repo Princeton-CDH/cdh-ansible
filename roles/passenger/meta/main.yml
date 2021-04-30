@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   role_name: passenger
-  author: pulibrary
+  author: cdh
   description: Install nginx passenger
   company: Center for Digital Humanities at Princeton
 
