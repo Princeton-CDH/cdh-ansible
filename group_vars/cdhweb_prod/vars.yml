@@ -10,3 +10,9 @@ allowed_hosts:
   - "cdh-web1"
   - "localhost"
   - "127.0.0.1"
+
+# cdhweb production contexts required for deploy
+deploy_contexts:
+    - 'Python unit tests'
+    - 'codecov/project'
+    - 'codecov/patch'
