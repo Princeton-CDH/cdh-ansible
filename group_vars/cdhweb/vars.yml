@@ -44,7 +44,8 @@ passenger_startup_file: "{{ app_name }}/wsgi.py"
 passenger_python: "{{ virtualenv_path }}/bin/python"
 
 # rewrites for urls that changed in migration from 2.8 to 3.x
+# specify server name to ensure https instead of http
 passenger_extra_config: |
-  rewrite "^/media/uploads/(.*/)?([^/]+\.(jpg|jpeg|gif|png))$" "/media/original_images/$2" permanent;
-  rewrite "^/grants/(.*)$" "/engage/grants/$1" permanent;
+  rewrite "^/media/uploads/(.*/)?([^/]+\.(jpg|jpeg|gif|png))$" "https://{{ passenger_server_name }}/media/original_images/$2" permanent;
+  rewrite "^/grants/(.*)$" "https://{{ passenger_server_name }}/engage/grants/$1" permanent;
 
