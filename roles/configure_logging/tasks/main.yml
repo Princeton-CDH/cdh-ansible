@@ -21,6 +21,7 @@
         path: '{{ logging_dir }}'
         owner: '{{ apache_user }}'
         group: '{{ apache_group }}'
+        mode: 0770
         recurse: true
       when: deploy_user is defined and ansible_distribution != 'Springdale'
     - name: Create logging directory default acl & set sticky bit
