@@ -14,3 +14,15 @@ DATA_IMPORT_URLS = {
     'metadata': '{{ metadata_csv_url }}'
 }
 {% endblock %}
+
+
+{% block solr_config %}
+from geniza.settings.components.base import SOLR_CONNECTIONS
+
+SOLR_CONNECTIONS['default'].update({
+    'URL': '{{ solr_url }}',
+    'COLLECTION': '{{ solr_collection }}',
+    'CONFIGSET': '{{ solr_configset }}'
+})
+
+{% endblock %}
