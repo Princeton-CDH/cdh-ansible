@@ -20,4 +20,3 @@ solr_collection: geniza
 solr_configset: geniza
 
 passenger_server_name: "test-geniza.cdh.princeton.edu"
-
