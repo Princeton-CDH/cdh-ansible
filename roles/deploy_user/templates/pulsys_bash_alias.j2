@@ -1,0 +1,6 @@
+# bash aliases for {{ ansible_user }}
+# NOTE: this file is {{ ansible_managed }}
+
+# shortcut to become deploy user
+alias conan="sudo su - {{ deploy_user }}"
+
