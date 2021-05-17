@@ -30,9 +30,8 @@
         state: directory
         owner: "{{ deploy_user }}"
         group: "{{ deploy_user }}"
-#        mode: 0700
-# NOTE: mode causes idempotence to fail; but required for ssh security?
-
+        mode: 0700
+#
     - name: Install private ssh key
       copy:
         src: files/id_rsa
