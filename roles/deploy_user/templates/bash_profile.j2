@@ -5,5 +5,7 @@
 # alias to change directory to current deployed version
 # and activate python virtualenv
 alias activate="cd {{ install_root }}/current && source env/bin/activate"
-{% endif %}
 
+# activate on login by default
+activate
+{% endif %}
