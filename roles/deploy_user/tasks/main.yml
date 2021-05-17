@@ -24,6 +24,11 @@
         group: "{{ deploy_user }}"
         mode: 0600
 
+    - name: Check to see if .ssh directory exists
+      stat:
+        path: "/home/{{ deploy_user }}/.ssh/"
+      register: deploy_user_ssh_dir
+
     - name: Create the .ssh directory
       file:
         path: "/home/{{ deploy_user }}/.ssh/"
@@ -31,7 +36,8 @@
         owner: "{{ deploy_user }}"
         group: "{{ deploy_user }}"
         mode: 0700
-#
+      when: not deploy_user_ssh_dir.stat.exists
+
     - name: Install private ssh key
       copy:
         src: files/id_rsa
