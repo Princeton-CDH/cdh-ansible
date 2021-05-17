@@ -36,8 +36,8 @@
     - name: Reload Solr collection if not newly created
       debug:
         msg: "Solr collection {{ solr_collection }} already exists"
-      when: solr_collection in solr_collections_list.json.collections
-      notify: reload solr
+      changed_when: solr_collection in solr_collections_list.json.collections
+      notify: reload solr collection
 
   rescue:
       - include_tasks: roles/create_deployment/tasks/fail.yml
