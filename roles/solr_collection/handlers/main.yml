@@ -1,5 +1,5 @@
 ---
 # handlers file for roles/solr
-- name: reload solr
+- name: reload solr collection
   uri:
     url: "{{ solr_url }}admin/collections?action=RELOAD&name={{ solr_collection }}"
