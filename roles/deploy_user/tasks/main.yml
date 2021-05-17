@@ -59,7 +59,7 @@
                   regexp='^#AuthorizedKeysFile(.*?)$'
                   line="AuthorizedKeysFile\1"
 
-    - name: deploy_user | allow deploy user to SSH
+    - name: allow deploy user to SSH
       lineinfile: >
                   dest=/etc/ssh/sshd_config
                   state=present
