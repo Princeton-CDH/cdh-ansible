@@ -8,7 +8,7 @@
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
   become: true
-  delegate_to: lib-solr-staging1.princeton.edu  # solr_staging
+  delegate_to: "{{ solr_server }}" # lib-solr-staging1.princeton.edu  # solr_staging
 
 - name: Update and configure Solr configset
   block:
@@ -17,11 +17,11 @@
       become: true
       become_user: "{{ deploy_user }}"
       command: /usr/bin/rsync -a cdh-test-geniza1:{{ deploy }}/solr_conf/ /solr/cdh_solr/cdh_{{ app_name }}_solr_conf
-      delegate_to: lib-solr-staging1.princeton.edu  # solr_staging
+      delegate_to: "{{ solr_server }}"
 
     - name: Update configset with zookeeper
       command: "/opt/solr/bin/solr zk -upconfig -d /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -n {{ solr_configset }} -z {{ zk_host }}"
-      delegate_to: lib-solr-staging1.princeton.edu
+      delegate_to: "{{ solr_server }}"
 
     - name: Get a list of current Solr collections
       uri:
@@ -38,13 +38,6 @@
         msg: "Solr collection {{ solr_collection }} already exists"
       when: solr_collection in solr_collections_list.json.collections
       notify: reload solr
-
-    # NOTE: this should be moved to django role
-    # - name: Apply any managed schema changes by running django solr_schema
-    #   django_manage:
-    #     command: "solr_schema --no-input"
-    #     app_path: "{{ deploy }}"
-    #     virtualenv: "{{ deploy }}/env"
 
   rescue:
       - include_tasks: roles/create_deployment/tasks/fail.yml
