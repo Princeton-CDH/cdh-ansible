@@ -1,0 +1,7 @@
+---
+# handlers file for deploy_user
+- name: restart ssh
+  become: true
+  systemd:
+    name: ssh
+    state: restarted
