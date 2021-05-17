@@ -69,5 +69,12 @@
       notify:
         - restart ssh
 
+    - name: "Create pulsys bash alias file"
+      template:
+        src: "pulsys_bash_alias.j2"
+        dest: "/home/{{ ansible_user }}/.bash_aliases"
+        mode: 0600
+      when: ansible_user != "root"
+
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
