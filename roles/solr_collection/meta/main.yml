@@ -1,7 +1,7 @@
 ---
 galaxy_info:
-  author: CDH
-  description: solr
+  author: cdh
+  description: Manage solr configset & collection with solr cloud + zookeeper
 
   license: MIT
 
