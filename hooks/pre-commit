@@ -1,10 +1,11 @@
 #!/bin/bash
-# Check for unencrypted vault files and block commits
+# Check for unencrypted vault files and private keys
+# Block commit if unencrypted
 
-unencrypted=$(find . -name vault.yml -exec grep -L "\$ANSIBLE_VAULT" {} \;)
+unencrypted=$(find . \( -name vault.yml -o -name id_rsa \) -exec grep -L "\$ANSIBLE_VAULT" {} \;)
 
 if [[ $unencrypted ]]; then
-	echo -e "The following vault files are not encrypted:\n$unencrypted"
+	echo -e "The following files are not encrypted:\n$unencrypted"
 	exit 1
 else
 	exit 0
