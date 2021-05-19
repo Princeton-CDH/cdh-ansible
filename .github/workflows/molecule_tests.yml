@@ -27,6 +27,7 @@ jobs:
             pip-
       - name: Install dependencies
         run: |
+          pip uninstall ansible
           python -m pip install --upgrade pip
           pip install wheel
           python -m pip install -r requirements.txt
