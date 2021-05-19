@@ -1,8 +1,8 @@
 ---
 - name: Converge
-  hosts: all
-  vars:
-    - running_on_server: false
+  hosts: solr
+  vars_files:
+    - ../../vars/test.yml
   become: true
   pre_tasks:
     - name: update cache
@@ -10,6 +10,6 @@
         update_cache: true
         cache_valid_time: 600
   tasks:
-    - name: "Include solr"
+    - name: include solr collection role
       include_role:
-        name: solr
+        name: solr_collection

@@ -1,20 +1,13 @@
 ---
 - name: Verify
-  hosts: all
+  hosts: instance
   gather_facts: false
   tasks:
-  - name: check ruby package status
-    package:
-      name: "{{ item }}"
-      state: present
-    check_mode: true
-    register: pkg_status
-    loop:
-      - ruby-switch
-      - ruby2.6-dev
-      - ruby2.6
+    - name: Get a list of current Solr collections
+      uri:
+        url: "{{ solr_url }}admin/collections?action=LIST"
+      register: solr_collections_list
 
-  - name: test for ruby packages
-    assert:
-      that:
-        - not pkg_status.changed
+    - name: output solr collections
+      debug:
+        msg: solr_collections_list
