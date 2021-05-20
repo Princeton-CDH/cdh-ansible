@@ -28,7 +28,13 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install wheel
           python -m pip install -r requirements.txt
+      - name: Create unencrypted ssh key for testing deploy user
+        run: |
+          rm roles/deploy_user/files/id_rsa*
+          ssh-keygen -f roles/deploy_user/files/id_rsa -P=
+
       - name: Test with molecule
         run: cd roles/${{ matrix.role }} && molecule test
         # not using working-directory because it does not support expressions
