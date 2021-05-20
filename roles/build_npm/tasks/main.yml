@@ -22,6 +22,7 @@
       become_user: "{{ deploy_user }}"
       npm:
         path: "{{ deploy }}"
+        ci: true
 
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
