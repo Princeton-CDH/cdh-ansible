@@ -1,0 +1,7 @@
+---
+# from GitHub, overriding the name and specifying a tag
+
+collections:
+  - name: community.general
+  - name: https://github.com/pulibrary/princeton_ansible.git
+    type: git
