@@ -16,7 +16,7 @@
       # rsync configset from deployed version on remote host to solr server
       become: true
       become_user: "{{ deploy_user }}"
-      command: /usr/bin/rsync -a cdh-test-geniza1:{{ deploy }}/solr_conf/ /solr/cdh_solr/cdh_{{ app_name }}_solr_conf
+      command: /usr/bin/rsync -a {{ inventory_hostname }}:{{ deploy }}/solr_conf/ /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -e "ssh -o StrictHostKeyChecking=no"
       delegate_to: "{{ solr_server }}"
 
     - name: Update configset with zookeeper
