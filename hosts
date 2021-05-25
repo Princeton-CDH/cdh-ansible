@@ -74,14 +74,23 @@ pemm_prod
 
 [geniza_qa]
 cdh-test-geniza1.princeton.edu
-[solr_staging]
-lib-solr-staging1.princeton.edu
 [geniza_prod]
 cdh-geniza1.princeton.edu
 
 [geniza:children]
 geniza_qa
 geniza_prod
+
+### PUL solr servers
+
+[solr_staging]
+lib-solr-staging1.princeton.edu
+[solr_prod]
+lib-solr-prod4.princeton.edu
+
+[solr:children]
+solr_staging
+solr_prod
 
 ### environment-based stanzas to create shared groups
 
