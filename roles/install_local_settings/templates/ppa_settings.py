@@ -68,6 +68,7 @@ HATHI_DATA = '{{ hathitrust_pairtree_path }}'
 # Will be used in From header for HathiTrust API requests
 TECHNICAL_CONTACT = '{{ technical_contact }}'
 
+GALE_API_USERNAME = '{{ gale_api_username }}'
 
 # Turn on Google Analytics
 INCLUDE_ANALYTICS = True
