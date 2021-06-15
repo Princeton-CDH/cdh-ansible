@@ -14,10 +14,6 @@ media_root: '/srv/www/prod/media'
 
 # override default deploy contexts to match current CI on GitHub Actions
 deploy_contexts:
-    - 'codecov/project'
-    - 'codecov/patch'
     - 'javascript unit tests'
     - 'python unit tests'
-# NOTE: codeql is disabled on repositories that are inactive for 60 days
-#    - 'Analyze (javascript)'
-#    - 'Analyze (python)'
+
