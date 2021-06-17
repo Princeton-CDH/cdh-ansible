@@ -6,3 +6,4 @@ email_prefix: '[QA PPA] '
 project_user: ppa
 symlink: ppa-django
 media_root: '/srv/www/qa/ppa-django/media'
+marc_data_path: '/srv/www/qa/ppa-django/data/marc/'
