@@ -24,5 +24,6 @@
     - solr_collection
     - django_collectstatic
     - django_migrate
+    - configure_crontab
     - finalize_deploy
     - close_deployment
