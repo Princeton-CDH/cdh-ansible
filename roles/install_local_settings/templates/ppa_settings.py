@@ -70,6 +70,9 @@ TECHNICAL_CONTACT = '{{ technical_contact }}'
 
 GALE_API_USERNAME = '{{ gale_api_username }}'
 
+# local path for cached marc records; needed for Gale/ECCO import
+MARC_DATA = '{{ marc_data_path }}'
+
 # Turn on Google Analytics
 INCLUDE_ANALYTICS = True
 
