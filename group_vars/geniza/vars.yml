@@ -46,3 +46,12 @@ solr_configset: geniza
 # github contexts required for deploy
 deploy_contexts:
   - "Python unit tests"
+
+# configure scripts to run as cron jobs
+crontab:
+
+  - name: "{{ app_name }} reindex"
+    minute: 3
+    job: "bin/cron-wrapper {{ passenger_app_root }}/env/bin/{{ python_version }} {{ passenger_app_root }}/manage.py index >> {{ logging_dir }}/index.log 2>&1"
+    state: present
+
