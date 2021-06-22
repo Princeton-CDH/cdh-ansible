@@ -61,7 +61,7 @@
         - name: Close out deployment as a success
           import_role:
             name: close_deployment
-      - rescue:
-        - include_tasks: roles/create_deployment/tasks/fail.yml
+        - rescue:
+          - include_tasks: roles/create_deployment/tasks/fail.yml
 
 

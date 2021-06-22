@@ -5,3 +5,4 @@ ansible-lint
 passlib
 wheel
 yamllint
+pre-commit
