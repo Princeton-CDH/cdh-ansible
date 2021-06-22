@@ -1,0 +1,24 @@
+repos:
+  - repo: https://github.com/IamTheFij/ansible-pre-commit
+    rev: v1.0.0
+    hooks:
+    - id: encryption-check
+      files: ((^|/)vault|vault.y[a]{0,1}ml$|.vault$|id_rsa$)
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+    - id: detect-private-key
+  # this looks potentially useful, flags fake passwords in postgres config
+  # but there seems to be a yaml parsing error, maybe this:
+  # https://github.com/Yelp/detect-secrets/issues/374
+  # - repo: https://github.com/Yelp/detect-secrets
+  #   rev: v1.1.0
+  #   hooks:
+  #   -   id: detect-secrets
+  #       # args: ['--baseline', '.secrets.baseline']
+  # this one is kind of slow; also currently failing on revert_deploy playbook
+  # - repo: https://github.com/ansible-community/ansible-lint.git
+  #   rev: v5.0.12
+  #   hooks:
+  #   - id: ansible-lint
+  #     files: \.(yaml|yml)$
