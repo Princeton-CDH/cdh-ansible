@@ -43,13 +43,16 @@ The overall structure of this repository can be broken down as follows:
   ```
 
 ### Precommit hook
-If you plan to contribute to this repository (i.e., you're a member of the CDH dev team editing our playbooks), please copy the following in your local instance:
+
+If you plan to contribute to this repository, you should install the configured pre-commit hooks:
 
 ```{bash}
-cp hooks/pre-commit .git/hooks/
+pre-commit install
 ```
 
-This will add a simple pre-commit hook that will prevent you from commiting a file with an uncrypted `vault.yml`. It isn't terribly smart in terms of looking for secrets in a `local_settings.py`, but prevents worst case scenarios from emerging.
+This will add install a pre-commit hook to prevent committing an unencrypted vault or private key file. If new encrypted files are added with different names, filename patterns should be added to the pre-commit configuration in `.pre-commit-config.yaml`
+
+> **_NOTE:_**  If you have a previous installation with the local pre-commit hook script that was included in this repository, you will need to run `pre-commit install -f` to replace it.
 
 ## Running a playbook
 
