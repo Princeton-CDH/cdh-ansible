@@ -16,9 +16,3 @@ repos:
   #   hooks:
   #   -   id: detect-secrets
   #       # args: ['--baseline', '.secrets.baseline']
-  # this one is kind of slow; also currently failing on revert_deploy playbook
-  # - repo: https://github.com/ansible-community/ansible-lint.git
-  #   rev: v5.0.12
-  #   hooks:
-  #   - id: ansible-lint
-  #     files: \.(yaml|yml)$
