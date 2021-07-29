@@ -1,5 +1,4 @@
-ansible>=3.3
-ansible-base
+ansible>=4.3
 molecule[docker]
 ansible-lint
 passlib

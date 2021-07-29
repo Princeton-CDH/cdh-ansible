@@ -53,16 +53,17 @@
         state: directory
         dest: "{{ deploy }}"
 
-    - name: Sync checkout to deploy directory
+    # using the local git repository as source, do a shallow, single branch checkout
+    # for the deployed instance
+    - name: Create a shallow checkout of deploy branch to deploy directory
       become: true
       become_user: "{{ deploy_user }}"
-      synchronize:
-        src: "{{ clone_root }}/{{ repo }}/"
-        # deploy constructed dynamicallly in group_vars
+      git:
+        repo: "{{ clone_root }}/{{ repo }}"
         dest: "{{ deploy }}/"
-      # sync remotely -- inventory_hostname is a magic var that always points
-      # to host where the playbook is being run.
-      delegate_to: "{{ inventory_hostname }}"
+        version: "{{ gitref }}"
+        single_branch: true
+        depth: 1
 
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
