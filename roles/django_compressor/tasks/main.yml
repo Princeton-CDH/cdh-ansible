@@ -10,6 +10,7 @@
   block:
     - name: Configure CACHE for django-compressor
       become: true
+      become_user: "{{ deploy_user }}"
       file:
         path: "{{ deploy }}/static/CACHE"
         state: directory
