@@ -59,11 +59,11 @@ logging_dir: '{{ install_root }}/logs'
 # logging file
 logging_path: '{{ logging_dir }}/{{ django_app }}.log'
 
-# These include the path for rh-python35 and nodejs6
+# These include the path for rh-python35, nodejs6, and git 2.27
 # Paths are picky and spaces for any YAML multiline syntax cause issues
 # These are defaults for most projects and should be overriden as necessary.
 path: '/opt/rh/rh-python35/root/usr/bin:/opt/rh/rh-nodejs6/root/usr/bin:/opt/rh/rh-git227/root/bin/:{{ ansible_env.PATH }}'
-ld_library_path: '/opt/rh/rh-python35/root/usr/lib64:/opt/rh/rh-nodejs6/root/usr/lib64{% if ansible_env.LD_LIBRARY_PATH is defined %}:{{ ansible_env.LD_LIBRARY_PATH }}{% endif %}'
+ld_library_path: '/opt/rh/rh-python35/root/usr/lib64:/opt/rh/rh-nodejs6/root/usr/lib64:/opt/rh/httpd24/root/usr/lib64{% if ansible_env.LD_LIBRARY_PATH is defined %}:{{ ansible_env.LD_LIBRARY_PATH }}{% endif %}'
 python_path: '/opt/rh/rh-nodejs6/root/usr/lib/python2.7/site-packages{% if ansible_env.PYTHON_PATH is defined %}:{{ ansible_env.PYTHONPATH }}{% endif %}'
 
 # currently default for most projects is 3.5
