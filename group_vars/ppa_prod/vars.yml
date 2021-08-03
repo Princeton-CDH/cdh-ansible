@@ -8,8 +8,8 @@ allowed_hosts:
 email_prefix: '[PPA] '
 
 # running on python 3.6 in production
-path: '/opt/rh/rh-python36/root/usr/bin:/opt/rh/rh-nodejs10/root/usr/bin:{{ ansible_env.PATH }}'
-ld_library_path: '/opt/rh/rh-python36/root/usr/lib64:/opt/rh/rh-nodejs10/root/usr/lib64{% if ansible_env.LD_LIBRARY_PATH is defined %}:{{ ansible_env.LD_LIBRARY_PATH }}{% endif %}'
+path: '/opt/rh/rh-python36/root/usr/bin:/opt/rh/rh-nodejs10/root/usr/bin:/opt/rh/rh-git227/root/bin/:{{ ansible_env.PATH }}'
+ld_library_path: '/opt/rh/rh-python36/root/usr/lib64:/opt/rh/rh-nodejs10/root/usr/lib64:/opt/rh/httpd24/root/usr/lib64{% if ansible_env.LD_LIBRARY_PATH is defined %}:{{ ansible_env.LD_LIBRARY_PATH }}{% endif %}'
 media_root: '/srv/www/prod/media'
 marc_data_path: '/srv/www/prod/data/marc/'
 
