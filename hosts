@@ -13,19 +13,10 @@
 #
 # Inheritance has some potential gotchas. All top level groups inherit from
 # group_vars/all, but when two groups inherit from a group on the same level
-# (i.e. qa and winthrop), any overlapping variables are resolved with the
+# (i.e. qa and ppa), any overlapping variables are resolved with the
 # group last in alphabetical order 'winning':
 # See https://docs.ansible.com/ansible/2.5/user_guide/intro_inventory.html#how-variables-are-merged
 ######
-
-[winthrop_prod]
-winthrop.princeton.edu
-[winthrop_qa]
-test-winthrop.cdh.princeton.edu
-
-[winthrop:children]
-winthrop_prod
-winthrop_qa
 
 [derrida_qa]
 test-derrida.cdh.princeton.edu
@@ -81,10 +72,20 @@ cdh-geniza1.princeton.edu
 geniza_qa
 geniza_prod
 
+### PUL solr servers
+
+[solr_staging]
+lib-solr-staging1.princeton.edu
+[solr_prod]
+lib-solr-prod4.princeton.edu
+
+[solr:children]
+solr_staging
+solr_prod
+
 ### environment-based stanzas to create shared groups
 
 [prod:children]
-winthrop_prod
 derrida_prod
 ppa_prod
 cdhweb_prod
@@ -93,7 +94,6 @@ pemm_prod
 geniza_prod
 
 [qa:children]
-winthrop_qa
 derrida_qa
 ppa_qa
 cdhweb_qa
