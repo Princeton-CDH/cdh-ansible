@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: cdh
+  description: Manage solr configset & collection with solr cloud + zookeeper
+
+  license: MIT
+
+  min_ansible_version: 2.10
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - 18.04
+dependencies:
+  - role: "deploy_user"  # this will run on solr server

@@ -1,0 +1,29 @@
+---
+- hosts: solr_prod
+  connection: ssh
+  remote_user: pulsys
+  vars:
+    app_name: cdh_solr   # referenced in deploy user bash profile
+  roles:
+    - deploy_user
+
+- hosts: geniza_prod
+  connection: ssh
+  remote_user: pulsys
+  become: true
+  roles:
+    - create_deployment
+    - deploy_user
+    - build_dependencies
+    - build_project_repo
+    - build_virtualenv
+    - postgresql
+    - passenger
+    - configure_logging
+    - install_local_settings
+    - solr_collection
+    - django_collectstatic
+    - django_migrate
+    - configure_crontab
+    - finalize_deploy
+    - close_deployment

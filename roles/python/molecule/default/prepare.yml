@@ -4,7 +4,9 @@
 - name: prepare
   hosts: all
   gather_facts: false
-  vars_files: ../../defaults/main.yml
+  vars_files:
+    - ../../defaults/main.yml
+    - ../../defaults/test.yml
 
   tasks:
     - name: create a testing user
