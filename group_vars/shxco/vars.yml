@@ -1,0 +1,54 @@
+###
+# Common variables for Shakespeare & Company Project django application
+###
+# Github repository
+repo: 'Princeton-CDH/mep-django'
+# application name
+app_name: mep
+# name of django application
+django_app: mep
+# symlink to current deploy in /var/www
+symlink: shakespeareandco
+# wsgi file relative to deploy location
+wsgi_path: "{{ django_app }}/wsgi.py"
+# use python 3.6
+python_version: 3.6
+# Override clone root to use deploy user home instead of root
+clone_root: "/home/{{ deploy_user }}/repos"
+# don't distinguish between qa/prod paths
+install_root: "/srv/www/{{ app_name }}"
+
+
+
+# pul deploy user
+deploy_user: "conan"
+# python/django defaults don't work as is
+python_user: "{{ deploy_user }}"
+django_user: "{{ deploy_user }}"
+
+# geonames and mapbox usernames, map-related configs
+geonames_username: '{{ vault_geonames_username }}'
+mapbox_token: '{{ vault_mapbox_token }}'
+mapbox_basemap: 'light-v10'
+paris_overlay: 'https://tiles.arcgis.com/tiles/4Ko8f1mCWFLyY4NV/arcgis/rest/services/Paris_1943/MapServer'
+
+# django database backend
+db_backend: "postgresql"
+db_host: "{{ postgres_host }}"
+# postgresql database info
+application_dbuser_name: "{{ vault_db_username }}"
+application_dbuser_password: "{{ vault_db_password }}"
+application_db_name: "{{ vault_db_name }}"
+
+# - solr settings
+solr_collection: cdh_shxco
+solr_configset: cdh_shxco
+
+# github contexts required for deploy
+deploy_contexts:
+  - "Python unit tests"
+
+# default media root
+media_root: '/srv/www/media'
+
+technical_contact: cdhdevteam@princeton.edu

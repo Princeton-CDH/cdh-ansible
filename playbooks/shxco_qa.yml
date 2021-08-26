@@ -1,0 +1,31 @@
+- hosts: solr_staging
+  connection: ssh
+  remote_user: pulsys
+  vars:
+    app_name: cdh_solr   # referenced in deploy user bash profile
+  roles:
+    - deploy_user
+
+- hosts: shxco_qa
+  connection: ssh
+  remote_user: pulsys
+  become: true
+  roles:
+    # - create_deployment
+    - deploy_user
+    - build_dependencies
+    - build_project_repo
+    - postgresql
+    - django
+#    - build_virtualenv
+    - configure_logging
+    - configure_media
+    - configure_apache
+    # - install_local_settings   # django role
+    - build_npm
+    - run_webpack
+    # - django_collectstatic   # django role
+    # - django_migrate
+    - finalize_deploy
+    # - configure_crontab  # used in prod but not alwaysin qa
+    # - close_deployment
