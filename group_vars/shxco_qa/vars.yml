@@ -1,0 +1,19 @@
+###
+# QA specific variables for mep-django
+###
+---
+
+# symlink for QA deployments
+symlink: mep-django
+# install root
+install_root: '{{ install_base }}/mep-django'
+allowed_hosts:
+    - "*"
+# email prefix for dev account emails
+email_prefix: '[QA S&co] '
+
+# solr settings
+# TODO: move somewhere common?
+zk_host: "lib-zk-staging1:2181,lib-zk-staging2:2181,lib-zk-staging3:2181/solr8"
+solr_url: "http://lib-solr8-staging.princeton.edu:8983/solr/"
+solr_server: "{{ groups['solr_staging'][0] }}"
