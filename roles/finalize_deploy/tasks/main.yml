@@ -48,9 +48,7 @@
         dest: "/var/www/{{ symlink }}"
         state: link
       notify:
-        - restart httpd
-        - restart apache
-        - restart nginx
+        - restart web server
       when: ansible_distribution != 'Springdale'
 
     # On Springdale we can do this as deploy_user
@@ -60,8 +58,7 @@
         dest: "/var/www/{{ symlink }}"
         state: link
       notify:
-        - restart httpd
-        - restart apache
+        - restart web server
       when: ansible_distribution == 'Springdale'
 
     # This makes sure that any server side settings that handle autoconfiguring

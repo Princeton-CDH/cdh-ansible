@@ -3,6 +3,8 @@
 # https://docs.djangoproject.com/en/dev/ref/django-admin/#migrate
 
 - name: run database migrations
+  become: true
+  become_user: "{{ django_user }}"
   django_manage:
     command: migrate
     app_path: "{{ django_app_path }}"
