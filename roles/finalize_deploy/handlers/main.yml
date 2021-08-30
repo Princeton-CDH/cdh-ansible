@@ -8,6 +8,7 @@
   args:
     warn: false
   when:  ansible_distribution == 'Springdale'
+  listen: "restart web server"
 
 # Restart apache on Ubuntu systems when apache role is in use
 - name: restart apache
@@ -17,5 +18,4 @@
     enabled: true
     state: restarted
   when:  ansible_distribution == 'Ubuntu' and apache_app_path is defined
-
-# TODO: do we need to restart nginx for the new version to take effect?
+  listen: "restart web server"

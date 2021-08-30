@@ -1,0 +1,30 @@
+---
+# main config
+django_app: myapp
+django_app_path: /srv/www/{{ django_app }}
+django_user: "{{ ansible_user }}"
+django_venv_path: "{{ django_app_path }}/env"
+
+# django settings config
+django_local_settings_template: local_settings.py
+django_secret_key: changeme
+django_debug: false
+django_allowed_hosts:
+  - localhost
+  - "{{ ansible_hostname }}"
+django_test_warning: false
+
+# database config
+django_db_backend: postgresql
+django_db_name: "{{ django_app }}"
+django_db_user: "{{ django_app }}"
+django_db_host: localhost
+django_db_password: changeme
+
+# email config
+django_email_password: changeme
+django_email_subject: "[{{ django_app }}]"
+
+# csp config
+django_csp_reportonly_uri: http://example.com/
+django_csp_enforce_uri: http://example.com/
