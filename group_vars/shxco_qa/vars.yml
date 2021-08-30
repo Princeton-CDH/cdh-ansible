@@ -3,10 +3,7 @@
 ###
 ---
 
-# symlink for QA deployments
-symlink: mep-django
-# install root
-install_root: '{{ install_base }}/mep-django'
+# allow any host, since we're behind PUL load balancer
 allowed_hosts:
     - "*"
 # email prefix for dev account emails

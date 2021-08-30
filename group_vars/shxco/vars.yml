@@ -13,18 +13,22 @@ symlink: shakespeareandco
 wsgi_path: "{{ django_app }}/wsgi.py"
 # use python 3.6
 python_version: 3.6
+# nodejs version
+node_version: "10"
+
 # Override clone root to use deploy user home instead of root
 clone_root: "/home/{{ deploy_user }}/repos"
 # don't distinguish between qa/prod paths
 install_root: "/srv/www/{{ app_name }}"
-
-
 
 # pul deploy user
 deploy_user: "conan"
 # python/django defaults don't work as is
 python_user: "{{ deploy_user }}"
 django_user: "{{ deploy_user }}"
+django_app_path: "{{ deploy }}"
+
+application_db_host: "{{ postgres_host }}"
 
 # geonames and mapbox usernames, map-related configs
 geonames_username: '{{ vault_geonames_username }}'
@@ -52,3 +56,7 @@ deploy_contexts:
 media_root: '/srv/www/media'
 
 technical_contact: cdhdevteam@princeton.edu
+
+# app-specific system dependencies
+app_dependencies:
+  -  libmysqlclient-dev # for mysql installation during the migration

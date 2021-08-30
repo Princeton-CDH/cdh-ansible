@@ -16,16 +16,17 @@
     - build_dependencies
     - build_project_repo
     - postgresql
+    - build_npm
+    - run_webpack   # dependency for collectstatic
     - django
 #    - build_virtualenv
     - configure_logging
     - configure_media
     - configure_apache
-    # - install_local_settings   # django role
-    - build_npm
-    - run_webpack
-    # - django_collectstatic   # django role
+    # - install_local_settings   # now part of django role
+
+    # - django_collectstatic   # now part of django role
     # - django_migrate
     - finalize_deploy
-    # - configure_crontab  # used in prod but not alwaysin qa
+    # - configure_crontab  # used in prod but not always in qa
     # - close_deployment
