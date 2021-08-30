@@ -1,0 +1,13 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: verify
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    # django should be installed and version django_version
+    # no migrations should need to be run
+    # no messages should need compilation
+    # the static file should be moved to its new location
+    # the localsettings file should exist with our settings in it

@@ -1,0 +1,15 @@
+---
+# Runs the `compilemessages` command for compiling localized strings.
+# https://docs.djangoproject.com/en/dev/ref/django-admin/#compilemessages
+
+- name: ensure gnu gettext is installed
+  become: true
+  apt:
+    name: gettext
+    state: present
+
+- name: compile localized messages
+  django_manage:
+    command: compilemessages
+    app_path: "{{ django_app_path }}"
+    virtualenv: "{{ django_venv_path }}"
