@@ -20,10 +20,10 @@ SHOW_TEST_WARNING = {{ django_test_warning }}
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.{{ django_db_backend }}",
-        "NAME": "{{ application_db_name }}",
-        "USER": "{{ application_dbuser_name }}",
-        "PASSWORD": "{{ application_dbuser_password }}",
-        "HOST": "{{ application_db_host }}",
+        "NAME": "{{ django_db_name }}",
+        "USER": "{{ django_db_user }}",
+        "PASSWORD": "{{ django_db_password }}",
+        "HOST": "{{ django_db_host }}",
         "CHARSET": "utf8",
         "COLLATION": "utf8_general_ci",
         {% if django_db_backend == "mysql" %}
