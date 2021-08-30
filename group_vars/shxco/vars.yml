@@ -8,7 +8,7 @@ app_name: mep
 # name of django application
 django_app: mep
 # symlink to current deploy in /var/www
-symlink: shakespeareandco
+symlink: mep
 # wsgi file relative to deploy location
 wsgi_path: "{{ django_app }}/wsgi.py"
 # use python 3.6
@@ -20,15 +20,14 @@ node_version: "10"
 clone_root: "/home/{{ deploy_user }}/repos"
 # don't distinguish between qa/prod paths
 install_root: "/srv/www/{{ app_name }}"
+# apache location
+apache_app_path: "/var/www/{{ app_name }}"
+
 
 # pul deploy user
 deploy_user: "conan"
-# python/django defaults don't work as is
-python_user: "{{ deploy_user }}"
-django_user: "{{ deploy_user }}"
-django_app_path: "{{ deploy }}"
 
-application_db_host: "{{ postgres_host }}"
+
 
 # geonames and mapbox usernames, map-related configs
 geonames_username: '{{ vault_geonames_username }}'
@@ -43,6 +42,7 @@ db_host: "{{ postgres_host }}"
 application_dbuser_name: "{{ vault_db_username }}"
 application_dbuser_password: "{{ vault_db_password }}"
 application_db_name: "{{ vault_db_name }}"
+application_db_host: "{{ postgres_host }}"
 
 # - solr settings
 solr_collection: cdh_shxco
