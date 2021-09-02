@@ -85,11 +85,59 @@ CSP_REPORT_URI = "{{ django_csp_enforce_uri }}"
 
 # Logging configuration
 # https://docs.djangoproject.com/en/dev/topics/logging/
-{% block logging_config %}{% endblock %}
+{% block logging_config %}
+# Solution following https://stackoverflow.com/a/9541647
+# Sends a logging email even when DEBUG is on
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'basic': {
+            'format': '[%(asctime)s] %(levelname)s:%(name)s::%(message)s',
+            'datefmt': '%d/%b/%Y %H:%M:%S',
+        },
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True
+        },
+        # This configuration lets logrotate and its proper permissions #
+        # handle this problem #
+        'debug_log': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.WatchedFileHandler',
+            'filename': '{{ logging_path }}',
+            'formatter': 'basic',
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins', 'debug_log'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        '{{ django_app }}': {
+            'handlers': ['debug_log'],
+            'level': {% if qa is defined %}'DEBUG'{% else %}'WARN'{% endif %},
+            'propagate': True,
+        },
+    }
+}
+{% endblock %}
 
 # Solr configuration (search index)
 # https://github.com/Princeton-CDH/parasolr
-{% block solr_config %}{% endblock %}
+{% block solr_config %}
+SOLR_CONNECTIONS = {
+    'default': {
+        'URL': '{{ solr_url }}',
+        'COLLECTION': '{{ solr_collection }}',
+        'CONFIGSET': '{{ solr_configset }}'
+    }
+}
+{% endblock %}
 
 # Extra app-specific configuration
 {% block extra_config %}{% endblock %}
