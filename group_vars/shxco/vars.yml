@@ -22,12 +22,15 @@ clone_root: "/home/{{ deploy_user }}/repos"
 install_root: "/srv/www/{{ app_name }}"
 # apache location
 apache_app_path: "/var/www/{{ app_name }}"
+# use site name instead of 'mep' for apache site config
+apache_conf_name: "shakespeareandco"
 
+# allow any host, since we're behind PUL load balancer
+django_allowed_hosts:
+  - "*"
 
 # pul deploy user
 deploy_user: "conan"
-
-
 
 # geonames and mapbox usernames, map-related configs
 geonames_username: '{{ vault_geonames_username }}'
@@ -39,10 +42,14 @@ paris_overlay: 'https://tiles.arcgis.com/tiles/4Ko8f1mCWFLyY4NV/arcgis/rest/serv
 db_backend: "postgresql"
 db_host: "{{ postgres_host }}"
 # postgresql database info
-application_dbuser_name: "{{ vault_db_username }}"
+application_dbuser_name: cdh_shxco
 application_dbuser_password: "{{ vault_db_password }}"
-application_db_name: "{{ vault_db_name }}"
+# same db name for qa and production to simplify syncing data
+application_db_name: cdh_shxco
 application_db_host: "{{ postgres_host }}"
+
+# app-specific local settings
+django_local_settings_template: "shxco_settings.py"
 
 # - solr settings
 solr_collection: cdh_shxco
