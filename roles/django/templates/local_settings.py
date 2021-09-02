@@ -108,7 +108,7 @@ LOGGING = {
         'debug_log': {
             'level': 'DEBUG',
             'class': 'logging.handlers.WatchedFileHandler',
-            'filename': '{{ logging_path }}',
+            'filename': '{{ django_logging_path }}',
             'formatter': 'basic',
         }
     },
@@ -130,6 +130,7 @@ LOGGING = {
 # Solr configuration (search index)
 # https://github.com/Princeton-CDH/parasolr
 {% block solr_config %}
+{% if solr_url is defined %}
 SOLR_CONNECTIONS = {
     'default': {
         'URL': '{{ solr_url }}',
@@ -137,6 +138,7 @@ SOLR_CONNECTIONS = {
         'CONFIGSET': '{{ solr_configset }}'
     }
 }
+{% endif %}
 {% endblock %}
 
 # Extra app-specific configuration
