@@ -58,6 +58,7 @@ version: '{{ python_app_version.stdout }}'
 logging_dir: '{{ install_root }}/logs'
 # logging file
 logging_path: '{{ logging_dir }}/{{ django_app }}.log'
+django_logging_path: '{{ logging_path }}'
 
 # These include the path for rh-python35, nodejs6, and git 2.27
 # Paths are picky and spaces for any YAML multiline syntax cause issues
