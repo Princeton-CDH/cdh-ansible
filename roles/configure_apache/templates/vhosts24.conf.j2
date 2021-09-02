@@ -11,6 +11,13 @@
 
     # support serving restricted/purchased webfonts at /static/fonts
     Alias {{ apache_app_url }}{% if not apache_app_url.endswith('/') %}/{% endif %}static/fonts/ {{ apache_font_path }}
+    # protect direct access to fonts; require princeton referer
+    <Directory '{{ apache_font_path }}'>
+      RewriteEngine on
+      RewriteCond %{HTTP_REFERER} !^https://(.*).princeton\.edu [NC]
+      RewriteRule .* - [F]
+      Require all granted
+    </Directory>
 
     # set up general /static/ and /media/ serving
     Alias {{ apache_app_url }}{% if not apache_app_url.endswith('/') %}/{% endif %}static/ {{ apache_app_path }}/static/
