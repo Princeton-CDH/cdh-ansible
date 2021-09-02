@@ -12,3 +12,6 @@ apache_default_modules:
   - headers
 apache_app_modules: []
 media_root: "/var/www/media/"
+# make it possible to customize apache site configuration name
+apache_conf_name: "{{ app_name }}"
+apache_app_config: "/etc/apache2/sites-available/{{ apache_conf_name }}.conf"
