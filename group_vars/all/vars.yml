@@ -58,6 +58,11 @@ version: '{{ python_app_version.stdout }}'
 logging_dir: '{{ install_root }}/logs'
 # logging file
 logging_path: '{{ logging_dir }}/{{ django_app }}.log'
+django_logging_path: '{{ logging_path }}'  # copy to django role variable
+
+# allow any host for applications behind PUL load balancer (setting used in django role)
+django_allowed_hosts:
+  - "*"
 
 # These include the path for rh-python35, nodejs6, and git 2.27
 # Paths are picky and spaces for any YAML multiline syntax cause issues
@@ -72,11 +77,14 @@ python_version: "python3.5"
 # custom hook for requirements, allows for override to use lock or txt
 requirements_type: 'txt'
 
-# CSP configuration -- two urls, one for readOnly, one for enforce
+# CSP configuration -- two urls, one for read only, one for enforce
 # first is used in QA, rest in production
 # set csp_enabled: true in project vars to enable
 csp_reportonly_uri: '{{ vault_csp_reportonly_uri}}'
 csp_enforce_uri: '{{ vault_csp_enforce_uri }}'
+# copy to CSP variables needed for django role settings
+django_csp_reportonly_uri: '{{ vault_csp_reportonly_uri}}'
+django_csp_enforce_uri: '{{ vault_csp_enforce_uri }}'
 
 # Postgres configuration (default version is 13)
 postgres_host: lib-postgres-prod1.princeton.edu
