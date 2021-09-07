@@ -25,10 +25,6 @@ apache_app_path: "/var/www/{{ app_name }}"
 # use site name instead of 'mep' for apache site config
 apache_conf_name: "shakespeareandco"
 
-# allow any host, since we're behind PUL load balancer
-django_allowed_hosts:
-  - "*"
-
 # pul deploy user
 deploy_user: "conan"
 
@@ -66,4 +62,5 @@ technical_contact: cdhdevteam@princeton.edu
 
 # app-specific system dependencies
 app_dependencies:
-  -  libmysqlclient-dev # for mysql installation during the migration
+  - at  # for 100 years twitter bot scheduled tweets
+  - libmysqlclient-dev # for mysql installation during the migration
