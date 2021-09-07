@@ -58,7 +58,11 @@ version: '{{ python_app_version.stdout }}'
 logging_dir: '{{ install_root }}/logs'
 # logging file
 logging_path: '{{ logging_dir }}/{{ django_app }}.log'
-django_logging_path: '{{ logging_path }}'
+django_logging_path: '{{ logging_path }}'  # copy to django role variable
+
+# allow any host for applications behind PUL load balancer (setting used in django role)
+django_allowed_hosts:
+  - "*"
 
 # These include the path for rh-python35, nodejs6, and git 2.27
 # Paths are picky and spaces for any YAML multiline syntax cause issues
