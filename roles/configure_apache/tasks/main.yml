@@ -33,7 +33,7 @@
     - name: install project apache site config to available sites
       template:
         src: "vhosts24.conf.j2"
-        dest: "/etc/apache2/sites-available/{{ app_name }}.conf"
+        dest: "{{ apache_app_config }}"
       notify: restart apache
     # todo: only restart when file is changed?
 
@@ -45,8 +45,8 @@
 
     - name: enable project apache site config
       file:
-        src: "/etc/apache2/sites-available/{{ app_name }}.conf"
-        dest: "/etc/apache2/sites-enabled/{{ app_name }}.conf"
+        src: "{{ apache_app_config }}"
+        dest: "/etc/apache2/sites-enabled/{{ apache_conf_name }}.conf"
         state: link
 
       # also restart if link is changed?

@@ -4,6 +4,7 @@ django_app: myapp
 django_app_path: /srv/www/{{ django_app }}
 django_user: "{{ ansible_user }}"
 django_venv_path: "{{ django_app_path }}/env"
+django_logging_path: "/srv/www/{{ django_app }}/logs/{{ django_app }}.log"
 
 # django settings config
 django_local_settings_template: local_settings.py

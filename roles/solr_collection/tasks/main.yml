@@ -18,6 +18,9 @@
       become_user: "{{ deploy_user }}"
       command: /usr/bin/rsync -a {{ inventory_hostname }}:{{ deploy }}/solr_conf/ /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -e "ssh -o StrictHostKeyChecking=no"
       delegate_to: "{{ solr_server }}"
+      # NOTE: this step may fail the first time it is run on a new server because
+      # systemd ssh restart does not reliably work (handler in deploy_user role);
+      # if it fails, try restarting ssh manually on the application server
 
     - name: Update configset with zookeeper
       command: "/opt/solr/bin/solr zk -upconfig -d /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -n {{ solr_configset }} -z {{ zk_host }}"
