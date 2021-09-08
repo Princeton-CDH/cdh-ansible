@@ -103,6 +103,3 @@ django_db_host: "{{ application_db_host }}"
 # configure VMs to use local timezone
 # (requires including pul timezone role in playbook)
 timezone: America/New_York
-
-# by default, assume we don't need 2to3 support for installing python dependencies
-requires_python2to3: false
