@@ -11,9 +11,11 @@
   remote_user: pulsys
   become: true
   roles:
-    # - create_deployment
+    - create_deployment
     - deploy_user
     - build_dependencies
+    - import_role:   # timezone needed for twitter bot cron/at jobs
+      name: pulibrary.princeton_ansible.timezone
     - build_project_repo
     - postgresql
     - build_npm
@@ -25,4 +27,4 @@
     - configure_apache
     - finalize_deploy
     - configure_crontab  # used in prod but not always in qa
-    # - close_deployment
+    - close_deployment
