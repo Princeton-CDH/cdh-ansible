@@ -20,9 +20,9 @@
     - postgresql
     - build_npm
     - run_webpack   # dependency for collectstatic
+    - configure_logging # logging directory must exist before running django commands
     - django
     - solr_collection
-    - configure_logging
     - configure_media
     - configure_apache
     - finalize_deploy
