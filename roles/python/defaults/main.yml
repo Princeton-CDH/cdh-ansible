@@ -5,3 +5,4 @@ python_version: "3.6"
 python_app_path: /usr/src/app
 python_venv_path: "{{ python_app_path }}/env"
 python_requirements_file: "{{ python_app_path }}/requirements.txt"
+requires_python2to3: false

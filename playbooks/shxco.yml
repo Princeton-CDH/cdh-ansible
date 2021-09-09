@@ -1,4 +1,4 @@
-- hosts: solr_staging
+- hosts: solr_prod
   connection: ssh
   remote_user: pulsys
   vars:
@@ -6,7 +6,7 @@
   roles:
     - deploy_user
 
-- hosts: shxco_qa
+- hosts: shxco_prod
   connection: ssh
   remote_user: pulsys
   become: true
