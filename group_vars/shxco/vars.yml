@@ -57,7 +57,7 @@ solr_configset: cdh_shxco
 #     - "Python unit tests (3.6, 8.6, postgresql)"
 
 # default media root
-media_root: '/srv/www/media'
+media_root: '/srv/www/media/'
 
 technical_contact: cdhdevteam@princeton.edu
 
@@ -65,3 +65,6 @@ technical_contact: cdhdevteam@princeton.edu
 app_dependencies:
   - at  # for 100 years twitter bot scheduled tweets
   - libmysqlclient-dev # for mysql installation during the migration
+
+# 2to3 support needed for installing rdflib-jsonld
+requires_python2to3: true

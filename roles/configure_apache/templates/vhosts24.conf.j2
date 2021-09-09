@@ -23,6 +23,10 @@
     Alias {{ apache_app_url }}{% if not apache_app_url.endswith('/') %}/{% endif %}static/ {{ apache_app_path }}/static/
     {% if media_root is defined %}
     Alias {{ apache_app_url }}{% if not apache_app_url.endswith('/') %}/{% endif %}media/ {{ media_root }}
+    <Directory "{{ media_root }}">
+      Require all granted
+      Options FollowSymlinks
+    </Directory>
     {% endif %}
 
     # optionally include extra config files, if they exist

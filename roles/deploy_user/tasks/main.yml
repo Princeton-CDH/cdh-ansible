@@ -69,6 +69,11 @@
       notify:
         - restart ssh
 
+    # by default, handlers run at the end of the playbook; we need the ssh restart
+    # to take effect for subsequent tasks
+    - name: Flush handlers (trigger ssh restart if needed)
+      meta: flush_handlers
+
     - name: "Create pulsys bash alias file"
       template:
         src: "pulsys_bash_alias.j2"
