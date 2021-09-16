@@ -28,7 +28,7 @@ crontab:
     minute: 30
     hour: 2
     job: "bin/cron-wrapper {{ deploy }}/env/bin/python {{ deploy }}/manage.py twitterbot_100years schedule  >> {{ logging_dir }}/twitterbot_100years.log  2>&1"
-    state: absent
+    state: present
 
   # schedule nightly reindex until problems with signal indexing are resolved
   - name: "{{ django_app }} update Solr index"
