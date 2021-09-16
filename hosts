@@ -45,15 +45,6 @@ ppa.princeton.edu
 ppa_prod
 ppa_qa
 
-[mep_qa]
-test-mep.cdh.princeton.edu
-[mep_prod]
-mep2.princeton.edu
-
-[mep:children]
-mep_qa
-mep_prod
-
 [shxco_qa]
 cdh-test-shxco1.princeton.edu
 [shxco_prod]
@@ -98,7 +89,6 @@ solr_prod
 derrida_prod
 ppa_prod
 cdhweb_prod
-mep_prod
 pemm_prod
 geniza_prod
 shxco_prod
@@ -107,7 +97,6 @@ shxco_prod
 derrida_qa
 ppa_qa
 cdhweb_qa
-mep_qa
 pemm_qa
 geniza_qa
 shxco_qa
