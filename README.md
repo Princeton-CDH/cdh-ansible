@@ -21,10 +21,10 @@ The overall structure of this repository can be broken down as follows:
   - Python virtual environment.
     - See `.python-version` for the recommended version of Python.
     - If you use `env` or `venv`, the `.gitignore` will exclude it.
-    
+
   -  Install required Ansible galaxy collections:
       - `ansible-galaxy install -r requirements.yml`
-    
+
   - The CDH Ansible vault key. This can be referenced on the command line or better set as in the Bash session, i.e. `export ANSIBLE_VAULT_PASSWORD_FILE=/path/to/.passwd`
   - A GitHub [personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) for any playbook that uses the `create_deployment` and `close_deployment` roles. You can set this in your Bash session as `ANSIBLE_GITHUB_TOKEN` or pass it on the command line as `-e github_token=`
   - The CDH deploy bot key. This can be added to ssh-agent or in `~/.ssh/config`. All production deploys must be on the campus network (including VPN) and proxy through the QA server to production, with an ssh config stanza that looks something like:
@@ -77,7 +77,7 @@ The playbook will run, noting success and failures. The `-v` flag adjusts verbos
 To revert to previous deploy run call the `revert_deploy` playbook with a `host_group` matching the deploy you want to revert, e.g.:
 
 ```{bash}
-ansible-playbook -e host_group=mep_qa playbooks/revert_deploy.yml
+ansible-playbook -e host_group=shxco_qa playbooks/revert_deploy.yml
 ```
 
 ## Vault variables
