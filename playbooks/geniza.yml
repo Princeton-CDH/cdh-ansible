@@ -16,7 +16,6 @@
     - deploy_user
     - build_dependencies
     - build_project_repo
-    - build_virtualenv
     - postgresql
     - passenger
     - build_npm

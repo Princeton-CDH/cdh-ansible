@@ -73,6 +73,8 @@ python_path: '/opt/rh/rh-nodejs6/root/usr/lib/python2.7/site-packages{% if ansib
 
 # currently default for most projects is 3.5
 python_version: "python3.5"
+# set python virtualenv prompt based on application & version (used by python role only)
+python_venv_prompt: "{{ app_name }}-{{ version }}-{{ short_hash }}"
 
 # custom hook for requirements, allows for override to use lock or txt
 requirements_type: 'txt'
