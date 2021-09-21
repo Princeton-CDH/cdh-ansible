@@ -10,6 +10,9 @@ DEBUG = {{ django_debug }}
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = [{% for host in django_allowed_hosts %}"{{ host }}", {% endfor %}]
 
+# Use x-forwarded-proto header to tell if request from nginx was https or not
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # Show a small "this is a test site" banner for QA sites, if corresponding
 # template and stylesheet are present.
 SHOW_TEST_WARNING = {{ django_test_warning }}

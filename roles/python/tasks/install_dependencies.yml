@@ -7,7 +7,7 @@
   become_user: "{{ python_user }}"
   pip:
     virtualenv: "{{ python_venv_path }}"
-    virtualenv_command: python{{ python_version }} -m venv
+    virtualenv_command: python{{ python_version }} -m venv --prompt "{{ python_venv_prompt }}"
     name:
       - pip
       - setuptools
