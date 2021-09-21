@@ -13,8 +13,11 @@ app_name: geniza
 symlink: "{{ app_name }}"
 # wsgi file relative to apache location
 wsgi_path: "{{ django_app }}/wsgi.py"
-# use python 3.6
-python_version: "python3.6"
+# use python 3.8
+python_version: "3.8"
+# nodejs version
+node_version: "12"
+
 # Override clone root to use deploy user home instead of root
 clone_root: "/home/{{ deploy_user }}/repos"
 # for Geniza, we don't distinguish between qa/prod paths
@@ -32,12 +35,20 @@ db_host: "{{ postgres_host }}"
 application_dbuser_name: "{{ vault_db_username }}"
 application_dbuser_password: "{{ vault_db_password }}"
 application_db_name: "{{ vault_db_name }}"
+application_db_host: "{{ postgres_host }}"
+
+# configure app-specific local settings if needed
+# django_local_settings_template: "geniza_settings.py"
 
 # set defaults for princeton; override for other environments
 passenger_app_root: "/var/www/{{ app_name }}"
 passenger_server_name: "geniza.princeton.edu"
 passenger_startup_file: "{{ app_name }}/wsgi.py"
 passenger_python: "{{ virtualenv_path }}/bin/python"
+
+# override webpack build command
+webpack_build_qa: 'build'
+webpack_build_prod: 'build'
 
 # solr settings
 solr_collection: geniza

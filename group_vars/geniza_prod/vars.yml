@@ -2,14 +2,6 @@
 # email prefix for admin emails
 email_prefix: "[Geniza] "
 
-# allowed hosts for Django
-allowed_hosts:
-  - "geniza.cdh.princeton.edu"
-  - "cdh-geniza.princeton.edu"
-  - "cdh-geniza1"
-  - "localhost"
-  - "127.0.0.1"
-
 # passenger settings
 passenger_server_name: "geniza.cdh.princeton.edu"
 

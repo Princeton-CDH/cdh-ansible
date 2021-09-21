@@ -4,7 +4,7 @@
 # This role runs Webpack to compile and compress source javascript and styles
 # into css/js files. It depends on webpack and all its associated js dependencies
 # having been installed, usually through the 'build_npm' role.
-# 
+#
 # The role expects that appropriate qa/prod-specific tasks will be defined in
 # package.json and callable via `npm run build:qa` and `npm run build:prod`.
 ###
@@ -12,14 +12,14 @@
 - name: Run webpack build tasks for static assets
   block:
     - name: Do a QA build if in QA
-      shell: 'npm run build:qa'
+      shell: 'npm run {{ webpack_build_qa }}'
       args:
         chdir: '{{ deploy }}'
         executable: /bin/bash
       when:
         - qa is defined
     - name: Do a prod build if in prod
-      shell: 'npm run build:prod'
+      shell: 'npm run {{ webpack_build_prod }}'
       args:
         chdir: '{{ deploy }}'
         executable: /bin/bash
