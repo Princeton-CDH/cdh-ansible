@@ -16,14 +16,13 @@
     - deploy_user
     - build_dependencies
     - build_project_repo
-    - build_virtualenv
     - postgresql
     - passenger
+    - build_npm
+    - run_webpack   # dependency for collectstatic
     - configure_logging
-    - install_local_settings
+    - django
     - solr_collection
-    - django_collectstatic
-    - django_migrate
     - configure_crontab
     - finalize_deploy
     - close_deployment
