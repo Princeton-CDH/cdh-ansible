@@ -6,3 +6,4 @@ python_app_path: /usr/src/app
 python_venv_path: "{{ python_app_path }}/env"
 python_requirements_file: "{{ python_app_path }}/requirements.txt"
 requires_python2to3: false
+python_venv_prompt: "env-py{{ python_version }}"
