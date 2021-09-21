@@ -5,6 +5,6 @@
 - name: install django local settings
   template:
     src: "{{ django_local_settings_template }}"
-    dest: "{{ django_app_path }}/{{ django_app }}/local_settings.py"
+    dest: "{{ django_local_settings_dest }}"
     owner: "{{ django_user }}"
     mode: 0644

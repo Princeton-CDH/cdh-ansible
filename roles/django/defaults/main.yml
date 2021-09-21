@@ -14,6 +14,7 @@ django_allowed_hosts:
   - localhost
   - "{{ ansible_hostname }}"
 django_test_warning: false
+django_local_settings_dest: "{{ django_app_path }}/{{ django_app }}/local_settings.py"
 
 # database config
 django_db_backend: postgresql
