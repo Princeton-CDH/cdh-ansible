@@ -1,0 +1,7 @@
+# variables our roles currently require/assume
+# app_name: 'derrida-crawl'
+repo: 'derrida-crawl'
+
+# app-specific system dependencies
+app_dependencies:
+  - docker.io
