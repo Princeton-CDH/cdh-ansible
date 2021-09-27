@@ -1,0 +1,6 @@
+- hosts: derrida_crawl_qa
+  connection: ssh
+  remote_user: pulsys
+  become: true
+  roles:
+    - deploy_user  # runs build_dependencies as a dependency
