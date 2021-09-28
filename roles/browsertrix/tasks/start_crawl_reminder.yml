@@ -1,0 +1,8 @@
+---
+# Reminder task with instructions for starting the crawl
+- name: Remind to start the crawl
+  debug:
+    msg: |
+      Browsertrix is configured, now start the crawl:
+      - ssh to the remote server: ssh {{ ansible_user }}@{{ inventory_hostname }}
+      - start the crawl script in a new tmux session: tmux new-session -s crawl ./crawl.sh
