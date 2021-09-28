@@ -1,38 +1,38 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+This role runs setup needed to install and use [browsertrix-crawler](https://github.com/webrecorder/browsertrix-crawler) to create a web archive of a site and push the resulting files to a GitHub repository.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+The GitHub repository and branch specified in role variables must be created ahead of time.
+
+The public ssh key in `files/github_id.pub` must be added as an allowed key for the user that should be used for pushing the web archive crawl results to GitHub.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+- `browsertrix_crawl_url`: Base url of the site to be crawled and archived
+- `browsertrix_crawl_repo`: GitHub repository (in org/name format) where web archive results will go
+- `browsertrix_crawl_repo_branch`: branch of the GitHub repository; default is `main`
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+Depends on the **build_dependencies** role to install the Ubuntu **docker.io** package.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+The role includes an optional reminder task about next steps that can be run as a post task.
 
-    - hosts: servers
+    - hosts: crawl_server
       roles:
-         - { role: username.rolename, x: 42 }
+        - browsertrix
 
-License
--------
-
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+      post_tasks:
+        - name: Reminder about next steps
+          include_role:
+            name: browsertrix
+            tasks_from: start_crawl_reminder
