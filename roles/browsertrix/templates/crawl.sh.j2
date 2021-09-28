@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# script to kick off browsertrix crawl with yaml config
+docker run -v {{ browsertrix_crawl_config_dest }}:/app/crawl-config.yaml -v {{ browsertrix_crawl_dir }}:{{ browsertrix_crawl_dir }} webrecorder/browsertrix-crawler crawl --config /app/crawl-config.yaml
+
+# git add & commit & push ?
+git add {{ browsertrix_crawl_dir }}/**
