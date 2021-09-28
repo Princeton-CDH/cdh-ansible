@@ -2,6 +2,7 @@
 # app_name: 'derrida-crawl'
 repo: 'derrida-crawl'
 
-# app-specific system dependencies
-app_dependencies:
-  - docker.io
+# crawl configuration
+browsertrix_crawl_url: "https://derridas-margins.princeton.edu/"
+browsertrix_crawl_repo: derridas-margins-archive
+browsertrix_crawl_repo_branch: staging

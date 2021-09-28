@@ -1,0 +1,47 @@
+---
+# tasks file for browsertrix
+- name: Ensure GitHub ssh key is present on the server.
+  copy:
+    src: "files/github_id_rsa"
+    dest: "/home/{{ ansible_user }}/.ssh/id_rsa"
+    mode: 0600
+
+    # TODO: make a new key for github; add to files for this role
+    # add to repos that it should have access to
+
+- name: Ensure gitconfig is present on the server.
+  copy:
+    src: "files/gitconfig"
+    dest: "/home/{{ ansible_user }}/.gitconfig"
+    mode: 0600
+
+- name: Check out git data repository
+  git:
+    repo: "git@github.com:{{ browsertrix_crawl_repo }}.git"
+    dest: "{{ browsertrix_crawl_dir }}"
+    version: "{{ browsertrix_crawl_repo_branch }}"
+    accept_hostkey: yes
+    key_file: /home/{{ ansible_user }}/.ssh/id_rsa
+
+  # TODO: ssh key for pulsys to push to github repo
+  # see example in pul ansible
+
+ - name: Create browsertrix crawl config file
+   template:
+     src: "{{ item.src }}"
+     dest: "{{ item.dest }}"
+     mode: "{{ item.mode }}"
+   loop:
+      - { src: "crawl-config.j2", dest: "{{ browsertrix_crawl_config_dest }}", mode: 0444 }
+      - { src: "crawl.sh.j2", dest: "{{ browsertrix_home }}/crawl.sh", mode: 0744 }
+
+ - name: Pull browsertrix-crawler docker image
+   command: "docker pull webrecorder/browsertrix-crawler"
+   become: true
+   # TODO: does it matter if we run this a second time?
+
+
+
+# task in role to say what to do next; playbook should include as post task
+# example
+https://github.com/pulibrary/princeton_ansible/blob/c679342a6af1185f4e4bbdb38b65b69f5c46aeb5/playbooks/libwww_production.yml#L30
