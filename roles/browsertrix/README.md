@@ -16,6 +16,7 @@ Role Variables
 - `browsertrix_crawl_url`: Base url of the site to be crawled and archived
 - `browsertrix_crawl_repo`: GitHub repository (in org/name format) where web archive results will go
 - `browsertrix_crawl_repo_branch`: branch of the GitHub repository; default is `main`
+- `browsertrix_collection`: collection name to be used for the archive (optional)
 
 Dependencies
 ------------
