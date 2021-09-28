@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
 # script to kick off browsertrix crawl with yaml config
-docker run -v {{ browsertrix_crawl_config_dest }}:/app/crawl-config.yaml -v {{ browsertrix_crawl_dir }}:{{ browsertrix_crawl_dir }} webrecorder/browsertrix-crawler crawl --config /app/crawl-config.yaml
+# docker commands need to be run as root unless otherwise configured
+sudo docker run -v {{ browsertrix_crawl_config_dest }}:/app/crawl-config.yaml -v {{ browsertrix_crawl_dir }}:{{ browsertrix_crawl_dir }} webrecorder/browsertrix-crawler crawl --config /app/crawl-config.yaml
 
-# git add & commit & push ?
-git add {{ browsertrix_crawl_dir }}/**
+# Add resulting crawl files to git repo, commit, and push
+# add all new & unchanged files from the crawl
+cd {{ browsertrix_crawl_dir }}
+git add **
+git commit -m "Browsertrix crawl results"
+git push
