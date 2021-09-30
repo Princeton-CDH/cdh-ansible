@@ -17,7 +17,7 @@
     repo: "git@github.com:{{ browsertrix_crawl_repo }}.git"
     dest: "{{ browsertrix_crawl_dir }}"
     version: "{{ browsertrix_crawl_repo_branch }}"
-    accept_hostkey: yes
+    accept_hostkey: true
     key_file: "{{ browsertrix_home }}/.ssh/id_ed25519"
 
 - name: Create browsertrix crawl config and shell script
@@ -32,4 +32,3 @@
 - name: Pull browsertrix-crawler docker image
   command: "docker pull webrecorder/browsertrix-crawler"
   become: true
-  # TODO: does it matter if we run this a second time?
