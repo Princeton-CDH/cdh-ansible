@@ -1,0 +1,11 @@
+- hosts: derrida_crawl_qa
+  connection: ssh
+  remote_user: pulsys
+  roles:
+    - browsertrix
+
+  post_tasks:
+    - name: Reminder about next steps
+      include_role:
+        name: browsertrix
+        tasks_from: start_crawl_reminder

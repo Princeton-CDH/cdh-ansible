@@ -1,0 +1,9 @@
+# variables our roles currently require/assume
+# app_name: 'derrida-crawl'
+repo: 'derrida-crawl'
+
+# crawl configuration
+browsertrix_crawl_url: "https://derridas-margins.princeton.edu/"
+browsertrix_crawl_repo: Princeton-CDH/derridas-margins-archive
+browsertrix_crawl_repo_branch: staging
+browsertrix_collection: "derrida"
