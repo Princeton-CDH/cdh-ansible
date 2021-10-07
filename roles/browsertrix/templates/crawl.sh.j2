@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# script to kick off browsertrix crawl with yaml config
+# docker commands need to be run as root unless otherwise configured
+sudo docker run -v {{ browsertrix_crawl_config_dest }}:/app/crawl-config.yaml \
+    -v {{ browsertrix_crawl_dir }}:/crawls/ webrecorder/browsertrix-crawler crawl \
+    --config /app/crawl-config.yaml --rolloverSize 50000000 \
+    {% if browsertrix_collection is defined %}--collection {{ browsertrix_collection }}{% endif %}
+
+# change collection files owner from root to ansible user
+sudo chown -R {{ ansible_user }}.{{ ansible_user }} {{ browsertrix_crawl_dir }}
+
+# Add resulting crawl files to git repo, commit, and push
+# add all new & unchanged files from the crawl
+cd {{ browsertrix_crawl_dir }}
+git add **
+git commit -m "Browsertrix crawl results"
+git push
+
+# change working directory back to where we started
+cd -

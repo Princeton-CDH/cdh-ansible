@@ -72,6 +72,9 @@ cdh-geniza1.princeton.edu
 geniza_qa
 geniza_prod
 
+[derrida_crawl_qa]
+cdh-test-derrida-crawl1.princeton.edu
+
 ### PUL solr servers
 
 [solr_staging]
