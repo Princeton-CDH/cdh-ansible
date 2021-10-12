@@ -45,6 +45,9 @@
       register: python_app_version
       tags:
         - django
+      when:
+        - django_app is defined
+      # must define version in vars if not using python app version
 
     - name: Create the deploy directory (to recursively create parent dirs if necessary)
       become: true
