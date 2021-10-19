@@ -1,6 +1,9 @@
 # variables our roles currently require/assume
 # app_name: 'derrida-crawl'
 repo: 'derrida-crawl'
+deploy_user: "conan"
+# override default project/version based virtualenv prompt in all vars
+python_venv_prompt: "browsertrix"
 
 # crawl configuration
 browsertrix_crawl_url: "https://derridas-margins.princeton.edu/"
