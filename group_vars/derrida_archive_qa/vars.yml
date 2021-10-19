@@ -9,7 +9,6 @@ install_root: "/srv/www/derrida"
 clone_root: "/home/{{ deploy_user }}/repos"
 # name of main application
 app_name: derrida
-python_app_path: "{{ install_root }}"  # normally set by django role
 # python version
 python_version: "3.8"
 # symlink to current deploy in /var/www
@@ -18,11 +17,16 @@ symlink: derrida
 deploy_user: "conan"
 # no versioning within archive app, just call it 1.0
 version: '1.0'
+# configure where virtualenv should be created;
+# normally set by django role, but we don't use that
+python_app_path: "{{ deploy }}"
 
 passenger_app_root: "/var/www/{{ app_name }}"
 passenger_server_name: "test-derrida.cdh.princeton.edu"
-passenger_startup_file: "{{ app_name }}/wsgi.py"  # TBD wayback
+passenger_startup_file: "wsgi.py"
 passenger_python: "{{ passenger_app_root }}/env/bin/python"
+# disable default static nginx block so we can customize
+passenger_static_path: ""
 
 # # rewrites for urls that changed in migration from 2.8 to 3.x
 # # specify server name to ensure https instead of http
@@ -30,3 +34,10 @@ passenger_python: "{{ passenger_app_root }}/env/bin/python"
 #   rewrite "^/media/uploads/(.*/)?([^/]+\.(jpg|jpeg|gif|png))$" "https://{{ passenger_server_name }}/media/original_images/$2" permanent;
 #   rewrite "^/grants/(.*)$" "https://{{ passenger_server_name }}/engage/grants/$1" permanent;
 
+passenger_extra_config: |
+    # look for local static files first, then in pywb static files
+    location /static/ {
+      expires 10d;
+      root /;
+      try_files {{ passenger_app_root }}/$uri {{ passenger_app_root }}/env/lib/python{{ python_version }}/site-packages/pywb/$uri =404;
+    }
