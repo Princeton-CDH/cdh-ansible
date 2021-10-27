@@ -3,7 +3,15 @@
 repo: 'derrida-crawl'
 
 # crawl configuration
-browsertrix_crawl_url: "https://derridas-margins.princeton.edu/"
+
 browsertrix_crawl_repo: Princeton-CDH/derridas-margins-archive
 browsertrix_crawl_repo_branch: staging
 browsertrix_collection: "derrida"
+
+# configure urls to be set in the browsertrix crawl config
+browsertrix_crawl_seeds:
+   - url: "https://derridas-margins.princeton.edu/"
+   - url: "https://derridas-margins.princeton.edu/sitemap.xml"
+   - url: "https://derridas-margins.princeton.edu/404/"
+   - url: "https://derridas-margins.princeton.edu/_500/"
+  # add other seed url here; scope defaults to host
