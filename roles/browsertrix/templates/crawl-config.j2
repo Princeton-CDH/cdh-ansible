@@ -1,3 +1,6 @@
 seeds:
-  - url: "{{ browsertrix_crawl_url }}"
-    scopeType: "host"
+{% for seed in browsertrix_crawl_seeds %}
+  - url: "{{ seed.url }}"
+    scopeType: "{{ seed.scopeType | default('host') }}"
+
+{% endfor %}
