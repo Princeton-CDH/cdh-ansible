@@ -13,7 +13,7 @@ The public ssh key in `files/github_id.pub` must be added as an allowed key for 
 Role Variables
 --------------
 
-- `browsertrix_crawl_url`: Base url of the site to be crawled and archived
+- `browsertrix_crawl_seeds`: List of seed urls to be crawled and archived; must include `url`;  `scopeType` is optional, default scope is `host`
 - `browsertrix_crawl_repo`: GitHub repository (in org/name format) where web archive results will go
 - `browsertrix_crawl_repo_branch`: branch of the GitHub repository; default is `main`
 - `browsertrix_collection`: collection name to be used for the archive (optional)
@@ -26,8 +26,18 @@ Depends on the **build_dependencies** role to install the Ubuntu **docker.io** p
 Example Playbook
 ----------------
 
+Example seed variable list:
+
+```yaml
+browsertrix_crawl_seeds:
+   - url: "https://example.com/"
+     scopeType: "host"
+   - url: "https://example.com/sitemap.xml"
+```
+
 The role includes an optional reminder task about next steps that can be run as a post task.
 
+```yaml
     - hosts: crawl_server
       roles:
         - browsertrix
@@ -37,3 +47,4 @@ The role includes an optional reminder task about next steps that can be run as 
           include_role:
             name: browsertrix
             tasks_from: start_crawl_reminder
+```
