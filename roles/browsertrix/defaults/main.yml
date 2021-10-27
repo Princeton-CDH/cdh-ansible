@@ -3,7 +3,8 @@
 browsertrix_home: "{{ ansible_env.HOME }}"
 
 browsertrix_crawl_dir: "{{ browsertrix_home }}/crawls"
-browsertrix_crawl_url: "http://example.edu/"
 browsertrix_crawl_repo_branch: main
+browsertrix_crawl_seeds:
+   - url: "http://example.edu/"
 
 browsertrix_crawl_config_dest: "{{ browsertrix_home }}/crawl-config.yaml"
