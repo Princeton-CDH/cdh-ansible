@@ -28,14 +28,17 @@ Example Playbook
 
 Example seed variable list:
 
+```yaml
 browsertrix_crawl_seeds:
    - url: "https://example.com/"
      scopeType: "host"
    - url: "https://example.com/sitemap.xml"
 
+```
 
 The role includes an optional reminder task about next steps that can be run as a post task.
 
+```yaml
     - hosts: crawl_server
       roles:
         - browsertrix
@@ -45,3 +48,4 @@ The role includes an optional reminder task about next steps that can be run as 
           include_role:
             name: browsertrix
             tasks_from: start_crawl_reminder
+```
