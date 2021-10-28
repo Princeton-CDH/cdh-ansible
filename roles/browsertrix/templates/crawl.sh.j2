@@ -17,7 +17,7 @@ sudo chown -R {{ ansible_user }}.{{ ansible_user }} {{ browsertrix_crawl_dir }}
 cd {{ browsertrix_crawl_dir }}
 
 # generate an index for the collection
-{{ python_venv_path }}/bin/wb-manager index {{ browsertrix_collection }}"
+{{ python_venv_path }}/bin/wb-manager reindex {{ browsertrix_collection }}
 
 git add **
 git commit -m "Browsertrix crawl results"
