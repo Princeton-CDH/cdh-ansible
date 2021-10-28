@@ -33,6 +33,7 @@ browsertrix_crawl_seeds:
    - url: "https://example.com/"
      scopeType: "host"
    - url: "https://example.com/sitemap.xml"
+
 ```
 
 The role includes an optional reminder task about next steps that can be run as a post task.

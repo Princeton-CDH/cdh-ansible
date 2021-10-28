@@ -53,3 +53,10 @@ dependencies:
     vars:
        app_dependencies:
         - docker.io
+  - role: python
+    vars:
+      python_app_path: "/home/{{ deploy_user }}/env"
+      python_app_version: "1.0"
+      python_version: "3.8"
+      python_extra_packages: "pywb"
+

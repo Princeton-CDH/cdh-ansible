@@ -52,7 +52,7 @@
 
     - name: Configure passenger virtual host.
       template:
-        src: passenger.conf.j2
+        src: "{{ passenger_nginx_site_template }}"
         dest: /etc/nginx/sites-available/{{ app_name }}.conf
         mode: 0644
       notify: restart nginx

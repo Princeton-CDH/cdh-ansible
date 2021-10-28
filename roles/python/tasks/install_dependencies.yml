@@ -33,3 +33,11 @@
   pip:
     virtualenv: "{{ python_venv_path }}"
     requirements: "{{ python_requirements_file }}"
+
+- name: install additional python requirments
+  become: true
+  become_user: "{{ python_user }}"
+  pip:
+    virtualenv: "{{ python_venv_path }}"
+    name: "{{ python_extra_packages }}"
+  when: python_extra_packages is defined

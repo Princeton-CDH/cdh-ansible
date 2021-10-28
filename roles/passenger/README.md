@@ -15,24 +15,37 @@ Application name variable ``app_name`` must be defined.
 
 Available variables are listed below, along with default values (see `defaults/main.yml`):
 
-    passenger_server_name: www.example.com
+```yaml
+passenger_server_name: www.example.com
+```
 
 The server name (used in the Nginx virtual host configuration).
 
-    passenger_app_root: /var/www/app
+```yaml
+passenger_app_root: /var/www/app
+```
 
 The wsgi file to use and the path to the python to use (i.e., if you need python within a virtualenv):
-    
-    passenger_startup_file: app/wsgi.py
-    passenger_python: /usr/bin/python
 
+```yaml
+passenger_startup_file: app/wsgi.py
+passenger_python: /usr/bin/python
+```
+
+The nginx site configuration template to use, if you want to exstend it:
+
+```yaml
+passenger_nginx_site_template: passenger.conf.j2
+```
 
 Values for passenger configuration directives inside `nginx.conf`. These defaults should generally work correctly.
 
-    nginx_worker_processes: "{{ ansible_processor_vcpus | default(ansible_processor_count) }}"
-    nginx_worker_connections: "768"
-    nginx_keepalive_timeout: "65"
-    nginx_remove_default_vhost: true
+```yaml
+nginx_worker_processes: "{{ ansible_processor_vcpus | default(ansible_processor_count) }}"
+nginx_worker_connections: "768"
+nginx_keepalive_timeout: "65"
+nginx_remove_default_vhost: true
+```
 
 Nginx directives.
 
@@ -42,9 +55,11 @@ None.
 
 ## Example Playbook
 
-    - hosts: server
-      roles:
-        - passenger
+```yaml
+- hosts: server
+    roles:
+    - passenger
+```
 
 ## License
 
