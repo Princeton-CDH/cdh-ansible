@@ -5,6 +5,7 @@ passenger_listen_port: '80'
 passenger_startup_file: wsgi.py
 passenger_python: /usr/bin/python
 passenger_static_path: "{{ passenger_app_root }}/static/"
+passenger_nginx_site_template: passenger.conf.j2
 
 nginx_worker_processes: "{{ ansible_processor_vcpus | default(ansible_processor_count) }}"
 nginx_worker_connections: "768"
