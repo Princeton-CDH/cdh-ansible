@@ -54,22 +54,31 @@ server {
   }
 
   # set up general /static/ and /media/ serving
+  {% block static %}
   {% if passenger_static_path %}
   location /static/ {
     expires 10d;
     alias {{ passenger_static_path }};
   }
   {% endif %}
+  {% endblock %}
 
+  {% block media %}
   location /media/ {
     expires 7d;
     alias {{ media_root }};  # MUST end with trailing slash
   }
+  {% endblock %}
+  {% block fonts %}
   # support serving restricted/purchased webfonts at /static/fonts/
   location /static/fonts/ {
     expires 10d;
     alias {{ font_path }};  # MUST end with trailing slash
  }
+ {% endblock %}
 
-  {{ passenger_extra_config }}
+ {% block extra_config %}
+ {{ passenger_extra_config }}
+ {% endblock %}
+
 }

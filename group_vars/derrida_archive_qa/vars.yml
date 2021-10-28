@@ -27,17 +27,4 @@ passenger_startup_file: "wsgi.py"
 passenger_python: "{{ passenger_app_root }}/env/bin/python"
 # disable default static nginx block so we can customize
 passenger_static_path: ""
-
-# # rewrites for urls that changed in migration from 2.8 to 3.x
-# # specify server name to ensure https instead of http
-# passenger_extra_config: |
-#   rewrite "^/media/uploads/(.*/)?([^/]+\.(jpg|jpeg|gif|png))$" "https://{{ passenger_server_name }}/media/original_images/$2" permanent;
-#   rewrite "^/grants/(.*)$" "https://{{ passenger_server_name }}/engage/grants/$1" permanent;
-
-passenger_extra_config: |
-    # look for local static files first, then in pywb static files
-    location /static/ {
-      expires 10d;
-      root /;
-      try_files {{ passenger_app_root }}/$uri {{ passenger_app_root }}/env/lib/python{{ python_version }}/site-packages/pywb/$uri =404;
-    }
+passenger_nginx_site_template: "derrida_wayback_passenger.conf.j2"

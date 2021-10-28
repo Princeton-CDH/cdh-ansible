@@ -1,0 +1,17 @@
+{% extends 'passenger.conf.j2' %}
+
+{% block static %}
+    # look for local static files first, then in pywb static files
+    location /static/ {
+      expires 10d;
+      root /;
+      try_files {{ passenger_app_root }}/$uri {{ passenger_app_root }}/env/lib/python{{ python_version }}/site-packages/pywb/$uri =404;
+    }
+{% endblock %}
+
+{# no media or fonts for this application #}
+{% block media %}{% endblock %}
+{% block fonts %}{% endblock %}
+
+{% block extra_config %}
+{% endblock %}
