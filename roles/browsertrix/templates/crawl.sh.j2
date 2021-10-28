@@ -10,6 +10,8 @@ sudo docker run -v {{ browsertrix_crawl_config_dest }}:/app/crawl-config.yaml \
 # change collection files owner from root to ansible user
 sudo chown -R {{ ansible_user }}.{{ ansible_user }} {{ browsertrix_crawl_dir }}
 
+
+
 # Add resulting crawl files to git repo, commit, and push
 # add all new & unchanged files from the crawl
 cd {{ browsertrix_crawl_dir }}

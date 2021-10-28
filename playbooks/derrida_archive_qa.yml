@@ -1,0 +1,12 @@
+- hosts: derrida_archive_qa
+  connection: ssh
+  remote_user: pulsys
+  roles:
+    - create_deployment
+    - deploy_user
+    - build_project_repo
+    - python
+    - passenger
+    - finalize_deploy
+    - close_deployment
+
