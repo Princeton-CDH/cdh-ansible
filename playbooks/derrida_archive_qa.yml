@@ -2,11 +2,11 @@
   connection: ssh
   remote_user: pulsys
   roles:
-    # - create_deployment
+    - create_deployment
     - deploy_user
     - build_project_repo
     - python
     - passenger
     - finalize_deploy
-    # - close_deployment
+    - close_deployment
 
