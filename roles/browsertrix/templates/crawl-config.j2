@@ -4,3 +4,7 @@ seeds:
     scopeType: "{{ seed.scopeType | default('host') }}"
 
 {% endfor %}
+
+blockRules:
+   - url: googleanalytics.com
+   - url: www.googletagmanager.com
