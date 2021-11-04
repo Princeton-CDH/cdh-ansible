@@ -1,5 +1,11 @@
 {% extends 'passenger.conf.j2' %}
 
+{% block root %}
+  location / {
+     proxy_pass http://localhost:8080/derrida/20210928203330/https://derridas-margins.princeton.edu/;
+  }
+{% endblock %}
+
 {% block static %}
     # look for local static files first, then in pywb static files
     location /static/ {

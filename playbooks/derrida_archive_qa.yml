@@ -6,6 +6,13 @@
     - deploy_user
     - build_project_repo
     - python
+    # run passenger role once to configure wayback on port 8080
+    - role: passenger
+      passenger_listen_port: "8080"
+      passenger_nginx_site_template: "passenger.conf.j2"
+      passenger_site_config_name: "derrida-wayback"
+      passenger_server_name: "localhost"
+    # run a second time for the main configuration
     - passenger
     - finalize_deploy
     - close_deployment
