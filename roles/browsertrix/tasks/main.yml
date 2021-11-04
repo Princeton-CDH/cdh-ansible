@@ -29,11 +29,12 @@
     - { src: "crawl-config.j2", dest: "{{ browsertrix_crawl_config_dest }}", mode: '0444' }
     - { src: "crawl.sh.j2", dest: "{{ browsertrix_home }}/crawl.sh", mode: '0744' }
 
-- name: Add custom driver to server
+- name: Copy custom driver to server if specified
   copy:
-    src: "files/custom-driver.js"
+    src: "files/{{ browsertrix_custom_driver }}"
     dest: "{{ browsertrix_custom_driver_dest }}"
     mode: 0744
+  when: browsertrix_custom_driver is defined
 
 - name: Pull browsertrix-crawler docker image
   command: "docker pull webrecorder/browsertrix-crawler"

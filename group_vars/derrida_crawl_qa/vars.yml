@@ -10,6 +10,7 @@ python_venv_prompt: "browsertrix"
 browsertrix_crawl_repo: Princeton-CDH/derridas-margins-archive
 browsertrix_crawl_repo_branch: staging
 browsertrix_collection: "derrida"
+browsertrix_custom_driver: "derrida-driver.js"
 
 # configure urls to be set in the browsertrix crawl config
 browsertrix_crawl_seeds:
