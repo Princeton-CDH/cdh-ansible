@@ -4,10 +4,11 @@
 # docker commands need to be run as root unless otherwise configured
 sudo docker run -v {{ browsertrix_crawl_config_dest }}:/app/crawl-config.yaml \
     -v {{ browsertrix_crawl_dir }}:/crawls/ webrecorder/browsertrix-crawler crawl \
-    {% if browsertrix_custom_driver is defined %}-v {{ browsertrix_custom_driver_dest }}:/app/defaultDriver.js \{% endif %}
+    {% if browsertrix_custom_driver is defined %}-v {{ browsertrix_custom_driver_dest }}:/app/custom-driver.js \ {% endif %}
     --config /app/crawl-config.yaml --rolloverSize 50000000 \
     --useSitemap \
-    {% if browsertrix_collection is defined %}--collection {{ browsertrix_collection }}{% endif %}
+    {% if browsertrix_collection is defined %}--collection {{ browsertrix_collection }}{% endif %} \
+    {% if browsertrix_custom_driver is defined %}--driver /app/custom-driver.js {% endif %}
 
 # change collection files owner from root to ansible user
 sudo chown -R {{ ansible_user }}.{{ ansible_user }} {{ browsertrix_crawl_dir }}
@@ -22,7 +23,7 @@ cd {{ browsertrix_crawl_dir }}
 {{ python_venv_path }}/bin/wb-manager reindex {{ browsertrix_collection }}
 
 git add **
-git commit -m "Browsertrix crawl results"
+git commit # Title: "Browsertrix crawl results", then copy the docker command into the message
 git push
 
 # change working directory back to where we started
