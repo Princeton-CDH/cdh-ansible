@@ -6,6 +6,7 @@ browsertrix_crawl_dir: "{{ browsertrix_home }}/crawls"
 browsertrix_crawl_repo_branch: main
 browsertrix_crawl_seeds:
    - url: "http://example.edu/"
+browsertrix_worker_count: 2
 
 browsertrix_crawl_config_dest: "{{ browsertrix_home }}/crawl-config.yaml"
 browsertrix_custom_driver_dest: "{{ browsertrix_home }}/custom-driver.js"
