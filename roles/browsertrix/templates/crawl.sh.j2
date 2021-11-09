@@ -3,8 +3,9 @@
 # script to kick off browsertrix crawl with yaml config
 # docker commands need to be run as root unless otherwise configured
 sudo docker run -v {{ browsertrix_crawl_config_dest }}:/app/crawl-config.yaml \
-    -v {{ browsertrix_crawl_dir }}:/crawls/ webrecorder/browsertrix-crawler crawl \
-    {% if browsertrix_custom_driver is defined %}-v {{ browsertrix_custom_driver_dest }}:/app/custom-driver.js \ {% endif %}
+    -v {{ browsertrix_crawl_dir }}:/crawls/ \
+    {% if browsertrix_custom_driver is defined %} -v {{ browsertrix_custom_driver_dest }}:/app/custom-driver.js \
+    {% endif %} webrecorder/browsertrix-crawler crawl \
     --config /app/crawl-config.yaml --rolloverSize 50000000 \
     --useSitemap \
     {% if browsertrix_collection is defined %}--collection {{ browsertrix_collection }}{% endif %} \
