@@ -25,7 +25,7 @@ cd {{ browsertrix_crawl_dir }}
 {{ python_venv_path }}/bin/wb-manager reindex {{ browsertrix_collection }}
 
 git add **
-git commit # Title: "Browsertrix crawl results", then copy the docker command into the message
+git commit -m "Browsertrix crawl results"
 git push
 
 # change working directory back to where we started
