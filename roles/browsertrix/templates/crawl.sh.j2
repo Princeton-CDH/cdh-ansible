@@ -9,8 +9,9 @@ sudo docker run -v {{ browsertrix_crawl_config_dest }}:/app/crawl-config.yaml \
     --config /app/crawl-config.yaml --rolloverSize 50000000 \
     --useSitemap \
     --workers {{ browsertrix_worker_count }} \
-    {% if browsertrix_collection is defined %}--collection {{ browsertrix_collection }}{% endif %} \
-    {% if browsertrix_custom_driver is defined %}--driver /app/custom-driver.js {% endif %}
+    {% if browsertrix_timeout_seconds is defined %}--timeout {{ browsertrix_timeout_seconds  }} \
+    {% endif %}{% if browsertrix_collection is defined %}--collection {{ browsertrix_collection }} \
+    {% endif %}{% if browsertrix_custom_driver is defined %}--driver /app/custom-driver.js {% endif %}
 
 # change collection files owner from root to ansible user
 sudo chown -R {{ ansible_user }}.{{ ansible_user }} {{ browsertrix_crawl_dir }}
