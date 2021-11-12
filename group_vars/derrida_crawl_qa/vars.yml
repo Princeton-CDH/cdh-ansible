@@ -12,6 +12,10 @@ browsertrix_crawl_repo_branch: staging
 browsertrix_collection: "derrida"
 browsertrix_custom_driver: "derrida-driver.js"
 
+# Set at 5 hours to ensure that the custom driver can finish hovering over all
+#  visualization elements
+browsertrix_timeout_seconds: 18000
+
 # configure urls to be set in the browsertrix crawl config
 browsertrix_crawl_seeds:
    - url: "https://derridas-margins.princeton.edu/"
