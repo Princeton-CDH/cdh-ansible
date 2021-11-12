@@ -18,6 +18,7 @@ Role Variables
 - `browsertrix_crawl_repo_branch`: branch of the GitHub repository; default is `main`
 - `browsertrix_collection`: collection name to be used for the archive (optional)
 - `browsertrix_custom_driver`: custom driver to pass to browsertrix for specific interactive behaviors (optional)
+- `browsertrix_timeout_seconds`: number of seconds before browsertrix gives up trying to load a URL (optional)
 
 
 Dependencies
