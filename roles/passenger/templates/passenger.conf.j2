@@ -2,6 +2,9 @@ server {
   listen {{ passenger_listen_port }} default_server;
   server_name {{ passenger_server_name }};
 
+  # define django environment for split settings
+  passenger_env_var DJANGO_ENV {% if qa is defined %}staging{% else %}production{% endif %};
+
   set_real_ip_from 128.112.203.144;
   set_real_ip_from 128.112.203.145;
   set_real_ip_from 128.112.203.146;
