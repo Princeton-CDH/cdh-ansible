@@ -7,8 +7,8 @@ Role Variables
 --------------
 
 * `solr_server`: server where configset directory will be created, and where zookooper will be run
-* `num_shards`: number of shards; default  3
-* `replication_factor`: replication factor; default 1
+* `num_shards`: number of shards; default  1
+* `replication_factor`: replication factor; default 3
 * `shards_per_node`: shards per node; default 1
 
 
