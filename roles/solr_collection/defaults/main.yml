@@ -1,5 +1,5 @@
 ---
-# defaults file for roles/solr
-num_shards: 1
+# defaults file for roles/solr_collection
+num_shards: 3
 replication_factor: 1
 shards_per_node: 1
