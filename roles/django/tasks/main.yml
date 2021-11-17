@@ -1,7 +1,11 @@
 ---
 # Basic sequence of tasks for setting up a Django app.
 
-- include: install_local_settings.yml
-- include: migrate.yml
-- include: collectstatic.yml
-- include: compilemessages.yml
+- name: Setup django application
+  block:
+  - include: install_local_settings.yml
+  - include: migrate.yml
+  - include: collectstatic.yml
+  - include: compilemessages.yml
+  environment:
+    DJANGO_ENV: "{% if qa is defined %}staging{% else %}production{% endif %}"
