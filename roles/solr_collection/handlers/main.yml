@@ -3,3 +3,4 @@
 - name: reload solr collection
   uri:
     url: "{{ solr_url }}admin/collections?action=RELOAD&name={{ solr_collection }}"
+    timeout: 180
