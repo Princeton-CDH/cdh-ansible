@@ -18,6 +18,8 @@ DATA_IMPORT_URLS = {
 # path to preliminary JSON transcription data
 TRANSCRIPTIONS_JSON_FILE = "/srv/www/geniza/data/transcriptions.json"
 
+TEI_TRANSCRIPTIONS_LOCAL_PATH = "/srv/www/geniza/data/tei_xml/"
+
 {% endblock %}
 
 {% block solr_config %}
