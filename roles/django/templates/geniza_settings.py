@@ -1,4 +1,4 @@
-{% extends "settings.py" %}
+{% extends "local_settings.py" %}
 """
 Django local settings for geniza
 """
