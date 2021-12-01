@@ -53,14 +53,14 @@
     - name: Configure passenger virtual host.
       template:
         src: "{{ passenger_nginx_site_template }}"
-        dest: /etc/nginx/sites-available/{{ app_name }}.conf
+        dest: /etc/nginx/sites-available/{{ passenger_site_config_name }}.conf
         mode: 0644
       notify: restart nginx
 
     - name: Ensure passenger virtual host is enabled.
       file:
-        src: /etc/nginx/sites-available/{{ app_name }}.conf
-        dest: /etc/nginx/sites-enabled/{{ app_name }}.conf
+        src: /etc/nginx/sites-available/{{ passenger_site_config_name }}.conf
+        dest: /etc/nginx/sites-enabled/{{ passenger_site_config_name }}.conf
         state: link
 
     - name: Ensure default virtual host is removed.

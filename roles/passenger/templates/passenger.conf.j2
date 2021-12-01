@@ -44,6 +44,7 @@ server {
   gzip_disable        "MSIE [1-6]\.";
   gzip_vary           on;
 
+  {% block root %}
   location / {
     passenger_enabled {{ passenger_enabled }};
     passenger_app_root {{ passenger_app_root }};
@@ -55,6 +56,7 @@ server {
     passenger_set_header X-Forwarded-For $remote_addr;
     root {{ passenger_app_root }};
   }
+  {% endblock %}
 
   # set up general /static/ and /media/ serving
   {% block static %}
