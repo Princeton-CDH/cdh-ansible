@@ -45,6 +45,11 @@ passenger_app_root: "/var/www/{{ app_name }}"
 passenger_server_name: "geniza.princeton.edu"
 passenger_startup_file: "{{ app_name }}/wsgi.py"
 passenger_python: "{{ passenger_app_root }}/env/bin/python"
+# apply reasonable restrictions to licensed fonts based on referrer
+font_require_referrer:
+  - geniza.cdh.princeton.edu
+  - test-geniza.cdh.princeton.edu
+  - "*.percy.io"   # for visual testing
 
 # override webpack build command
 webpack_build_qa: 'build'

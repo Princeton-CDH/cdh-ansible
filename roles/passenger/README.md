@@ -47,6 +47,13 @@ nginx_keepalive_timeout: "65"
 nginx_remove_default_vhost: true
 ```
 
+Media and font paths, along with an optional list of valid referrers to restrict access to fonts in nginx.
+```yaml
+media_root: "/var/www/media/"
+font_path: "/var/www/fonts/"
+font_require_referrer: []
+```
+
 Nginx directives.
 
 ## Dependencies
