@@ -78,6 +78,13 @@ server {
   # support serving restricted/purchased webfonts at /static/fonts/
   location /static/fonts/ {
     expires 10d;
+    {% if font_require_referrer|length > 0 %}
+    # restrict fonts by referrer
+    valid_referers {{ font_require_referrer|join(' ') }};
+    if ($invalid_referer) {
+      return 403;
+    }
+    {% endif %}
     alias {{ font_path }};  # MUST end with trailing slash
  }
  {% endblock %}

@@ -18,6 +18,7 @@
     - build_project_repo
     - postgresql
     - passenger
+    - geniza_setup
     - build_npm
     - run_webpack   # dependency for collectstatic
     - configure_logging
