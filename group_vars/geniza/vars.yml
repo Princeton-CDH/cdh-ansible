@@ -45,6 +45,13 @@ passenger_app_root: "/var/www/{{ app_name }}"
 passenger_server_name: "geniza.princeton.edu"
 passenger_startup_file: "{{ app_name }}/wsgi.py"
 passenger_python: "{{ passenger_app_root }}/env/bin/python"
+
+# Redirect old links from PGPv3
+# specify server name to ensure https instead of http
+passenger_extra_config: |
+  rewrite "^/pgpsearch/\?a=object&id=(\w+).*$" "https://{{ passenger_server_name }}/documents/$1/" last;
+  rewrite "^/pgpsearch.*$" "https://{{ passenger_server_name }}/documents/" last;
+
 # apply reasonable restrictions to licensed fonts based on referrer
 font_require_referrer:
   - geniza.cdh.princeton.edu
