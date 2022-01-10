@@ -34,11 +34,10 @@ deploy_user: "conan"
 db_backend: "postgresql"
 db_host: "{{ postgres_host }}"
 # postgresql database info
-application_dbuser_name: "{{ vault_db_username }}"
+application_dbuser_name: "geniza"
 application_dbuser_password: "{{ vault_db_password }}"
-application_db_name: "{{ vault_db_name }}"
+application_db_name: "cdh_geniza"
 application_db_host: "{{ postgres_host }}"
-
 
 # set defaults for princeton; override for other environments
 passenger_app_root: "/var/www/{{ app_name }}"
@@ -77,6 +76,6 @@ crontab:
 
   - name: "{{ app_name }} reindex"
     special_time: daily
-    job: "bin/cron-wrapper {{ passenger_app_root }}/env/bin/{{ python_version }} {{ passenger_app_root }}/manage.py index --no-progress >> {{ logging_dir }}/index.log 2>&1"
+    job: "bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py index --no-progress >> {{ logging_dir }}/index.log 2>&1"
     state: present
 
