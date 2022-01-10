@@ -76,6 +76,6 @@ crontab:
 
   - name: "{{ app_name }} reindex"
     special_time: daily
-    job: "bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py index --no-progress >> {{ logging_dir }}/index.log 2>&1"
+    job: "env DJANGO_ENV=production bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py index --no-progress >> {{ logging_dir }}/index.log 2>&1"
     state: present
 

@@ -16,9 +16,9 @@ crontab:
   # do we need reindexing in qa? probably deson't hurt
   - name: "{{ app_name }} reindex"
     special_time: daily
-    job: "bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py index --no-progress >> {{ logging_dir }}/index.log 2>&1"
+    job: "env DJANGO_ENV=staging bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py index --no-progress >> {{ logging_dir }}/index.log 2>&1"
     state: present
   - name: "{{ app_name }} sync transcriptions"
     special_time: daily
-    job: "bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py sync_transcriptions -v 0 >> {{ logging_dir }}/sync_transcriptions.log 2>&1"
+    job: "env DJANGO_ENV=staging bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py sync_transcriptions -v 0 >> {{ logging_dir }}/sync_transcriptions.log 2>&1"
     state: present
