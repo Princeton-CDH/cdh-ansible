@@ -47,11 +47,30 @@ passenger_python: "{{ passenger_app_root }}/env/bin/python"
 
 # Redirect old links from PGPv3
 # specify server name to ensure https instead of http
+
+# NOTE: nginx makes it difficult to check two parameters at a time;
+# rather than complicate this, just check for the pertinent options
 passenger_extra_config: |
-  rewrite "^/pgpsearch/\?a=object&id=(\w+).*$" "https://{{ passenger_server_name }}/documents/$1/" permanent;
-  rewrite "^/pgpsearch.*$" "https://{{ passenger_server_name }}/documents/" permanent;
-# Redirect to appropriate tags query after implementation
-# rewrite "^/pgpsearch/\?a=tag&tag=(\w+).*$" LOCATION permanent;
+  location /pgpsearch {
+
+    # object id specified, e.g. /pgpsearch/?a=object&id=2619
+    if ($arg_id) {
+       return 301 "https://{{ passenger_server_name }}/documents/$arg_id/";
+    }
+    # tag search, e.g. /pgpsearch/?a=tag&tag=illness
+    if ($arg_tag) {
+       return 301 "https://{{ passenger_server_name }}/documents/?q=tag:\"$arg_tag\"";
+    }
+    # search term specified, e.g. /pgpsearch/?a=search&type=meta&q=dating
+    # (ignores all other parameters, but search is different anyway)
+    if ($arg_q) {
+      return 301 "https://{{ passenger_server_name }}/documents/?q=$arg_q";
+    }
+
+    return 301 "https://{{ passenger_server_name }}/documents/";
+    error_log /var/log/nginx/error.log notice;
+    rewrite_log on;
+  }
 
 # apply reasonable restrictions to licensed fonts based on referrer
 font_require_referrer:
@@ -76,6 +95,6 @@ crontab:
 
   - name: "{{ app_name }} reindex"
     special_time: daily
-    job: "env DJANGO_ENV=production bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py index --no-progress >> {{ logging_dir }}/index.log 2>&1"
+    job: "bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py index --no-progress >> {{ logging_dir }}/index.log 2>&1"
     state: present
 
