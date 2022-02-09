@@ -17,6 +17,11 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # template and stylesheet are present.
 SHOW_TEST_WARNING = {{ django_test_warning }}
 
+{% if media_root is defined %}
+# Configure media root path
+MEDIA_ROOT = '{{ media_root }}'
+{% endif %}
+
 # Database configuration
 # https://docs.djangoproject.com/en/dev/ref/databases/
 {% block db_config %}
