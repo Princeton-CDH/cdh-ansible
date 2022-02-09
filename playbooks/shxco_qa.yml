@@ -23,7 +23,6 @@
     - configure_logging # logging directory must exist before running django commands
     - django
     - solr_collection
-    - configure_media
     - configure_apache
     - finalize_deploy
     - configure_crontab  # used in prod but not always in qa

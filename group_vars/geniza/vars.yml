@@ -26,6 +26,8 @@ install_root: "/srv/www/{{ app_name }}"
 django_local_settings_dest: "{{ deploy }}/{{ django_app }}/settings/local_settings.py"
 # configure app-specific local settings
 django_local_settings_template: "geniza_settings.py"
+# uploaded media directory; must end with trailing slash for nginx
+media_root: /srv/www/media/
 
 # pul deploy user
 deploy_user: "conan"
