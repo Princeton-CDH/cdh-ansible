@@ -65,7 +65,7 @@ passenger_extra_config: |
     }
     # filter by type, e.g. /pgpsearch/?a=type&type=Letter
     if ($arg_type) {
-       return 301 "https://{{ passenger_server_name }}/documents/?q=doctype:$arg_type";
+       return 301 "https://{{ passenger_server_name }}/documents/?doctype=$arg_type";
     }
     # search term specified, e.g. /pgpsearch/?a=search&type=meta&q=dating
     # (ignores all other parameters, but search is different anyway)
