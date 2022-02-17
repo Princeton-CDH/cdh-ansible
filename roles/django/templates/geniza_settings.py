@@ -22,6 +22,7 @@ TEI_TRANSCRIPTIONS_LOCAL_PATH = "/srv/www/geniza/data/tei_xml/"
 
 {% if qa is not defined %}
 GTAGS_ANALYTICS_ID = "G-3HMY094CY2"
+{% endif %}
 
 # Languages to make visible on the public site/front-end in addition to the admin site.
 # If undefined, all LANGUAGES will be enabled on both the public and admin site.
@@ -32,9 +33,6 @@ PUBLIC_SITE_LANGUAGES = [
 #    "he",
 #    "ar",
 ]
-
-{% endif %}
-
 {% endblock %}
 
 {% block solr_config %}
