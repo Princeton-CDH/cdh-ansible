@@ -81,6 +81,7 @@ passenger_extra_config: |
 # apply reasonable restrictions to licensed fonts based on referrer
 font_require_referrer:
   - geniza.cdh.princeton.edu
+  - geniza.princeton.edu
   - test-geniza.cdh.princeton.edu
   - "*.percy.io"   # for visual testing
 
@@ -96,11 +97,13 @@ solr_configset: geniza
 deploy_contexts:
   - "Python unit tests"
 
-# configure scripts to run as cron jobs
+# qa configure scripts to run as cron jobs
 crontab:
-
   - name: "{{ app_name }} reindex"
     special_time: daily
-    job: "bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py index --no-progress >> {{ logging_dir }}/index.log 2>&1"
+    job: "env DJANGO_ENV=staging bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py index --no-progress >> {{ logging_dir }}/index.log 2>&1"
     state: present
-
+  - name: "{{ app_name }} sync transcriptions"
+    special_time: daily
+    job: "env DJANGO_ENV=staging bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py sync_transcriptions -v 0 >> {{ logging_dir }}/sync_transcriptions.log 2>&1"
+    state: present
