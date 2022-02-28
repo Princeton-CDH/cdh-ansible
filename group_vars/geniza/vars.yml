@@ -16,7 +16,7 @@ wsgi_path: "{{ django_app }}/wsgi.py"
 # use python 3.8
 python_version: "3.8"
 # nodejs version
-node_version: "12"
+node_version: "16"
 
 # Override clone root to use deploy user home instead of root
 clone_root: "/home/{{ deploy_user }}/repos"
