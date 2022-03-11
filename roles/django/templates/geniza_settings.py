@@ -30,6 +30,9 @@ GTAGS_ANALYTICS_ID = "G-3HMY094CY2"
 # For production only, limit to languages ready to be made public
 PUBLIC_SITE_LANGUAGES = [
    "en",
+{% if qa %}
+   "he",
+{% endif %}
 #    "he",
 #    "ar",
 ]
