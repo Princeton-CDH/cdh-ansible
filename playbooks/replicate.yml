@@ -1,0 +1,86 @@
+- hosts: geniza_qa
+  connection: ssh
+  remote_user: pulsys
+  # override default location for db backup
+  vars:
+    - timestamp: "{{ ansible_date_time.date }}"
+    - db_backup_filename: "{{ timestamp }}_{{ application_db_name }}.sql.bz2"
+    - db_backup_path: "/home/{{ deploy_user }}/migrate/{{ db_backup_filename }}"
+    # testing replicating to localhost/dev for now
+    - dest_host: localhost
+    - dest_backup_path: "/tmp/migrate/{{ db_backup_filename }}"
+    - dest_backup_path_unzipped:  "{{ dest_backup_path | replace('.bz2', '') }}"
+    - dest_postgres_host: localhost
+  tasks:
+    - name: Generate a database dump
+      # use existing postgres backup task with customized backup path
+      # (role ensures backup dir exists)
+      include_role:
+        name: postgresql
+        tasks_from: backup_db.yml
+
+    - name: Create backup path on destination {{ dest_host }}
+      file:
+        dest: "{{ dest_backup_path | dirname }}"
+        mode: 0777
+        # owner: "{{ deploy_user }}"
+        state: directory
+      delegate_to: "{{ dest_host }}"
+
+    - name: Sync database dump to destination host
+      # run rsync on dest machine to pull db dump from the source machine
+      ansible.builtin.command: /usr/bin/rsync -avz "{{ ansible_user }}@{{ ansible_hostname }}:{{ db_backup_path }}" "{{ dest_backup_path }}" -e "ssh -o StrictHostKeyChecking=no"
+      # become: true
+      # become_user: "{{ deploy_user }}"
+      delegate_to: "{{ dest_host }}"
+
+    - name: Make sure unzipped database dump does not exist (if it does, bunzip2 will fail)
+      ansible.builtin.file:
+        path: "{{ dest_backup_path_unzipped }}"
+        state: absent
+      delegate_to: "{{ dest_host }}"
+
+    # postgres module can create zipped dump file, but at least on OSX
+    # it fails to unzip when attempting to restore;
+    # use command line since builtin unarchive task does not handle bz2
+    - name: Unzip dumped database on {{ dest_host }}
+      ansible.builtin.command: bunzip2 "{{ dest_backup_path }}"
+      delegate_to: "{{ dest_host }}"
+
+    # if we don't clear the database first, loading the dump results in
+    # errors/warnings about constraints that already exist
+    # NOTE: in local setup, remove database fails if django is running (client connected to db)
+    - name: Remove the database "{{ application_db_name }}" on target host {{ dest_host }} if it exists
+      community.postgresql.postgresql_db:
+        name: "{{ application_db_name }}"
+        login_host: '{{ dest_postgres_host | default(omit) }}'
+        login_user: '{{ application_dbuser_name | default(omit) }}'
+        login_password: '{{ application_dbuser_password | default(omit) }}'
+        state: "absent"
+      delegate_to: "{{ dest_host }}"
+
+    - name: Create empty database "{{ application_db_name }}" on target host {{ dest_host }}
+      community.postgresql.postgresql_db:
+        name: "{{ application_db_name }}"
+        login_host: '{{ dest_postgres_host | default(omit) }}'
+        login_user: '{{ application_dbuser_name | default(omit) }}'
+        login_password: '{{ application_dbuser_password | default(omit) }}'
+        state: "present"
+        owner: '{{ application_dbuser_name }}'
+      delegate_to: "{{ dest_host }}"
+
+    - name: Load the database "{{ application_db_name }}" on target host {{ dest_host }}
+      community.postgresql.postgresql_db:
+        name: "{{ application_db_name }}"
+        encoding: 'UTF-8'
+        login_host: '{{ dest_postgres_host | default(omit) }}'
+        login_user: '{{ application_dbuser_name | default(omit) }}'
+        login_password: '{{ application_dbuser_password | default(omit) }}'
+        owner: '{{ application_dbuser_name }}'
+        target: "{{ dest_backup_path_unzipped }}"
+        state: "restore"
+      # become: true
+      # become_user: postgres
+      delegate_to: "{{ dest_host }}"
+      # async: 1800
+      # poll: 60

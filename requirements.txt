@@ -5,3 +5,4 @@ passlib
 wheel
 yamllint
 pre-commit
+psycopg2
