@@ -13,4 +13,4 @@ qa: qa
 # allow any deploy contexts
 deploy_contexts: []
 # PUL staging VM (default version is postgres 13)
-postgres_host: lib-postgres-staging1.princeton.edu
+postgres_host: lib-postgres-staging3.princeton.edu
