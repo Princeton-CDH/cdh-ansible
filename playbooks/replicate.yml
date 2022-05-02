@@ -1,16 +1,24 @@
-- hosts: geniza_qa
+- name: Replace database and media content between deploy environments
+  hosts: geniza_qa
   connection: ssh
   remote_user: pulsys
   # override default location for db backup
   vars:
     - timestamp: "{{ ansible_date_time.date }}"
+    - backup_dir : "/home/{{ deploy_user }}/migrate/"
     - db_backup_filename: "{{ timestamp }}_{{ application_db_name }}.sql.bz2"
-    - db_backup_path: "/home/{{ deploy_user }}/migrate/{{ db_backup_filename }}"
+    - db_backup_path: "{{ backup_dir }}{{ db_backup_filename }}"
+    - media_backup_filename: "{{ timestamp }}_{{ app_name }}_media.tar.gz"
+    - media_backup_path: "{{ backup_dir }}{{ media_backup_filename}}"
     # testing replicating to localhost/dev for now
     - dest_host: localhost
-    - dest_backup_path: "/tmp/migrate/{{ db_backup_filename }}"
+    - dest_backup_dir : "/tmp/migrate/"
+    - dest_backup_path: "{{ dest_backup_dir }}{{ db_backup_filename }}"
     - dest_backup_path_unzipped:  "{{ dest_backup_path | replace('.bz2', '') }}"
     - dest_postgres_host: localhost
+    - dest_media_backup_path: "{{ dest_backup_dir }}{{ media_backup_filename}}"
+    # TODO: setup group vars for dev/local
+    - dest_media_dir: /Users/rkoeser/workarea/github/geniza/media
   tasks:
     - name: Generate a database dump
       # use existing postgres backup task with customized backup path
@@ -18,6 +26,14 @@
       include_role:
         name: postgresql
         tasks_from: backup_db.yml
+
+    - name: Create an archive of application media files
+      community.general.archive:
+        path: "{{ media_root }}"
+        dest: "{{ media_backup_path }}"
+        owner: "{{ deploy_user }}"
+      become: true
+      become_user: "{{ deploy_user }}"
 
     - name: Create backup path on destination {{ dest_host }}
       file:
@@ -30,6 +46,13 @@
     - name: Sync database dump to destination host
       # run rsync on dest machine to pull db dump from the source machine
       ansible.builtin.command: /usr/bin/rsync -avz "{{ ansible_user }}@{{ ansible_hostname }}:{{ db_backup_path }}" "{{ dest_backup_path }}" -e "ssh -o StrictHostKeyChecking=no"
+      # become: true
+      # become_user: "{{ deploy_user }}"
+      delegate_to: "{{ dest_host }}"
+
+    - name: Sync media to destination host
+      # run rsync on dest machine to pull db dump from the source machine
+      ansible.builtin.command: /usr/bin/rsync -avz "{{ ansible_user }}@{{ ansible_hostname }}:{{ media_backup_path }}" "{{ dest_backup_dir }}" -e "ssh -o StrictHostKeyChecking=no"
       # become: true
       # become_user: "{{ deploy_user }}"
       delegate_to: "{{ dest_host }}"
@@ -84,3 +107,22 @@
       delegate_to: "{{ dest_host }}"
       # async: 1800
       # poll: 60
+
+    - name: Extract media to destination media directory
+      ansible.builtin.unarchive:
+        src: "{{ dest_media_backup_path }}"
+        dest: "{{ dest_media_dir }}"
+      delegate_to: "{{ dest_host }}"
+
+
+# could django migration be done as a second playbook? use existing role/task
+- hosts: localhost    # local won't actually work without some setup...
+  connection: ssh
+  remote_user: pulsys
+  # override default location for db backup
+  # vars:
+  tasks:
+  - name: Run django migrations on destination
+    include_role:
+      name: django
+      tasks_from: migrate
