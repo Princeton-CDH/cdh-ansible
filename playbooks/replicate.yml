@@ -1,24 +1,9 @@
-- name: Replace database and media content between deploy environments
-  hosts: geniza_qa
+# source hosts tasks
+- name: Generate database and media backups on source host
+  hosts: geniza_prod
   connection: ssh
   remote_user: pulsys
-  # override default location for db backup
-  vars:
-    - timestamp: "{{ ansible_date_time.date }}"
-    - backup_dir : "/home/{{ deploy_user }}/migrate/"
-    - db_backup_filename: "{{ timestamp }}_{{ application_db_name }}.sql.bz2"
-    - db_backup_path: "{{ backup_dir }}{{ db_backup_filename }}"
-    - media_backup_filename: "{{ timestamp }}_{{ app_name }}_media.tar.gz"
-    - media_backup_path: "{{ backup_dir }}{{ media_backup_filename}}"
-    # testing replicating to localhost/dev for now
-    - dest_host: localhost
-    - dest_backup_dir : "/tmp/migrate/"
-    - dest_backup_path: "{{ dest_backup_dir }}{{ db_backup_filename }}"
-    - dest_backup_path_unzipped:  "{{ dest_backup_path | replace('.bz2', '') }}"
-    - dest_postgres_host: localhost
-    - dest_media_backup_path: "{{ dest_backup_dir }}{{ media_backup_filename}}"
-    # TODO: setup group vars for dev/local
-    - dest_media_dir: /Users/rkoeser/workarea/github/geniza/media
+  # generate backups on source host
   tasks:
     - name: Generate a database dump
       # use existing postgres backup task with customized backup path
@@ -27,102 +12,135 @@
         name: postgresql
         tasks_from: backup_db.yml
 
-    - name: Create an archive of application media files
+    - name: Check if media directory has any files
+      stat:
+        path: "{{ media_root }}/*"
+      register: media_files
+
+    - name: Create an archive of application media files, if any exist
       community.general.archive:
         path: "{{ media_root }}"
         dest: "{{ media_backup_path }}"
         owner: "{{ deploy_user }}"
       become: true
       become_user: "{{ deploy_user }}"
+      when: media_files.stat.exists == true
 
-    - name: Create backup path on destination {{ dest_host }}
-      file:
-        dest: "{{ dest_backup_path | dirname }}"
-        mode: 0777
-        # owner: "{{ deploy_user }}"
-        state: directory
-      delegate_to: "{{ dest_host }}"
-
-    - name: Sync database dump to destination host
-      # run rsync on dest machine to pull db dump from the source machine
-      ansible.builtin.command: /usr/bin/rsync -avz "{{ ansible_user }}@{{ ansible_hostname }}:{{ db_backup_path }}" "{{ dest_backup_path }}" -e "ssh -o StrictHostKeyChecking=no"
-      # become: true
-      # become_user: "{{ deploy_user }}"
-      delegate_to: "{{ dest_host }}"
-
-    - name: Sync media to destination host
-      # run rsync on dest machine to pull db dump from the source machine
-      ansible.builtin.command: /usr/bin/rsync -avz "{{ ansible_user }}@{{ ansible_hostname }}:{{ media_backup_path }}" "{{ dest_backup_dir }}" -e "ssh -o StrictHostKeyChecking=no"
-      # become: true
-      # become_user: "{{ deploy_user }}"
-      delegate_to: "{{ dest_host }}"
-
-    - name: Make sure unzipped database dump does not exist (if it does, bunzip2 will fail)
-      ansible.builtin.file:
-        path: "{{ dest_backup_path_unzipped }}"
-        state: absent
-      delegate_to: "{{ dest_host }}"
-
-    # postgres module can create zipped dump file, but at least on OSX
-    # it fails to unzip when attempting to restore;
-    # use command line since builtin unarchive task does not handle bz2
-    - name: Unzip dumped database on {{ dest_host }}
-      ansible.builtin.command: bunzip2 "{{ dest_backup_path }}"
-      delegate_to: "{{ dest_host }}"
-
-    # if we don't clear the database first, loading the dump results in
-    # errors/warnings about constraints that already exist
-    # NOTE: in local setup, remove database fails if django is running (client connected to db)
-    - name: Remove the database "{{ application_db_name }}" on target host {{ dest_host }} if it exists
-      community.postgresql.postgresql_db:
-        name: "{{ application_db_name }}"
-        login_host: '{{ dest_postgres_host }}'
-        login_user: '{{ application_dbuser_name }}'
-        login_password: '{{ application_dbuser_password }}'
-        state: "absent"
-      delegate_to: "{{ dest_host }}"
-
-    - name: Create empty database "{{ application_db_name }}" on target host {{ dest_host }}
-      community.postgresql.postgresql_db:
-        name: "{{ application_db_name }}"
-        login_host: '{{ dest_postgres_host }}'
-        login_user: '{{ application_dbuser_name }}'
-        login_password: '{{ application_dbuser_password }}'
-        state: "present"
-        owner: '{{ application_dbuser_name }}'
-      delegate_to: "{{ dest_host }}"
-
-    - name: Load the database "{{ application_db_name }}" on target host {{ dest_host }}
-      community.postgresql.postgresql_db:
-        name: "{{ application_db_name }}"
-        encoding: 'UTF-8'
-        login_host: '{{ dest_postgres_host }}'
-        login_user: '{{ application_dbuser_name }}'
-        login_password: '{{ application_dbuser_password }}'
-        owner: '{{ application_dbuser_name }}'
-        target: "{{ dest_backup_path_unzipped }}"
-        state: "restore"
-      # become: true
-      # become_user: postgres
-      delegate_to: "{{ dest_host }}"
-      # async: 1800
-      # poll: 60
-
-    - name: Extract media to destination media directory
-      ansible.builtin.unarchive:
-        src: "{{ dest_media_backup_path }}"
-        dest: "{{ dest_media_dir }}"
-      delegate_to: "{{ dest_host }}"
-
-
-# could django migration be done as a second playbook? use existing role/task
-- hosts: localhost    # local won't actually work without some setup...
+# destination host tasks
+- name: Restore database and media backups on target host
+  # hosts: dev
+  # connection: local
+  hosts: geniza_qa
   connection: ssh
   remote_user: pulsys
-  # override default location for db backup
-  # vars:
+  vars:
+     - deploy_user: "conan"
+    #  - source_user: pulsys
+     - source_user: conan
+     - source_hostname: cdh-geniza1   # maybe replication source var?
   tasks:
-  - name: Run django migrations on destination
-    include_role:
-      name: django
-      tasks_from: migrate
+      - name: Create backup path on target destination
+        file:
+          dest: "{{ dest_backup_path | dirname }}"
+          mode: 0777
+          # owner: "{{ deploy_user }}"
+          state: directory
+
+      - name: Sync database dump to destination host
+        # run rsync on dest machine to pull db dump from the source machine
+        ansible.builtin.command: /usr/bin/rsync -avz "{{ source_user }}@{{ source_hostname }}:{{ db_backup_path }}" "{{ dest_backup_path }}" -e "ssh -o StrictHostKeyChecking=no"
+        become: true
+        become_user: "{{ deploy_user }}"
+
+      - name: Check for media tar file on source
+        stat:
+          path: "{{ media_backup_path }}"
+        register: media_backup
+        delegate_to: "{{ source_hostname }}"
+
+      - name: Sync media to destination host
+        # run rsync on dest machine to pull db dump from the source machine
+        ansible.builtin.command: /usr/bin/rsync -avz "{{ source_user }}@{{ source_hostname }}:{{ media_backup_path }}" "{{ dest_backup_dir }}" -e "ssh -o StrictHostKeyChecking=no"
+        become: true
+        become_user: "{{ deploy_user }}"
+        when: media_backup.stat.exists == true
+
+      - name: Make sure unzipped database dump does not exist (if it does, bunzip2 will fail)
+        ansible.builtin.file:
+          path: "{{ dest_backup_path_unzipped }}"
+          state: absent
+
+      # postgres module can create zipped dump file, but at least on OSX
+      # it fails to unzip when attempting to restore;
+      # use command line since builtin unarchive task does not handle bz2
+      - name: Unzip dumped database
+        ansible.builtin.command: bunzip2 "{{ dest_backup_path }}"
+
+      # if we don't clear the database first, loading the dump results in
+      # errors/warnings about constraints that already exist
+      # NOTE: in local setup, remove database fails if django is running (client connected to db)
+      - name: Remove the database "{{ application_db_name }}" on target host if it exists
+        community.postgresql.postgresql_db:
+          name: "{{ application_db_name }}"
+          login_host: '{{ postgres_host }}'
+          login_user: '{{ application_dbuser_name }}'
+          login_password: '{{ application_dbuser_password }}'
+          state: "absent"
+        when: "'prod' not in group_names"   # never run this on production
+
+      - name: Create empty database "{{ application_db_name }}" on target host
+        community.postgresql.postgresql_db:
+          name: "{{ application_db_name }}"
+          login_host: '{{ postgres_host }}'
+          login_user: "{{ vault_postgres_admin_user }}"
+          login_password: "{{ vault_postgres_admin_password }}"
+          # worked for my dev setup...
+          # login_user: '{{ application_dbuser_name }}'
+          # login_password: '{{ application_dbuser_password }}'
+          state: "present"
+          owner: '{{ application_dbuser_name }}'
+
+      - name: Load the database "{{ application_db_name }}" on target host
+        community.postgresql.postgresql_db:
+          name: "{{ application_db_name }}"
+          encoding: 'UTF-8'
+          login_host: '{{ postgres_host }}'
+          login_user: '{{ application_dbuser_name }}'
+          login_password: '{{ application_dbuser_password }}'
+          owner: '{{ application_dbuser_name }}'
+          target: "{{ dest_backup_path_unzipped }}"
+          state: "restore"
+
+      - name: Extract media to destination media directory
+        ansible.builtin.unarchive:
+          src: "{{ dest_media_backup_path }}"
+          dest: "{{ dest_media_dir }}"
+        when: media_backup.stat.exists == true
+
+      # use current install symlink
+      - name: Run django migrations on destination
+        become: true
+        become_user: "{{ deploy_user }}"
+        django_manage:
+          command: migrate
+          # TODO: figure out how to set these properly
+          # FIXME: not getting virtualenv dependencies
+          app_path: "{{ install_root }}/current"
+          virtualenv: "{{ install_root }}/current/env"
+          # for dev, set these in dev group vars
+          # app_path: "{{ django_app_path }}"
+          # virtualenv: "{{ django_venv_path }}"
+
+      # - name: Run django migrations on destination   <-- this one has too many dependencies
+        # include_role:
+          # name: django
+          # tasks_from: migrate
+
+      # all current apps are single-site installs and use site id = 1
+      - name: Update django site in destination db
+        postgresql_query:
+          db: "{{ application_db_name }}"
+          login_host: '{{ postgres_host }}'
+          login_user: '{{ application_dbuser_name }}'
+          login_password: '{{ application_dbuser_password }}'
+          query: "UPDATE django_site SET domain = '{{ application_url }}', name = '{{ application_url }}' WHERE id = 1;"

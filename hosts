@@ -71,6 +71,7 @@ cdh-geniza1.princeton.edu
 [geniza:children]
 geniza_qa
 geniza_prod
+dev
 
 [derrida_crawl_qa]
 cdh-test-derrida-crawl1.princeton.edu
@@ -108,3 +109,6 @@ geniza_qa
 shxco_qa
 derrida_crawl_qa
 derrida_archive_qa
+
+[dev]
+localhost
