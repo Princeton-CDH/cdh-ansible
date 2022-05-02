@@ -53,18 +53,18 @@
     - name: Remove the database "{{ application_db_name }}" on target host {{ dest_host }} if it exists
       community.postgresql.postgresql_db:
         name: "{{ application_db_name }}"
-        login_host: '{{ dest_postgres_host | default(omit) }}'
-        login_user: '{{ application_dbuser_name | default(omit) }}'
-        login_password: '{{ application_dbuser_password | default(omit) }}'
+        login_host: '{{ dest_postgres_host }}'
+        login_user: '{{ application_dbuser_name }}'
+        login_password: '{{ application_dbuser_password }}'
         state: "absent"
       delegate_to: "{{ dest_host }}"
 
     - name: Create empty database "{{ application_db_name }}" on target host {{ dest_host }}
       community.postgresql.postgresql_db:
         name: "{{ application_db_name }}"
-        login_host: '{{ dest_postgres_host | default(omit) }}'
-        login_user: '{{ application_dbuser_name | default(omit) }}'
-        login_password: '{{ application_dbuser_password | default(omit) }}'
+        login_host: '{{ dest_postgres_host }}'
+        login_user: '{{ application_dbuser_name }}'
+        login_password: '{{ application_dbuser_password }}'
         state: "present"
         owner: '{{ application_dbuser_name }}'
       delegate_to: "{{ dest_host }}"
@@ -73,9 +73,9 @@
       community.postgresql.postgresql_db:
         name: "{{ application_db_name }}"
         encoding: 'UTF-8'
-        login_host: '{{ dest_postgres_host | default(omit) }}'
-        login_user: '{{ application_dbuser_name | default(omit) }}'
-        login_password: '{{ application_dbuser_password | default(omit) }}'
+        login_host: '{{ dest_postgres_host }}'
+        login_user: '{{ application_dbuser_name }}'
+        login_password: '{{ application_dbuser_password }}'
         owner: '{{ application_dbuser_name }}'
         target: "{{ dest_backup_path_unzipped }}"
         state: "restore"
