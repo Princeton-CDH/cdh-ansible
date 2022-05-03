@@ -16,6 +16,7 @@
       when: ansible_distribution == 'Springdale'
 
     - name: Ensure deploy user has access to install root
+      tags: setup
       become: true
       file:
         dest: "{{ install_root }}"
@@ -51,6 +52,7 @@
 
     - name: Create the deploy directory (to recursively create parent dirs if necessary)
       become: true
+      tags: setup
       become_user: "{{ deploy_user }}"
       file:
         state: directory
