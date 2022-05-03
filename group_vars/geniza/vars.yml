@@ -36,7 +36,7 @@ deploy_user: "conan"
 db_backend: "postgresql"
 db_host: "{{ postgres_host }}"
 # postgresql database info
-application_dbuser_name: "geniza"
+application_dbuser_name: "cdh_geniza"
 application_dbuser_password: "{{ vault_db_password }}"
 application_db_name: "cdh_geniza"
 application_db_host: "{{ postgres_host }}"
