@@ -30,6 +30,12 @@
         state: present
       ignore_errors: true
 
+    - name: Add key for Phusion apt repo
+      tags: setup
+      ansible.builtin.apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: 561F9B9CAC40B2F7
+
     - name: update our repos
       become: true
       apt:
