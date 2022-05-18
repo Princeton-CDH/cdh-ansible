@@ -24,6 +24,13 @@ TEI_TRANSCRIPTIONS_LOCAL_PATH = "/srv/www/geniza/data/tei_xml/"
 GTAGS_ANALYTICS_ID = "G-3HMY094CY2"
 {% endif %}
 
+
+# base url for simple annotation server
+ANNOTATION_SERVER_URL = "{{ annotation_server_url }}"
+# base url for manifest uris used with annotation server
+ANNOTATION_MANIFEST_BASE_URL = "https://geniza.princeton.edu"
+
+
 # Languages to make visible on the public site/front-end in addition to the admin site.
 # If undefined, all LANGUAGES will be enabled on both the public and admin site.
 # Must be a subset of the language codes in LANGUAGES from base settings, or undefined.
