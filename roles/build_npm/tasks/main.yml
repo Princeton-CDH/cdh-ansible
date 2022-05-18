@@ -7,9 +7,10 @@
 ---
 - name: npm configuration tasks
   block:
-  
+
     - name: ensure nodejs and package managers are installed
       become: true
+      tags: setup
       community.general.snap:
         name: node
         classic: true

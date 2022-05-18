@@ -72,6 +72,16 @@ ansible-playbook -e ref=GITREF playbooks/name_of_playbook.yml
 
 The playbook will run, noting success and failures. The `-v` flag adjusts verbosity (adding more `v`s will produce more verbosity. Debug tasks are usually written at `2`)
 
+### Skip setup tasks
+
+By default, initial provisioning and setup tasks are configured to be skipped.  Tasks or groups of tasks should be tagged as `setup`.
+
+To run playbook without skipping setup tasks, override the default skip tag configuration:
+
+```{bash}
+ansible-playbook playbooks/name_of_playbook.yml --skip-tags none
+```
+
 ## Revert last deploy
 
 To revert to previous deploy run call the `revert_deploy` playbook with a `host_group` matching the deploy you want to revert, e.g.:
