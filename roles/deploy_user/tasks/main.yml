@@ -2,6 +2,7 @@
 # tasks file for deploy_user
 - name: set up deploy user
   become: true
+  tags: setup
   block:
     - name: create deploy user group
       group:

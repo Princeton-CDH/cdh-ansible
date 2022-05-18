@@ -4,6 +4,7 @@
 
 - name: ensure gnu gettext is installed
   become: true
+  tags: setup
   apt:
     name: gettext
     state: present
