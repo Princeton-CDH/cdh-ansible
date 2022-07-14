@@ -117,24 +117,18 @@
           dest: "{{ dest_media_dir }}"
         when: media_backup.stat.exists == true
 
-      # use current install symlink
+      # run migrations in current install, using symlink
       - name: Run django migrations on destination
         become: true
         become_user: "{{ deploy_user }}"
-        django_manage:
+        community.general.django_manage:
           command: migrate
-          # TODO: figure out how to set these properly
-          # FIXME: not getting virtualenv dependencies
-          app_path: "{{ install_root }}/current"
-          virtualenv: "{{ install_root }}/current/env"
-          # for dev, set these in dev group vars
-          # app_path: "{{ django_app_path }}"
-          # virtualenv: "{{ django_venv_path }}"
-
-      # - name: Run django migrations on destination   <-- this one has too many dependencies
-        # include_role:
-          # name: django
-          # tasks_from: migrate
+          project_path: "{{ install_root }}/current"
+          virtualenv: "{{ install_root }}/current/env/"
+        environment:
+          DJANGO_ENV: staging
+          # django env must be set because it currently defaults to development,
+          # which attempts to load packages that are not installed
 
       # all current apps are single-site installs and use site id = 1
       - name: Update django site in destination db
@@ -144,3 +138,4 @@
           login_user: '{{ application_dbuser_name }}'
           login_password: '{{ application_dbuser_password }}'
           query: "UPDATE django_site SET domain = '{{ application_url }}', name = '{{ application_url }}' WHERE id = 1;"
+        when: "'prod' not in group_names"   # never run this on production
