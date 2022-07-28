@@ -20,6 +20,9 @@ TRANSCRIPTIONS_JSON_FILE = "/srv/www/geniza/data/transcriptions.json"
 
 TEI_TRANSCRIPTIONS_LOCAL_PATH = "/srv/www/geniza/data/tei_xml/"
 
+# TinyMCE API key
+TINY_API_KEY = '{{ tiny_api_key }}'
+
 {% if qa is not defined %}
 GTAGS_ANALYTICS_ID = "G-3HMY094CY2"
 {% endif %}
