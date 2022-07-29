@@ -7,7 +7,5 @@ project_user: ppa
 symlink: ppa-django
 media_root: '/srv/www/qa/ppa-django/media'
 marc_data_path: '/srv/www/qa/ppa-django/data/marc/'
-# python in qa is still 3.5 even though ppa is 3.6 in production :=(
-python_version: "python3.5"
 
 
