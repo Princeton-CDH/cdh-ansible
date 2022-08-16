@@ -5,7 +5,7 @@ email_prefix: "[QA Geniza] "
 application_url: "test-geniza.cdh.princeton.edu"
 
 # passenger settings
-passenger_server_name: "{{ appliation_url }}"
+passenger_server_name: "{{ application_url }}"
 
 # solr settings
 zk_host: "lib-zk-staging1:2181,lib-zk-staging2:2181,lib-zk-staging3:2181/solr8"
