@@ -8,7 +8,6 @@
       include_vars: "main.yml"
 
     - name: Define nginx_user.
-      tags: setup
       set_fact:
         nginx_user: "{{ __nginx_user }}"
       when: nginx_user is not defined
