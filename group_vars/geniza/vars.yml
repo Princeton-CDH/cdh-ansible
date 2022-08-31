@@ -47,6 +47,10 @@ passenger_server_name: "geniza.princeton.edu"
 passenger_startup_file: "{{ app_name }}/wsgi.py"
 passenger_python: "{{ passenger_app_root }}/env/bin/python"
 
+
+# source when replicating data/media (from host inventory file)
+replication_source_host: geniza_prod
+
 # Redirect old links from PGPv3
 # specify server name to ensure https instead of http
 

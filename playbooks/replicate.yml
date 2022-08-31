@@ -1,6 +1,20 @@
+# playbook to synchronize data and media from production to staging
+#
+# to use, specify desired hostgroup or hostname, e.g.:
+#
+#     ansible-playbook playbooks/replicate.yml --limit=cdhweb
+#
+# If you run the production portion without error and want to rerun
+# staging without refreshing production, specify the target host:
+#
+#     ansible-playbook playbooks/replicate.yml --limit=cdhweb_qa
+#
+# NOTE: has not been tested running multiple host groups at once!
+# probably won't work that way yet
+
 # source hosts tasks
 - name: Generate database and media backups on source host
-  hosts: geniza_prod
+  hosts: geniza_prod, cdhweb_prod
   connection: ssh
   remote_user: pulsys
   # generate backups on source host
@@ -30,15 +44,22 @@
 - name: Restore database and media backups on target host
   # hosts: dev
   # connection: local
-  hosts: geniza_qa
+  hosts: geniza_qa, cdhweb_qa
   connection: ssh
   remote_user: pulsys
   vars:
      - deploy_user: "conan"
-    #  - source_user: pulsys
-     - source_user: conan
-     - source_hostname: cdh-geniza1   # maybe replication source var?
+     # - source_user: pulsys
+     - source_user: conan   # geniza
+     # must define replication_source_host
+     # NOTE: override db_backup_filename if db names differ between qa/prod
   tasks:
+      - name: Get replication source hostname
+        set_fact:
+          source_hostname: "{{ item }}"
+        with_inventory_hostnames:
+          - "{{ replication_source_host }}"
+
       - name: Create backup path on target destination
         file:
           dest: "{{ dest_backup_path | dirname }}"
@@ -64,6 +85,10 @@
         become: true
         become_user: "{{ deploy_user }}"
         when: media_backup.stat.exists == true
+
+      - name: Calculate unzipped db backup path based on backup path
+        set_fact:
+          dest_backup_path_unzipped:  "{{ dest_backup_path | replace('.bz2', '') }}"
 
       - name: Make sure unzipped database dump does not exist (if it does, bunzip2 will fail)
         ansible.builtin.file:
