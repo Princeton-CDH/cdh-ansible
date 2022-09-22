@@ -27,12 +27,17 @@ TINY_API_KEY = '{{ tiny_api_key }}'
 GTAGS_ANALYTICS_ID = "G-3HMY094CY2"
 {% endif %}
 
-
 {% if qa is defined %} # (QA only for now)
 # base url for simple annotation server
 ANNOTATION_SERVER_URL = "{{ annotation_server_url }}"
 # base url for manifest uris used with annotation server
 ANNOTATION_MANIFEST_BASE_URL = "https://geniza.princeton.edu"
+
+# URL for git repository of transcription annotation backups
+ANNOTATION_BACKUP_GITREPO = "{{ annotation_backup_gitrepo }}"
+# local path where git repo should be cloned
+ANNOTATION_BACKUP_PATH = "{{ annotation_backup_path }}"
+
 {% endif %}
 
 # Languages to make visible on the public site/front-end in addition to the admin site.
