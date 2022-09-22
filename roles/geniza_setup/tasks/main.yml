@@ -17,3 +17,26 @@
     src: geniza_fonts.vault
     dest: "{{ font_path }}"
     group: "{{ nginx_user }}"
+
+- name: Ensure GitHub ssh key is present on the server.
+  copy:
+    src: "files/github_id_rsa"
+    dest: "/home/{{ deploy_user }}/.ssh/id_rsa"
+    mode: 0600
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+
+- name: Ensure gitconfig is present on the server.
+  copy:
+    src: "files/gitconfig"
+    dest: "/home/{{ deploy_user }}/.gitconfig"
+    mode: 0600
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+
+- name: Ensure base data directory exists and owned by deploy user
+  ansible.builtin.file:
+    state: directory
+    dest: "{{ data_path }}"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
