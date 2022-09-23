@@ -21,10 +21,20 @@
 - name: Ensure GitHub ssh key is present on the server.
   copy:
     src: "files/github_id_rsa"
-    dest: "/home/{{ deploy_user }}/.ssh/id_rsa"
+    dest: "/home/{{ deploy_user }}/.ssh/github_id_rsa"
     mode: 0600
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
+
+- name: Configure ssh key for GitHub access in ~/.ssh/config
+  become: true
+  become_user: "{{ deploy_user }}"
+  ansible.builtin.blockinfile:
+    path: "/home/{{ deploy_user }}/.ssh/config"
+    block: |
+      Host github.com
+       HostName github.com
+       IdentityFile ~/.ssh/github_id_rsa
 
 - name: Ensure gitconfig is present on the server.
   copy:
