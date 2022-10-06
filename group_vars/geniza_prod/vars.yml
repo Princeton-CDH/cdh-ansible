@@ -3,9 +3,18 @@
 email_prefix: "[Geniza] "
 
 # passenger settings
-passenger_server_name: "geniza.cdh.princeton.edu"
+passenger_server_name: "geniza.princeton.edu"
+
+# data repository for annotation/transcription backup s
+annotation_backup_gitrepo: "git@github.com:princetongenizalab/pgp-text.git"
 
 # solr settings
 zk_host: "lib-zk1:2181,lib-zk2:2181,lib-zk3:2181/solr8"
 solr_url: "http://lib-solr8-prod.princeton.edu:8983/solr/"
 solr_server: "{{ groups['solr_prod'][0] }}"
+
+
+# enable warning banner for TEI migration; configured in geniza local settings
+show_warning_banner: true
+warning_banner_heading: "Update in Progress"
+warning_banner_message: "Transcriptions are being migrated and may not be accessible on the site until completed (estimated ### EST)"
