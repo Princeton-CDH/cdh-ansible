@@ -59,6 +59,9 @@ annotation_backup_path: "{{ data_path }}/annotations_backup"
 # source when replicating data/media (from host inventory file)
 replication_source_host: geniza_prod
 
+# keep the warning banner off by default
+show_warning_banner: false
+
 # Redirect old links from PGPv3
 # specify server name to ensure https instead of http
 
@@ -115,11 +118,13 @@ crontab:
     special_time: daily
     job: "env DJANGO_ENV=staging bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py index --no-progress >> {{ logging_dir }}/index.log 2>&1"
     state: absent
+    # disable for now; remove after TEI migration is complete
   - name: "{{ app_name }} sync transcriptions"
     special_time: hourly
     job: "env DJANGO_ENV=staging bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py sync_transcriptions -v 0 >> {{ logging_dir }}/sync_transcriptions.log 2>&1"
-    state: present
+    state: absent
+    # disable until TEI migration is complete
   - name: "{{ app_name }} sync annotation export"
-    minute: "*/2"   # run every two minutes
+    minute: "*/5"   # run every five minutes
     job: "env DJANGO_ENV=staging bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py sync_annotation_export -v 0 >> {{ logging_dir }}/sync_export.log 2>&1"
-    state: present
+    state: absent

@@ -16,7 +16,6 @@ TINY_API_KEY = '{{ tiny_api_key }}'
 GTAGS_ANALYTICS_ID = "G-3HMY094CY2"
 {% endif %}
 
-{% if qa is defined %} # (QA only for now)
 # base url for simple annotation server
 ANNOTATION_SERVER_URL = "{{ annotation_server_url }}"
 # base url for manifest uris used with annotation server
@@ -27,7 +26,20 @@ ANNOTATION_BACKUP_GITREPO = "{{ annotation_backup_gitrepo }}"
 # local path where git repo should be cloned
 ANNOTATION_BACKUP_PATH = "{{ annotation_backup_path }}"
 
+
+FEATURE_FLAGS = [
+    {% if show_warning_banner %}
+    "SHOW_WARNING_BANNER", # show warning banner
+    {% endif %}
+]
+# Configure warning banner when set
+{% if warning_banner_heading %}
+WARNING_BANNER_HEADING = "{{ warning_banner_heading }}"
 {% endif %}
+{% if warning_banner_message %}
+WARNING_BANNER_MESSAGE = "{{ warning_banner_message }}"
+{% endif %}
+
 
 # Languages to make visible on the public site/front-end in addition to the admin site.
 # If undefined, all LANGUAGES will be enabled on both the public and admin site.
