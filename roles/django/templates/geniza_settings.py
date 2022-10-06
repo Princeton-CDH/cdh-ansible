@@ -7,17 +7,6 @@ Django local settings for geniza
 # Use x-forwarded-proto header to tell if request from nginx was https or not
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# urls to google sheets data published as csv for import
-DATA_IMPORT_URLS = {
-    'libraries': '{{ libraries_csv_url }}',
-    'languages': '{{ languages_csv_url }}',
-    'metadata': '{{ metadata_csv_url }}',
-    'demerged': '{{ demerge_csv_url }}'
-}
-
-# path to preliminary JSON transcription data
-TRANSCRIPTIONS_JSON_FILE = "/srv/www/geniza/data/transcriptions.json"
-
 TEI_TRANSCRIPTIONS_LOCAL_PATH = "/srv/www/geniza/data/tei_xml/"
 
 # TinyMCE API key
