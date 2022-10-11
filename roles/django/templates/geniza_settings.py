@@ -16,8 +16,6 @@ TINY_API_KEY = '{{ tiny_api_key }}'
 GTAGS_ANALYTICS_ID = "G-3HMY094CY2"
 {% endif %}
 
-# base url for simple annotation server
-ANNOTATION_SERVER_URL = "{{ annotation_server_url }}"
 # base url for manifest uris used with annotation server
 ANNOTATION_MANIFEST_BASE_URL = "https://geniza.princeton.edu"
 
@@ -33,10 +31,10 @@ FEATURE_FLAGS = [
     {% endif %}
 ]
 # Configure warning banner when set
-{% if warning_banner_heading %}
+{% if warning_banner_heading is defined %}
 WARNING_BANNER_HEADING = "{{ warning_banner_heading }}"
 {% endif %}
-{% if warning_banner_message %}
+{% if warning_banner_message is defined %}
 WARNING_BANNER_MESSAGE = "{{ warning_banner_message }}"
 {% endif %}
 
