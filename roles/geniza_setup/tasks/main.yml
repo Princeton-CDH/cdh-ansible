@@ -26,6 +26,14 @@
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
 
+- name: Make sure ssh config file exists
+  ansible.builtin.file:
+    path: "/home/{{ deploy_user }}/.ssh/config"
+    mode: 0600
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    state: touch
+
 - name: Configure ssh key for GitHub access in ~/.ssh/config
   become: true
   become_user: "{{ deploy_user }}"

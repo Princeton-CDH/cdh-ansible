@@ -127,4 +127,4 @@ crontab:
   - name: "{{ app_name }} sync annotation export"
     minute: "*/5"   # run every five minutes
     job: "env DJANGO_ENV=staging bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py sync_annotation_export -v 0 >> {{ logging_dir }}/sync_export.log 2>&1"
-    state: absent
+    state: present
