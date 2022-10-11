@@ -13,8 +13,8 @@ app_name: geniza
 symlink: "{{ app_name }}"
 # wsgi file relative to apache location
 wsgi_path: "{{ django_app }}/wsgi.py"
-# use python 3.8
-python_version: "3.8"
+# use python 3.9
+python_version: "3.9"
 # nodejs version
 node_version: "16"
 
