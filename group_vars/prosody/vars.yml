@@ -1,0 +1,64 @@
+###
+# Common variables for Princeton Prosody Archive django application
+###
+
+# Github repository
+repo: 'Princeton-CDH/ppa-django'
+app_name: ppa
+# name of django application
+django_app: ppa
+# apache symlink
+symlink: ppa
+# wsgi file relative to deploy location
+wsgi_path: "{{ django_app }}/wsgi.py"
+# use python 3.6
+python_version: 3.6
+# nodejs version
+node_version: "10"
+
+# pul deploy user
+deploy_user: "conan"
+
+# Override clone root to use deploy user home instead of root
+clone_root: "/home/{{ deploy_user }}/repos"
+# don't distinguish between qa/prod paths
+install_root: "/srv/www/{{ app_name }}"
+# apache location
+apache_app_path: "/var/www/{{ app_name }}"
+
+# path to hathitree pairtree data
+hathitrust_pairtree_path: '/home/deploy/ppa/ht_text_pd/'
+technical_contact: cdhdevteam@princeton.edu
+# flag that csp is enabled
+csp_enabled: true
+
+
+# django database backend
+db_backend: "postgresql"
+db_host: "{{ postgres_host }}"
+# postgresql database info
+application_dbuser_name: cdh_ppa
+application_dbuser_password: "{{ vault_db_password }}"
+# same db name for qa and production to simplify syncing data
+application_db_name: cdh_ppa
+application_db_host: "{{ postgres_host }}"
+
+# app-specific local settings TODO if needed
+# django_local_settings_template: "shxco_settings.py"
+
+# - solr settings
+solr_collection: cdh_ppa
+solr_configset: cdh_ppa
+
+# github contexts required for deploy production
+# deploy_contexts:
+# #   - "Python unit tests"
+#     - "Python unit tests (3.6, 8.6, postgresql)"
+
+# default media root
+media_root: '/srv/www/media/'
+
+# app-specific system dependencies
+app_dependencies:
+  - libmysqlclient-dev # for mysql installation during the migration
+
