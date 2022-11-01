@@ -9,14 +9,14 @@
 # We include the generic python3-setuptools because it's required to create the
 # virtual environment; later we can update pip and setuptools inside it.
 
-- name: add python apt repository
+- name: Add python apt repository
   become: true
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: ppa:deadsnakes/ppa
 
-- name: install python and core libraries
+- name: Install python and core libraries
   become: true
-  apt:
+  ansible.builtin.apt:
     name:
       - python3-setuptools
       - python{{ python_version }}
