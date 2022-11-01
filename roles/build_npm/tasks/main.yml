@@ -7,15 +7,24 @@
 ---
 - name: npm configuration tasks
   block:
-  
-    - name: ensure nodejs and package managers are installed
+
+    - name: Ensure nodejs is installed
       become: true
+      tags: setup
       community.general.snap:
         name: node
         classic: true
         channel: "{{ node_version }}"
         state: present
       when: ansible_distribution == "Ubuntu"
+
+    # NOTE: upgrading nodejs on cdh-geniza1 failed;
+    # was able to get it working with refresh
+    # instead of install:
+    #   sudo snap refresh node --channel=16
+    # We may want to run refresh as a command, see
+    # https://serverfault.com/a/1025300
+
 
     - name: install javascript dependencies with npm
       become: true
