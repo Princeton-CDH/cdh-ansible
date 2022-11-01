@@ -8,9 +8,9 @@ jobs:
       matrix:
         role:
           - deploy_user
-          - passenger
+          # - passenger
           - python
-          - django
+          # - django
           # - postgresql
     steps:
       - uses: actions/checkout@v2
