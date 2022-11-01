@@ -1,7 +1,7 @@
 ---
 # handlers file for deploy_user
-- name: restart ssh
+- name: Restart ssh
   become: true
-  systemd:
+  ansible.builtin.systemd:
     name: ssh
     state: restarted
