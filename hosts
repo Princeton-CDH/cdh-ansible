@@ -54,15 +54,6 @@ cdh-shxco1.princeton.edu
 shxco_qa
 shxco_prod
 
-[pemm_qa]
-cdh-test-pemm1.princeton.edu
-[pemm_prod]
-cdh-pemm1.princeton.edu
-
-[pemm:children]
-pemm_qa
-pemm_prod
-
 [geniza_qa]
 cdh-test-geniza1.princeton.edu
 [geniza_prod]
@@ -95,7 +86,6 @@ solr_prod
 derrida_prod
 ppa_prod
 cdhweb_prod
-pemm_prod
 geniza_prod
 shxco_prod
 
@@ -103,7 +93,6 @@ shxco_prod
 derrida_qa
 ppa_qa
 cdhweb_qa
-pemm_qa
 geniza_qa
 shxco_qa
 derrida_crawl_qa
