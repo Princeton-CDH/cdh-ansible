@@ -3,12 +3,14 @@
 # https://github.com/phusion/passenger/issues/2303#issuecomment-931571362
 - name: update ca certificates
   become: true
+  tags: setup
   apt:
     name: "ca-certificates"
     state: latest
 
 - name: install configured dependencies
   become: true
+  tags: setup
   apt:
     name: "{{ common_dependencies + app_dependencies }}"
     state: present
@@ -18,6 +20,7 @@
 
 - name: configure tmux
   become: true
+  tags: setup
   copy:
     src: "tmux.conf"
     dest: "/etc/tmux.conf"

@@ -5,12 +5,14 @@
   become: "{{ 'true' if ansible_distribution != 'Springdale' else 'false' }}"
   block:
     - name: Create media root if it does not already exist
+      tags: setup
       file:
         path: "{{ media_root }}"
         state: directory
         mode: "u=rwX,g=rwX,o=X"
 
     - name: Make sure media root is owned by apache user and group
+      tags: setup
       file:
         path: "{{ media_root }}"
         owner: "{{ apache_user }}"
@@ -20,6 +22,7 @@
       when: ansible_distribution == 'Ubuntu'
 
     - name: if on qa, set acls appropriately so apache can access
+      tags: setup
       acl:
         entity: "{{ apache_group }}"
         etype: group
@@ -31,6 +34,7 @@
       when: qa is defined
 
     - name: Give deploy acl rwx over all files in the directory as a fall back
+      tags: setup
       acl:
         entity: "{{ deploy_user }}"
         etype: user

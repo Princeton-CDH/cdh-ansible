@@ -4,18 +4,21 @@
 
 - name: make sure the CA certificates are available
   become: true
+  tags: setup
   apt:
     pkg: ca-certificates
     state: present
 
 - name: add postgres repository apt-key
   become: true
+  tags: setup
   apt_key:
     url: "{{ postgres_apt_key_url }}"
     state: present
 
 - name: add postgres repository
   become: true
+  tags: setup
   apt_repository:
     repo: "{{ postgres_apt_repository }}"
     update_cache: true
@@ -23,6 +26,7 @@
 
 - name: install postgres client libraries
   become: true
+  tags: setup
   apt:
     name: "{{ item }}"
     state: present
@@ -34,6 +38,7 @@
     - postgresql-client-{{ postgres_version }}
 
 - name: ensure access to postgres server
+  tags: setup
   become: true
   lineinfile:
     path: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
@@ -42,6 +47,7 @@
 
 - name: reload remote postgres server
   become: true
+  tags: setup
   service:
     name: postgresql
     state: reloaded

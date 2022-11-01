@@ -14,17 +14,20 @@
 
     # Passenger repository setup.
     - name: Add Passenger apt key.
+      tags: setup
       apt_key:
         keyserver: keyserver.ubuntu.com
         id: 561F9B9CAC40B2F7
         state: present
 
     - name: Add apt HTTPS capabilities.
+      tags: setup
       apt:
         name: apt-transport-https
         state: present
 
     - name: Add Phusion apt repo.
+      tags: setup
       apt_repository:
         repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
         state: present
@@ -37,12 +40,14 @@
         id: 561F9B9CAC40B2F7
 
     - name: update our repos
+      tags: setup
       become: true
       apt:
         update_cache: true
 
     # Nginx and passenger installation.
     - name: Install Nginx and Passenger.
+      tags: setup
       become: true
       apt:
         name: "{{ nginx_passenger_packages }}"
