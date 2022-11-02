@@ -1,7 +1,7 @@
 ---
-- name: restart nginx
+- name: Restart nginx
   become: true
-  service:
+  ansible.builtin.service:
     name: nginx
     state: restarted
   listen: "restart web server"
