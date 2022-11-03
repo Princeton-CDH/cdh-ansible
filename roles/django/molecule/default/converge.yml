@@ -1,12 +1,12 @@
 ---
 # Test running main task sequence for django.
 
-- name: converge
+- name: Converge
   hosts: all
   gather_facts: false
   vars_files: ../../defaults/main.yml
 
   tasks:
-    - name: include django role
-      include_role:
+    - name: Include django role
+      ansible.builtin.include_role:
         name: django
