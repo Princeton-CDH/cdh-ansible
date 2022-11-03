@@ -27,7 +27,10 @@ install_root: "/srv/www/{{ app_name }}"
 apache_app_path: "/var/www/{{ app_name }}"
 
 # path to hathitree pairtree data
-hathitrust_pairtree_path: '/home/deploy/ppa/ht_text_pd/'
+hathitrust_pairtree_path: "/home/{{ deploy_user }}/data/ht_text_pd/"
+# path to MARC data for Gale/ECCO
+marc_data_path: "/home/{{ deploy_user }}/data/ht_text_pd/"
+
 technical_contact: cdhdevteam@princeton.edu
 # flag that csp is enabled
 csp_enabled: true
@@ -43,8 +46,8 @@ application_dbuser_password: "{{ vault_db_password }}"
 application_db_name: cdh_ppa
 application_db_host: "{{ postgres_host }}"
 
-# app-specific local settings TODO if needed
-# django_local_settings_template: "shxco_settings.py"
+# app-specific local settings
+django_local_settings_template: "prosody_settings.py"
 
 # - solr settings
 solr_collection: cdh_ppa

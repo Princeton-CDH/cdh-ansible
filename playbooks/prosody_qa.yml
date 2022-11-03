@@ -22,6 +22,7 @@
     - configure_logging # logging directory must exist before running django commands
     - django
     - solr_collection
+    - prosody_setup
     - configure_apache
     - finalize_deploy
     # - close_deployment
