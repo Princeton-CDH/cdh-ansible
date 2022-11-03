@@ -12,6 +12,7 @@ jobs:
           - python
           - django
           # - postgresql
+          - prosody_setup
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
