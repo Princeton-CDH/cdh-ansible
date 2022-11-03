@@ -29,7 +29,7 @@ apache_app_path: "/var/www/{{ app_name }}"
 # path to hathitree pairtree data
 hathitrust_pairtree_path: "/home/{{ deploy_user }}/data/ht_text_pd/"
 # path to MARC data for Gale/ECCO
-marc_data_path: "/home/{{ deploy_user }}/data/ht_text_pd/"
+marc_data_path: "/home/{{ deploy_user }}/data/marc/"
 
 technical_contact: cdhdevteam@princeton.edu
 # flag that csp is enabled
