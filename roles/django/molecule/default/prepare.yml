@@ -1,7 +1,7 @@
 ---
 # Create an example django project for testing.
 
-- name: prepare
+- name: Prepare
   hosts: all
   gather_facts: false
   vars_files:
@@ -13,19 +13,19 @@
     python_app_path: "{{ django_app_path }}"
 
   tasks:
-    - name: create a testing user
-      user:
+    - name: Create a testing user
+      ansible.builtin.user:
         name: "{{ django_user }}"
 
-    - name: create project directory
-      copy:
+    - name: Create project directory
+      ansible.builtin.copy:
         src: myapp
         dest: "/srv/www"
         owner: "{{ django_user }}"
         mode: 0744
 
-    - name: create requirements.txt file
-      template:
+    - name: Create requirements.txt file
+      ansible.builtin.template:
         src: requirements.txt.j2
         dest: "{{ django_app_path }}/requirements.txt"
         owner: "{{ django_user }}"

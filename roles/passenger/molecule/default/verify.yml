@@ -6,8 +6,8 @@
     - ../../defaults/main.yml
     - ../../vars/test.yml
   tasks:
-    - name: check passenger package status
-      package:
+    - name: Check passenger package status
+      ansible.builtin.package:
         name: "{{ item }}"
         state: present
       check_mode: true
@@ -16,56 +16,56 @@
         - libnginx-mod-http-passenger
         - nginx-extras
 
-    - name: test for passenger packages
-      assert:
+    - name: Test for passenger packages
+      ansible.builtin.assert:
         that:
           - not pkg_status.changed
 
-    - name: stat application sites-available nginx config file
-      stat:
+    - name: Stat application sites-available nginx config file
+      ansible.builtin.stat:
         path: "/etc/nginx/sites-available/{{ app_name }}.conf"
       register: app_config
 
-    - name: assert that application nginx sites-available file is present
-      assert:
+    - name: Assert that application nginx sites-available file is present
+      ansible.builtin.assert:
         that:
           - "app_config.stat.exists"
           - "app_config.stat.isreg"   # regular file
 
-    - name: stat application sites-enabled nginx config file
-      stat:
+    - name: Stat application sites-enabled nginx config file
+      ansible.builtin.stat:
         path: "/etc/nginx/sites-enabled/{{ app_name }}.conf"
       register: app_config_enabled
 
-    - name: assert that application nginx sites-available file is present
-      assert:
+    - name: Assert that application nginx sites-available file is present
+      ansible.builtin.assert:
         that:
           - "app_config_enabled.stat.exists"
           - "app_config_enabled.stat.islnk"   # symbolic link
 
-    - name: stat nginx default config file
-      stat:
+    - name: Stat nginx default config file
+      ansible.builtin.stat:
         path: /etc/nginx/sites-enabled/default
       register: nginx_default_config
 
-    - name: assert that default nginx config file is not present
-      assert:
+    - name: Assert that default nginx config file is not present
+      ansible.builtin.assert:
         that:
           - "not nginx_default_config.stat.exists"
 
-    - name: check that nginx configtest passes
-      command: nginx -t
+    - name: Check that nginx configtest passes
+      ansible.builtin.command: nginx -t
       register: configtest_result
       changed_when: false
 
-    - name: check that nginx configtest passesp
-      assert:
+    - name: Check that nginx configtest passesp
+      ansible.builtin.assert:
         that:
           - "'syntax is ok' in configtest_result.stderr"
           - "not configtest_result.failed"
 
     - name: Test that nginx is running and returns 200
-      uri:
+      ansible.builtin.uri:
         url: http://localhost/
         return_content: yes
       register: site

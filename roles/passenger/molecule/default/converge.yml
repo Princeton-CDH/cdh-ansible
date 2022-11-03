@@ -5,6 +5,6 @@
     - ../../defaults/main.yml
     - ../../vars/test.yml
   tasks:
-    - name: "Include passenger"
-      include_role:
+    - name: Include passenger
+      ansible.builtin.include_role:
         name: passenger
