@@ -2,21 +2,18 @@
 #  Configure MEDIA_ROOT and folders for a Django deploy
 ###
 - name: Configure media folder and set up Django configurations
+  tags:
+    - media
   block:
-    - name: Create media root if it does not already exist
-      file:
-        path: "{{ media_root }}"
-        state: directory
-
-    - name: Set media root permissions recursively
-      file:
+    - name: Create media root and set permissions
+      ansible.builtin.file:
         path: "{{ media_root }}"
         state: directory
         mode: "u=rwX,g=rwX,o=X"
         recurse: true
 
     - name: Make sure media root is owned by configured user and group
-      file:
+      ansible.builtin.file:
         path: "{{ media_root }}"
         owner: "{{ media_user }}"
         group: "{{ media_group }}"
@@ -24,7 +21,7 @@
         recurse: true
 
     - name: Give deploy acl rwx over all files in the directory as a fall back
-      acl:
+      ansible.posix.acl:
         entity: "{{ deploy_user }}"
         etype: user
         permissions: rwx
@@ -32,9 +29,6 @@
         recursive: yes
         default: yes
         state: present
-
-  tags:
-    - media
-
   rescue:
-    - include_tasks: roles/create_deployment/tasks/fail.yml
+    - name: Close deployment as failed if error
+      ansible.builtin.include_tasks: roles/create_deployment/tasks/fail.yml
