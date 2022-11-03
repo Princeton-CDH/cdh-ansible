@@ -2,8 +2,8 @@
 # Runs the `collectstatic` command for collecting static files.
 # https://docs.djangoproject.com/en/dev/ref/django-admin/#collectstatic
 
-- name: collect static files
-  django_manage:
+- name: Collect static files
+  community.general.django_manage:
     command: collectstatic
     app_path: "{{ django_app_path }}"
     virtualenv: "{{ django_venv_path }}"

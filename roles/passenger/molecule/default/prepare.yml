@@ -1,7 +1,7 @@
 ---
 # Create a minimal python wsgi app for testing
 
-- name: prepare
+- name: Prepare
   hosts: all
   gather_facts: false
   vars_files:
@@ -9,14 +9,14 @@
     - ../../vars/test.yml
   become: true
   tasks:
-    - name: create minimal app dir
-      file:
+    - name: Create minimal app dir
+      ansible.builtin.file:
         dest: "{{ passenger_app_root }}"
         state: directory
         mode: 0655
 
-    - name: create minimal wsgi file
-      copy:
+    - name: Create minimal wsgi file
+      ansible.builtin.copy:
         src: "test_wsgi.py"
         dest: "{{ passenger_app_root }}/{{ passenger_startup_file }}"
         mode: 0644

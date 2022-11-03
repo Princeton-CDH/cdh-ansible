@@ -5,6 +5,6 @@
     python_version: "python3.6"
     postgres_version: "13"
   tasks:
-    - name: "Include postgresql"
-      include_role:
+    - name: Include postgresql
+      ansible.builtin.include_role:
         name: postgresql

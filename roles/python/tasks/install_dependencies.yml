@@ -2,10 +2,10 @@
 # Create a virtual environment and update pip/setuptools. If a requirements.txt
 # file is present, install its contents into the virtual environment.
 
-- name: upgrade pip/setuptools
+- name: Upgrade pip/setuptools
   become: true
   become_user: "{{ python_user }}"
-  pip:
+  ansible.builtin.pip:
     virtualenv: "{{ python_venv_path }}"
     virtualenv_command: python{{ python_version }} -m venv --prompt "{{ python_venv_prompt }}"
     name:
@@ -14,30 +14,30 @@
     state: latest
 
 - name: Downgrade setuptools if 2to3 is required
-  pip:
+  ansible.builtin.pip:
     name: "setuptools<58"
     virtualenv: "{{ python_venv_path }}"
   when:  requires_python2to3
 
-- name: check for requirements.txt file
+- name: Check for requirements.txt file
   become: true
   become_user: "{{ python_user }}"
-  stat:
+  ansible.builtin.stat:
     path: "{{ python_requirements_file }}"
   register: _requirements_file
 
-- name: install python requirements
+- name: Install python requirements
   when: _requirements_file.stat.exists
   become: true
   become_user: "{{ python_user }}"
-  pip:
+  ansible.builtin.pip:
     virtualenv: "{{ python_venv_path }}"
     requirements: "{{ python_requirements_file }}"
 
-- name: install additional python requirments
+- name: Install additional python requirments
   become: true
   become_user: "{{ python_user }}"
-  pip:
+  ansible.builtin.pip:
     virtualenv: "{{ python_venv_path }}"
     name: "{{ python_extra_packages }}"
   when: python_extra_packages is defined

@@ -1,12 +1,12 @@
 ---
-# need to update ca-certificates to avoid problem with phusion passenger file
-# https://github.com/phusion/passenger/issues/2303#issuecomment-931571362
-- name: update ca certificates
-  become: true
-  tags: setup
-  apt:
-    name: "ca-certificates"
-    state: latest
+# # need to update ca-certificates to avoid problem with phusion passenger file
+# # https://github.com/phusion/passenger/issues/2303#issuecomment-931571362
+# - name: update ca certificates
+#   become: true
+#   tags: setup
+#   apt:
+#     name: "ca-certificates"
+#     state: latest
 
 - name: install configured dependencies
   become: true

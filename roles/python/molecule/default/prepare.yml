@@ -1,7 +1,7 @@
 ---
 # Create a project directory and requirements file for testing.
 
-- name: prepare
+- name: Prepare
   hosts: all
   gather_facts: false
   vars_files:
@@ -9,19 +9,19 @@
     - ../../defaults/test.yml
 
   tasks:
-    - name: create a testing user
-      user:
+    - name: Create a testing user
+      ansible.builtin.user:
         name: python
 
-    - name: create project directory
-      file:
+    - name: Create project directory
+      ansible.builtin.file:
         path: "{{ python_app_path }}"
         state: directory
         owner: python
         mode: 0744
 
-    - name: create requirements.txt file
-      copy:
+    - name: Create requirements.txt file
+      ansible.builtin.copy:
         dest: "{{ python_requirements_file }}"
         content: Django==3.1
         owner: python

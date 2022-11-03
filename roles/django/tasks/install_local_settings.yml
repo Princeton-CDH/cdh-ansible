@@ -2,8 +2,8 @@
 # Creates a new `local_settings.py` file based on a template.
 # https://docs.djangoproject.com/en/dev/ref/settings/
 
-- name: install django local settings
-  template:
+- name: Install django local settings
+  ansible.builtin.template:
     src: "{{ django_local_settings_template }}"
     dest: "{{ django_local_settings_dest }}"
     owner: "{{ django_user }}"

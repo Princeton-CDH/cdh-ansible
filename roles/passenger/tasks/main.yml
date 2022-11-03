@@ -1,78 +1,84 @@
 ---
 
-- name: install and configure nginx+passenger
+- name: Install and configure nginx+passenger
   become: true
   block:
     # Variable setup.
     - name: Include OS-specific variables.
-      include_vars: "main.yml"
+      ansible.builtin.include_vars: "main.yml"
 
     - name: Define nginx_user.
-      set_fact:
+      ansible.builtin.set_fact:
         nginx_user: "{{ __nginx_user }}"
       when: nginx_user is not defined
 
     # Passenger repository setup.
     - name: Add Passenger apt key.
       tags: setup
-      apt_key:
+      ansible.builtin.apt_key:
         keyserver: keyserver.ubuntu.com
         id: 561F9B9CAC40B2F7
         state: present
 
     - name: Add apt HTTPS capabilities.
       tags: setup
-      apt:
+      ansible.builtin.apt:
         name: apt-transport-https
         state: present
 
     - name: Add Phusion apt repo.
       tags: setup
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
         state: present
-      ignore_errors: true
+        # ignore_errors: true
 
-    - name: update our repos
+    - name: Add key for Phusion apt repo
+      tags: setup
+      ansible.builtin.apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: 561F9B9CAC40B2F7
+
+    - name: Update our repositories
       tags: setup
       become: true
-      apt:
+      ansible.builtin.apt:
         update_cache: true
 
     # Nginx and passenger installation.
     - name: Install Nginx and Passenger.
       tags: setup
       become: true
-      apt:
+      ansible.builtin.apt:
         name: "{{ nginx_passenger_packages }}"
         state: present
 
     # Nginx and passenger configuration.
     - name: Copy Nginx configuration into place.
-      template:
+      ansible.builtin.template:
         src: nginx.conf.j2
         dest: /etc/nginx/nginx.conf
         mode: 0644
-      notify: restart nginx
+      notify: Restart nginx
 
     - name: Configure passenger virtual host.
-      template:
+      ansible.builtin.template:
         src: "{{ passenger_nginx_site_template }}"
         dest: /etc/nginx/sites-available/{{ passenger_site_config_name }}.conf
         mode: 0644
-      notify: restart nginx
+      notify: Restart nginx
 
     - name: Ensure passenger virtual host is enabled.
-      file:
+      ansible.builtin.file:
         src: /etc/nginx/sites-available/{{ passenger_site_config_name }}.conf
         dest: /etc/nginx/sites-enabled/{{ passenger_site_config_name }}.conf
         state: link
 
     - name: Ensure default virtual host is removed.
-      file:
+      ansible.builtin.file:
         path: /etc/nginx/sites-enabled/default
         state: absent
         mode: 0644
       when: nginx_remove_default_vhost
       notify:
-        - restart nginx
+        - Restart nginx

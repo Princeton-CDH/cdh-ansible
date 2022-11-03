@@ -2,13 +2,17 @@
 # Basic sequence of tasks for setting up a Django app.
 
 - name: Setup django application
-  block:
-  - include: install_local_settings.yml
-  - include: migrate.yml
-  - include: collectstatic.yml
-  - include: compilemessages.yml
-  - include: media.yml
-    when: media_root is defined
-
   environment:
     DJANGO_ENV: "{% if qa is defined %}staging{% else %}production{% endif %}"
+  block:
+  - name: Install local settings
+    ansible.builtin.import_tasks: install_local_settings.yml
+  - name: Run django migrations
+    ansible.builtin.import_tasks: migrate.yml
+  - name: Run collect static
+    ansible.builtin.import_tasks: collectstatic.yml
+  - name: Run compile messages
+    ansible.builtin.import_tasks: compilemessages.yml
+  - name: Setup django media
+    ansible.builtin.import_tasks: media.yml
+    when: media_root is defined
