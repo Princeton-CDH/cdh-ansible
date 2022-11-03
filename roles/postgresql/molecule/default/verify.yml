@@ -5,10 +5,10 @@
   vars_files:
     - ../../defaults/main.yml
   tasks:
-    - name: ensure postgresql db user can create tables
+    - name: Ensure postgresql db user can create tables
       vars:
         ansible_python_interpreter: "{{ deploy_user_venv }}/bin/python"
-      postgresql_table:
+      community.postgresql.postgresql_table:
         login_host: "{{ postgres_host }}"
         port: "{{ postgres_port }}"
         login_user: "{{ application_dbuser_name }}"
