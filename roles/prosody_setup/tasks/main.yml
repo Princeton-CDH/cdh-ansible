@@ -11,11 +11,10 @@
     group: "{{ deploy_user }}"
 
 - name: Check if MARC pairtree data is present
-  stat:
+  ansible.builtin.stat:
     path: "{{ marc_data_path }}/pairtree_root"
   register: marc_pairtree_root
 
 - name: Extract Gale/ECCO MARC data if needed
   ansible.builtin.import_tasks: extract_marc.yml
   when: not marc_pairtree_root.stat.exists
-

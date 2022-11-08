@@ -4,4 +4,3 @@
 ansible_user: root
 hathitrust_pairtree_path: /tmp/data/hathi
 marc_data_path: /tmp/data/marc
-
