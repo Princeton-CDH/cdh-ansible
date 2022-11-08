@@ -10,11 +10,12 @@
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
 
-- name: Ensure Gale/ECCO MARC data directory exists.
-  tags: setup
-  ansible.builtin.file:
-    path: "{{ marc_data_path }}"
-    state: directory
-    mode: 0744
-    owner: "{{ deploy_user }}"
-    group: "{{ deploy_user }}"
+- name: Check if MARC pairtree data is present
+  stat:
+    path: "{{ marc_data_path }}/pairtree_root"
+  register: marc_pairtree_root
+
+- name: Extract Gale/ECCO MARC data if needed
+  ansible.builtin.import_tasks: extract_marc.yml
+  when: not marc_pairtree_root.stat.exists
+
