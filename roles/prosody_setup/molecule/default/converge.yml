@@ -4,5 +4,5 @@
   vars_files: ../../defaults/test.yml
   tasks:
     - name: "Include cdh.prosody_setup"
-      include_role:
+      ansible.builtin.include_role:
         name: "cdh.prosody_setup"
