@@ -13,11 +13,11 @@
       ansible.builtin.user:
         name: "{{ django_user }}"
 
-   # we can't run the split_marc script, so create empty data
-   # dir so that task won't be run
+    # we can't run the split_marc script, so create empty data
+    # dir so that task won't be run
     - name: Create MARC pairtree directory
       ansible.builtin.file:
         path: "{{ marc_data_path }}/pairtree_root"
         state: directory
-        owner:  "{{ django_user }}"
+        owner: "{{ django_user }}"
         mode: 0744
