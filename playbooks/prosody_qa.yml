@@ -11,13 +11,13 @@
   remote_user: pulsys
   become: true
   roles:
-    # - create_deployment
+    - create_deployment
     - deploy_user
     - build_dependencies
     - build_project_repo
     - postgresql
     - build_npm
-    - build_semantic   # TODO: make sure this works on PUL
+    - build_semantic
     - run_webpack   # dependency for collectstatic
     - configure_logging # logging directory must exist before running django commands
     - django
@@ -25,4 +25,4 @@
     - prosody_setup
     - configure_apache
     - finalize_deploy
-    # - close_deployment
+    - close_deployment
