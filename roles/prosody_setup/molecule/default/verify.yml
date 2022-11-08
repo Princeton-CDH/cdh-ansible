@@ -15,12 +15,3 @@
       that:
         - "hathitrust_pairtree_dir.stat.exists"
         - "hathitrust_pairtree_dir.stat.isdir"
-  - name: Get stats for marc data path
-    ansible.builtin.stat:
-      path: "{{ marc_data_path }}"
-    register: marc_data_dir
-  - name: Assert that marc data path exists
-    ansible.builtin.assert:
-      that:
-        - "marc_data_dir.stat.exists"
-        - "marc_data_dir.stat.isdir"
