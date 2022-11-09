@@ -1,0 +1,17 @@
+---
+#
+
+- name: Verify
+  hosts: all
+  vars_files: ../../defaults/test.yml
+  gather_facts: false
+  tasks:
+  - name: Get stats for hathitrust pairtree path
+    ansible.builtin.stat:
+      path: "{{ hathitrust_pairtree_path }}"
+    register: hathitrust_pairtree_dir
+  - name: Assert that hathitrust pairtree path exists
+    ansible.builtin.assert:
+      that:
+        - "hathitrust_pairtree_dir.stat.exists"
+        - "hathitrust_pairtree_dir.stat.isdir"
