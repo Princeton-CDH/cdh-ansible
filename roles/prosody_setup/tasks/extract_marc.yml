@@ -1,0 +1,33 @@
+---
+# Optional task to extract MARC files to make available for ECCO import
+
+- name: Create temporary working directory
+  become: true
+  become_user: "{{ django_user }}"
+  ansible.builtin.tempfile:
+    state: directory
+    suffix: ppa_marc
+  register: tempdir
+
+- name: Extract binary MARC files to temporary directory
+  become: true
+  become_user: "{{ django_user }}"
+  ansible.builtin.unarchive:
+    src: ecco_marc.vault
+    dest: "{{ tempdir.path }}"
+    group: "{{ django_user }}"
+
+- name: Run django manage command to split MARC records
+  become: true
+  become_user: "{{ django_user }}"
+  community.general.django_manage:
+    command: "split_marc {{ tempdir.path }}/*.mrc"
+    app_path: "{{ django_app_path }}"
+    virtualenv: "{{ django_venv_path }}"
+
+- name: Clean up temporary working directory
+  become: true
+  become_user: "{{ django_user }}"
+  ansible.builtin.tempfile:
+    state: absent
+    path: "{{ tempdir.path }}"

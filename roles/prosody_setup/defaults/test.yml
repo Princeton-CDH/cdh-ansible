@@ -1,0 +1,7 @@
+---
+# variables for molecule
+# app_name: molecule_test
+ansible_user: root
+django_user: ppa
+hathitrust_pairtree_path: /tmp/data/hathi
+marc_data_path: /tmp/data/marc

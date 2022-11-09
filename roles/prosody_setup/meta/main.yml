@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  author: cdh
+  company: Center for Digital Humanities @ Princeton
+  description: Custom setup specific to prosody archive
+  license: Apache-2.0
+  min_ansible_version: "2.10"
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - "bionic"
+
+  galaxy_tags: []
+
+dependencies:
+  - role: deploy_user

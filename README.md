@@ -82,8 +82,11 @@ By default, initial provisioning and setup tasks are configured to be skipped.  
 To run playbook without skipping setup tasks, override the default skip tag configuration:
 
 ```{bash}
-ansible-playbook playbooks/name_of_playbook.yml --skip-tags none
+env ANSIBLE_SKIP_TAGS= ansible-playbook playbooks/name_of_playbook.yml
 ```
+
+Note that `--skip-tags=[]` doesn't work because the skip tags setting in
+`ansible.cfg` takes precedence over command line options.
 
 ## Revert last deploy
 

@@ -51,7 +51,7 @@
       # get collection-specific portion of the collection status response
       set_fact:
         solr_collection_info: "{{ solr_collection_status.json[ solr_collection ]}}"
-      when: solr_collection_status is defined
+      when: solr_collection in solr_collections_list.json.collections and solr_collection_status is defined
 
     # NOTE: number of shards can't be changed via modify collection;
     # must use reindex; warning, this may be slow
