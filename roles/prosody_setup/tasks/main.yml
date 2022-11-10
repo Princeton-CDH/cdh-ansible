@@ -9,7 +9,7 @@
     mode: 0774
     owner: "{{ webapp_user }}"
     group: "{{ webapp_user }}"
-    recurse: yes
+    recurse: true
 
 - name: Check if MARC pairtree data is present
   ansible.builtin.stat:
@@ -28,4 +28,4 @@
     mode: 0774
     owner: "{{ webapp_user }}"
     group: "{{ webapp_user }}"
-    recurse: yes
+    recurse: true
