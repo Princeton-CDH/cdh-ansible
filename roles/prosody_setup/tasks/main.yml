@@ -6,7 +6,7 @@
   ansible.builtin.file:
     path: "{{ hathitrust_pairtree_path }}"
     state: directory
-    mode: 0774
+    mode: 0775
     owner: "{{ webapp_user }}"
     group: "{{ webapp_user }}"
     recurse: true
@@ -25,7 +25,7 @@
   ansible.builtin.file:
     path: "{{ marc_data_path }}"
     state: directory
-    mode: 0774
+    mode: 0775
     owner: "{{ webapp_user }}"
     group: "{{ webapp_user }}"
     recurse: true

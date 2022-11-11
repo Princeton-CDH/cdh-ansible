@@ -26,10 +26,12 @@ install_root: "/srv/www/{{ app_name }}"
 # apache location
 apache_app_path: "/var/www/{{ app_name }}"
 
+# base data dir — easier if NOT under conan home directory
+data_path: "/srv/www/data"
 # path to hathitree pairtree data
-hathitrust_pairtree_path: "/home/{{ deploy_user }}/data/ht_text_pd/"
+hathitrust_pairtree_path: "{{ data_path }}/ht_text_pd/"
 # path to MARC data for Gale/ECCO
-marc_data_path: "/home/{{ deploy_user }}/data/marc/"
+marc_data_path: "{{ data_path }}/marc/"
 
 technical_contact: cdhdevteam@princeton.edu
 # flag that csp is enabled
