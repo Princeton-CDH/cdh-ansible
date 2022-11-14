@@ -72,6 +72,10 @@ cdh-test-derrida1.princeton.edu
 [prosody_qa]
 cdh-test-prosody1.princeton.edu
 
+[prosody_prod]
+cdh-test-prosody1.princeton.edu
+
+
 [prosody:children]
 prosody_qa
 
