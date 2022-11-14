@@ -1,2 +1,3 @@
 ---
 # defaults file for prosody_setup
+webapp_user: "www-data"
