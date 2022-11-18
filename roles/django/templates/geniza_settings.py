@@ -21,8 +21,13 @@ ANNOTATION_MANIFEST_BASE_URL = "https://geniza.princeton.edu"
 
 # URL for git repository of transcription annotation backups
 ANNOTATION_BACKUP_GITREPO = "{{ annotation_backup_gitrepo }}"
-# local path where git repo should be cloned
+# local path where annotation git repo should be cloned
 ANNOTATION_BACKUP_PATH = "{{ annotation_backup_path }}"
+
+# git repository for metadata backup/export
+METADATA_BACKUP_GITREPO = "{{ metadata_backup_gitrepo }}"
+# local path where metadata git repo should be cloned
+METADATA_BACKUP_PATH = "{{ metadata_backup_path }}"
 
 
 FEATURE_FLAGS = [
