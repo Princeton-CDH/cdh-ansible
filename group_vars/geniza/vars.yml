@@ -55,6 +55,10 @@ annotation_backup_gitrepo: "git@github.com:Princeton-CDH/test-pgp-annotations.gi
 # local path where git repo should be cloned
 annotation_backup_path: "{{ data_path }}/annotations_backup"
 
+# git repository of metadata backup/export
+metadata_backup_gitrepo: "git@github.com:Princeton-CDH/test-geniza-metadata.git"
+# local path where metadata git repo should be cloned
+metadata_backup_path: "{{ data_path }}/metadata"
 
 # source when replicating data/media (from host inventory file)
 replication_source_host: geniza_prod
@@ -127,4 +131,8 @@ crontab:
   - name: "{{ app_name }} sync annotation export"
     minute: "*/5"   # run every five minutes
     job: "env DJANGO_ENV=staging bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py sync_annotation_export -v 0 >> {{ logging_dir }}/sync_export.log 2>&1"
+    state: present
+  - name: "{{ app_name }} metadata export "
+    minute: "*/30"   # run every thirty minutes for now (footnote export takes ~10 min)
+    job: "env DJANGO_ENV=staging bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py export_metadata -ws -v 0 >> {{ logging_dir }}/sync_metadata_export.log 2>&1"
     state: present
