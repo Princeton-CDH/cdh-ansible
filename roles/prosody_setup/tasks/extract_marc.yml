@@ -21,13 +21,14 @@
   become: true
   become_user: "{{ django_user }}"
   community.general.django_manage:
-    command: "split_marc {{ tempdir.path }}/*.mrc"
+    command: "split_marc {{ tempdir.path }}/ECCO1a-prin77918.mrc {{ tempdir.path }}/ECCO1b-prin77918.mrc {{ tempdir.path }}/ECCO2-prin77918.mrc"
     app_path: "{{ django_app_path }}"
     virtualenv: "{{ django_venv_path }}"
 
 - name: Clean up temporary working directory
   become: true
   become_user: "{{ django_user }}"
-  ansible.builtin.tempfile:
+  ansible.builtin.file:
     state: absent
     path: "{{ tempdir.path }}"
+  when: tempdir.path is defined

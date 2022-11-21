@@ -72,8 +72,12 @@ cdh-test-derrida1.princeton.edu
 [prosody_qa]
 cdh-test-prosody1.princeton.edu
 
+[prosody_prod]
+cdh-prosody1.princeton.edu
+
 [prosody:children]
 prosody_qa
+prosody_prod
 
 ### PUL solr servers
 
