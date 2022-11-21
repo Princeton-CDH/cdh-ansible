@@ -1,0 +1,28 @@
+- hosts: solr_prod
+  connection: ssh
+  remote_user: pulsys
+  vars:
+    app_name: cdh_solr   # referenced in deploy user bash profile
+  roles:
+    - deploy_user
+
+- hosts: prosody_prod
+  connection: ssh
+  remote_user: pulsys
+  become: true
+  roles:
+    - create_deployment
+    - deploy_user
+    - build_dependencies
+    - build_project_repo
+    - postgresql
+    - build_npm
+    - build_semantic
+    - run_webpack   # dependency for collectstatic
+    - configure_logging # logging directory must exist before running django commands
+    - django
+    - solr_collection
+    - prosody_setup
+    - configure_apache
+    - finalize_deploy
+    - close_deployment

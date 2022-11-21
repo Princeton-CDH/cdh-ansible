@@ -42,7 +42,7 @@
   become: true
   ansible.builtin.lineinfile:
     path: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
-    line: "host    all             all             {{ ansible_ssh_host }}/32       md5"
+    line: 'host    all             all             {{ ansible_default_ipv4.address }}/32       md5'
   delegate_to: "{{ postgres_host }}"
 
 - name: Reload remote postgres server
