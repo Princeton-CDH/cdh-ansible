@@ -14,5 +14,5 @@ solr_server: "{{ groups['solr_prod'][0] }}"
 # override default deploy contexts to match current CI on GitHub Actions
 deploy_contexts:
     - 'javascript unit tests'
-    - 'Python unit tests (8.6, postgresql)'
+    - 'Python unit tests'
     # - 'codecov/project'
