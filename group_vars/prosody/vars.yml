@@ -11,8 +11,8 @@ django_app: ppa
 symlink: ppa
 # wsgi file relative to deploy location
 wsgi_path: "{{ django_app }}/wsgi.py"
-# use python 3.6
-python_version: 3.6
+# use python 3.9
+python_version: 3.9
 # nodejs version
 node_version: "10"
 
