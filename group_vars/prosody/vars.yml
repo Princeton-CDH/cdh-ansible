@@ -28,7 +28,7 @@ apache_app_path: "/var/www/{{ app_name }}"
 
 # set passenger defaults for production; override for other environments
 passenger_app_root: "/var/www/{{ app_name }}"
-passenger_server_name: "geniza.princeton.edu"
+passenger_server_name: "prosody.princeton.edu"
 passenger_startup_file: "{{ app_name }}/wsgi.py"
 passenger_python: "{{ passenger_app_root }}/env/bin/python"
 
