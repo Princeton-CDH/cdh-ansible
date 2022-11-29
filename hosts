@@ -36,15 +36,6 @@ cdh-web1.princeton.edu
 cdhweb_qa
 cdhweb_prod
 
-[ppa_qa]
-test-ppa.cdh.princeton.edu
-[ppa_prod]
-ppa.princeton.edu
-
-[ppa:children]
-ppa_prod
-ppa_qa
-
 [shxco_qa]
 cdh-test-shxco1.princeton.edu
 [shxco_prod]
@@ -94,14 +85,13 @@ solr_prod
 
 [prod:children]
 derrida_prod
-ppa_prod
 cdhweb_prod
 geniza_prod
 shxco_prod
+prosody_prod
 
 [qa:children]
 derrida_qa
-ppa_qa
 cdhweb_qa
 geniza_qa
 shxco_qa
