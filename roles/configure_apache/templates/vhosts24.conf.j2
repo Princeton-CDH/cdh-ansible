@@ -6,7 +6,7 @@
     DocumentRoot {{ apache_app_path }}
     ServerName {{ apache_servername }}
 
-    WSGIDaemonProcess {{ app_name }} group={{ deploy_user }} python-path={{ apache_app_path }}/env/lib/{{ python_version }}/site-packages:{{ apache_app_path }} python-home={{ apache_app_path }}/env processes=1 threads=2
+    WSGIDaemonProcess {{ app_name }} group={{ deploy_user }} python-path={{ apache_app_path }}/env/lib/python{{ python_version }}/site-packages:{{ apache_app_path }} python-home={{ apache_app_path }}/env processes=1 threads=2
     WSGIScriptAlias {{ apache_app_url }} {{ apache_app_path }}/{{ wsgi_path }}
 
     # support serving restricted/purchased webfonts at /static/fonts
