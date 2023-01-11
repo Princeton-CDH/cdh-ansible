@@ -7,17 +7,6 @@ Django local settings for geniza
 # Use x-forwarded-proto header to tell if request from nginx was https or not
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# urls to google sheets data published as csv for import
-DATA_IMPORT_URLS = {
-    'libraries': '{{ libraries_csv_url }}',
-    'languages': '{{ languages_csv_url }}',
-    'metadata': '{{ metadata_csv_url }}',
-    'demerged': '{{ demerge_csv_url }}'
-}
-
-# path to preliminary JSON transcription data
-TRANSCRIPTIONS_JSON_FILE = "/srv/www/geniza/data/transcriptions.json"
-
 TEI_TRANSCRIPTIONS_LOCAL_PATH = "/srv/www/geniza/data/tei_xml/"
 
 # TinyMCE API key
@@ -27,18 +16,33 @@ TINY_API_KEY = '{{ tiny_api_key }}'
 GTAGS_ANALYTICS_ID = "G-3HMY094CY2"
 {% endif %}
 
-{% if qa is defined %} # (QA only for now)
-# base url for simple annotation server
-ANNOTATION_SERVER_URL = "{{ annotation_server_url }}"
 # base url for manifest uris used with annotation server
 ANNOTATION_MANIFEST_BASE_URL = "https://geniza.princeton.edu"
 
 # URL for git repository of transcription annotation backups
 ANNOTATION_BACKUP_GITREPO = "{{ annotation_backup_gitrepo }}"
-# local path where git repo should be cloned
+# local path where annotation git repo should be cloned
 ANNOTATION_BACKUP_PATH = "{{ annotation_backup_path }}"
 
+# git repository for metadata backup/export
+METADATA_BACKUP_GITREPO = "{{ metadata_backup_gitrepo }}"
+# local path where metadata git repo should be cloned
+METADATA_BACKUP_PATH = "{{ metadata_backup_path }}"
+
+
+FEATURE_FLAGS = [
+    {% if show_warning_banner %}
+    "SHOW_WARNING_BANNER", # show warning banner
+    {% endif %}
+]
+# Configure warning banner when set
+{% if warning_banner_heading is defined %}
+WARNING_BANNER_HEADING = "{{ warning_banner_heading }}"
 {% endif %}
+{% if warning_banner_message is defined %}
+WARNING_BANNER_MESSAGE = "{{ warning_banner_message }}"
+{% endif %}
+
 
 # Languages to make visible on the public site/front-end in addition to the admin site.
 # If undefined, all LANGUAGES will be enabled on both the public and admin site.

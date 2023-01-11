@@ -1,0 +1,31 @@
+---
+# tasks specific to setting up prosody archive
+
+- name: Ensure HathiTrust pairtree directory exists and has correct permissions
+  tags: setup
+  ansible.builtin.file:
+    path: "{{ hathitrust_pairtree_path }}"
+    state: directory
+    mode: 0775
+    owner: "{{ webapp_user }}"
+    group: "{{ webapp_user }}"
+    recurse: true
+
+- name: Check if MARC pairtree data is present
+  ansible.builtin.stat:
+    path: "{{ marc_data_path }}/pairtree_root"
+  register: marc_pairtree_root
+
+- name: Extract Gale/ECCO MARC data if needed
+  ansible.builtin.import_tasks: extract_marc.yml
+  when: not marc_pairtree_root.stat.exists
+
+- name: Ensure MARC data dir has correct permissions
+  tags: setup
+  ansible.builtin.file:
+    path: "{{ marc_data_path }}"
+    state: directory
+    mode: 0775
+    owner: "{{ webapp_user }}"
+    group: "{{ webapp_user }}"
+    recurse: true

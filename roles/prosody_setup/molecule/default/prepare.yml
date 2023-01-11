@@ -1,0 +1,23 @@
+---
+# Create a project directory and requirements file for testing.
+
+- name: Prepare
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - ../../defaults/main.yml
+    - ../../defaults/test.yml
+
+  tasks:
+    - name: Create a testing user
+      ansible.builtin.user:
+        name: "{{ django_user }}"
+
+    # we can't run the split_marc script, so create empty data
+    # dir so that task won't be run
+    - name: Create MARC pairtree directory
+      ansible.builtin.file:
+        path: "{{ marc_data_path }}/pairtree_root"
+        state: directory
+        owner: "{{ django_user }}"
+        mode: 0744

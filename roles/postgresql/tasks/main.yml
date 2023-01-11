@@ -2,32 +2,32 @@
 # Based on:
 # https://github.com/pulibrary/princeton_ansible/blob/main/roles/postgresql/tasks/main.yml
 
-- name: make sure the CA certificates are available
+- name: Make sure CA certificates are available
   become: true
   tags: setup
-  apt:
+  ansible.builtin.apt:
     pkg: ca-certificates
     state: present
 
-- name: add postgres repository apt-key
+- name: Add postgres repository apt-key
   become: true
   tags: setup
-  apt_key:
+  ansible.builtin.apt_key:
     url: "{{ postgres_apt_key_url }}"
     state: present
 
-- name: add postgres repository
+- name: Add postgres repository
   become: true
   tags: setup
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "{{ postgres_apt_repository }}"
     update_cache: true
     state: present
 
-- name: install postgres client libraries
+- name: Install postgres client libraries
   become: true
   tags: setup
-  apt:
+  ansible.builtin.apt:
     name: "{{ item }}"
     state: present
     update_cache: true
@@ -37,22 +37,25 @@
     - python3-psycopg2
     - postgresql-client-{{ postgres_version }}
 
-- name: ensure access to postgres server
+- name: Ensure access to postgres server
   tags: setup
   become: true
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
-    line: "host    all             all             {{ ansible_default_ipv4.address }}/32       md5"
+    line: 'host    all             all             {{ ansible_default_ipv4.address }}/32       md5'
   delegate_to: "{{ postgres_host }}"
 
-- name: reload remote postgres server
+- name: Reload remote postgres server
   become: true
   tags: setup
-  service:
+  ansible.builtin.service:
     name: postgresql
     state: reloaded
   delegate_to: "{{ postgres_host }}"
 
-- include: create_user.yml
-- include: create_db.yml
-- include: backup_db.yml
+- name: Create postgres user
+  ansible.builtin.import_tasks: create_user.yml
+- name: Create postgres database
+  ansible.builtin.import_tasks: create_db.yml
+- name: Backup postgres database
+  ansible.builtin.import_tasks: backup_db.yml

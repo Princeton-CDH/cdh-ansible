@@ -11,4 +11,9 @@ passenger_server_name: "{{ application_url }}"
 zk_host: "lib-zk-staging1:2181,lib-zk-staging2:2181,lib-zk-staging3:2181/solr8"
 solr_url: "http://lib-solr8-staging.princeton.edu:8983/solr/"
 solr_server: "{{ groups['solr_staging'][0] }}"
-annotation_server_url: "https://annotations-staging.princeton.edu/annotation"
+
+# enable warning banner; configured in geniza local settings
+show_warning_banner: true
+# use defaults for test site warning/reminder
+# warning_banner_heading:
+# warning_banner_message:

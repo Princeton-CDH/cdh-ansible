@@ -1,7 +1,7 @@
 ---
 # handlers file for postgresql
-- name: reload remote postgres
-  systemd:
+- name: Reload remote postgres
+  ansible.builtin.systemd:
     name: postgresql
     state: reloaded
   become: yes

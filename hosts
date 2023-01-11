@@ -36,15 +36,6 @@ cdh-web1.princeton.edu
 cdhweb_qa
 cdhweb_prod
 
-[ppa_qa]
-test-ppa.cdh.princeton.edu
-[ppa_prod]
-ppa.princeton.edu
-
-[ppa:children]
-ppa_prod
-ppa_qa
-
 [shxco_qa]
 cdh-test-shxco1.princeton.edu
 [shxco_prod]
@@ -53,15 +44,6 @@ cdh-shxco1.princeton.edu
 [shxco:children]
 shxco_qa
 shxco_prod
-
-[pemm_qa]
-cdh-test-pemm1.princeton.edu
-[pemm_prod]
-cdh-pemm1.princeton.edu
-
-[pemm:children]
-pemm_qa
-pemm_prod
 
 [geniza_qa]
 cdh-test-geniza1.princeton.edu
@@ -79,6 +61,16 @@ cdh-test-derrida-crawl1.princeton.edu
 [derrida_archive_qa]
 cdh-test-derrida1.princeton.edu
 
+[prosody_qa]
+cdh-test-prosody1.princeton.edu
+
+[prosody_prod]
+cdh-prosody1.princeton.edu
+
+[prosody:children]
+prosody_qa
+prosody_prod
+
 ### PUL solr servers
 
 [solr_staging]
@@ -94,17 +86,14 @@ solr_prod
 
 [prod:children]
 derrida_prod
-ppa_prod
 cdhweb_prod
-pemm_prod
 geniza_prod
 shxco_prod
+prosody_prod
 
 [qa:children]
 derrida_qa
-ppa_qa
 cdhweb_qa
-pemm_qa
 geniza_qa
 shxco_qa
 derrida_crawl_qa
@@ -112,3 +101,4 @@ derrida_archive_qa
 
 [dev]
 localhost
+

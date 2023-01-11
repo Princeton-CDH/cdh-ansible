@@ -1,29 +1,29 @@
 ---
 # Tests for python role.
 
-- name: verify
+- name: Verify
   hosts: all
   gather_facts: false
   vars_files: ../../defaults/main.yml
 
   tasks:
-    - name: check python version in virtual environment
-      command: "{{ python_venv_path }}/bin/python --version"
+    - name: Check python version in virtual environment
+      ansible.builtin.command: "{{ python_venv_path }}/bin/python --version"
       register: _python_version
       changed_when: true
 
-    - name: python version should be 3.8
-      assert:
+    - name: Python version should be 3.8
+      ansible.builtin.assert:
         that: _python_version.stdout.startswith("Python 3.8")
 
-    - name: check installed packages in virtual environment
-      pip:
+    - name: Check installed packages in virtual environment
+      ansible.builtin.pip:
         name: Django
         virtualenv: "{{ python_venv_path }}"
       check_mode: true
       register: _installed_pkgs
       changed_when: true
 
-    - name: django should be v3.1 in virtual environment
-      assert:
+    - name: Django should be v3.1 in virtual environment
+      ansible.builtin.assert:
         that: "'Django==3.1' in _installed_pkgs.stdout_lines"

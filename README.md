@@ -25,8 +25,11 @@ The overall structure of this repository can be broken down as follows:
   -  Install required Ansible galaxy collections:
       - `ansible-galaxy install -r requirements.yml`
 
-  - The CDH Ansible vault key. This can be referenced on the command line or better set as in the Bash session, i.e. `export ANSIBLE_VAULT_PASSWORD_FILE=/path/to/.passwd`
-  - A GitHub [personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) for any playbook that uses the `create_deployment` and `close_deployment` roles. You can set this in your Bash session as `ANSIBLE_GITHUB_TOKEN` or pass it on the command line as `-e github_token=`
+  - The CDH Ansible vault key. This can be referenced on the command line, but it is
+  recommende to set it as an environment variable; e.g., for BASH
+   `export ANSIBLE_VAULT_PASSWORD_FILE=/path/to/.passwd`
+  - A GitHub [personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) for any playbook that uses the `create_deployment` and `close_deployment` tasks. You can set this as an environment variable
+  as `ANSIBLE_GITHUB_TOKEN` or pass it on the command line as `-e github_token=`
   - The CDH deploy bot key. This can be added to ssh-agent or in `~/.ssh/config`. All production deploys must be on the campus network (including VPN) and proxy through the QA server to production, with an ssh config stanza that looks something like:
   ```
   Host derridas-margins.princeton.edu
@@ -79,8 +82,11 @@ By default, initial provisioning and setup tasks are configured to be skipped.  
 To run playbook without skipping setup tasks, override the default skip tag configuration:
 
 ```{bash}
-ansible-playbook playbooks/name_of_playbook.yml --skip-tags none
+env ANSIBLE_SKIP_TAGS= ansible-playbook playbooks/name_of_playbook.yml
 ```
+
+Note that `--skip-tags=[]` doesn't work because the skip tags setting in
+`ansible.cfg` takes precedence over command line options.
 
 ## Revert last deploy
 
