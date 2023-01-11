@@ -8,6 +8,12 @@
 #     name: "ca-certificates"
 #     state: latest
 
+- name: Load vaulted setup variables if running setup tasks
+  tags: setup
+  ansible.builtin.include_vars:
+    file: ../group_vars/setup/vault.yml
+  when: geniza_deploy_only is undefined
+
 - name: install configured dependencies
   become: true
   tags: setup
