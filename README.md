@@ -122,8 +122,16 @@ for typical use you should limit to the host group you want to replicate, e.g.:
 ansible-playbook playbooks/replicate.yml --limit=geniza
 ```
 
+On subsequent runs for the same host group on the same day, to skip regenerating
+production database dumps and media archive files, you can limit to just the qa host:
+
+```{bash}
+ansible-playbook playbooks/replicate.yml --limit=geniza_qa
+```
+
 Currently replication consists of:
-- dumping the production database, restoring it to qa, and running any django migrations
+- dumping the production database, restoring it to qa, and running 
+  django migrations in the current deploy
 - update django sites in the database to match the qa environment
 - backing up and restoring any user-uploaded media files and setting correct ownership and permissions
 
@@ -134,6 +142,8 @@ Replication does not yet include restoring Solr indexing or support replication 
 - Add the appropriate production and qa host names to the source and destination plays
 - Define a new variable `replication_source_host` in the qa variables; it should reference the corresponding ansible hostname (e.g., for geniza `replication_source_host` is set to `geniza_prod`)
 - If database names differ between qa and production, you may need to override the `db_backup_filename` for the qa host variables.
+- Ensure that the qa host has an `application_url` variable defined; this is needed to correctly set the Django site
+entry in the migrated database.
 
 
 ## Adding a playbook
