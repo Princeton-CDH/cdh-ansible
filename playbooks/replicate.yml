@@ -14,7 +14,7 @@
 
 # source hosts tasks
 - name: Generate database and media backups on source host
-  hosts: geniza_prod, cdhweb_prod
+  hosts: geniza_prod, cdhweb_prod, prosody_prod
   connection: ssh
   remote_user: pulsys
   # generate backups on source host
@@ -44,7 +44,7 @@
 - name: Restore database and media backups on target host
   # hosts: dev
   # connection: local
-  hosts: geniza_qa, cdhweb_qa
+  hosts: geniza_qa, cdhweb_qa, prosody_qa
   connection: ssh
   remote_user: pulsys
   vars:
@@ -78,6 +78,8 @@
           path: "{{ media_backup_path }}"
         register: media_backup
         delegate_to: "{{ source_hostname }}"
+        become: true
+        become_user: "{{ deploy_user }}"
 
       - name: Sync media to destination host
         # run rsync on dest machine to pull db dump from the source machine
@@ -125,7 +127,7 @@
           state: "present"
           owner: '{{ application_dbuser_name }}'
 
-      - name: Load the database "{{ application_db_name }}" on target host
+      - name: Load the database "{{ application_db_name }}" on target host (postgres on {{ postgres_host }})
         community.postgresql.postgresql_db:
           name: "{{ application_db_name }}"
           encoding: 'UTF-8'

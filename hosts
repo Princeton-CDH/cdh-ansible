@@ -98,6 +98,7 @@ geniza_qa
 shxco_qa
 derrida_crawl_qa
 derrida_archive_qa
+prosody_qa
 
 [dev]
 localhost
