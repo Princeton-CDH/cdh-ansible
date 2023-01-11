@@ -96,21 +96,46 @@ To revert to previous deploy run call the `revert_deploy` playbook with a `host_
 ansible-playbook -e host_group=shxco_qa playbooks/revert_deploy.yml
 ```
 
-## Vault variables
+## Vault variables and passwords
 
-Variables kept in `group_vars/*/vault.yml` are sensitive configurations that should always be kept encrypted on commit. To edit them (in your system text editor):
+Variables kept in `group_vars/*/vault.yml` are sensitive configurations
+that should always be kept encrypted on commit. To edit them (in your system text editor):
 ```{bash}
 ansible-vault edit group_vars/all/vault.yml
 ```
 
-You can also `ansible-vault decrypt` but need to remember to manually `encrypt`.
+You can also `ansible-vault decrypt` but need to remember to `encrypt`
+after editing. (Pre-commit check will flag if you fail to do so.)
+
+
+Ansible vault passwords are stored in shared LastPass vault and loaded
+using [lastpass-cli](https://lastpass.github.io/lastpass-cli/lpass.1.html).
+
+```{bash}
+brew install lastpass-cli
+lpass login <email@email.com>
+```
+
+There are two different vault passwords (default and geniza), to allow limited
+contractor access for running geniza and geniza_qa playbooks without full access
+to all credentials. Both are defined in the default ansible.cfg file
+with shell scripts to pull the appropriate password from LastPass. To set a single
+vault, you can override the config setting with the **ANSIBLE_VAULT_IDENTITY_LIST**
+environment variable.
+
+Because there are multiple vault ids, encrypting requires specifying which
+vault id to use. Geniza variables and setup files should be encrypted with
+`--encrypt-vault-id geniza` ; all other vaulted files should be encrypted with
+the default vault password
+
 
 These are included in playbooks indirectly. Typically in the appropriate `group_vars` YAML file, you'll see a stanza such as:
 ```{yaml}
 db_name: {{ vault_db_name }}
 ```
 
-Sometimes the variable will be common across projects, but will be overriden in a specific `vault.yml`.
+Some encrypted variable ase used across playbooks, but may be
+overriden in a project or playbook specific `vault.yml` file.
 
 ## Adding a playbook
 
@@ -132,3 +157,17 @@ The rough order of creating a playbook is:
 We use the [ADR specification](https://github.com/joelparkerhenderson/architecture_decision_record) for documenting architectural decisions made over the course of work on this repository - i.e. conventions around our usage of Ansible. Decision documents are stored in the `adr/` folder as markdown files.
 
 To propose a new decision, copy the `adr/template.md` file and rename it using a sequential number and description of the decision that needs making. Then create a pull request to track discussion on that decision.
+
+
+## To run the geniza deploy only
+
+- Ensure you have access to the geniza ansible vault key in LastPass
+- Install lastpass cli
+- Set the following environment variables:
+```sh
+ANSIBLE_VAULT_IDENTITY_LIST=geniza@bin/lpass_geniza.sh
+GENIZA_DEPLOY_ONLY=1
+```
+
+Note that you will not be able to run setup tasks or decrypt setup vault secrets.
+
