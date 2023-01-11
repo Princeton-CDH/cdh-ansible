@@ -109,3 +109,16 @@ django_db_host: "{{ application_db_host }}"
 # configure VMs to use local timezone
 # (requires including pul timezone role in playbook)
 timezone: America/New_York
+
+
+## replication playbook settings
+timestamp: "{{ ansible_date_time.date }}"
+deploy_user: "conan"
+dest_backup_dir : "/tmp/migrate/"
+dest_backup_path: "{{ dest_backup_dir }}{{ db_backup_filename }}"
+dest_media_backup_path: "{{ dest_backup_dir }}{{ media_backup_filename}}"
+backup_dir : "/home/{{ deploy_user }}/migrate/"
+db_backup_filename: "{{ timestamp }}_{{ application_db_name }}.sql.bz2"
+db_backup_path: "{{ backup_dir }}{{ db_backup_filename }}"
+media_backup_filename: "{{ timestamp }}_{{ app_name }}_media.tar.gz"
+media_backup_path: "{{ backup_dir }}{{ media_backup_filename}}"

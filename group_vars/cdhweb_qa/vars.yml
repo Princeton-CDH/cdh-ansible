@@ -11,5 +11,7 @@ allowed_hosts:
     - "localhost"
     - "127.0.0.1"
 
-passenger_server_name: "test-web.cdh.princeton.edu"
+application_url: "test-web.cdh.princeton.edu"
 
+# passenger settings
+passenger_server_name: "{{ application_url }}"
