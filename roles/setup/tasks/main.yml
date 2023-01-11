@@ -8,6 +8,6 @@
 - name: Load vaulted setup variables if appropriate
   tags: setup
   ansible.builtin.include_vars:
-    file: ../group_vars/setup/vault.yml
+    file: vars/vault.yml
   when: geniza_deploy_only is undefined or geniza_deploy_only == ""
 
