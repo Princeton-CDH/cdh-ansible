@@ -30,8 +30,8 @@ db_host: "{{ postgres_host }}"
 application_dbuser_name: "{{ vault_db_username }}"
 application_dbuser_password: "{{ vault_db_password }}"
 application_db_name: "{{ vault_db_name }}"
-# Database backup location
-db_backup_path: "/home/{{ deploy_user }}/backups/pre-{{ version }}-{{ short_hash }}.sql"
+# Database backup location — revert to default, with timestamp but not app version
+# db_backup_path: "/home/{{ deploy_user }}/backups/pre-{{ version }}-{{ short_hash }}.sql"
 # app-specific system dependencies
 app_dependencies:
   - python-pil # for mezzanine image handling
@@ -42,6 +42,17 @@ passenger_app_root: "/var/www/{{ app_name }}"
 passenger_server_name: "cdh.princeton.edu"
 passenger_startup_file: "{{ app_name }}/wsgi.py"
 passenger_python: "{{ virtualenv_path }}/bin/python"
+
+# not previously set; using passenger role default, but needs to be set
+# for replication
+media_root: /var/www/media/
+
+
+# source host when replicating data/media (use host from inventory file)
+replication_source_host: cdhweb_prod
+# cdhweb prod/qa database names differ; customize db backup so the file names match
+db_backup_filename: "{{ timestamp }}_{{ app_name }}.sql.bz2"
+dest_backup_path: "{{ dest_backup_dir }}{{ db_backup_filename }}"
 
 # rewrites for urls that changed in migration from 2.8 to 3.x
 # specify server name to ensure https instead of http

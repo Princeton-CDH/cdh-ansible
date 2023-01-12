@@ -137,6 +137,30 @@ db_name: {{ vault_db_name }}
 Some encrypted variable ase used across playbooks, but may be
 overriden in a project or playbook specific `vault.yml` file.
 
+## Replication
+
+Copying production data from production to qa can be done for some projects
+using a special replication playbook. It is defined with multiple hosts, but
+for typical use you should limit to the host group you want to replicate, e.g.:
+
+```{bash}
+ansible-playbook playbooks/replicate.yml --limit=geniza
+```
+
+Currently replication consists of:
+- dumping the production database, restoring it to qa, and running any django migrations
+- update django sites in the database to match the qa environment
+- backing up and restoring any user-uploaded media files and setting correct ownership and permissions
+
+Replication does not yet include restoring Solr indexing or support replication to dev environments. 
+
+### Setting up replication for a new project
+
+- Add the appropriate production and qa host names to the source and destination plays
+- Define a new variable `replication_source_host` in the qa variables; it should reference the corresponding ansible hostname (e.g., for geniza `replication_source_host` is set to `geniza_prod`)
+- If database names differ between qa and production, you may need to override the `db_backup_filename` for the qa host variables.
+
+
 ## Adding a playbook
 
 The rough order of creating a playbook is:
