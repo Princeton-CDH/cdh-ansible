@@ -119,9 +119,12 @@
         community.postgresql.postgresql_db:
           name: "{{ application_db_name }}"
           login_host: '{{ postgres_host }}'
+          # NOTE: access as app db user so that unprivileged access is enough;
+          # qa app db accounts created before this practice may need
+          # createdb permission granted manually with postgres admin permissions:
+          # alter user appusername CREATEDB;
           login_user: "{{ vault_postgres_admin_user }}"
           login_password: "{{ vault_postgres_admin_password }}"
-          # worked for my dev setup...
           # login_user: '{{ application_dbuser_name }}'
           # login_password: '{{ application_dbuser_password }}'
           state: "present"
