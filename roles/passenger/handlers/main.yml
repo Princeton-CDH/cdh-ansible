@@ -13,4 +13,3 @@
     name: nginx
     state: restarted
   listen: "restart web server"
-
