@@ -126,7 +126,7 @@ environment variable.
 Because there are multiple vault ids, encrypting requires specifying which
 vault id to use. Geniza variables and setup files should be encrypted with
 `--encrypt-vault-id geniza` ; all other vaulted files should be encrypted with
-the default vault password
+the default vault password.
 
 
 These are included in playbooks indirectly. Typically in the appropriate `group_vars` YAML file, you'll see a stanza such as:
