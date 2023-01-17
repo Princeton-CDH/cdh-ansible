@@ -14,3 +14,6 @@ qa: qa
 deploy_contexts: []
 # PUL staging VM (default version is postgres 13)
 postgres_host: lib-postgres-staging3.princeton.edu
+
+# in QA, grant postgres app user permission to create db for replication
+application_dbuser_role_attr_flags: "CREATEDB"
