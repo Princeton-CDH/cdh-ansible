@@ -1,0 +1,13 @@
+---
+# tasks file for setup
+
+# Conditionally load vaulted setup variables.
+# Skip based on setup tag is insufficient, ansible complains if
+# the vault key is not available.
+
+- name: Load vaulted setup variables if appropriate
+  tags: setup
+  ansible.builtin.include_vars:
+    file: vars/vault.yml
+  when: geniza_deploy_only is undefined or geniza_deploy_only == ""
+

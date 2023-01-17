@@ -66,6 +66,8 @@ replication_source_host: geniza_prod
 # keep the warning banner off by default
 show_warning_banner: false
 
+geniza_deploy_only: "{{ lookup('env', 'GENIZA_DEPLOY_ONLY', default=Undefined) }}"
+
 # Redirect old links from PGPv3
 # specify server name to ensure https instead of http
 
