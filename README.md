@@ -135,7 +135,7 @@ db_name: {{ vault_db_name }}
 ```
 
 Some encrypted variables are shared across projects and playbooks. Shared variables may be
-overriden in a project or playbook specific `vault.yml` file.
+overriden in a project- or playbook-specific `vault.yml` file.
 
 ## Replication
 
