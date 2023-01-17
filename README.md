@@ -134,7 +134,7 @@ These are included in playbooks indirectly. Typically in the appropriate `group_
 db_name: {{ vault_db_name }}
 ```
 
-Some encrypted variable ase used across playbooks, but may be
+Some encrypted variables are shared across projects and playbooks. Shared variables may be
 overriden in a project or playbook specific `vault.yml` file.
 
 ## Replication
