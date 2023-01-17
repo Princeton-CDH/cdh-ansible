@@ -16,6 +16,7 @@ galaxy_info:
   galaxy_tags: []
 
 dependencies:
+  - role: setup
   - role: python
     vars:
       python_app_path: "{{ django_app_path }}"
