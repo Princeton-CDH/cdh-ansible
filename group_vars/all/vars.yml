@@ -96,7 +96,7 @@ postgres_host: lib-postgres-prod3.princeton.edu
 postgres_admin_user: postgres
 
 # location for snapshot db backup when deploying
-db_backup_path: "/home/{{ deploy_user }}/backups/pre-{{ version }}-{{ short_hash }}.sql"
+# db_backup_path: "/home/{{ deploy_user }}/backups/pre-{{ version }}-{{ short_hash }}.sql"
 
 # configure python role
 python_user: "{{ deploy_user }}"
