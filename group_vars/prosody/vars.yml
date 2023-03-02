@@ -23,8 +23,6 @@ deploy_user: "conan"
 clone_root: "/home/{{ deploy_user }}/repos"
 # don't distinguish between qa/prod paths
 install_root: "/srv/www/{{ app_name }}"
-# apache location
-apache_app_path: "/var/www/{{ app_name }}"
 
 # set passenger defaults for production; override for other environments
 passenger_app_root: "/var/www/{{ app_name }}"
