@@ -23,7 +23,7 @@ MARC_DATA = '{{ marc_data_path }}'
 {% if qa is not defined %}
 # Turn on Google Analytics
 INCLUDE_ANALYTICS = True
-GTAGS_ANALYTICS_ID = 'UA-87887700-5'
+GTAGS_ANALYTICS_ID = 'G-FJG5ZQ5KGR'
 {% endif %}
 
 {% endblock %}
