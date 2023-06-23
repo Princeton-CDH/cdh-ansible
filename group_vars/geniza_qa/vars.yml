@@ -8,9 +8,9 @@ application_url: "test-geniza.cdh.princeton.edu"
 passenger_server_name: "{{ application_url }}"
 
 # solr settings
-zk_host: "lib-zk-staging1:2181,lib-zk-staging2:2181,lib-zk-staging3:2181/solr8"
-solr_url: "http://lib-solr8-staging.princeton.edu:8983/solr/"
-solr_server: "{{ groups['solr_staging'][0] }}"
+zk_host: "lib-zk-staging4:2181,lib-zk-staging5:2181,lib-zk-staging6:2181/solr9"
+solr_url: "http://lib-solr9-staging.princeton.edu:8983/solr/"
+solr_server: "{{ groups['solr9_staging'][0] }}"
 
 # enable warning banner; configured in geniza local settings
 show_warning_banner: true
