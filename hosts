@@ -78,8 +78,12 @@ lib-solr-staging4.princeton.edu
 [solr_prod]
 lib-solr-prod4.princeton.edu
 
+[solr9_staging]
+lib-solr-staging1.princeton.edu
+
 [solr:children]
 solr_staging
+solr9_staging
 solr_prod
 
 ### environment-based stanzas to create shared groups
