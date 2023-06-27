@@ -16,12 +16,9 @@ OCLC_WSKEY = '{{ oclc_wskey }}'
 # Will be used in From header for OCLC API requests
 TECHNICAL_CONTACT = '{{ technical_contact }}'
 
-# turn on google analytics
-GTAGS_ANALYTICS_ID = 'UA-87887700-6'
-
-{% if qa is defined and qa %}
-GTAGS_ANALYTICS_ENV = 'qa'
-{% else %}
+{% if qa is not defined %}
+# turn on google analytics in production only
+GTAGS_ANALYTICS_ID = 'G-H1FNDPYCC6'
 GTAGS_ANALYTICS_ENV = 'prod'
 {% endif %}
 

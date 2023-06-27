@@ -65,4 +65,11 @@ IGNORABLE_404_URLS = [re.compile('\.(php|aspx?|jspa?)(\/$|$)')]
 
 # Use x-forwarded-proto header to tell if request from nginx was https or not
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+{% if qa is not defined %}
+# Turn on Google Analytics
+INCLUDE_ANALYTICS = True
+GTAGS_ANALYTICS_ID = 'G-864528T1N5'
+{% endif %}
+
 {% endblock %}
