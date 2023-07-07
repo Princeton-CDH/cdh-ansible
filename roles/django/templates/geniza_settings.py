@@ -50,10 +50,7 @@ WARNING_BANNER_MESSAGE = "{{ warning_banner_message }}"
 # For production only, limit to languages ready to be made public
 PUBLIC_SITE_LANGUAGES = [
    "en",
-{% if qa is defined %}
    "he",
-{% endif %}
-#    "he",
 #    "ar",
 ]
 {% endblock %}
