@@ -26,10 +26,13 @@ node_version: "10"
 # django database backend
 db_backend: "postgresql"
 db_host: "{{ postgres_host }}"
+
 # postgresql database info
 application_dbuser_name: "{{ vault_db_username }}"
 application_dbuser_password: "{{ vault_db_password }}"
 application_db_name: "{{ vault_db_name }}"
+application_db_host: "{{ postgres_host }}"
+
 # Database backup location — revert to default, with timestamp but not app version
 # db_backup_path: "/home/{{ deploy_user }}/backups/pre-{{ version }}-{{ short_hash }}.sql"
 # app-specific system dependencies
@@ -41,7 +44,7 @@ app_dependencies:
 passenger_app_root: "/var/www/{{ app_name }}"
 passenger_server_name: "cdh.princeton.edu"
 passenger_startup_file: "{{ app_name }}/wsgi.py"
-passenger_python: "{{ virtualenv_path }}/bin/python"
+passenger_python: "{{ passenger_app_root }}/bin/python"
 
 # not previously set; using passenger role default, but needs to be set
 # for replication

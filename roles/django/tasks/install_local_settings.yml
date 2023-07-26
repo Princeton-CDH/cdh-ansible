@@ -3,6 +3,8 @@
 # https://docs.djangoproject.com/en/dev/ref/settings/
 
 - name: Install django local settings
+  become: true
+  become_user: "{{ django_user }}"
   ansible.builtin.template:
     src: "{{ django_local_settings_template }}"
     dest: "{{ django_local_settings_dest }}"

@@ -13,6 +13,7 @@
         recurse: true
 
     - name: Make sure media root is owned by configured user and group
+      become: true
       ansible.builtin.file:
         path: "{{ media_root }}"
         owner: "{{ media_user }}"
@@ -21,6 +22,7 @@
         recurse: true
 
     - name: Give deploy acl rwx over all files in the directory as a fall back
+      become: true
       ansible.posix.acl:
         entity: "{{ deploy_user }}"
         etype: user

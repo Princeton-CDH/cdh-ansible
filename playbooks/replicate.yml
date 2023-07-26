@@ -115,7 +115,7 @@
           state: "absent"
         when: "'prod' not in group_names"   # never run this on production
 
-      - name: Create empty database "{{ application_db_name }}" on target host
+      - name: "Create empty database {{ application_db_name }} on target host"
         community.postgresql.postgresql_db:
           name: "{{ application_db_name }}"
           login_host: '{{ postgres_host }}'
@@ -123,10 +123,10 @@
           # qa app db accounts created before this practice may need
           # createdb permission granted manually with postgres admin permissions:
           # alter user appusername CREATEDB;
-          login_user: "{{ vault_postgres_admin_user }}"
-          login_password: "{{ vault_postgres_admin_password }}"
-          # login_user: '{{ application_dbuser_name }}'
-          # login_password: '{{ application_dbuser_password }}'
+          # login_user: "{{ postgres_admin_user }}"
+          # login_password: "{{ vault_postgres_admin_password }}"
+          login_user: '{{ application_dbuser_name }}'
+          login_password: '{{ application_dbuser_password }}'
           state: "present"
           owner: '{{ application_dbuser_name }}'
 
