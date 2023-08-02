@@ -12,7 +12,8 @@ common_dependencies:
   - libssl-dev
   - wget
   - tmux
-  - python-virtualenv
+ # - python-virtualenv
+  - python3
   - snapd
 # app-specific dependencies: override to install
 app_dependencies: []
