@@ -48,7 +48,7 @@ passenger_python: "{{ passenger_app_root }}/bin/python"
 
 # not previously set; using passenger role default, but needs to be set
 # for replication
-media_root: /var/www/media/
+media_root: /var/www/media
 
 
 # source host when replicating data/media (use host from inventory file)
