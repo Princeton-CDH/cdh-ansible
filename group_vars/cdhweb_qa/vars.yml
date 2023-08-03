@@ -16,11 +16,6 @@ application_url: "test-web.cdh.princeton.edu"
 # passenger settings
 passenger_server_name: "{{ application_url }}"
 
-# python version - override in qa until tested
-python_version: "3.8"  # can't go past 3.8 until we get to newer ubuntu
-# nodejs version
-node_version: "18"
-
 # configure app-specific local settings
 django_local_settings_template: "cdhweb_settings.py"
 

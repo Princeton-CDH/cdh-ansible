@@ -14,7 +14,7 @@ clone_root: "/home/{{ deploy_user }}/repos"
 django_app: cdhweb
 app_name: cdhweb
 # python version
-python_version: "python3.6"
+python_version: "3.8"  # can't go past 3.8 until we get to newer ubuntu
 # symlink to current deploy in /var/www
 symlink: cdhweb
 # use PUL deploy user of conan
@@ -22,7 +22,7 @@ deploy_user: "conan"
 # wsgi path
 wsgi_path: "{{ django_app }}/wsgi.py"
 # nodejs version
-node_version: "10"
+node_version: "18"
 # django database backend
 db_backend: "postgresql"
 db_host: "{{ postgres_host }}"
@@ -37,9 +37,7 @@ application_db_host: "{{ postgres_host }}"
 # db_backup_path: "/home/{{ deploy_user }}/backups/pre-{{ version }}-{{ short_hash }}.sql"
 # app-specific system dependencies
 app_dependencies:
-  - python-pil # for mezzanine image handling
   - python-opencv  # for wagtail image feature detection
-
 
 passenger_app_root: "/var/www/{{ app_name }}"
 passenger_server_name: "cdh.princeton.edu"
