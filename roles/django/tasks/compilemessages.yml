@@ -10,6 +10,8 @@
     state: present
 
 - name: Compile localized messages
+  become: true
+  become_user: "{{ django_user }}"
   community.general.django_manage:
     command: compilemessages
     app_path: "{{ django_app_path }}"

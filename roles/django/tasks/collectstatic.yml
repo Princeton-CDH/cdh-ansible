@@ -3,6 +3,8 @@
 # https://docs.djangoproject.com/en/dev/ref/django-admin/#collectstatic
 
 - name: Collect static files
+  become: true
+  become_user: "{{ django_user }}"
   community.general.django_manage:
     command: collectstatic
     app_path: "{{ django_app_path }}"
