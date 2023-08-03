@@ -10,12 +10,12 @@
   when:  ansible_distribution == 'Springdale'
   listen: "restart web server"
 
-# Restart apache on Ubuntu systems when apache role is in use
-- name: restart apache
-  become: true
-  service:
-    name: apache2
-    enabled: true
-    state: restarted
-  when:  ansible_distribution == 'Ubuntu' and apache_app_path is defined
-  listen: "restart web server"
+# # Restart apache on Ubuntu systems when apache role is in use
+# - name: restart apache
+#   become: true
+#   service:
+#     name: apache2
+#     enabled: true
+#     state: restarted
+#   when:  ansible_distribution == 'Ubuntu' and apache_app_path is defined
+#   listen: "restart web server"
