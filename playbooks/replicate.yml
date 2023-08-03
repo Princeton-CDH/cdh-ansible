@@ -27,8 +27,12 @@
         tasks_from: backup_db.yml
 
     - name: Check if media directory has any files
-      stat:
-        path: "{{ media_root }}/*"
+      become: true
+      become_user: "{{ deploy_user }}"
+      ansible.builtin.find:
+        paths: "{{ media_root }}"
+        file_type: any
+        recurse: no
       register: media_files
 
     - name: Create an archive of application media files, if any exist
@@ -38,7 +42,7 @@
         owner: "{{ deploy_user }}"
       become: true
       become_user: "{{ deploy_user }}"
-      when: media_files.stat.exists == true
+      when: media_files.matched|int != 0
 
 # destination host tasks
 - name: Restore database and media backups on target host
@@ -142,9 +146,16 @@
           state: "restore"
 
       - name: Extract media to destination media directory
+        become: true
+        become_user: "{{ deploy_user }}"
         ansible.builtin.unarchive:
           src: "{{ dest_media_backup_path }}"
-          dest: "{{ dest_media_dir }}"
+          remote_src: true
+          # dest: "{{ dest_media_dir }}" # only defined for dev ?
+          dest: "{{ media_root }}"
+          # FIXME: this is creating /var/www/media/media instead
+          # of putting content at /var/www/media
+          # (check if fixed by removing trailing slash on media_root)
         when: media_backup.stat.exists == true
 
       # run migrations in current install, using symlink
