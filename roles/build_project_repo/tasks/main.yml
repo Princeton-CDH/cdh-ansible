@@ -42,7 +42,7 @@
       become: true
       become_user: "{{ deploy_user }}"
       shell:
-        cmd: "python -c 'import {{ django_app }}; print({{ django_app }}.__version__)'"
+        cmd: "python3 -c 'import {{ django_app }}; print({{ django_app }}.__version__)'"
         chdir: "{{ clone_root}}/{{ repo }}"
       register: python_app_version
       tags:
