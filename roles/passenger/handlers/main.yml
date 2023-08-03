@@ -2,10 +2,19 @@
 # to automate transition from apache to nginx:
 # handler to stop and disable apache if the service is defined
 - name: Stop apache2
-  ansible.builtin.service:
-    name: apache2
-    enabled: false
-    state: stopped
+  become: true
+  block:
+    - name: populate service facts
+      ansible.builtin.service_facts:
+    - name: Print service facts
+      ansible.builtin.debug:
+        var: ansible_facts.services
+    - name: Stop apache2 if installed
+      ansible.builtin.service:
+        name: apache2
+        enabled: false
+        state: stopped
+      when: ansible_facts.services['apache2.service'] is defined
 
 - name: Restart nginx
   become: true
