@@ -47,9 +47,9 @@ passenger_server_name: "cdh.princeton.edu"
 passenger_startup_file: "{{ app_name }}/wsgi.py"
 passenger_python: "{{ passenger_app_root }}/bin/python"
 
-# not previously set; using passenger role default, but needs to be set
-# for replication
-media_root: /var/www/media
+# for passenger config, this MUST end with a trailing slash;
+# also used for replication
+media_root: /var/www/media/
 
 # source host when replicating data/media (use host from inventory file)
 replication_source_host: cdhweb_prod

@@ -6,6 +6,7 @@
     - media
   block:
     - name: Create media root and set permissions
+      become: true
       ansible.builtin.file:
         path: "{{ media_root }}"
         state: directory
