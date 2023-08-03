@@ -33,6 +33,9 @@ application_dbuser_password: "{{ vault_db_password }}"
 application_db_name: "{{ vault_db_name }}"
 application_db_host: "{{ postgres_host }}"
 
+# configure app-specific local settings
+django_local_settings_template: "cdhweb_settings.py"
+
 # Database backup location — revert to default, with timestamp but not app version
 # db_backup_path: "/home/{{ deploy_user }}/backups/pre-{{ version }}-{{ short_hash }}.sql"
 # app-specific system dependencies
@@ -47,7 +50,6 @@ passenger_python: "{{ passenger_app_root }}/bin/python"
 # not previously set; using passenger role default, but needs to be set
 # for replication
 media_root: /var/www/media
-
 
 # source host when replicating data/media (use host from inventory file)
 replication_source_host: cdhweb_prod

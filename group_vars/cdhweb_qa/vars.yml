@@ -16,7 +16,5 @@ application_url: "test-web.cdh.princeton.edu"
 # passenger settings
 passenger_server_name: "{{ application_url }}"
 
-# configure app-specific local settings
-django_local_settings_template: "cdhweb_settings.py"
 
 
