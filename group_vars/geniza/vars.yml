@@ -66,7 +66,8 @@ replication_source_host: geniza_prod
 # keep the warning banner off by default
 show_warning_banner: false
 
-geniza_deploy_only: "{{ lookup('env', 'GENIZA_DEPLOY_ONLY', default=Undefined) }}"
+# variable needed to determine if cdh vaulted variables can be loaded
+geniza_deploy_only: "{{ lookup('ansible.builtin.env', 'GENIZA_DEPLOY_ONLY')| default(false) }}"
 
 # Redirect old links from PGPv3
 # specify server name to ensure https instead of http
