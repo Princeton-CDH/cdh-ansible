@@ -45,7 +45,7 @@ app_dependencies:
 passenger_app_root: "/var/www/{{ app_name }}"
 passenger_server_name: "cdh.princeton.edu"
 passenger_startup_file: "{{ app_name }}/wsgi.py"
-passenger_python: "{{ passenger_app_root }}/bin/python"
+passenger_python: "{{ passenger_app_root }}/env/bin/python"
 
 # for passenger config, this MUST end with a trailing slash;
 # also used for replication
