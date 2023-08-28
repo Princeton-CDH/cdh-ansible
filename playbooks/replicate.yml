@@ -147,12 +147,13 @@
 
       - name: Extract media to destination media directory
         become: true
-        become_user: "{{ deploy_user }}"
+        # become_user: "{{ deploy_user }}"
         ansible.builtin.unarchive:
           src: "{{ dest_media_backup_path }}"
           remote_src: true
           # dest: "{{ dest_media_dir }}" # only defined for dev ?
           dest: "{{ media_root }}"
+          owner: '{{ deploy_user }}'
           # FIXME: this is creating /var/www/media/media instead
           # of putting content at /var/www/media
           # (check if fixed by removing trailing slash on media_root)
