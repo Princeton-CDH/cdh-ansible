@@ -9,7 +9,7 @@
     - build_project_repo
     - python
     - configure_logging
-    - configure_apache
+    - passenger
     - geotaste_setup
     - finalize_deploy
     - close_deployment

@@ -39,10 +39,10 @@ version: '1.0'
 # normally set by django role, but we don't use that
 python_app_path: "{{ deploy }}"
 
-# passenger_app_root: "/var/www/{{ app_name }}"
-# passenger_server_name: "test-derrida.cdh.princeton.edu"
-# passenger_startup_file: "wsgi.py"
-# passenger_python: "{{ passenger_app_root }}/env/bin/python"
-# # disable default static nginx block so we can customize
-# passenger_static_path: ""
+passenger_app_root: "/var/www/{{ app_name }}"
+passenger_server_name: "sandbox.cdh.princeton.edu"
+passenger_startup_file: "wsgi.py"
+passenger_python: "{{ passenger_app_root }}/env/bin/python"
+# disable default static nginx block so we can customize
+passenger_static_path: ""
 # passenger_nginx_site_template: "derrida_wayback_passenger.conf.j2"
