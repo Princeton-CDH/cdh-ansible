@@ -11,7 +11,7 @@
 # GitHub repository
 repo: 'Princeton-CDH/geotaste'
 # name of python application
-django_app: scripts
+django_app: geotaste
 # application name
 app_name: geotaste
 # apache symlink
