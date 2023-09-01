@@ -1,13 +1,7 @@
 ###
-# Variables for PEMM that apply across all deploy groups (prod, qa, and staging)
+# Variables for Geotaste that apply across all deploy groups (prod, qa, and staging)
 ###
----
-# do we still need these for ubuntu? should use python3.6
-# Using python35 and nodejs8 for QA and staging
-# Paths are picky and spaces for any YAML multiline syntax causes issues
-#path: '/opt/rh/rh-python35/root/usr/bin:/opt/rh/rh-nodejs8/root/usr/bin:{{ ansible_env.PATH }}'
-#ld_library_path: '/opt/rh/rh-python35/root/usr/lib64:/opt/rh/rh-nodejs8/root/usr/lib64{% if ansible_env.LD_LIBRARY_PATH is defined %}:{{ ansible_env.LD_LIBRARY_PATH }}{% endif %}'
-#python_path: '/opt/rh/rh-nodejs8/root/usr/lib/python2.7/site-packages{% if ansible_env.PYTHON_PATH is defined %}:{{ ansible_env.PYTHONPATH }}{% endif %}'
+
 # GitHub repository
 repo: 'Princeton-CDH/geotaste'
 # name of python application
@@ -21,7 +15,7 @@ apache_app_path: "/var/www/{{ app_name }}"
 # wsgi file relative to apache location
 wsgi_path: "geotaste.wsgi"
 # use python 3.6
-python_version: "python3.8"
+python_version: "3.10"
 # Override clone root to use deploy user home instead of root
 clone_root: "/home/{{ deploy_user }}/repos"
 # for geotaste, don't differentiate qa/prod paths
@@ -35,3 +29,20 @@ deploy_contexts:
 app_vars:
   - name: FLASK_APP
     value: 'geotaste/app.py'
+
+
+# set QA to use staging for now
+# gitref: '{{ ref | default("main") }}'
+# no versioning within archive app, just call it 1.0
+version: '1.0'
+# configure where virtualenv should be created;
+# normally set by django role, but we don't use that
+python_app_path: "{{ deploy }}"
+
+# passenger_app_root: "/var/www/{{ app_name }}"
+# passenger_server_name: "test-derrida.cdh.princeton.edu"
+# passenger_startup_file: "wsgi.py"
+# passenger_python: "{{ passenger_app_root }}/env/bin/python"
+# # disable default static nginx block so we can customize
+# passenger_static_path: ""
+# passenger_nginx_site_template: "derrida_wayback_passenger.conf.j2"
