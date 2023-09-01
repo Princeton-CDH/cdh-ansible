@@ -36,6 +36,9 @@ cdh-web1.princeton.edu
 cdhweb_qa
 cdhweb_prod
 
+[sandbox]
+cdh-dev-sandbox1.princeton.edu
+
 [shxco_qa]
 cdh-test-shxco1.princeton.edu
 [shxco_prod]
@@ -99,6 +102,7 @@ shxco_qa
 derrida_crawl_qa
 derrida_archive_qa
 prosody_qa
+sandbox
 
 [dev]
 localhost
