@@ -29,7 +29,8 @@ install_root: '/srv/www/{{ app_name }}'
 
 # override default production contexts (no code coverage for this project yet)
 deploy_contexts:
-    - 'continuous-integration/travis-ci/push'
+    # - 'continuous-integration/travis-ci/push'
+    
 
 app_vars:
   - name: FLASK_APP
