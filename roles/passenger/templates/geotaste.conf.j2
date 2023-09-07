@@ -45,7 +45,7 @@ server {
   gzip_vary           on;
 
   {% block root %}
-  location / {
+  location /sco/1 {
     passenger_enabled {{ passenger_enabled }};
     passenger_app_root {{ passenger_app_root }};
     passenger_app_type wsgi;
