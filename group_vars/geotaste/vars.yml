@@ -45,4 +45,4 @@ passenger_startup_file: "wsgi.py"
 passenger_python: "{{ passenger_app_root }}/env/bin/python"
 # disable default static nginx block so we can customize
 # passenger_static_path: "{{ passenger_app_root }}/geotaste/static"
-passenger_nginx_site_template: "passenger.conf.j2"
+passenger_nginx_site_template: "geotaste.conf.j2"
