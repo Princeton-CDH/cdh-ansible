@@ -51,7 +51,7 @@ WARNING_BANNER_MESSAGE = "{{ warning_banner_message }}"
 PUBLIC_SITE_LANGUAGES = [
    "en",
    "he",
-#    "ar",
+   "ar",
 ]
 {% endblock %}
 
