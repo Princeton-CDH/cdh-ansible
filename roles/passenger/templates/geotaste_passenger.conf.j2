@@ -15,6 +15,11 @@ server {
   # increase upload size from nginx default of 1MB
   client_max_body_size 0;
 
+  # set landing page
+  root /srv/www/root/html;
+  index index.html;
+  expires -1;
+
   # Enable Gzip
   gzip  on;
   gzip_http_version 1.0;
