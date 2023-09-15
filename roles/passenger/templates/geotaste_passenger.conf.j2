@@ -51,6 +51,9 @@ server {
 
   {% block root %}
   location /sco/1 {
+    auth_basic "Restricted Content";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+
     passenger_enabled {{ passenger_enabled }};
     passenger_app_root {{ passenger_app_root }};
     passenger_app_type wsgi;
