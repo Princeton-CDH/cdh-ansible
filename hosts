@@ -39,6 +39,10 @@ cdhweb_prod
 [geotaste]
 cdh-dev-sandbox1.princeton.edu
 
+[simulatingrisk]
+cdh-dev-sandbox1.princeton.edu
+
+
 [shxco_qa]
 cdh-test-shxco1.princeton.edu
 [shxco_prod]
@@ -103,7 +107,7 @@ derrida_crawl_qa
 derrida_archive_qa
 prosody_qa
 geotaste
-
+simulatingrisk
 
 [dev]
 localhost

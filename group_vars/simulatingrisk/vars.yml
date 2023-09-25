@@ -1,0 +1,48 @@
+###
+# Variables for Simulating Risk that apply across all deploy groups (prod, qa, and staging)
+###
+
+# GitHub repository
+repo: 'Princeton-CDH/simulatingrisk'
+# name of python application
+django_app: simulatingrisk
+# application name
+app_name: simulatingrisk
+# apache symlink
+symlink: "{{ app_name }}"
+# apache location
+apache_app_path: "/var/www/{{ app_name }}"
+# wsgi file relative to apache location
+wsgi_path: "simulatingrisk.wsgi"
+# use python 3.9
+python_version: "3.9"
+# Override clone root to use deploy user home instead of root
+clone_root: "/home/{{ deploy_user }}/repos"
+# for simulatingrisk, don't differentiate qa/prod paths
+install_root: '/srv/www/{{ app_name }}'
+
+# override default production contexts (no code coverage for this project yet)
+deploy_contexts:
+    # - 'continuous-integration/travis-ci/push'
+    
+
+app_vars:
+  - name: FLASK_APP
+    value: 'simulatingrisk/app.py'
+
+
+# set QA to use staging for now
+# gitref: '{{ ref | default("main") }}'
+# no versioning within archive app, just call it 1.0
+version: '1.0'
+# configure where virtualenv should be created;
+# normally set by django role, but we don't use that
+python_app_path: "{{ deploy }}"
+
+passenger_app_root: "/var/www/{{ app_name }}"
+passenger_server_name: "sandbox.cdh.princeton.edu"
+passenger_startup_file: "wsgi.py"
+passenger_python: "{{ passenger_app_root }}/env/bin/python"
+# disable default static nginx block so we can customize
+# passenger_static_path: "{{ passenger_app_root }}/geotaste/static"
+passenger_nginx_site_template: "simulating_risk.conf.j2"
