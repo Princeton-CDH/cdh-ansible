@@ -3,7 +3,7 @@
 ###
 
 # GitHub repository
-repo: 'Princeton-CDH/simulatingrisk'
+repo: 'Princeton-CDH/simulating-risk'
 # name of python application
 django_app: simulatingrisk
 # application name
@@ -44,5 +44,5 @@ passenger_server_name: "sandbox.cdh.princeton.edu"
 passenger_startup_file: "wsgi.py"
 passenger_python: "{{ passenger_app_root }}/env/bin/python"
 # disable default static nginx block so we can customize
-# passenger_static_path: "{{ passenger_app_root }}/geotaste/static"
-passenger_nginx_site_template: "simulating_risk.conf.j2"
+# passenger_static_path: "{{ passenger_app_root }}/simulatingrisk/static"
+passenger_nginx_site_template: "simulatingrisk_proxy.conf.j2"
