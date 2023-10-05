@@ -1,2 +1,6 @@
 ---
 # vars file for roles/solr
+
+# default solr version
+# used to determine whether to run shard per node tasks (not in solr 9)
+solr_version: 8
