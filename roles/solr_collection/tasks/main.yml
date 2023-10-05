@@ -26,7 +26,9 @@
     # no shards per node in solr 9; only run if solr version is < 9
     - name: Check replication factor configuration
       fail: msg=" replication factor is greater than three; must specify shards per node > 1"
-      when: solr_version < 9 and num_shards * replication_factor > 3 and shards_per_node == 1
+      when:
+        - solr_version < 9
+        - num_shards * replication_factor > 3 and shards_per_node == 1
 
     - name: Update configset with zookeeper
       command: "/opt/solr/bin/solr zk -upconfig -d /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -n {{ solr_configset }} -z {{ zk_host }}"
@@ -52,20 +54,27 @@
       # get collection-specific portion of the collection status response
       set_fact:
         solr_collection_info: "{{ solr_collection_status.json[ solr_collection ]}}"
-      when: solr_collection in solr_collections_list.json.collections and solr_collection_status is defined
+      when:
+        - solr_collection in solr_collections_list.json.collections
+        - solr_collection_status is defined
 
     # NOTE: number of shards can't be changed via modify collection;
     # must use reindex; warning, this may be slow
     - name: Modify Solr collection number of shards if changed
       uri:
         url: "{{ solr_url }}admin/collections?action=REINDEXCOLLECTION&name={{ solr_collection }}&numShards={{ num_shards }}"
-      when: solr_version < 9 and solr_collection_info["activeShards"] != num_shards
+      when:
+        - solr_version < 9
+        - solr_collection_info["activeShards"] != num_shards
       # is it ok to use active shards total and ignore inactive?
 
     - name: Modify Solr collection shards per node if changed
       uri:
         url: "{{ solr_url }}admin/collections?action=MODIFYCOLLECTION&collection={{ solr_collection }}&maxShardsPerNode={{ shards_per_node }}"
-      when: solr_version < 9 and solr_collection_info["properties"]["maxShardsPerNode"] != shards_per_node
+      when:
+        - solr_version < 9
+        - solr_collection_info["properties"]["maxShardsPerNode"] is defined
+        - solr_collection_info["properties"]["maxShardsPerNode"] != shards_per_node
 
     - name: Modify Solr collection replication factor if changed
       uri:
