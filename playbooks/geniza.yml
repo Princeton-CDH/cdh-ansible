@@ -1,5 +1,5 @@
 ---
-- hosts: solr_prod
+- hosts: solr9_prod
   connection: ssh
   remote_user: pulsys
   vars:
