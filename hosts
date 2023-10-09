@@ -81,10 +81,14 @@ lib-solr-prod4.princeton.edu
 [solr9_staging]
 lib-solr-staging1.princeton.edu
 
+[solr9_prod]
+lib-solr-prod1.princeton.edu
+
 [solr:children]
 solr_staging
 solr9_staging
 solr_prod
+solr9_prod
 
 ### environment-based stanzas to create shared groups
 
