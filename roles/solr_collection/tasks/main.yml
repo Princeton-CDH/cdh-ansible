@@ -41,7 +41,7 @@
 
     - name: Create Solr collection if it does not already exist
       uri:
-        url: "{{ solr_url }}admin/collections?action=CREATE&name={{ solr_collection }}&collection.configName={{ solr_configset }}&numShards={{ num_shards }}&replicationFactor={{ replication_factor }}&maxShardsPerNode={{ shards_per_node }}"
+        url: "{{ solr_url }}admin/collections?action=CREATE&name={{ solr_collection }}&collection.configName={{ solr_configset }}&numShards={{ num_shards }}&replicationFactor={{ replication_factor }}"
       when: solr_collection not in solr_collections_list.json.collections
 
     - name: Check Solr collection status if it previously existed
@@ -65,6 +65,7 @@
         url: "{{ solr_url }}admin/collections?action=REINDEXCOLLECTION&name={{ solr_collection }}&numShards={{ num_shards }}"
       when:
         - solr_version < 9
+        - solr_collection_info is defined
         - solr_collection_info["activeShards"] != num_shards
       # is it ok to use active shards total and ignore inactive?
 
@@ -73,13 +74,16 @@
         url: "{{ solr_url }}admin/collections?action=MODIFYCOLLECTION&collection={{ solr_collection }}&maxShardsPerNode={{ shards_per_node }}"
       when:
         - solr_version < 9
+        - solr_collection_info is defined
         - solr_collection_info["properties"]["maxShardsPerNode"] is defined
         - solr_collection_info["properties"]["maxShardsPerNode"] != shards_per_node
 
     - name: Modify Solr collection replication factor if changed
       uri:
         url: "{{ solr_url }}admin/collections?action=MODIFYCOLLECTION&collection={{ solr_collection }}&replicationFactor={{ replication_factor }}"
-      when: solr_collection_info["properties"]["replicationFactor"] != replication_factor
+      when:
+        - solr_collection_info is defined
+        - solr_collection_info["properties"]["replicationFactor"] | int != replication_factor
 
     - name: Reload Solr collection if not newly created
       debug:
