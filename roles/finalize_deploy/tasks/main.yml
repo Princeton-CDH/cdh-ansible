@@ -9,6 +9,30 @@
   become: true
   become_user: "{{ deploy_user }}"
   block:
+    - name: Create "next" symlink for any final steps before switching live
+      file:
+        src: "{{ deploy }}"
+        dest: "{{ install_root }}/next"
+        state: link
+      tags:
+        - never
+        - final-pause
+
+    - name: pause before switching live
+      ansible.builtin.pause:
+        prompt: "Do any steps needed before the new version is live, e.g., reindexing. (CTRL-C when done)"
+      tags:
+        - never
+        - final-pause
+
+    - name: Remove "next" symlink
+      file:
+        dest: "{{ install_root }}/next"
+        state: absent
+      tags:
+        - never
+        - final-pause
+
     - name: Check for "current" symlink; if present, save path
       stat:
         path: "{{ install_root }}/current"

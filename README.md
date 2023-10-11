@@ -88,6 +88,21 @@ env ANSIBLE_SKIP_TAGS= ansible-playbook playbooks/name_of_playbook.yml
 Note that `--skip-tags=[]` doesn't work because the skip tags setting in
 `ansible.cfg` takes precedence over command line options.
 
+## Pause before finalizing deploy
+
+If you want to pause the playbook before the new version is switched live,
+there is an optional pause step you can enable using tags. When running normally and skipping setup tasks, run as follows:
+
+```{bash}
+ansible-playbook --tags=all,final-pause playbooks/playbook.yml
+```
+
+When running with setup steps enabled:
+
+```{bash}
+env ANSIBLE_SKIP_TAGS= ansible-playbook --tags=all,final-pause playbooks/playbook.yml
+```
+
 ## Revert last deploy
 
 To revert to previous deploy run call the `revert_deploy` playbook with a `host_group` matching the deploy you want to revert, e.g.:
