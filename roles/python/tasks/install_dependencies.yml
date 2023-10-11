@@ -26,7 +26,7 @@
     path: "{{ python_requirements_file }}"
   register: _requirements_file
 
-- name: Install python requirements
+- name: Install python dependencies from requirements.txt
   when: _requirements_file.stat.exists
   become: true
   become_user: "{{ python_user }}"
@@ -34,7 +34,23 @@
     virtualenv: "{{ python_venv_path }}"
     requirements: "{{ python_requirements_file }}"
 
-- name: Install additional python requirments
+- name: Check for pyproject.toml file
+  become: true
+  become_user: "{{ python_user }}"
+  ansible.builtin.stat:
+    path: "{{ pyproject_toml_file }}"
+  register: _pyproject_file
+
+- name: Install python dependencies from pyproject
+  when: _pyproject_file.stat.exists
+  become: true
+  become_user: "{{ python_user }}"
+  ansible.builtin.pip:
+    virtualenv: "{{ python_venv_path }}"
+    name: "."
+    chdir: "{{ python_app_path }}"
+
+- name: Install additional python requirements
   become: true
   become_user: "{{ python_user }}"
   ansible.builtin.pip:
