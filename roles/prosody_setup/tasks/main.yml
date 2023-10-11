@@ -29,3 +29,25 @@
     owner: "{{ webapp_user }}"
     group: "{{ webapp_user }}"
     recurse: true
+
+- name: Ensure the presence of cdh qa mount
+  tags: setup
+  ansible.posix.mount:
+    src: "{{ nfs_server_staging }}:/var/nfs/cdh"
+    path: "/mnt/nfs/cdh"
+    state: mounted
+    fstype: nfs
+    opts: rw,sync,hard
+  when:
+   - "'test' in inventory_hostname"
+  become: true
+
+- name: Ensure prosody data directory
+  tags: setup
+  ansible.builtin.file:
+    path: "{{ prosody_data_path }}"
+    state: directory
+    mode: "0775"
+    owner: "{{ webapp_user }}"
+    group: "{{ webapp_user }}"
+    recurse: true
