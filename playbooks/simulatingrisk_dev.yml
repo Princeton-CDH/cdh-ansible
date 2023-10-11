@@ -1,0 +1,18 @@
+- hosts: sandbox
+  vars_files:
+    - ../group_vars/sandbox/simrisk.yml
+  connection: ssh
+  remote_user: pulsys
+  become: true
+  roles:
+    - create_deployment
+    - deploy_user
+    - build_dependencies
+    - build_project_repo
+    - python
+    - geerlingguy.supervisor
+    # TODO: include a sandbox role somewhere?
+    - configure_logging
+    - finalize_deploy
+    - close_deployment
+    # TODO: trigger supervisor handler to restart after making new version live

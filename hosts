@@ -71,6 +71,9 @@ cdh-prosody1.princeton.edu
 prosody_qa
 prosody_prod
 
+[sandbox]
+cdh-dev-sandbox1.princeton.edu
+
 ### PUL solr servers
 
 [solr_staging]
