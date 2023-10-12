@@ -10,7 +10,9 @@
 
     - name: "Install nodejs from --channel={{ node_version }}/stable"
       become: true
-      tags: setup
+      tags:
+        - setup
+        - never
       community.general.snap:
         name: node
         classic: true

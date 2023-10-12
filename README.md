@@ -77,16 +77,13 @@ The playbook will run, noting success and failures. The `-v` flag adjusts verbos
 
 ### Skip setup tasks
 
-By default, initial provisioning and setup tasks are configured to be skipped.  Tasks or groups of tasks should be tagged as `setup`.
+By default, initial provisioning and setup tasks are configured to be skipped.  Tasks or groups of tasks should be tagged with both `setup` and `never`.
 
 To run playbook without skipping setup tasks, override the default skip tag configuration:
 
 ```{bash}
-env ANSIBLE_SKIP_TAGS= ansible-playbook playbooks/name_of_playbook.yml
+ansible-playbook --tags=all,setup playbooks/name_of_playbook.yml
 ```
-
-Note that `--skip-tags=[]` doesn't work because the skip tags setting in
-`ansible.cfg` takes precedence over command line options.
 
 ## Pause before finalizing deploy
 
@@ -100,7 +97,7 @@ ansible-playbook --tags=all,final-pause playbooks/playbook.yml
 When running with setup steps enabled:
 
 ```{bash}
-env ANSIBLE_SKIP_TAGS= ansible-playbook --tags=all,final-pause playbooks/playbook.yml
+ansible-playbook --tags=all,setup,final-pause playbooks/playbook.yml
 ```
 
 ## Revert last deploy

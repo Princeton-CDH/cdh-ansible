@@ -14,40 +14,52 @@
 
     # Passenger repository setup.
     - name: Add Passenger apt key.
-      tags: setup
+      tags:
+        - setup
+        - never
       ansible.builtin.apt_key:
         keyserver: keyserver.ubuntu.com
         id: 561F9B9CAC40B2F7
         state: present
 
     - name: Add apt HTTPS capabilities.
-      tags: setup
+      tags:
+        - setup
+        - never
       ansible.builtin.apt:
         name: apt-transport-https
         state: present
 
     - name: Add Phusion apt repo.
-      tags: setup
+      tags:
+        - setup
+        - never
       ansible.builtin.apt_repository:
         repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
         state: present
         # ignore_errors: true
 
     - name: Add key for Phusion apt repo
-      tags: setup
+      tags:
+        - setup
+        - never
       ansible.builtin.apt_key:
         keyserver: keyserver.ubuntu.com
         id: 561F9B9CAC40B2F7
 
     - name: Update our repositories
-      tags: setup
+      tags:
+        - setup
+        - never
       become: true
       ansible.builtin.apt:
         update_cache: true
 
     # Nginx and passenger installation.
     - name: Install Nginx and Passenger.
-      tags: setup
+      tags:
+        - setup
+        - never
       become: true
       ansible.builtin.apt:
         name: "{{ nginx_passenger_packages }}"
