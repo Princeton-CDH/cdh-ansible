@@ -6,9 +6,11 @@
 repo: 'Princeton-CDH/ppa-django'
 app_name: ppa
 # name of django application
-django_app: ppa
+python_app: "{{ app_name }}"
+django_app: "{{ app_name }}"
+
 # apache symlink
-symlink: ppa
+symlink: "{{ app_name }}"
 # wsgi file relative to deploy location
 wsgi_path: "{{ django_app }}/wsgi.py"
 # use python 3.9
@@ -66,8 +68,7 @@ solr_configset: cdh_ppa
 #     - "Python unit tests (3.6, 8.6, postgresql)"
 
 # default media root
-media_root: '/srv/www/media/'
-
+anag
 # app-specific system dependencies
 app_dependencies:
   - libmysqlclient-dev # for mysql installation during the migration

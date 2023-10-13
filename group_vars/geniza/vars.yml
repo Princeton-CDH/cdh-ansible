@@ -5,10 +5,12 @@
 # Paths are picky and spaces for any YAML multiline syntax causes issues
 # GitHub repository
 repo: "Princeton-CDH/geniza"
-# name of python application
-django_app: geniza
 # application name
 app_name: geniza
+# name of python application
+python_app: "{{ app_name }}"
+django_app: "{{ app_name }}"
+
 # symlink to current deploy in /var/www
 symlink: "{{ app_name }}"
 # wsgi file relative to apache location

@@ -71,6 +71,9 @@ cdh-prosody1.princeton.edu
 prosody_qa
 prosody_prod
 
+[sandbox]
+cdh-dev-sandbox1.princeton.edu
+
 ### PUL solr servers
 
 [solr_staging]
@@ -107,6 +110,7 @@ shxco_qa
 derrida_crawl_qa
 derrida_archive_qa
 prosody_qa
+sandbox
 
 [dev]
 localhost
