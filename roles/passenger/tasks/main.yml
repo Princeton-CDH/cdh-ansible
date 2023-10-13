@@ -66,8 +66,8 @@
         src: "{{ passenger_nginx_site_template }}"
         dest: /etc/nginx/sites-available/{{ passenger_site_config_name }}.conf
         mode: 0644
+      when: passenger_site_config_name
       notify:
-        - Stop apache2
         - Restart nginx
 
     - name: Ensure passenger virtual host is enabled.
@@ -75,6 +75,7 @@
         src: /etc/nginx/sites-available/{{ passenger_site_config_name }}.conf
         dest: /etc/nginx/sites-enabled/{{ passenger_site_config_name }}.conf
         state: link
+      when: passenger_site_config_name
 
     - name: Ensure default virtual host is removed.
       ansible.builtin.file:
@@ -83,5 +84,4 @@
         mode: 0644
       when: nginx_remove_default_vhost
       notify:
-        - Stop apache2
         - Restart nginx
