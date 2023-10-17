@@ -4,12 +4,16 @@
 
 - name: Ensure gnu gettext is installed
   become: true
-  tags: setup
+  tags:
+    - setup
+    - never
   ansible.builtin.apt:
     name: gettext
     state: present
 
 - name: Compile localized messages
+  become: true
+  become_user: "{{ django_user }}"
   community.general.django_manage:
     command: compilemessages
     app_path: "{{ django_app_path }}"

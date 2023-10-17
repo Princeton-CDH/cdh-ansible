@@ -10,7 +10,9 @@
 
 - name: install configured dependencies
   become: true
-  tags: setup
+  tags:
+    - setup
+    - never
   apt:
     name: "{{ common_dependencies + app_dependencies }}"
     state: present
@@ -20,7 +22,9 @@
 
 - name: configure tmux
   become: true
-  tags: setup
+  tags:
+    - setup
+    - never
   copy:
     src: "tmux.conf"
     dest: "/etc/tmux.conf"

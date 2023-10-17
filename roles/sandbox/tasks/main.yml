@@ -1,0 +1,33 @@
+---
+# tasks file for roles/sandbox
+- name: Setup sandbox html nginx site
+  tags:
+    - setup
+    - never
+  block:
+    - name: Make sure nginx and passenger are configured
+      ansible.builtin.include_role:
+        name: passenger
+      vars:
+        passenger_site_config_name: false  # don't create an app config file
+    - name: Copy index.html file to web root
+      ansible.builtin.copy:
+        src: files/index.html
+        dest: /var/www/html
+        mode: 0644
+    - name: Copy image referenced in index.html
+      ansible.builtin.copy:
+        src: files/cdh_logo_sand.png
+        dest: /var/www/html
+        mode: 0644
+    - name: Install sandbox nginx site config
+      ansible.builtin.copy:
+        src: files/sandbox_nginx_site.conf
+        dest: /etc/nginx/sites-available/sandbox.conf
+        mode: 0644
+    - name: Enable sandbox nginx config
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/sandbox.conf
+        dest: /etc/nginx/sites-enabled/sandbox.conf
+        state: link
+      notify: "Restart nginx"

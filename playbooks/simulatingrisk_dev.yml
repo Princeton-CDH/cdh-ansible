@@ -1,0 +1,23 @@
+- hosts: sandbox
+  vars_files:
+    - ../group_vars/sandbox/simrisk.yml
+  connection: ssh
+  remote_user: pulsys
+  become: true
+  roles:
+    - create_deployment
+    - deploy_user
+    - sandbox
+    - build_dependencies
+    - build_project_repo
+    - python
+    - geerlingguy.supervisor
+    - configure_logging
+    - finalize_deploy
+    - close_deployment
+  post_tasks:
+    # use a no-op to notify supervisor restart after new version is live
+    - name: restart supervisor
+      ansible.builtin.meta: noop
+      notify: restart supervisor
+

@@ -2,7 +2,9 @@
 # tasks file for deploy_user
 - name: Set up deploy user
   become: true
-  tags: setup
+  tags:
+    - setup
+    - never
   block:
     - name: Create deploy user group
       ansible.builtin.group:

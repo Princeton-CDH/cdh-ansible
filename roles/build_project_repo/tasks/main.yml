@@ -16,7 +16,9 @@
       when: ansible_distribution == 'Springdale'
 
     - name: Ensure deploy user has access to install root
-      tags: setup
+      tags:
+        - setup
+        - never
       become: true
       file:
         dest: "{{ install_root }}"
@@ -42,18 +44,20 @@
       become: true
       become_user: "{{ deploy_user }}"
       shell:
-        cmd: "python3 -c 'import {{ django_app }}; print({{ django_app }}.__version__)'"
+        cmd: "python3 -c 'import {{ python_app }}; print({{ python_app }}.__version__)'"
         chdir: "{{ clone_root}}/{{ repo }}"
       register: python_app_version
       tags:
-        - django
+        - python
       when:
-        - django_app is defined
+        - python_app is defined
       # must define version in vars if not using python app version
 
     - name: Create the deploy directory (to recursively create parent dirs if necessary)
       become: true
-      tags: setup
+      tags:
+        - setup
+        - never
       become_user: "{{ deploy_user }}"
       file:
         state: directory

@@ -14,5 +14,7 @@ allowed_hosts:
 # cdhweb production contexts required for deploy
 deploy_contexts:
     - 'Python unit tests'
-    - 'codecov/project'
-    - 'codecov/patch'
+    # - 'codecov/project'
+    # - 'codecov/patch'
+
+# 2023-08 disabled codecov deploy contexts because they were not present

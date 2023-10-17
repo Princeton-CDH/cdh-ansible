@@ -1,19 +1,16 @@
-- hosts: cdhweb_prod
+- hosts: cdhweb_qa
   connection: ssh
   remote_user: pulsys
   roles:
     - create_deployment
     - deploy_user
+    - build_dependencies
     - build_project_repo
-    - build_virtualenv
     - postgresql
-    - configure_logging
     - passenger
-    - install_local_settings
     - build_npm
-    - configure_media
-    - django_collectstatic
+    - configure_logging
+    - django
     - django_compressor
-    - django_migrate
     - finalize_deploy
     - close_deployment

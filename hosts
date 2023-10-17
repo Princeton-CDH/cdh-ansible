@@ -72,6 +72,9 @@ cdh-prosody1.princeton.edu
 prosody_qa
 prosody_prod
 
+[sandbox]
+cdh-dev-sandbox1.princeton.edu
+
 ### PUL solr servers
 
 [solr_staging]
@@ -79,9 +82,17 @@ lib-solr-staging4.princeton.edu
 [solr_prod]
 lib-solr-prod4.princeton.edu
 
+[solr9_staging]
+lib-solr-staging1.princeton.edu
+
+[solr9_prod]
+lib-solr-prod1.princeton.edu
+
 [solr:children]
 solr_staging
+solr9_staging
 solr_prod
+solr9_prod
 
 ### environment-based stanzas to create shared groups
 
@@ -100,6 +111,7 @@ shxco_qa
 derrida_crawl_qa
 derrida_archive_qa
 prosody_qa
+sandbox
 
 [dev]
 localhost
