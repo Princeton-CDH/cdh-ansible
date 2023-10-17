@@ -4,21 +4,27 @@
 
 - name: Make sure CA certificates are available
   become: true
-  tags: setup
+  tags:
+    - setup
+    - never
   ansible.builtin.apt:
     pkg: ca-certificates
     state: present
 
 - name: Add postgres repository apt-key
   become: true
-  tags: setup
+  tags:
+    - setup
+    - never
   ansible.builtin.apt_key:
     url: "{{ postgres_apt_key_url }}"
     state: present
 
 - name: Add postgres repository
   become: true
-  tags: setup
+  tags:
+    - setup
+    - never
   ansible.builtin.apt_repository:
     repo: "{{ postgres_apt_repository }}"
     update_cache: true
@@ -26,7 +32,9 @@
 
 - name: Install postgres client libraries
   become: true
-  tags: setup
+  tags:
+    - setup
+    - never
   ansible.builtin.apt:
     name: "{{ item }}"
     state: present
@@ -38,7 +46,9 @@
     - postgresql-client-{{ postgres_version }}
 
 - name: Ensure access to postgres server
-  tags: setup
+  tags:
+    - setup
+    - never
   become: true
   ansible.builtin.lineinfile:
     path: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
@@ -47,7 +57,9 @@
 
 - name: Reload remote postgres server
   become: true
-  tags: setup
+  tags:
+    - setup
+    - never
   ansible.builtin.service:
     name: postgresql
     state: reloaded
