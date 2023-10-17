@@ -79,7 +79,7 @@ The playbook will run, noting success and failures. The `-v` flag adjusts verbos
 
 By default, initial provisioning and setup tasks are configured to be skipped.  Tasks or groups of tasks should be tagged with both `setup` and `never`.
 
-To run playbook without skipping setup tasks, override the default skip tag configuration:
+To run playbook without skipping setup tasks, pass the `setup` and `all` tags, so untagged tasks and tasks tagged `setup` run:
 
 ```{bash}
 ansible-playbook --tags=all,setup playbooks/name_of_playbook.yml
