@@ -2,7 +2,9 @@
 # tasks specific to setting up prosody archive
 
 - name: Ensure HathiTrust pairtree directory exists and has correct permissions
-  tags: setup
+  tags:
+    - setup
+    - never
   ansible.builtin.file:
     path: "{{ hathitrust_pairtree_path }}"
     state: directory
@@ -21,7 +23,9 @@
   when: not marc_pairtree_root.stat.exists
 
 - name: Ensure MARC data dir has correct permissions
-  tags: setup
+  tags:
+    - setup
+    - never
   ansible.builtin.file:
     path: "{{ marc_data_path }}"
     state: directory
@@ -31,13 +35,17 @@
     recurse: true
 
 - name: Ensure the presense of nfs-common
-  tags: setup
+  tags:
+    - setup
+    - never
   ansible.builtin.apt:
     name: nfs-common
     state: present
 
 - name: Ensure the presence of cdh qa mount
-  tags: setup
+  tags:
+    - setup
+    - never
   ansible.posix.mount:
     src: "{{ nfs_server_staging }}:/var/nfs/cdh"
     path: "/mnt/nfs/cdh"
@@ -49,7 +57,9 @@
   become: true
 
 - name: Ensure prosody data directory
-  tags: setup
+  tags:
+    - setup
+    - never
   ansible.builtin.file:
     path: "{{ prosody_data_path }}"
     state: directory

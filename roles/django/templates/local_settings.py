@@ -138,7 +138,7 @@ LOGGING = {
 # Solr configuration (search index)
 # https://github.com/Princeton-CDH/parasolr
 {% block solr_config %}
-{% if solr_url is defined %}
+{% if solr_collection is defined %}
 SOLR_CONNECTIONS = {
     'default': {
         'URL': '{{ solr_url }}',

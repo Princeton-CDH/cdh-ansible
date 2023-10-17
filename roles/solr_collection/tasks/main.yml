@@ -1,7 +1,9 @@
 ---
 # tasks file for roles/solr_collection
 - name: Create the base directory for Solr configsets
-  tags: setup
+  tags:
+    - setup
+    - never
   file:
     path: "/solr/cdh_solr/"
     state: directory
@@ -23,9 +25,12 @@
       # systemd ssh restart does not reliably work (handler in deploy_user role);
       # if it fails, try restarting ssh manually on the application server
 
-    - name: Check number of shards & replication factor configuration
-      fail: msg="Number of shards x replication factor is greater than three; must specify shards per node > 1"
-      when: num_shards * replication_factor > 3 and shards_per_node == 1
+    # no shards per node in solr 9; only run if solr version is < 9
+    - name: Check replication factor configuration
+      fail: msg=" replication factor is greater than three; must specify shards per node > 1"
+      when:
+        - solr_version < 9
+        - num_shards * replication_factor > 3 and shards_per_node == 1
 
     - name: Update configset with zookeeper
       command: "/opt/solr/bin/solr zk -upconfig -d /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -n {{ solr_configset }} -z {{ zk_host }}"
@@ -38,7 +43,7 @@
 
     - name: Create Solr collection if it does not already exist
       uri:
-        url: "{{ solr_url }}admin/collections?action=CREATE&name={{ solr_collection }}&collection.configName={{ solr_configset }}&numShards={{ num_shards }}&replicationFactor={{ replication_factor }}&maxShardsPerNode={{ shards_per_node }}"
+        url: "{{ solr_url }}admin/collections?action=CREATE&name={{ solr_collection }}&collection.configName={{ solr_configset }}&numShards={{ num_shards }}&replicationFactor={{ replication_factor }}"
       when: solr_collection not in solr_collections_list.json.collections
 
     - name: Check Solr collection status if it previously existed
@@ -51,25 +56,36 @@
       # get collection-specific portion of the collection status response
       set_fact:
         solr_collection_info: "{{ solr_collection_status.json[ solr_collection ]}}"
-      when: solr_collection in solr_collections_list.json.collections and solr_collection_status is defined
+      when:
+        - solr_collection in solr_collections_list.json.collections
+        - solr_collection_status is defined
 
     # NOTE: number of shards can't be changed via modify collection;
     # must use reindex; warning, this may be slow
     - name: Modify Solr collection number of shards if changed
       uri:
         url: "{{ solr_url }}admin/collections?action=REINDEXCOLLECTION&name={{ solr_collection }}&numShards={{ num_shards }}"
-      when: solr_collection_info["activeShards"] != num_shards
+      when:
+        - solr_version < 9
+        - solr_collection_info is defined
+        - solr_collection_info["activeShards"] != num_shards
       # is it ok to use active shards total and ignore inactive?
 
     - name: Modify Solr collection shards per node if changed
       uri:
         url: "{{ solr_url }}admin/collections?action=MODIFYCOLLECTION&collection={{ solr_collection }}&maxShardsPerNode={{ shards_per_node }}"
-      when: solr_collection_info["properties"]["maxShardsPerNode"] != shards_per_node
+      when:
+        - solr_version < 9
+        - solr_collection_info is defined
+        - solr_collection_info["properties"]["maxShardsPerNode"] is defined
+        - solr_collection_info["properties"]["maxShardsPerNode"] != shards_per_node
 
     - name: Modify Solr collection replication factor if changed
       uri:
         url: "{{ solr_url }}admin/collections?action=MODIFYCOLLECTION&collection={{ solr_collection }}&replicationFactor={{ replication_factor }}"
-      when: solr_collection_info["properties"]["replicationFactor"] != replication_factor
+      when:
+        - solr_collection_info is defined
+        - solr_collection_info["properties"]["replicationFactor"] | int != replication_factor
 
     - name: Reload Solr collection if not newly created
       debug:

@@ -14,40 +14,52 @@
 
     # Passenger repository setup.
     - name: Add Passenger apt key.
-      tags: setup
+      tags:
+        - setup
+        - never
       ansible.builtin.apt_key:
         keyserver: keyserver.ubuntu.com
         id: 561F9B9CAC40B2F7
         state: present
 
     - name: Add apt HTTPS capabilities.
-      tags: setup
+      tags:
+        - setup
+        - never
       ansible.builtin.apt:
         name: apt-transport-https
         state: present
 
     - name: Add Phusion apt repo.
-      tags: setup
+      tags:
+        - setup
+        - never
       ansible.builtin.apt_repository:
         repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
         state: present
         # ignore_errors: true
 
     - name: Add key for Phusion apt repo
-      tags: setup
+      tags:
+        - setup
+        - never
       ansible.builtin.apt_key:
         keyserver: keyserver.ubuntu.com
         id: 561F9B9CAC40B2F7
 
     - name: Update our repositories
-      tags: setup
+      tags:
+        - setup
+        - never
       become: true
       ansible.builtin.apt:
         update_cache: true
 
     # Nginx and passenger installation.
     - name: Install Nginx and Passenger.
-      tags: setup
+      tags:
+        - setup
+        - never
       become: true
       ansible.builtin.apt:
         name: "{{ nginx_passenger_packages }}"
@@ -66,8 +78,8 @@
         src: "{{ passenger_nginx_site_template }}"
         dest: /etc/nginx/sites-available/{{ passenger_site_config_name }}.conf
         mode: 0644
+      when: passenger_site_config_name
       notify:
-        - Stop apache2
         - Restart nginx
 
     - name: Ensure passenger virtual host is enabled.
@@ -75,6 +87,7 @@
         src: /etc/nginx/sites-available/{{ passenger_site_config_name }}.conf
         dest: /etc/nginx/sites-enabled/{{ passenger_site_config_name }}.conf
         state: link
+      when: passenger_site_config_name
 
     - name: Ensure default virtual host is removed.
       ansible.builtin.file:
@@ -83,5 +96,4 @@
         mode: 0644
       when: nginx_remove_default_vhost
       notify:
-        - Stop apache2
         - Restart nginx

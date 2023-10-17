@@ -8,13 +8,15 @@
 - name: npm configuration tasks
   block:
 
-    - name: Ensure nodejs is installed
+    - name: "Install nodejs from --channel={{ node_version }}/stable"
       become: true
-      tags: setup
+      tags:
+        - setup
+        - never
       community.general.snap:
         name: node
         classic: true
-        channel: "{{ node_version }}"
+        channel: "{{ node_version }}/stable"
         state: present
       when: ansible_distribution == "Ubuntu"
 

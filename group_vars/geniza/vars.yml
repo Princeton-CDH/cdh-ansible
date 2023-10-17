@@ -5,10 +5,12 @@
 # Paths are picky and spaces for any YAML multiline syntax causes issues
 # GitHub repository
 repo: "Princeton-CDH/geniza"
-# name of python application
-django_app: geniza
 # application name
 app_name: geniza
+# name of python application
+python_app: "{{ app_name }}"
+django_app: "{{ app_name }}"
+
 # symlink to current deploy in /var/www
 symlink: "{{ app_name }}"
 # wsgi file relative to apache location
@@ -66,7 +68,8 @@ replication_source_host: geniza_prod
 # keep the warning banner off by default
 show_warning_banner: false
 
-geniza_deploy_only: "{{ lookup('env', 'GENIZA_DEPLOY_ONLY', default=Undefined) }}"
+# variable needed to determine if cdh vaulted variables can be loaded
+geniza_deploy_only: "{{ lookup('ansible.builtin.env', 'GENIZA_DEPLOY_ONLY')| default(false) }}"
 
 # Redirect old links from PGPv3
 # specify server name to ensure https instead of http

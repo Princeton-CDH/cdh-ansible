@@ -6,8 +6,10 @@
 # the vault key is not available.
 
 - name: Load vaulted setup variables if appropriate
-  tags: setup
+  tags:
+    - setup
+    - never
   ansible.builtin.include_vars:
     file: vars/vault.yml
-  when: geniza_deploy_only is undefined or geniza_deploy_only == ""
+  when: geniza_deploy_only is not defined or geniza_deploy_only == ""
 
