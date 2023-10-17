@@ -12,6 +12,11 @@ zk_host: "lib-zk-staging1:2181,lib-zk-staging2:2181,lib-zk-staging3:2181/solr8"
 solr_url: "http://lib-solr8-staging.princeton.edu:8983/solr/"
 solr_server: "{{ groups['solr_staging'][0] }}"
 
+# set passenger defaults for production; override for other environments
+passenger_app_root: "/var/www/{{ app_name }}"
+passenger_server_name: "shakespeareandco.princeton.edu"
+passenger_startup_file: "{{ app_name }}/wsgi.py"
+passenger_python: "{{ passenger_app_root }}/env/bin/python"
 
 # configure scripts to run as cron jobs
 crontab:
