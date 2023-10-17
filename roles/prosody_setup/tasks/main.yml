@@ -2,7 +2,9 @@
 # tasks specific to setting up prosody archive
 
 - name: Ensure HathiTrust pairtree directory exists and has correct permissions
-  tags: setup
+  tags:
+    - setup
+    - never
   ansible.builtin.file:
     path: "{{ hathitrust_pairtree_path }}"
     state: directory
@@ -21,7 +23,9 @@
   when: not marc_pairtree_root.stat.exists
 
 - name: Ensure MARC data dir has correct permissions
-  tags: setup
+  tags:
+    - setup
+    - never
   ansible.builtin.file:
     path: "{{ marc_data_path }}"
     state: directory
