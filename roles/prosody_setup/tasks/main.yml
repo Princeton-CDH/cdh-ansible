@@ -53,7 +53,7 @@
     fstype: nfs
     opts: rw,sync,hard
   when:
-   - "'test' in inventory_hostname"
+   - qa is defined
   become: true
 
 - name: Ensure prosody data directory
