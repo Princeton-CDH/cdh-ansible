@@ -3,5 +3,17 @@
   connection: ssh
   remote_user: pulsys
   become: true
-  roles:
-    - postgresql
+  tasks:
+    - name: Run postgresql setup tasks (ensure access, create db and user)
+      ansible.builtin.include_role:
+        name: postgresql
+      tags: setup
+    - name: Get version for currently deployed python application
+      ansible.builtin.include_role:
+        name: build_project_repo
+        tasks_from: deploy_path_variables.yml
+    - name: Update django local settings
+      ansible.builtin.include_role:
+        name: django
+        tasks_from: install_local_settings.yml
+
