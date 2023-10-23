@@ -1,5 +1,16 @@
----
-- hosts: geniza_qa, cdhweb_qa, prosody_qa
+# Run database setup and update application local settings.
+# The application must already be deployed.
+#
+# Use this playbook for database migrations to do database setup
+# (create new database and db user, ensure app server has access),
+# and then update the local settings to reference the new database.
+#
+# To run with a single host or host group:
+#
+#    ansible-playbook playbooks/db_setup.yml --limit=cdhweb_qa
+#    ansible-playbook playbooks/db_setup.yml --limit=qa
+#
+- hosts: geniza_qa, cdhweb_qa, prosody_qa, shxco_qa
   connection: ssh
   remote_user: pulsys
   become: true
