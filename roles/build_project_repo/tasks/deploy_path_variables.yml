@@ -1,0 +1,30 @@
+# populate variables needed to determine path for current deploy
+# - python application/package version
+# - git info for current hash
+
+- name: Get repository info for current deploy
+  become: true
+  become_user: "{{ deploy_user }}"
+  git:
+    repo: "{{ repo_url }}/"
+    dest: "{{ clone_root }}/{{ repo }}"
+    # don't update
+    clone: no
+    update: no
+  # register repo_info for group_vars
+  register: repo_info
+  when:
+    - repo_info is not defined
+
+- name: Get the version for the python package/app being deployed
+  become: true
+  become_user: "{{ deploy_user }}"
+  shell:
+    cmd: "python3 -c 'import {{ python_app }}; print({{ python_app }}.__version__)'"
+    chdir: "{{ clone_root}}/{{ repo }}"
+  register: python_app_version
+  tags:
+    - python
+  when:
+    - python_app is defined
+  # must define version in vars if not using python app version

@@ -40,18 +40,8 @@
       # register repo_info for group_vars
       register: repo_info
 
-    - name: Get python package version
-      become: true
-      become_user: "{{ deploy_user }}"
-      shell:
-        cmd: "python3 -c 'import {{ python_app }}; print({{ python_app }}.__version__)'"
-        chdir: "{{ clone_root}}/{{ repo }}"
-      register: python_app_version
-      tags:
-        - python
-      when:
-        - python_app is defined
-      # must define version in vars if not using python app version
+    - name: Get python package version for deploy path
+      ansible.builtin.import_tasks: deploy_path_variables.yml
 
     - name: Create the deploy directory (to recursively create parent dirs if necessary)
       become: true
