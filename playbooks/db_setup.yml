@@ -1,0 +1,7 @@
+---
+- hosts: geniza_qa, cdhweb_qa, prosody_qa
+  connection: ssh
+  remote_user: pulsys
+  become: true
+  roles:
+    - postgresql
