@@ -15,6 +15,20 @@
         verbosity: 2
       when: ansible_distribution == 'Springdale'
 
+    - name: Get git repository info for version being deployed
+      ansible.builtin.git:
+        repo: "{{ repo_url }}"
+        # don't update or checkout
+        clone: no
+        update: no
+      # register repo_info for group_vars
+      register: repo_info
+
+    - name: Store short git hash
+      # 'after' is most recent git commit hash; grab first few characters
+      ansible.builtin.set_fact:
+        git_hash: "{{ repo_info.after[0:6] }}"
+
     - name: Ensure deploy user has access to install root
       tags:
         - setup
@@ -34,11 +48,9 @@
       become: true
       become_user: "{{ deploy_user }}"
       git:
-        repo: "{{ repo_url }}/"
+        repo: "{{ repo_url }}"
         dest: "{{ clone_root }}/{{ repo }}"
         version: "{{ gitref }}"
-      # register repo_info for group_vars
-      register: repo_info
 
     - name: Get the version for the python package/app being deployed
       become: true
@@ -49,6 +61,12 @@
       register: python_app_version
       tags:
         - python
+      when:
+        - python_app is defined
+
+    - name: Set python app version as a fact
+      ansible.builtin.set_fact:
+        app_version: "{{ python_app_version.stdout }}"
       when:
         - python_app is defined
 

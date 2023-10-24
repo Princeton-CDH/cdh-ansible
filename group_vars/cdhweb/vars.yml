@@ -40,7 +40,7 @@ application_db_host: "{{ postgres_host }}"
 django_local_settings_template: "cdhweb_settings.py"
 
 # Database backup location — revert to default, with timestamp but not app version
-# db_backup_path: "/home/{{ deploy_user }}/backups/pre-{{ version }}-{{ short_hash }}.sql"
+# db_backup_path: "/home/{{ deploy_user }}/backups/pre-{{ version }}-{{ git_hash }}.sql"
 # app-specific system dependencies
 app_dependencies:
   - python-opencv  # for wagtail image feature detection

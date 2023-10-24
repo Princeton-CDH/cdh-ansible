@@ -48,12 +48,10 @@ install_root: '/srv/www/{{ app_name }}'
 
 # Clone root (where deploy user clones repo)
 clone_root: "/home/{{ deploy_user }}/repos"
-# short hash for Git reference
-short_hash: '{{ repo_info.after[0:6] }}'
-# Path of the deploy directory. Generated from vars above and build_project_repo
-deploy: '{{ install_root }}/{{ version }}-{{ short_hash }}'
 # python app version. Generated in build_project_repo
-version: '{{ python_app_version.stdout }}'
+version: '{{ app_version }}'
+# Path of the deploy directory. Generated from vars above and build_project_repo
+deploy: '{{ install_root }}/{{ version }}-{{ git_hash }}'
 # logging directory
 logging_dir: '{{ install_root }}/logs'
 # logging file
@@ -76,7 +74,7 @@ python_path: '/opt/rh/rh-nodejs6/root/usr/lib/python2.7/site-packages{% if ansib
 # currently default for most projects is 3.5
 python_version: "python3.5"
 # set python virtualenv prompt based on application & version (used by python role only)
-python_venv_prompt: "{{ app_name }}-{{ version }}-{{ short_hash }}"
+python_venv_prompt: "{{ app_name }}-{{ version }}-{{ git_hash }}"
 
 # custom hook for requirements, allows for override to use lock or txt
 requirements_type: 'txt'
@@ -96,7 +94,7 @@ postgres_host: lib-postgres-prod1.princeton.edu
 postgres_admin_user: postgres
 
 # location for snapshot db backup when deploying
-# db_backup_path: "/home/{{ deploy_user }}/backups/pre-{{ version }}-{{ short_hash }}.sql"
+# db_backup_path: "/home/{{ deploy_user }}/backups/pre-{{ version }}-{{ git_hash }}.sql"
 
 # configure python role
 python_user: "{{ deploy_user }}"
