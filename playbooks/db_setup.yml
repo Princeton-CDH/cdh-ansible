@@ -5,16 +5,20 @@
 # (create new database and db user, ensure app server has access),
 # and then update the local settings to reference the new database.
 #
-# To run with a single host or host group:
+# For proper behavior, you MUST specify setup and app_config tags
+# and skip db_backup:
 #
-#    ansible-playbook playbooks/db_setup.yml --limit=cdhweb_qa
-#    ansible-playbook playbooks/db_setup.yml --limit=qa
+#    ansible-playbook playbooks/db_setup.yml -t setup,app_config --skip-tags db_backup
+#
+# Use the --limit option to run on a single host or host group.
 #
 - hosts: geniza_qa, cdhweb_qa, prosody_qa, shxco_qa
   connection: ssh
   remote_user: pulsys
   become: true
   vars:
+    # update currently deployed config,
+    # instead of getting path from app version and git hash
     deploy: "{{ install_root }}/current"
   tasks:
     - name: Run postgresql setup tasks (ensure access, create db and user)
@@ -22,7 +26,8 @@
         name: postgresql
       tags: setup
     - name: Update django local settings
-      ansible.builtin.include_role:
+      # need to use import to get variables and path for template
+      # use app_config tag to only run local settings task
+      ansible.builtin.import_role:
         name: django
-        tasks_from: install_local_settings.yml
 
