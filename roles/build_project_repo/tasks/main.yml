@@ -51,8 +51,6 @@
         - python
       when:
         - python_app is defined
-    # - name: Get python package version for deploy path
-    #   ansible.builtin.import_tasks: deploy_path_variables.yml
 
     - name: Create the deploy directory (to recursively create parent dirs if necessary)
       become: true
