@@ -12,7 +12,7 @@
 #
 # Use the --limit option to run on a single host or host group.
 #
-- hosts: geniza_qa, cdhweb_qa, prosody_qa, shxco_qa
+- hosts: geniza_qa, cdhweb_qa, prosody_qa, shxco_qa, geniza_prod, cdhweb_prod, prosody_prod, shxco_prod
   connection: ssh
   remote_user: pulsys
   become: true
