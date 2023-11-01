@@ -8,7 +8,7 @@
 # For proper behavior, you MUST specify setup and app_config tags
 # and skip db_backup:
 #
-#    ansible-playbook playbooks/db_setup.yml -t setup,app_config --skip-tags db_backup
+#    ansible-playbook playbooks/db_setup.yml -t setup,app_config
 #
 # Use the --limit option to run on a single host or host group.
 #
