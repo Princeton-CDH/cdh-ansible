@@ -74,6 +74,10 @@ prosody_prod
 [sandbox]
 cdh-dev-sandbox1.princeton.edu
 
+# must be configured in ssh config with bastion proxy command
+[simrisk]
+simrisk
+
 ### PUL solr servers
 
 [solr_staging]
@@ -111,6 +115,7 @@ derrida_crawl_qa
 derrida_archive_qa
 prosody_qa
 sandbox
+simrisk
 
 [dev]
 localhost
