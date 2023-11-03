@@ -40,7 +40,7 @@
       # register repo_info for group_vars
       register: repo_info
 
-    - name: Get python package version
+    - name: Get the version for the python package/app being deployed
       become: true
       become_user: "{{ deploy_user }}"
       shell:
@@ -51,7 +51,6 @@
         - python
       when:
         - python_app is defined
-      # must define version in vars if not using python app version
 
     - name: Create the deploy directory (to recursively create parent dirs if necessary)
       become: true
