@@ -42,7 +42,9 @@
   register: _pyproject_file
 
 - name: Install python dependencies from pyproject
-  when: _pyproject_file.stat.exists
+  when:
+    - not _requirements_file.stat.exists
+    - _pyproject_file.stat.exists
   become: true
   become_user: "{{ python_user }}"
   ansible.builtin.pip:
