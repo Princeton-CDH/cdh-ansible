@@ -14,13 +14,15 @@ gitref: '{{ ref | default("main") }}'
 
 # use python 3.9
 python_version: "3.9"
-# for simulatingrisk, don't differentiate qa/prod paths
+# where to install the application code
 install_root: '/srv/www/{{ app_name }}'
 
+
 # configure to run via supervisor
+# runs at a non top-level path when on the sandbox
 supervisor_programs:
   - name: 'simulatingrisk'
-    command: "{{ install_root }}/current/env/bin/solara run --host 0.0.0.0 --port 8765 --root-path /{{ app_name }} {{ install_root }}/current/simulatingrisk/app.py"
+    command: "{{ install_root }}/current/env/bin/solara run --host 0.0.0.0 --port 8765 {% if inventory_hostname in groups['sandbox'] %}--root-path /{{ app_name }}{% endif %} {{ install_root }}/current/simulatingrisk/app.py"
     state: present
     configuration: |
       directory={{ install_root }}/current
