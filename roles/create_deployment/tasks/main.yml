@@ -4,22 +4,24 @@
 # a success.
 ###
 - name: Create a GitHub deployment
+  tags:
+    - gh_deploy
   block:
     - name: Check for GitHub token, and fail if not present
       fail:
-          msg: "Pass a GitHub API token to -e github_token or set in environment as ANSIBLE_GITHUB_TOKEN"
+        msg: "Pass a GitHub API token to -e github_token or set in environment as ANSIBLE_GITHUB_TOKEN"
       when: github_token == ""
     - name: Create a deployment
       uri:
-        url: '{{ deployments_endpoint }}'
+        url: "{{ deployments_endpoint }}"
         body_format: json
         method: POST
         status_code: 201
         body:
-          ref: '{{ gitref }}'
-          environment: '{{ deploy_environment }}'
-          description: '{{ deploy_description }}'
-          required_contexts: '{{ deploy_contexts }}'
+          ref: "{{ gitref }}"
+          environment: "{{ deploy_environment }}"
+          description: "{{ deploy_description }}"
+          required_contexts: "{{ deploy_contexts }}"
           auto_merge: false
         headers:
           Authorization: "token {{ github_token }}"
@@ -27,7 +29,7 @@
       register: deployment
     - name: Set status to in progress
       uri:
-        url: '{{ deployment.json.url }}/statuses'
+        url: "{{ deployment.json.url }}/statuses"
         body_format: json
         method: POST
         status_code: 201
