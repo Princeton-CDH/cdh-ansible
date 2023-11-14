@@ -7,6 +7,8 @@
   block:
   - name: Install local settings
     ansible.builtin.import_tasks: install_local_settings.yml
+    tags:
+    - app_config
   - name: Run django migrations
     ansible.builtin.import_tasks: migrate.yml
   - name: Run collect static
