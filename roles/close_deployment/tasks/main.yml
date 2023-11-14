@@ -2,17 +2,19 @@
 # Closes a successful GitHub deployment, depends on deployment variable
 # registered by create_deployment task
 ###
-- block:
-  - name: Close GitHub deployment as a success.
-    uri:
-      url: '{{ deployment.json.url }}/statuses'
-      body_format: json
-      method: POST
-      status_code: 201
-      body:
-          state: "success"
-          description: "Deployment succeeded"
-      headers:
-          Authorization: "token {{ github_token }}"
-    when: deploy_environment != "staging"
-    # no rescue because if this fails, closing an errored deploy will too!
+
+- name: Close GitHub deployment as a success.
+  tags:
+    - gh_deploy
+  uri:
+    url: "{{ deployment.json.url }}/statuses"
+    body_format: json
+    method: POST
+    status_code: 201
+    body:
+      state: "success"
+      description: "Deployment succeeded"
+    headers:
+      Authorization: "token {{ github_token }}"
+  when: deploy_environment != "staging"
+  # no rescue because if this fails, closing an errored deploy will too!
