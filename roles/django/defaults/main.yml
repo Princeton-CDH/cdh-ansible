@@ -34,3 +34,4 @@ django_csp_enforce_uri: http://example.com/
 # media root owner
 media_user: "www-data"
 media_group: "{{ media_user }}"
+media_root: "/var/www/media/"
