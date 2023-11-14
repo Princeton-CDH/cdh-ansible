@@ -34,9 +34,10 @@
     group: "{{ webapp_user }}"
     recurse: true
 
-- name: Ensure the presense of nfs-common
+- name: Ensure the presence of nfs-common
   tags:
     - setup
+    - nfs
     - never
   ansible.builtin.apt:
     name: nfs-common
@@ -45,6 +46,7 @@
 - name: Ensure the presence of cdh qa mount
   tags:
     - setup
+    - nfs
     - never
   ansible.posix.mount:
     src: "{{ nfs_server_staging }}:/var/nfs/cdh"
@@ -53,12 +55,13 @@
     fstype: nfs
     opts: rw,sync,hard
   when:
-   - qa is defined
+    - qa is defined
   become: true
 
 - name: Ensure prosody data directory
   tags:
     - setup
+    - nfs
     - never
   ansible.builtin.file:
     path: "{{ prosody_data_path }}"
@@ -67,3 +70,4 @@
     owner: "{{ webapp_user }}"
     group: "{{ webapp_user }}"
     recurse: true
+  become: true
