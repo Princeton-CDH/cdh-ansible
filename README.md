@@ -19,9 +19,9 @@ The overall structure of this repository can be broken down as follows:
 
 ### Requirements
   - Python virtual environment.
-    - See `.python-version` for the recommended version of Python.
+    - See `.python-version` for the recommended version of Python; we recommend [pyenv](https://github.com/pyenv/pyenv) for managing python versions.
     - If you use `env` or `venv`, the `.gitignore` will exclude it.
-    - Install python dependencies: `pip install -r requiremetns.txt`
+    - Install python dependencies: `pip install -r requirements.txt`
 
   -  Install required Ansible galaxy collections and roles:
       - `ansible-galaxy install -r requirements.yml`
