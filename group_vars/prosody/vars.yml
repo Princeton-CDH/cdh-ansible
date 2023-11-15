@@ -3,7 +3,7 @@
 ###
 
 # Github repository
-repo: 'Princeton-CDH/ppa-django'
+repo: "Princeton-CDH/ppa-django"
 app_name: ppa
 # name of django application
 python_app: "{{ app_name }}"
@@ -32,7 +32,6 @@ passenger_server_name: "prosody.princeton.edu"
 passenger_startup_file: "{{ app_name }}/wsgi.py"
 passenger_python: "{{ passenger_app_root }}/env/bin/python"
 
-
 # base data dir — easier if NOT under conan home directory
 data_path: "/srv/www/data"
 # path to hathitree pairtree data
@@ -43,7 +42,6 @@ marc_data_path: "{{ data_path }}/marc/"
 technical_contact: cdhdevteam@princeton.edu
 # flag that csp is enabled
 csp_enabled: true
-
 
 # django database backend
 db_backend: "postgresql"
@@ -56,7 +54,7 @@ application_db_name: cdh_ppa
 application_db_host: "{{ postgres_host }}"
 
 # app-specific local settings
-django_local_settings_template: "prosody_settings.py"
+django_local_settings_template: "prosody_settings.py.j2"
 
 # - solr settings
 solr_collection: cdh_ppa
@@ -70,4 +68,3 @@ solr_configset: cdh_ppa
 # app-specific system dependencies
 app_dependencies:
   - libmysqlclient-dev # for mysql installation during the migration
-
