@@ -9,6 +9,9 @@
 # Ansible files
 *.retry
 
+# ignore roles installed from ansible galaxy
+roles/geerlingguy.supervisor
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
