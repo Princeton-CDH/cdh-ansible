@@ -34,15 +34,6 @@
     group: "{{ webapp_user }}"
     recurse: true
 
-- name: Ensure the presence of nfs-common
-  tags:
-    - setup
-    - nfs
-    - never
-  ansible.builtin.apt:
-    name: nfs-common
-    state: present
-
 - name: Ensure the presence of cdh qa mount
   tags:
     - setup
