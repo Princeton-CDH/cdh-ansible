@@ -5,15 +5,16 @@ common_dependencies:
   - build-essential
   - curl
   - git
-  - unzip
-  - zip
+  - libssl-dev
+  - nfs-common
+  - python3
   - python3-pip
   - python3-setuptools
-  - libssl-dev
+  - snapd
+  - unzip
+  - zip
   - wget
   - tmux
  # - python-virtualenv
-  - python3
-  - snapd
 # app-specific dependencies: override to install
 app_dependencies: []
