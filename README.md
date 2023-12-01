@@ -70,9 +70,12 @@ To run playbook without skipping setup tasks, pass the `setup` and `all` tags, s
 ```{bash}
 ansible-playbook --tags=all,setup playbooks/name_of_playbook.yml
 ```
+
 ### Skip deployment tasks
 
-After provisioning and setup, the playbook deploys code through GitHub. You must use a token to authenticate to the GitHub API for the tasks that kick off and then close the deploy. These tasks are tagged with `gh_deploy`. If you want to run a playbook without deploying code, pass `--skip-tags gh_deploy`.
+By default, most playbooks create a [GitHub deployment](https://docs.github.com/en/rest/deployments/deployments?apiVersion=2022-11-28), which is used to track which version of the code is deployed to which environment. Through Slack/GitHub integration, GitHub deployments can be used to notify team members when a deploy is taking place and whether or not it succeeds or fails.  (This can be very noisy when working on or troubleshooting a deploy.)
+
+The tasks for creating and closing the GitHub deployment are tagged with `gh_deploy`. If you want to run a playbook without deploying code, pass `--skip-tags gh_deploy`.
 
 ## Pause before finalizing deploy
 
