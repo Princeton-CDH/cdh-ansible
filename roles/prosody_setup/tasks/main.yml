@@ -33,6 +33,9 @@
     owner: "{{ webapp_user }}"
     group: "{{ webapp_user }}"
     recurse: true
+  # skip run on bionic machine because user/owner is not working properly
+  # with old nfs
+  # when:  "{{ ansible_distribution_version != '18.04' }}"
 
 - name: Ensure the presence of cdh qa mount
   tags:
@@ -62,3 +65,7 @@
     group: "{{ webapp_user }}"
     recurse: true
   become: true
+  # skip run on bionic machine because user/owner is not working properly
+  # with old nfs
+  when: ansible_distribution_version != '18.04'
+
