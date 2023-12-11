@@ -19,9 +19,9 @@ The overall structure of this repository can be broken down as follows:
 
 ### Requirements
   - Python virtual environment.
-    - See `.python-version` for the recommended version of Python.
+    - See `.python-version` for the recommended version of Python; we recommend [pyenv](https://github.com/pyenv/pyenv) for managing python versions.
     - If you use `env` or `venv`, the `.gitignore` will exclude it.
-    - Install python dependencies: `pip install -r requiremetns.txt`
+    - Install python dependencies: `pip install -r requirements.txt`
 
   -  Install required Ansible galaxy collections and roles:
       - `ansible-galaxy install -r requirements.yml`
@@ -70,6 +70,12 @@ To run playbook without skipping setup tasks, pass the `setup` and `all` tags, s
 ```{bash}
 ansible-playbook --tags=all,setup playbooks/name_of_playbook.yml
 ```
+
+### Skip deployment tasks
+
+By default, most playbooks create a [GitHub deployment](https://docs.github.com/en/rest/deployments/deployments?apiVersion=2022-11-28), which is used to track which version of the code is deployed to which environment. Through Slack/GitHub integration, GitHub deployments can be used to notify team members when a deploy is taking place and whether or not it succeeds or fails.  (This can be very noisy when working on or troubleshooting a deploy.)
+
+The tasks for creating and closing the GitHub deployment are tagged with `gh_deploy`. If you want to run a playbook without deploying code, pass `--skip-tags gh_deploy`.
 
 ## Pause before finalizing deploy
 

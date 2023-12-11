@@ -55,7 +55,7 @@ application_db_name: cdh_ppa
 application_db_host: "{{ postgres_host }}"
 
 # app-specific local settings
-django_local_settings_template: "prosody_settings.py"
+django_local_settings_template: "prosody_settings.py.j2"
 
 # - solr settings
 solr_collection: cdh_ppa
