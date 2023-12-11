@@ -2,7 +2,7 @@
 # Common variables for Shakespeare & Company Project django application
 ###
 # Github repository
-repo: 'Princeton-CDH/mep-django'
+repo: "Princeton-CDH/mep-django"
 # application name
 app_name: mep
 # name of django application
@@ -30,10 +30,10 @@ apache_conf_name: "shakespeareandco"
 deploy_user: "conan"
 
 # geonames and mapbox usernames, map-related configs
-geonames_username: '{{ vault_geonames_username }}'
-mapbox_token: '{{ vault_mapbox_token }}'
-mapbox_basemap: 'light-v10'
-paris_overlay: 'https://tiles.arcgis.com/tiles/4Ko8f1mCWFLyY4NV/arcgis/rest/services/Paris_1943/MapServer'
+geonames_username: "{{ vault_geonames_username }}"
+mapbox_token: "{{ vault_mapbox_token }}"
+mapbox_basemap: "light-v10"
+paris_overlay: "https://tiles.arcgis.com/tiles/4Ko8f1mCWFLyY4NV/arcgis/rest/services/Paris_1943/MapServer"
 
 # django database backend
 db_backend: "postgresql"
@@ -46,7 +46,7 @@ application_db_name: cdh_shxco
 application_db_host: "{{ postgres_host }}"
 
 # app-specific local settings
-django_local_settings_template: "shxco_settings.py"
+django_local_settings_template: "shxco_settings.py.j2"
 
 # - solr settings
 solr_collection: cdh_shxco
@@ -58,13 +58,13 @@ solr_configset: cdh_shxco
 #     - "Python unit tests (3.6, 8.6, postgresql)"
 
 # default media root
-media_root: '/srv/www/media/'
+media_root: "/srv/www/media/"
 
 technical_contact: cdhdevteam@princeton.edu
 
 # app-specific system dependencies
 app_dependencies:
-  - at  # for 100 years twitter bot scheduled tweets
+  - at # for 100 years twitter bot scheduled tweets
   - libmysqlclient-dev # for mysql installation during the migration
 
 # 2to3 support needed for installing rdflib-jsonld

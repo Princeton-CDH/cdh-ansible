@@ -25,7 +25,7 @@ clone_root: "/home/{{ deploy_user }}/repos"
 # for Geniza, we don't distinguish between qa/prod paths
 install_root: "/srv/www/{{ app_name }}"
 # geniza local settings have a slightly different path
-django_local_settings_dest: "{{ deploy }}/{{ django_app }}/settings/local_settings.py"
+django_local_settings_dest: "{{ deploy }}/{{ django_app }}/settings/local_settings.py.j2"
 # configure app-specific local settings
 django_local_settings_template: "geniza_settings.py"
 # uploaded media directory; must end with trailing slash for nginx
@@ -107,11 +107,11 @@ font_require_referrer:
   - geniza.cdh.princeton.edu
   - geniza.princeton.edu
   - test-geniza.cdh.princeton.edu
-  - "*.percy.io"   # for visual testing
+  - "*.percy.io" # for visual testing
 
 # override webpack build command
-webpack_build_qa: 'build'
-webpack_build_prod: 'build'
+webpack_build_qa: "build"
+webpack_build_prod: "build"
 
 # solr settings
 solr_collection: geniza
@@ -134,10 +134,10 @@ crontab:
     state: absent
     # disable until TEI migration is complete
   - name: "{{ app_name }} sync annotation export"
-    minute: "*/5"   # run every five minutes
+    minute: "*/5" # run every five minutes
     job: "env DJANGO_ENV=staging bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py sync_annotation_export -v 0 >> {{ logging_dir }}/sync_export.log 2>&1"
     state: present
   - name: "{{ app_name }} metadata export "
-    minute: "*/30"   # run every thirty minutes for now (footnote export takes ~10 min)
+    minute: "*/30" # run every thirty minutes for now (footnote export takes ~10 min)
     job: "env DJANGO_ENV=staging bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py export_metadata -ws -v 0 >> {{ logging_dir }}/sync_metadata_export.log 2>&1"
     state: present

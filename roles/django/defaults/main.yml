@@ -7,7 +7,7 @@ django_venv_path: "{{ django_app_path }}/env"
 django_logging_path: "/srv/www/{{ django_app }}/logs/{{ django_app }}.log"
 
 # django settings config
-django_local_settings_template: local_settings.py
+django_local_settings_template: local_settings.py.j2
 django_secret_key: changeme
 django_debug: false
 django_allowed_hosts:
