@@ -16,7 +16,7 @@
   apt:
     name: "{{ common_dependencies + app_dependencies }}"
     state: present
-    update_cache: true
+    update_cache: false
   changed_when: false
   when: ansible_distribution == 'Ubuntu'
 
