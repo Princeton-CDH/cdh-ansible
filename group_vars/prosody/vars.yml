@@ -68,7 +68,7 @@ solr_configset: cdh_ppa
 
 # default media root
 #media_root: /srv/www/media/
-media_root: /mnt/nfs/cdh/prosody/media
+media_root: /mnt/nfs/cdh/prosody/media/
 
 # app-specific system dependencies
 app_dependencies:
