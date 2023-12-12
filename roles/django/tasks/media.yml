@@ -32,6 +32,8 @@
         recursive: yes
         default: yes
         state: present
+      when: ansible_distribution == 'Springdale'
+      # NOTE: fails on nfs filesystem; did not error before
   rescue:
     - name: Close deployment as failed if error
       ansible.builtin.include_tasks: roles/create_deployment/tasks/fail.yml
