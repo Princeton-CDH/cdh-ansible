@@ -19,14 +19,17 @@
         channel: "{{ node_version }}/stable"
         state: present
       when: ansible_distribution == "Ubuntu"
+      register: snap_results
 
-    # NOTE: upgrading nodejs on cdh-geniza1 failed;
-    # was able to get it working with refresh
-    # instead of install:
-    #   sudo snap refresh node --channel=16
-    # We may want to run refresh as a command, see
-    # https://serverfault.com/a/1025300
+    # NOTE: upgrading nodejs with ansible snap fails, even though
+    # the documentation claims it should refresh when then channel changes.
+    # Manually run a refresh command to ensure version changes take effect, e.g.:
+    #   sudo snap refresh node --channel=18
+    # NOTE2: could add a node -v check and only refresh on mismatch
 
+    - name: Refresh nodejs to ensure version changes take effect
+      become: true
+      ansible.builtin.command: "snap refresh node --channel={{ node_version }}/stable"
 
     - name: install javascript dependencies with npm
       become: true
