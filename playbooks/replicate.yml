@@ -14,7 +14,7 @@
 
 # source hosts tasks
 - name: Generate database and media backups on source host
-  hosts: geniza_prod, cdhweb_prod, prosody_prod
+  hosts: geniza_prod, cdhweb_prod, prosody_prod, shxco_prod
   connection: ssh
   remote_user: pulsys
   # generate backups on source host
@@ -48,7 +48,7 @@
 - name: Restore database and media backups on target host
   # hosts: dev
   # connection: local
-  hosts: geniza_qa, cdhweb_qa, prosody_qa
+  hosts: geniza_qa, cdhweb_qa, prosody_qa, shxco_qa
   connection: ssh
   remote_user: pulsys
   vars:

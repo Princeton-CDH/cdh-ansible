@@ -13,7 +13,16 @@ solr_url: "http://lib-solr8-staging.princeton.edu:8983/solr/"
 solr_server: "{{ groups['solr_staging'][0] }}"
 
 # override passenger server name with qa hostname
-passenger_server_name: "test-shakespeareandco.cdh.princeton.edu"
+application_url: "test-shakespeareandco.cdh.princeton.edu"
+
+# passenger settings
+passenger_server_name: "{{ application_url }}"
+
+
+
+
+# source host when replicating data/media (from ansible host inventory file)
+replication_source_host: shxco_prod
 
 # configure scripts to run as cron jobs
 crontab:
