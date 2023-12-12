@@ -1,7 +1,9 @@
 ---
 # tasks file for roles/solr_collection
 - name: Create the base directory for Solr configsets
-  tags: setup
+  tags:
+    - setup
+    - never
   file:
     path: "/solr/cdh_solr/"
     state: directory

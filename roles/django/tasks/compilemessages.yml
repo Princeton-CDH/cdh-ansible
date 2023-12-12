@@ -4,7 +4,9 @@
 
 - name: Ensure gnu gettext is installed
   become: true
-  tags: setup
+  tags:
+    - setup
+    - never
   ansible.builtin.apt:
     name: gettext
     state: present

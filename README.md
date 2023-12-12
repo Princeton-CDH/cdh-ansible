@@ -19,35 +19,21 @@ The overall structure of this repository can be broken down as follows:
 
 ### Requirements
   - Python virtual environment.
-    - See `.python-version` for the recommended version of Python.
+    - See `.python-version` for the recommended version of Python; we recommend [pyenv](https://github.com/pyenv/pyenv) for managing python versions.
     - If you use `env` or `venv`, the `.gitignore` will exclude it.
+    - Install python dependencies: `pip install -r requirements.txt`
 
-  -  Install required Ansible galaxy collections:
+  -  Install required Ansible galaxy collections and roles:
       - `ansible-galaxy install -r requirements.yml`
 
-  - The CDH Ansible vault key. This can be referenced on the command line, but it is
-  recommende to set it as an environment variable; e.g., for BASH
-   `export ANSIBLE_VAULT_PASSWORD_FILE=/path/to/.passwd`
+  - The CDH Ansible vault keys are stored in LastPass. You need to be added to the appropriate LastPass share and install [lastpass-cli](https://github.com/lastpass/lastpass-cli).  There are two command-line scripts in the `bin/` directory to call `lpass` to retrieve the vault keys, and the default configuration is set in `ansible.cfg`. See below for more details on the vault setup.
   - A GitHub [personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) for any playbook that uses the `create_deployment` and `close_deployment` tasks. You can set this as an environment variable
   as `ANSIBLE_GITHUB_TOKEN` or pass it on the command line as `-e github_token=`
-  - The CDH deploy bot key. This can be added to ssh-agent or in `~/.ssh/config`. All production deploys must be on the campus network (including VPN) and proxy through the QA server to production, with an ssh config stanza that looks something like:
-  ```
-  Host derridas-margins.princeton.edu
-      User deploy
-      Proxycommand ssh deploy@QASERVERHOST -W %h:%p
-      Identityfile ~/.ssh/key_for_qa_server
-  ```
 
-  And for deploying to the QA server:
-  ```
-  Host test-*.cdh.princeton.edu
-      User deploy
-      Identityfile ~/.ssh/key_for_qa_server
-  ```
 
 ### Precommit hook
 
-If you plan to contribute to this repository, you should install the configured pre-commit hooks:
+If you plan to contribute to this repository, you should install the configured pre-commit hooks. (If you installed python dependencies, pre-commit should already be installed)
 
 ```{bash}
 pre-commit install
@@ -77,16 +63,19 @@ The playbook will run, noting success and failures. The `-v` flag adjusts verbos
 
 ### Skip setup tasks
 
-By default, initial provisioning and setup tasks are configured to be skipped.  Tasks or groups of tasks should be tagged as `setup`.
+By default, initial provisioning and setup tasks are configured to be skipped.  Tasks or groups of tasks should be tagged with both `setup` and `never`.
 
-To run playbook without skipping setup tasks, override the default skip tag configuration:
+To run playbook without skipping setup tasks, pass the `setup` and `all` tags, so untagged tasks and tasks tagged `setup` run:
 
 ```{bash}
-env ANSIBLE_SKIP_TAGS= ansible-playbook playbooks/name_of_playbook.yml
+ansible-playbook --tags=all,setup playbooks/name_of_playbook.yml
 ```
 
-Note that `--skip-tags=[]` doesn't work because the skip tags setting in
-`ansible.cfg` takes precedence over command line options.
+### Skip deployment tasks
+
+By default, most playbooks create a [GitHub deployment](https://docs.github.com/en/rest/deployments/deployments?apiVersion=2022-11-28), which is used to track which version of the code is deployed to which environment. Through Slack/GitHub integration, GitHub deployments can be used to notify team members when a deploy is taking place and whether or not it succeeds or fails.  (This can be very noisy when working on or troubleshooting a deploy.)
+
+The tasks for creating and closing the GitHub deployment are tagged with `gh_deploy`. If you want to run a playbook without deploying code, pass `--skip-tags gh_deploy`.
 
 ## Pause before finalizing deploy
 
@@ -100,7 +89,7 @@ ansible-playbook --tags=all,final-pause playbooks/playbook.yml
 When running with setup steps enabled:
 
 ```{bash}
-env ANSIBLE_SKIP_TAGS= ansible-playbook --tags=all,final-pause playbooks/playbook.yml
+ansible-playbook --tags=all,setup,final-pause playbooks/playbook.yml
 ```
 
 ## Revert last deploy
@@ -170,12 +159,12 @@ ansible-playbook playbooks/replicate.yml --limit=geniza_qa
 ```
 
 Currently replication consists of:
-- dumping the production database, restoring it to qa, and running 
+- dumping the production database, restoring it to qa, and running
   django migrations in the current deploy
 - update django sites in the database to match the qa environment
 - backing up and restoring any user-uploaded media files and setting correct ownership and permissions
 
-Replication does not yet include restoring Solr indexing or support replication to dev environments. 
+Replication does not yet include restoring Solr indexing or support replication to dev environments.
 
 ### Setting up replication for a new project
 
@@ -219,4 +208,3 @@ GENIZA_DEPLOY_ONLY=1
 ```
 
 Note that you will not be able to run setup tasks or decrypt setup vault secrets.
-

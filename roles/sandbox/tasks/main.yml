@@ -4,6 +4,7 @@
   tags:
     - setup
     - never
+  when: "'sandbox' in group_names"   # only run this on sandbox hosts
   block:
     - name: Make sure nginx and passenger are configured
       ansible.builtin.include_role:
