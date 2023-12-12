@@ -38,7 +38,9 @@
   ansible.builtin.apt:
     name: "{{ item }}"
     state: present
-    update_cache: true
+    # update cache fails on bionic because postgres no longer has a release
+    # only update cache on newer VMs; skip updating on older vms
+    update_cache: "{{ ansible_distribution_version != '18.04' }}"
   loop:
     - libpq-dev
     - python3-dev
