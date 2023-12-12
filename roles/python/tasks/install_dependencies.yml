@@ -10,7 +10,7 @@
     virtualenv_command: python{{ python_version }} -m venv --prompt "{{ python_venv_prompt }}"
     name:
       - pip
-      - setuptools
+      # - setuptools
     state: latest
 
 - name: Downgrade setuptools if 2to3 is required
