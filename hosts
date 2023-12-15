@@ -67,6 +67,7 @@ cdh-test-prosody2.princeton.edu
 
 [prosody_prod]
 cdh-prosody1.princeton.edu
+cdh-prosody2.princeton.edu
 
 [prosody:children]
 prosody_qa
