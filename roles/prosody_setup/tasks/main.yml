@@ -36,19 +36,17 @@
   # with old nfs
   # when:  "{{ ansible_distribution_version != '18.04' }}"
 
-- name: Ensure the presence of cdh qa mount
+- name: Ensure the presence of cdh nfs mount
   tags:
     - setup
     - nfs
     - never
   ansible.posix.mount:
-    src: "{{ nfs_server_staging }}:/var/nfs/cdh"
+    src: "{{ nfs_server }}:/var/nfs/cdh"
     path: "/mnt/nfs/cdh"
     state: mounted
     fstype: nfs
     opts: rw,sync,hard
-  when:
-    - qa is defined
   become: true
 
 - name: Ensure prosody data directory

@@ -125,5 +125,5 @@ db_backup_filename: "{{ timestamp }}_{{ application_db_name }}.sql.bz2"
 db_backup_path: "{{ backup_dir }}{{ db_backup_filename }}"
 media_backup_filename: "{{ timestamp }}_{{ app_name }}_media.tar.gz"
 media_backup_path: "{{ backup_dir }}{{ media_backup_filename}}"
-## nfs
-nfs_server_staging: "128.112.203.82"
+## nfs prod server
+nfs_server: "128.112.204.89"
