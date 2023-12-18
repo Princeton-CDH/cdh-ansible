@@ -21,6 +21,8 @@
         group: "{{ media_group }}"
         state: directory
         recurse: true
+      # nfs config (owner/group) make this fail on bionic
+      when: "{{ 'nfs' not in media_root or ansible_distribution_version != '18.04' }}"
 
     - name: Give deploy acl rwx over all files in the directory as a fall back
       become: true
@@ -32,6 +34,8 @@
         recursive: yes
         default: yes
         state: present
+      when: ansible_distribution == 'Springdale'
+      # NOTE: fails on nfs filesystem; did not error before
   rescue:
     - name: Close deployment as failed if error
       ansible.builtin.include_tasks: roles/create_deployment/tasks/fail.yml
