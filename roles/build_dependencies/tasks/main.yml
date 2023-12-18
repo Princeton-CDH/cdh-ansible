@@ -16,7 +16,9 @@
   apt:
     name: "{{ common_dependencies + app_dependencies }}"
     state: present
-    update_cache: true
+    # update cache fails on bionic because postgres no longer has a release
+    # only update cache on newer VMs; skip updating on older vms
+    update_cache: "{{ ansible_distribution_version != '18.04' }}"
   changed_when: false
   when: ansible_distribution == 'Ubuntu'
 
