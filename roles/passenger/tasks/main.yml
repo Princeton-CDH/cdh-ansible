@@ -53,7 +53,9 @@
         - never
       become: true
       ansible.builtin.apt:
-        update_cache: true
+        # update cache fails on bionic because postgres no longer has a release
+        # only update cache on newer VMs; skip updating on older vms
+        update_cache: "{{ ansible_distribution_version != '18.04' }}"
 
     # Nginx and passenger installation.
     - name: Install Nginx and Passenger.
