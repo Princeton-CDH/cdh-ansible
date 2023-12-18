@@ -29,8 +29,10 @@ derrida_prod
 
 [cdhweb_qa]
 cdh-test-web1.princeton.edu
+cdh-test-web2.princeton.edu
 [cdhweb_prod]
 cdh-web1.princeton.edu
+cdh-web2.princeton.edu
 
 [cdhweb:children]
 cdhweb_qa
