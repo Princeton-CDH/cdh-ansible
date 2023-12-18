@@ -33,7 +33,8 @@ passenger_startup_file: "{{ app_name }}/wsgi.py"
 passenger_python: "{{ passenger_app_root }}/env/bin/python"
 
 # base data dir — easier if NOT under conan home directory
-data_path: "/srv/www/data"
+# data_path: "/srv/www/data"
+data_path: "/mnt/nfs/cdh/prosody/data"
 # path to hathitree pairtree data
 hathitrust_pairtree_path: "{{ data_path }}/ht_text_pd/"
 # path to MARC data for Gale/ECCO
@@ -64,6 +65,10 @@ solr_configset: cdh_ppa
 # deploy_contexts:
 # #   - "Python unit tests"
 #     - "Python unit tests (3.6, 8.6, postgresql)"
+
+# default media root is /srv/www/media/
+# media nfs path
+media_root: /mnt/nfs/cdh/prosody/media/
 
 # app-specific system dependencies
 app_dependencies:
