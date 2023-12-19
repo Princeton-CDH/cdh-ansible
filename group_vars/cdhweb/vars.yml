@@ -43,7 +43,7 @@ django_local_settings_template: "cdhweb_settings.py.j2"
 # db_backup_path: "/home/{{ deploy_user }}/backups/pre-{{ version }}-{{ short_hash }}.sql"
 # app-specific system dependencies
 app_dependencies:
-  - python-opencv # for wagtail image feature detection
+  - python3-opencv # for wagtail image feature detection
 
 passenger_app_root: "/var/www/{{ app_name }}"
 passenger_server_name: "cdh.princeton.edu"
