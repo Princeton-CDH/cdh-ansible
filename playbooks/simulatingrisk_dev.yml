@@ -16,8 +16,5 @@
     - finalize_deploy
     - close_deployment
   post_tasks:
-    # use a no-op to notify supervisor restart after new version is live
-    - name: restart supervisor
-      ansible.builtin.meta: noop
-      notify: restart supervisor
-
+    - name: Use supervisorctl to restart application
+      ansible.builtin.command: "sudo supervisorctl restart simulatingrisk"
