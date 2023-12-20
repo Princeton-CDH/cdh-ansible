@@ -13,3 +13,15 @@
     file: vars/vault.yml
   when: geniza_deploy_only is not defined or geniza_deploy_only == ""
 
+- name: Ensure the presence of cdh nfs mount
+  tags:
+    - setup
+    - nfs
+    - never
+  ansible.posix.mount:
+    src: "{{ nfs_server }}:/var/nfs/cdh"
+    path: "/mnt/nfs/cdh"
+    state: mounted
+    fstype: nfs
+    opts: rw,sync,hard
+  become: true

@@ -1,0 +1,4 @@
+---
+# defaults for cdhweb_setup
+nginx_user: "www-data"
+font_path: "/var/www/fonts/"
