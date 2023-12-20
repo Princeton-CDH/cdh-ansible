@@ -17,3 +17,5 @@ postgres_host: lib-postgres-staging1.princeton.edu
 
 # in QA, grant postgres app user permission to create db for replication
 application_dbuser_role_attr_flags: "CREATEDB"
+## nfs staging server
+nfs_server: "128.112.203.82"

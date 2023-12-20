@@ -29,8 +29,10 @@ derrida_prod
 
 [cdhweb_qa]
 cdh-test-web1.princeton.edu
+cdh-test-web2.princeton.edu
 [cdhweb_prod]
 cdh-web1.princeton.edu
+cdh-web2.princeton.edu
 
 [cdhweb:children]
 cdhweb_qa
@@ -63,9 +65,11 @@ cdh-test-derrida1.princeton.edu
 
 [prosody_qa]
 cdh-test-prosody1.princeton.edu
+cdh-test-prosody2.princeton.edu
 
 [prosody_prod]
 cdh-prosody1.princeton.edu
+cdh-prosody2.princeton.edu
 
 [prosody:children]
 prosody_qa
@@ -74,8 +78,8 @@ prosody_prod
 [sandbox]
 cdh-dev-sandbox1.princeton.edu
 
-# must be configured in ssh config with bastion proxy command
-[simrisk]
+# simrisk must be configured in ssh config with bastion proxy command
+[simrisk_cloud]
 simrisk
 
 ### PUL solr servers
@@ -115,7 +119,7 @@ derrida_crawl_qa
 derrida_archive_qa
 prosody_qa
 sandbox
-simrisk
+simrisk_cloud
 
 [dev]
 localhost

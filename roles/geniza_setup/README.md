@@ -1,9 +1,10 @@
-geniza_setup
-============
+# geniza_setup
 
-Application setup specific to geniza playbooks.
+Setup specific to geniza application.
 
 Currently includes handling for licensed fonts. A vaulted archive file of the purchased fonts is included as a tar file, to be copied and extracted to the remote server.
+
+This role also includes the setup for github access, git configuration, and data directory needed for pushing data exports from the web application to GitHub.
 
 To update the font file:
 

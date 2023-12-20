@@ -11,7 +11,8 @@
     mode: 0775
     owner: "{{ webapp_user }}"
     group: "{{ webapp_user }}"
-    recurse: true
+    recurse: false
+  when:  "{{ ansible_distribution_version != '18.04' }}"
 
 - name: Check if MARC pairtree data is present
   ansible.builtin.stat:
@@ -32,4 +33,23 @@
     mode: 0775
     owner: "{{ webapp_user }}"
     group: "{{ webapp_user }}"
-    recurse: true
+  # skip run on bionic machine because user/owner is not working properly
+  # with old nfs
+  when:  "{{ ansible_distribution_version != '18.04' }}"
+
+- name: Ensure prosody data directory
+  tags:
+    - setup
+    - nfs
+    - never
+  ansible.builtin.file:
+    path: "{{ prosody_data_path }}"
+    state: directory
+    mode: "0775"
+    owner: "{{ webapp_user }}"
+    group: "{{ webapp_user }}"
+  become: true
+  # skip run on bionic machine because user/owner is not working properly
+  # with old nfs
+  when: ansible_distribution_version != '18.04'
+

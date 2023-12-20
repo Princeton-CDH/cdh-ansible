@@ -11,7 +11,6 @@ application_url: "test-ppa.cdh.princeton.edu"
 # passenger settings
 passenger_server_name: "{{ application_url }}"
 
-
 # solr settings
 # NOTE: should be moved somewhere common; zk is unique but solr vars used for old deploys
 zk_host: "lib-zk-staging1:2181,lib-zk-staging2:2181,lib-zk-staging3:2181/solr8"
