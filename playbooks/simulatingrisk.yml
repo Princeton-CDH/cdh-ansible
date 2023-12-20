@@ -1,4 +1,4 @@
-- hosts: sandbox, simrisk
+- hosts: sandbox, simrisk_cloud
   vars_files:
     - ../group_vars/sandbox/simrisk.yml
   connection: ssh
