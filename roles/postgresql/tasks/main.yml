@@ -38,7 +38,7 @@
     - never
   ansible.builtin.apt_repository:
     repo: "{{ postgres_apt_repository }}"
-    update_cache: true
+    update_cache: false
     state: absent
   when: ansible_distribution_version == '18.04'
 
