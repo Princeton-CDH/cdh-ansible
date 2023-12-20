@@ -5,7 +5,7 @@
 # It assumes the standard configuration /srv/www symlinks to /var/www
 # used in CDH Django projects.
 ---
-- name: Do final configurations and restart apache
+- name: Do final configurations and restart webserver
   become: true
   become_user: "{{ deploy_user }}"
   block:
@@ -72,7 +72,7 @@
         dest: "/var/www/{{ symlink }}"
         state: link
       notify:
-        - restart web server
+        - Restart nginx
       when: ansible_distribution != 'Springdale'
 
     # On Springdale we can do this as deploy_user

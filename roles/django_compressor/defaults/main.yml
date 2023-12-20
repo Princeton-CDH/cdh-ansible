@@ -1,4 +1,4 @@
 ---
-# default for configure_media
-apache_user: "www-data"
-apache_group: "{{ apache_user }}"
+# default for django compressor
+webapp_user: "www-data"
+webapp_group: "{{ webapp_user }}"

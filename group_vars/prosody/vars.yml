@@ -9,7 +9,7 @@ app_name: ppa
 python_app: "{{ app_name }}"
 django_app: "{{ app_name }}"
 
-# apache symlink
+# symlink for web application
 symlink: "{{ app_name }}"
 # wsgi file relative to deploy location
 wsgi_path: "{{ django_app }}/wsgi.py"
