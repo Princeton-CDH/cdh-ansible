@@ -13,24 +13,24 @@
         state: directory
         mode: "u=rwX,g=rwX,o=X"
 
-    - name: Make sure media root is owned by apache user and group
+    - name: Make sure media root is owned by www-data user and group
       tags:
         - setup
         - never
       file:
         path: "{{ media_root }}"
-        owner: "{{ apache_user }}"
-        group: "{{ apache_group }}"
+        owner: "{{ webapp_user }}"
+        group: "{{ webapp_group }}"
         state: directory
         recurse: true
       when: ansible_distribution == 'Ubuntu'
 
-    - name: if on qa, set acls appropriately so apache can access
+    - name: if on qa, set acls appropriately so www-data can access
       tags:
         - setup
         - never
       acl:
-        entity: "{{ apache_group }}"
+        entity: "{{ webapp_group }}"
         etype: group
         permissions: rwx
         path: "{{ media_root }}"

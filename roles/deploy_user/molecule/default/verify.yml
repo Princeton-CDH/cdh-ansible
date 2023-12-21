@@ -33,7 +33,7 @@
       register: user_groups
       changed_when: true
 
-    - name: User should be member of deploy group and apache group
+    - name: User should be member of deploy group and www-data group
       ansible.builtin.assert:
         that:
           - "'conan' in '{{ user_groups.stdout.split(':')[1] }}'"

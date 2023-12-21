@@ -10,6 +10,8 @@
 ###
 ---
 - name: Run webpack build tasks for static assets
+  become: true
+  become_user: "{{ django_user }}"
   block:
     - name: Do a QA build if in QA
       shell: 'npm run {{ webpack_build_qa }}'

@@ -15,7 +15,7 @@
         name: "{{ deploy_user }}"
         groups:
           - "{{ deploy_user }}"
-          - "{{ apache_group }}"
+          - "{{ webapp_group }}"
         home: "/home/{{ deploy_user }}"
         shell: "{{ deploy_user_shell }}"
 
