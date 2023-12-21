@@ -19,11 +19,11 @@
         group: '{{ project_user | default(deploy_user) }}'
         recurse: true
       when: qa is defined
-    - name: For PUL VMs, set logging directory owner and group to apache
+    - name: For PUL VMs, set logging directory owner and group to www-data
       file:
         path: '{{ logging_dir }}'
-        owner: '{{ apache_user }}'
-        group: '{{ apache_group }}'
+        owner: '{{ webapp_user }}'
+        group: '{{ webapp_group }}'
         mode: 0770
         recurse: true
       when: deploy_user is defined and ansible_distribution != 'Springdale'

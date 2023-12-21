@@ -15,7 +15,7 @@ nginx_remove_default_vhost: true
 passenger_extra_config: ''
 passenger_enabled: 'on'
 
-# copied from apache role defaults; should these be defined elsewhere?
+# duplicated from other role defaults; should these be defined elsewhere?
 media_root: "/var/www/media/"
 font_path: "/var/www/fonts/"
 font_require_referrer: []

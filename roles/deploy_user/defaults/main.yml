@@ -2,7 +2,7 @@
 # defaults file for deploy_user
 deploy_user: conan
 deploy_user_shell: /bin/bash
-apache_group: www-data  # default on ubuntu
+webapp_group: www-data  # default on ubuntu
 # only one application/project is installed on this vm
 single_app: true
 alias_apps: []

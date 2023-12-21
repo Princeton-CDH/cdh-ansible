@@ -3,9 +3,9 @@
 #
 # This role must come after npm and virtualenv creation, as it depends on both.
 # It also create a CACHE dir with the appropriate user and group permissions
-# so that Apache can use the result.
+# so that the web application can use the result.
 ###
-# Ownership needs to deploy/apache for production
+# Ownership needs to deploy/www-data for production
 - name: Configure for django compressor
   block:
     - name: Configure CACHE for django-compressor
@@ -15,7 +15,7 @@
         path: "{{ deploy }}/static/CACHE"
         state: directory
         owner: "{{ deploy_user }}"
-        group: "{{ apache_group }}"
+        group: "{{ webapp_group }}"
 
     - name: run ./manage.py compress to build CSS
       become: true

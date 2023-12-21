@@ -9,14 +9,14 @@ app_name: ppa
 python_app: "{{ app_name }}"
 django_app: "{{ app_name }}"
 
-# apache symlink
+# symlink for web application
 symlink: "{{ app_name }}"
 # wsgi file relative to deploy location
 wsgi_path: "{{ django_app }}/wsgi.py"
 # use python 3.9
 python_version: 3.9
 # nodejs version
-node_version: "10"
+node_version: "16"
 
 # pul deploy user
 deploy_user: "conan"
