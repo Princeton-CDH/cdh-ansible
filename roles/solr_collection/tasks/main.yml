@@ -71,14 +71,14 @@
         - solr_collection_info["activeShards"] != num_shards
       # is it ok to use active shards total and ignore inactive?
 
-    - name: Modify Solr collection shards per node if changed
-      uri:
-        url: "{{ solr_url }}admin/collections?action=MODIFYCOLLECTION&collection={{ solr_collection }}&maxShardsPerNode={{ shards_per_node }}"
-      when:
-        - solr_version < 9
-        - solr_collection_info is defined
-        - solr_collection_info["properties"]["maxShardsPerNode"] is defined
-        - solr_collection_info["properties"]["maxShardsPerNode"] != shards_per_node
+    # - name: Modify Solr collection shards per node if changed
+    #   uri:
+    #     url: "{{ solr_url }}admin/collections?action=MODIFYCOLLECTION&collection={{ solr_collection }}&maxShardsPerNode={{ shards_per_node }}"
+    #   when:
+    #     - solr_version < 9
+    #     - solr_collection_info is defined
+    #     - solr_collection_info["properties"]["maxShardsPerNode"] is defined
+    #     - solr_collection_info["properties"]["maxShardsPerNode"] != shards_per_node
 
     - name: Modify Solr collection replication factor if changed
       uri:
