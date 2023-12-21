@@ -40,6 +40,7 @@ cdhweb_prod
 
 [shxco_qa]
 cdh-test-shxco1.princeton.edu
+cdh-test-shxco2.princeton.edu
 [shxco_prod]
 cdh-shxco1.princeton.edu
 
@@ -49,6 +50,7 @@ shxco_prod
 
 [geniza_qa]
 cdh-test-geniza1.princeton.edu
+cdh-test-geniza2.princeton.edu
 [geniza_prod]
 cdh-geniza1.princeton.edu
 
@@ -123,4 +125,3 @@ simrisk_cloud
 
 [dev]
 localhost
-
