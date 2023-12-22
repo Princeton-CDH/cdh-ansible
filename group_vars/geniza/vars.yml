@@ -29,7 +29,8 @@ django_local_settings_dest: "{{ deploy }}/{{ django_app }}/settings/local_settin
 # configure app-specific local settings
 django_local_settings_template: "geniza_settings.py.j2"
 # uploaded media directory; must end with trailing slash for nginx
-media_root: /srv/www/media/
+# media_root: /srv/www/media/
+media_root: "/mnt/nfs/cdh/geniza/media/"
 
 # pul deploy user
 deploy_user: "conan"
