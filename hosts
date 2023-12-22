@@ -53,6 +53,7 @@ cdh-test-geniza1.princeton.edu
 cdh-test-geniza2.princeton.edu
 [geniza_prod]
 cdh-geniza1.princeton.edu
+cdh-geniza2.princeton.edu
 
 [geniza:children]
 geniza_qa
