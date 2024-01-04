@@ -43,6 +43,7 @@ cdh-test-shxco1.princeton.edu
 cdh-test-shxco2.princeton.edu
 [shxco_prod]
 cdh-shxco1.princeton.edu
+cdh-shxco2.princeton.edu
 
 [shxco:children]
 shxco_qa
