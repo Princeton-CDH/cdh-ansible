@@ -11,15 +11,15 @@
       file:
         path: "{{ media_root }}"
         state: directory
-        mode: "u=rwX,g=rwX,o=X"
+        mode: "u=rwX,g=rwX,o=rX"
 
-    - name: Make sure media root is owned by www-data user and group
+    - name: Make sure media root is owned by deploy user and www-data group
       tags:
         - setup
         - never
       file:
         path: "{{ media_root }}"
-        owner: "{{ webapp_user }}"
+        owner: "{{ deploy_user }}"
         group: "{{ webapp_group }}"
         state: directory
         recurse: true
