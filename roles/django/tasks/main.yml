@@ -18,3 +18,6 @@
   - name: Setup django media
     ansible.builtin.import_tasks: media.yml
     when: media_root is defined
+  - name: Setup django fonts
+    ansible.builtin.import_tasks: fonts.yml
+    when: font_archive_file is defined

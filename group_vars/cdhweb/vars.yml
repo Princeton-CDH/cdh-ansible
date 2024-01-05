@@ -56,6 +56,8 @@ passenger_python: "{{ passenger_app_root }}/env/bin/python"
 # media nfs path
 media_root: /mnt/nfs/cdh/cdhweb/media/
 
+# vaulted tar file with proprietary fonts
+font_archive_file: cdhweb_fonts.vault
 
 # source host when replicating data/media (use host from inventory file)
 replication_source_host: cdhweb_prod
