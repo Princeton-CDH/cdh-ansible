@@ -60,7 +60,12 @@ solr_configset: cdh_shxco
 #     - "Python unit tests (3.6, 8.6, postgresql)"
 
 # default media root
-media_root: "/srv/www/media/"
+# default media root is /srv/www/media/
+# media nfs path
+media_root: /mnt/nfs/cdh/shxco/media/
+
+# vaulted tar file with proprietrary fonts
+font_archive_file: shxco_fonts.vault
 
 technical_contact: cdhdevteam@princeton.edu
 

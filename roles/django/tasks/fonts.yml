@@ -1,0 +1,23 @@
+###
+#  Configure font folder and extract font files from archive
+###
+- name: Configure fonts folder and extract any licensed fonts
+  tags:
+    - fonts
+  block:
+    - name: Ensure fonts directory exists
+      become: true
+      ansible.builtin.file:
+        path: "{{ font_path }}"
+        state: directory
+        mode: '0775'
+        owner: "{{ media_user }}"
+        group: "{{ media_user }}"
+
+    - name: Extract licensed fonts
+      become: true
+      become_user: "{{ django_user }}"
+      ansible.builtin.unarchive:
+        src: "{{ font_archive_file }}"
+        dest: "{{ font_path }}"
+        group: "{{ media_user }}"
