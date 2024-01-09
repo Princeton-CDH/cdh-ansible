@@ -64,7 +64,7 @@ solr_configset: cdh_shxco
 # media nfs path
 media_root: /mnt/nfs/cdh/shxco/media/
 
-# vaulted tar file with proprietrary fonts
+# vaulted tar file with proprietary fonts
 font_archive_file: shxco_fonts.vault
 
 technical_contact: cdhdevteam@princeton.edu
