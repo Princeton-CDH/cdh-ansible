@@ -1,0 +1,38 @@
+# variables for geotaste sandbox app
+
+# GitHub repository
+repo: 'Princeton-CDH/geotaste'
+# application name
+app_name: geotaste
+python_app: "{{ app_name }}"
+python_app_path: "{{ deploy }}"
+symlink: "{{ app_name }}"
+
+# this is a dev/qa deploy, default branch to develop
+gitref: '{{ ref | default("develop") }}'
+
+
+# use python 3.10
+python_version: "3.10"
+# where to install the application code
+install_root: '/srv/www/{{ app_name }}'
+
+
+# configure to run via supervisor
+# runs at a non top-level path when on the sandbox
+supervisor_programs:
+  - name: 'geotaste'
+    command: "{{ install_root }}/env/bin/gunicorn wsgi:application --bind=127.0.0.1:1919 --workers=2"
+    state: present
+    configuration: |
+      directory={{ install_root }}/current
+      autostart=true
+      autorestart=true
+      startretries=1
+      startsecs=1
+      redirect_stderr=true
+      stderr_logfile=/var/log/{{ app_name }}-err.log
+      stdout_logfile=/var/log/{{ app_name }}-out.log
+      user={{ deploy_user }}
+      killasgroup=true
+      stopasgroup=true

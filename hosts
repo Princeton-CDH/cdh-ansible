@@ -86,6 +86,9 @@ cdh-dev-sandbox1.princeton.edu
 [simrisk_cloud]
 simrisk
 
+[geotaste_cloud]
+geotaste
+
 ### PUL solr servers
 
 [solr_staging]
