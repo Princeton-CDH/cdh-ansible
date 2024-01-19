@@ -13,6 +13,9 @@ solr_url: "http://lib-solr9-staging.princeton.edu:8983/solr/"
 solr_server: "{{ groups['solr9_staging'][0] }}"
 solr_version: 9
 
+# run cron jobs only on the first machine in the host group
+cronjob_host: "{{ groups['geniza_qa'][0] }}"
+
 # enable warning banner; configured in geniza local settings
 show_warning_banner: true
 # use defaults for test site warning/reminder

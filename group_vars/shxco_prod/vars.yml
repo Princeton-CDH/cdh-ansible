@@ -19,6 +19,9 @@ deploy_contexts:
 #    - 'Analyze (javascript)'
 #    - 'Analyze (python)'
 
+# run cron jobs only on the first machine in the host group
+cronjob_host: "{{ groups['shxco_prod'][0] }}"
+
 # configure scripts to run as cron jobs
 crontab:
 
