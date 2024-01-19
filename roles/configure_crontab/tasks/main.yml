@@ -1,6 +1,6 @@
 - name: Configure cron jobs
   block:
-  - name: "Configure crontab — special times"
+  - name: "Configure crontab — special times"
     cron:
       name: "{{ item.name }}"
       special_time: "{{ item.special_time }}"

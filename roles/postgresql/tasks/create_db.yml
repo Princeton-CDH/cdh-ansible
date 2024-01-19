@@ -3,6 +3,7 @@
 # https://github.com/pulibrary/princeton_ansible/blob/main/roles/postgresql/tasks/create_db.yml
 
 - name: Ensure postgres database for app exists
+  run_once: true
   community.postgresql.postgresql_db:
     name: "{{ application_db_name }}"
     login_host: "{{ postgres_host }}"

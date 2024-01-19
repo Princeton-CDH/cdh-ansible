@@ -43,6 +43,7 @@
     - name: Get the version for the python package/app being deployed
       become: true
       become_user: "{{ deploy_user }}"
+      run_once: true
       shell:
         cmd: "python3 -c 'import {{ python_app }}; print({{ python_app }}.__version__)'"
         chdir: "{{ clone_root}}/{{ repo }}"
