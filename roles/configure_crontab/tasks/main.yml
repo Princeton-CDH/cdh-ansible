@@ -1,6 +1,7 @@
 - name: Configure cron jobs
+  when: inventory_hostname == cronjob_host
   block:
-  - name: "Configure crontab — special times"
+  - name: "Configure crontab — special times"
     cron:
       name: "{{ item.name }}"
       special_time: "{{ item.special_time }}"

@@ -4,6 +4,7 @@
 ###
 
 - name: Close GitHub deployment as a success.
+  run_once: true
   tags:
     - gh_deploy
   uri:
