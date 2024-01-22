@@ -22,7 +22,7 @@
         state: directory
         recurse: true
       # nfs config (owner/group); this fails on bionic
-      when: ansible_distribution_version != "18.04" or "nfs" not in media_root
+      when: "ansible_distribution_version != '18.04' and 'nfs' not in media_root"
 
     - name: Give deploy acl rwx over all files in the directory as a fall back
       become: true
