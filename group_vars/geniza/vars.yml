@@ -124,7 +124,7 @@ deploy_contexts:
   - "Python unit tests"
 
 # run cron jobs only on the first machine in the host group
-cronjob_host: "{{ groups['geniza_prod'][0] }}"
+cronjob_host: "cdh-geniza1.princeton.edu"
 
 # configure scripts to run as cron jobs
 crontab:

@@ -20,7 +20,7 @@ deploy_contexts:
 #    - 'Analyze (python)'
 
 # run cron jobs only on the first machine in the host group
-cronjob_host: "{{ groups['shxco_prod'][0] }}"
+cronjob_host: "cdh-shxco1.princeton.edu"
 
 # configure scripts to run as cron jobs
 crontab:
