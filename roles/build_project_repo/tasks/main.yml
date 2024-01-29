@@ -30,7 +30,7 @@
       # (i.e. on PUL vms, where deploy user is different than remote user)
       when: deploy_user is defined and ansible_distribution != 'Springdale'
 
-    - name: Clone project repository and set to the correct version
+    - name: Clone project repository and checkout the correct git reference
       become: true
       become_user: "{{ deploy_user }}"
       git:
@@ -40,47 +40,10 @@
       # register repo_info for group_vars
       register: repo_info
 
-    - name: Check if version number file exists
-      stat:
-        path: "{{ clone_root}}/{{ repo }}/version.py"
-      register: py_version_file_result
-
-    - name: Get the version number from version.py filename
-      become: true
-      become_user: "{{ deploy_user }}"
-      shell:
-        cmd: "python3 -c 'import version; print(version.__version__)'"
-        chdir: "{{ clone_root}}/{{ repo }}"
-      register: py_version_file
-      tags:
-        - python
+    - name: Determine version of python app being deployed
+      ansible.builtin.import_tasks: python_app_version.yml
       when:
-        - py_version_file_result.stat.exists
-
-    - name: Get the version number from the python package/app being deployed
-      become: true
-      become_user: "{{ deploy_user }}"
-      shell:
-        cmd: "python3 -c 'import {{ python_app }}; print({{ python_app }}.__version__)'"
-        chdir: "{{ clone_root}}/{{ repo }}"
-      register: py_version_app
-      tags:
-        - python
-      when: 
-        - not py_version_file_result.stat.exists
         - python_app is defined
-
-    - name: storing version number from version.py
-      set_fact:
-        python_app_version: "{{ py_version_file }}"
-      when: 
-        - py_version_file.stdout is defined
-    
-    - name: storing version number from python package import
-      set_fact:
-        python_app_version: "{{ py_version_app }}"
-      when: 
-        - py_version_app.stdout is defined
 
     - name: Create the deploy directory (to recursively create parent dirs if necessary)
       become: true
