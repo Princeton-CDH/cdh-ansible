@@ -72,12 +72,16 @@
       become_user: root
       shell:
         cmd: "mkdir -p /var/www"
-      when: not var_www_exists.stat.exists
+      when: 
+        - not var_www_exists.stat.exists
+        - ansible_distribution != 'Springdale'
 
     - name: Create /var/www if necessary on Springdale (deploy user)
       shell:
         cmd: "mkdir -p /var/www"
-      when: not var_www_exists.stat.exists
+      when: 
+        - not var_www_exists.stat.exists
+        - ansible_distribution == 'Springdale'
     
     # On Ubuntu we need to do this with an account that can access both /srv
     # and /var, so we need to be root
