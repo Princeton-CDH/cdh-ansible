@@ -63,6 +63,22 @@
         path: "{{ install_root }}/previous"
       register: previous
 
+    - name: Check if /var/www exists
+      stat:
+        path: "/var/www"
+      register: var_www_exists
+
+    - name: Create /var/www if necessary on Ubuntu (root)
+      become_user: root
+      shell:
+        cmd: "mkdir -p /var/www"
+      when: not var_www_exists.stat.exists
+
+    - name: Create /var/www if necessary on Springdale (deploy user)
+      shell:
+        cmd: "mkdir -p /var/www"
+      when: not var_www_exists.stat.exists
+    
     # On Ubuntu we need to do this with an account that can access both /srv
     # and /var, so we need to be root
     - name: Update /var/www/ symlink to make the new version live
