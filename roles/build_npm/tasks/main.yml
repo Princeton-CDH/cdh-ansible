@@ -30,7 +30,7 @@
       become: true
       ansible.builtin.command: "snap refresh node --channel={{ node_version }}/stable"
 
-    - name: install javascript dependencies with npm
+    - name: "install javascript dependencies with npm ({{ npm_install_mode }} install)"
       become: true
       become_user: "{{ deploy_user }}"
       npm:
@@ -38,7 +38,8 @@
         # NOTE: for shxco, omitting dev dependencies means the webpack build fails;
         # using production install solved a problem for cdhweb
         # shxco prod/dev dependencies should be adjusted so this does not fail
-        production: true
+        production: "{{ npm_install_mode == 'production' }}"
+        ci: "{{ npm_install_mode == 'ci' }}"
 
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
