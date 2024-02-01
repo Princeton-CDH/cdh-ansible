@@ -22,6 +22,7 @@
     - name: Generate a database dump
       # use existing postgres backup task with customized backup path
       # (role ensures backup dir exists)
+      run_once: true
       include_role:
         name: postgresql
         tasks_from: backup_db.yml
@@ -29,6 +30,7 @@
     - name: Check if media directory has any files
       become: true
       become_user: "{{ deploy_user }}"
+      run_once: true
       ansible.builtin.find:
         paths: "{{ media_root }}"
         file_type: any
@@ -36,6 +38,7 @@
       register: media_files
 
     - name: Create an archive of application media files, if any exist
+      run_once: true
       community.general.archive:
         path: "{{ media_root }}"
         dest: "{{ media_backup_path }}"
@@ -51,6 +54,7 @@
   hosts: geniza_qa, cdhweb_qa, prosody_qa, shxco_qa
   connection: ssh
   remote_user: pulsys
+  run_once: true
   vars:
      - deploy_user: "conan"
      # - source_user: pulsys
@@ -62,11 +66,13 @@
         set_fact:
           source_hostname: "{{ item }}"
         with_inventory_hostnames:
-          - "{{ replication_source_host }}"
+          - "{{ groups[replication_source_host][0] }}"
+          # we use run once in the first section of this playbook;
+          # assume it runs on fhe tirst host in the production group
 
       - name: Create backup path on target destination
         file:
-          dest: "{{ dest_backup_path | dirname }}"
+          dest: "{{ dest_backup_dir }}"
           mode: 0777
           # owner: "{{ deploy_user }}"
           state: directory
