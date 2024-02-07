@@ -19,6 +19,7 @@
     insertbefore: '# Domain = localdomain'
     line: "Domain = {{ nfs_host_server }}"
     state: present  
+
 - name: nfsserver | enable id_mapping
   ansible.builtin.lineinfile:
     path: /etc/default/nfs-common
