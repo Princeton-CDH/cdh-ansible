@@ -22,7 +22,7 @@
         state: directory
         recurse: true
       # don't recursively update ownership on nfs mount (too slow, unnecessary)
-      when: 'nfs' not in media_root"
+      when: "'nfs' not in media_root"
 
     - name: Give deploy acl rwx over all files in the directory as a fall back
       become: true
