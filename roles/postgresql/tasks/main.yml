@@ -29,19 +29,6 @@
     repo: "{{ postgres_apt_repository }}"
     update_cache: true
     state: present
-  when: ansible_distribution_version != '18.04'
-
-- name: Remove postgres repository for bionic (no longer valid)
-  become: true
-  tags:
-    - setup
-    - never
-  ansible.builtin.apt_repository:
-    repo: "{{ postgres_apt_repository }}"
-    update_cache: false
-    state: absent
-  when: ansible_distribution_version == '18.04'
-
 
 - name: Install postgres client libraries
   become: true
@@ -51,9 +38,7 @@
   ansible.builtin.apt:
     name: "{{ item }}"
     state: present
-    # update cache fails on bionic because postgres no longer has a release
-    # only update cache on newer VMs; skip updating on older vms
-    update_cache: "{{ ansible_distribution_version != '18.04' }}"
+    update_cache: true
   loop:
     - libpq-dev
     - python3-dev
