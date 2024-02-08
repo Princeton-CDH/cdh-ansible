@@ -10,8 +10,8 @@
     path: "{{ hathitrust_pairtree_path }}"
     state: directory
     mode: 0775
-    owner: "{{ webapp_user }}"
-    group: "{{ webapp_user }}"
+    owner: nobody
+    group: nogroup
     recurse: false
 
 - name: Check if MARC pairtree data is present
@@ -32,8 +32,8 @@
     path: "{{ marc_data_path }}"
     state: directory
     mode: 0775
-    owner: "{{ webapp_user }}"
-    group: "{{ webapp_user }}"
+    owner: nobody
+    group: nogroup
 
 - name: Ensure prosody data directory
   tags:
@@ -45,6 +45,6 @@
     path: "{{ prosody_data_path }}"
     state: directory
     mode: "0775"
-    owner: "{{ webapp_user }}"
-    group: "{{ webapp_user }}"
+    owner: nobody
+    group: nogroup
   become: true
