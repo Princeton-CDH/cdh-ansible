@@ -5,6 +5,7 @@
   tags:
     - setup
     - never
+  become: true
   ansible.builtin.file:
     path: "{{ hathitrust_pairtree_path }}"
     state: directory
@@ -26,6 +27,7 @@
   tags:
     - setup
     - never
+  become: true
   ansible.builtin.file:
     path: "{{ marc_data_path }}"
     state: directory
@@ -38,6 +40,7 @@
     - setup
     - nfs
     - never
+  become: true
   ansible.builtin.file:
     path: "{{ prosody_data_path }}"
     state: directory
