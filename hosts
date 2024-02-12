@@ -18,66 +18,66 @@
 # See https://docs.ansible.com/ansible/2.5/user_guide/intro_inventory.html#how-variables-are-merged
 ######
 
-[derrida_qa]
+[derrida_staging]
 test-derrida.cdh.princeton.edu
-[derrida_prod]
+[derrida_production]
 derridas-margins.princeton.edu
 
 [derrida:children]
-derrida_qa
-derrida_prod
+derrida_staging
+derrida_production
 
-[cdhweb_qa]
+[cdhweb_staging]
 cdh-test-web1.princeton.edu
 cdh-test-web2.princeton.edu
-[cdhweb_prod]
+[cdhweb_production]
 cdh-web1.princeton.edu
 cdh-web2.princeton.edu
 
 [cdhweb:children]
-cdhweb_qa
-cdhweb_prod
+cdhweb_staging
+cdhweb_production
 
-[shxco_qa]
+[shxco_staging]
 cdh-test-shxco1.princeton.edu
 cdh-test-shxco2.princeton.edu
-[shxco_prod]
+[shxco_production]
 cdh-shxco1.princeton.edu
 cdh-shxco2.princeton.edu
 
 [shxco:children]
-shxco_qa
-shxco_prod
+shxco_staging
+shxco_production
 
-[geniza_qa]
+[geniza_staging]
 cdh-test-geniza1.princeton.edu
 cdh-test-geniza2.princeton.edu
-[geniza_prod]
+[geniza_production]
 cdh-geniza1.princeton.edu
 cdh-geniza2.princeton.edu
 
 [geniza:children]
-geniza_qa
-geniza_prod
+geniza_staging
+geniza_production
 dev
 
-[derrida_crawl_qa]
+[derrida_crawl_staging]
 cdh-test-derrida-crawl1.princeton.edu
 
-[derrida_archive_qa]
+[derrida_archive_staging]
 cdh-test-derrida1.princeton.edu
 
-[prosody_qa]
+[prosody_staging]
 cdh-test-prosody1.princeton.edu
 cdh-test-prosody2.princeton.edu
 
-[prosody_prod]
+[prosody_production]
 cdh-prosody1.princeton.edu
 cdh-prosody2.princeton.edu
 
 [prosody:children]
-prosody_qa
-prosody_prod
+prosody_staging
+prosody_production
 
 [sandbox]
 cdh-dev-sandbox1.princeton.edu
@@ -90,38 +90,38 @@ simrisk
 
 [solr_staging]
 lib-solr-staging4.princeton.edu
-[solr_prod]
+[solr_production]
 lib-solr-prod4.princeton.edu
 
 [solr9_staging]
 lib-solr-staging1.princeton.edu
 
-[solr9_prod]
+[solr9_production]
 lib-solr-prod1.princeton.edu
 
 [solr:children]
 solr_staging
 solr9_staging
-solr_prod
-solr9_prod
+solr_production
+solr9_production
 
 ### environment-based stanzas to create shared groups
 
 [prod:children]
-derrida_prod
-cdhweb_prod
-geniza_prod
-shxco_prod
-prosody_prod
+derrida_production
+cdhweb_production
+geniza_production
+shxco_production
+prosody_production
 
 [qa:children]
-derrida_qa
-cdhweb_qa
-geniza_qa
-shxco_qa
-derrida_crawl_qa
-derrida_archive_qa
-prosody_qa
+derrida_staging
+cdhweb_staging
+geniza_staging
+shxco_staging
+derrida_crawl_staging
+derrida_archive_staging
+prosody_staging
 sandbox
 simrisk_cloud
 

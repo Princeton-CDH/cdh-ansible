@@ -1,5 +1,5 @@
 ---
-# by default this playbook runs in the qa environment
+# by default this playbook runs in the staging environment
 # to run in production, pass '-e runtime_env=prod'
 - name: create solr connection
   hosts: solr_{{ runtime_env | default('staging') }}
@@ -11,7 +11,7 @@
     - deploy_user
 
 - name: build the shakespeare and co application
-  hosts: shxco_{{ runtime_env | default('qa') }}
+  hosts: shxco_{{ runtime_env | default('staging') }}
   connection: ssh
   remote_user: pulsys
   become: true
@@ -30,5 +30,5 @@
     - django
     - solr_collection
     - finalize_deploy
-    - configure_crontab  # used in prod but not always in qa
+    - configure_crontab  # used in prod but not always in staging
     - close_deployment
