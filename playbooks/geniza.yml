@@ -1,4 +1,6 @@
 ---
+# by default this playbook runs in the qa environment
+# to run in production, pass '-e runtime_env=prod'
 - name: create solr connection
   hosts: solr9_{{ runtime_env | default('staging') }}
   connection: ssh
