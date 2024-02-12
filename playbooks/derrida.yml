@@ -1,4 +1,6 @@
-- hosts: derrida_prod
+---
+- name: build the derrida website
+  hosts: derrida_{{ runtime_env | default('qa') }}
   connection: ssh
   remote_user: deploy
   # Set environment to use scl rh-python35 in group_vars

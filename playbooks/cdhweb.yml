@@ -1,4 +1,6 @@
-- hosts: cdhweb_prod
+---
+- name: build the cdh website
+  hosts: cdhweb_{{ runtime_env | default('qa') }}
   connection: ssh
   remote_user: pulsys
   roles:

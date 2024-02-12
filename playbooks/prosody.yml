@@ -1,4 +1,6 @@
-- hosts: solr_prod
+---
+- name: create a solr connection
+  hosts: solr_{{ runtime_env | default('staging') }}
   connection: ssh
   remote_user: pulsys
   vars:
@@ -6,7 +8,8 @@
   roles:
     - deploy_user
 
-- hosts: prosody_prod
+- name: build the prosody application
+  hosts: prosody_{{ runtime_env | default('qa') }}
   connection: ssh
   remote_user: pulsys
   become: true

@@ -1,4 +1,6 @@
-- hosts: solr_prod
+---
+- name: create solr connection
+  hosts: solr_{{ runtime_env | default('staging') }}
   connection: ssh
   remote_user: pulsys
   vars:
@@ -6,7 +8,8 @@
   roles:
     - deploy_user
 
-- hosts: shxco_prod
+- name: build the shakespeare and co application
+  hosts: shxco_{{ runtime_env | default('qa') }}
   connection: ssh
   remote_user: pulsys
   become: true

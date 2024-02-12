@@ -1,4 +1,6 @@
-- hosts: derrida_archive_qa
+---
+- name: build derrida archive page
+  hosts: derrida_archive_{{ runtime_env | default('qa') }}
   connection: ssh
   remote_user: pulsys
   roles:

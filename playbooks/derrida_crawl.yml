@@ -1,4 +1,6 @@
-- hosts: derrida_crawl_qa
+---
+- name: build derrida crawl app
+  hosts: derrida_crawl_{{ runtime_env | default('qa') }}
   connection: ssh
   remote_user: pulsys
   roles:
