@@ -1,4 +1,4 @@
-- hosts: geotaste_cloud
+- hosts: sandbox, geotaste_cloud
   vars_files:
     - ../group_vars/sandbox/geotaste.yml
   connection: ssh

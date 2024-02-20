@@ -5,23 +5,19 @@
   block:
     - name: Check if project has a version.py file
       stat:
-        path: "{{ clone_root}}/{{ repo }}/{{ python_app }}/version.py"
+        path: "{{ clone_root}}/{{ repo }}/_version.py"
       register: python_version_file
 
     - name: Get the version for the python package/app being deployed (app.version)
       become: true
       become_user: "{{ deploy_user }}"
       shell:
-        cmd: "python3 -c 'from {{ python_app }} import version; print(version.__version__)'"
+        cmd: "python3 -c 'from _version import __version__; print(__version__)'"
         chdir: "{{ clone_root}}/{{ repo }}"
-      register: python_app_version
+      register: python_app_version_vpy
       # when skipped, registers a variable with info with skip / conditional info
       when:
         - python_version_file.stat.exists
-
-    - name: debug python app version
-      ansible.builtin.debug:
-        msg: python_app_version = {{ python_app_version}}
 
     - name: Get the version for the python package/app being deployed (app.__version__)
       become: true
@@ -29,13 +25,25 @@
       shell:
         cmd: "python3 -c 'import {{ python_app }}; print({{ python_app }}.__version__)'"
         chdir: "{{ clone_root}}/{{ repo }}"
-      register: python_app_version
+      register: python_app_version_pkg
       tags:
         - python
       when:
         - not python_version_file.stat.exists
         # alternately, could check if python_app_version.skipped is True
 
-    - name: Set python app version as a fact
+    - name: Storing version number from version.py
       set_fact:
-        python_app_version: "{{ python_app_version.stdout }}"
+        python_app_version: "{{ python_app_version_vpy.stdout }}"
+      when: 
+        - python_app_version_vpy.stdout is defined
+
+    - name: Storing version number from python package import
+      set_fact:
+        python_app_version: "{{ python_app_version_pkg.stdout }}"
+      when: 
+        - python_app_version_pkg.stdout is defined
+
+    - name: debug python app version
+      ansible.builtin.debug:
+        msg: python_app_version = {{ python_app_version}}
