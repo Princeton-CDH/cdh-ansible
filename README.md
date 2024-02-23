@@ -13,7 +13,7 @@ The overall structure of this repository can be broken down as follows:
       - `vault.yml` - `ansible vault` encrypted variables
     - Individual project group variables
   - `hosts` - host file with groups and their associated host(s)
-  - `adr` - list of significant architectural decisions, as markdown files
+  - `architucture-decisions` - list of significant architectural decisions, as markdown files
 
 ## Using these playbooks
 
@@ -183,10 +183,9 @@ Recommended steps for adding a new playbook:
 
 ## Documenting architectural decisions
 
-We use the [ADR specification](https://github.com/joelparkerhenderson/architecture_decision_record) for documenting architectural decisions made over the course of work on this repository - i.e. conventions around our usage of Ansible. Decision documents are stored in the `adr/` folder as markdown files.
+We use the [ADR specification](https://github.com/joelparkerhenderson/architecture_decision_record) for documenting architectural decisions made over the course of work on this repository - i.e. conventions around our usage of Ansible. Decision documents are stored in the `architecture-decisions/` folder as markdown files.
 
-To propose a new decision, copy the `adr/template.md` file and rename it using a sequential number and description of the decision that needs making. Then create a pull request to track discussion on that decision.
-
+To propose or doucment a new decision, copy the `adr/template.md` file and rename it using a sequential number and description of the decision that needs making. Decisions that require discussion should be proposed using a pull request for discussion and review.
 
 ## To run the geniza deploy only
 
