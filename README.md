@@ -45,19 +45,17 @@ This will add install a pre-commit hook to prevent committing an unencrypted vau
 
 ## Running a playbook
 
-To run a playbook, from your virtual environment, simply invoke:
+To run a playbook, with your python virtual environment activated:
 
 ```{bash}
 ansible-playbook playbooks/name_of_playbook.yml
 ```
 
-QA playbooks should point by default to the develop branch and production playbooks (denoted by an absence of `_qa` suffix) to main.
+Each application has a deploy playbooks that can be used to deploy that application to either the production or staging environments. By default, the playbook will deploy to staging. To deploy to production, override the runtime environment with this command line option: `-e runtime_env=production`
 
-To deploy a different reference (hash, tag, or branch), use the syntax:
+By default, deploying to production will deploy the `main` branch of the github repository for that application; deploying to staging will deploy the `develop` branch. These may be overridden by specific applications with different conventions.
 
-```{bash}
-ansible-playbook -e ref=GITREF playbooks/name_of_playbook.yml
-```
+To deploy a branch or tag other than the default, you can specify an alternet git reference via `-e ref=GITREF` where `GITREF` is the name of the branch, tag, or a commit hash.
 
 The playbook will run, noting success and failures. The `-v` flag adjusts verbosity (adding more `v`s will produce more verbosity. Debug tasks are usually written at `2`)
 
@@ -97,7 +95,7 @@ ansible-playbook --tags=all,setup,final-pause playbooks/playbook.yml
 To revert to previous deploy run call the `revert_deploy` playbook with a `host_group` matching the deploy you want to revert, e.g.:
 
 ```{bash}
-ansible-playbook -e host_group=shxco_qa playbooks/revert_deploy.yml
+ansible-playbook -e host_group=shxco_staging playbooks/revert_deploy.yml
 ```
 
 ## Vault variables and passwords
@@ -121,7 +119,7 @@ lpass login <email@email.com>
 ```
 
 There are two different vault passwords (default and geniza), to allow limited
-contractor access for running geniza and geniza_qa playbooks without full access
+contractor access for running geniza and geniza_staging playbooks without full access
 to all credentials. Both are defined in the default ansible.cfg file
 with shell scripts to pull the appropriate password from LastPass. To set a single
 vault, you can override the config setting with the **ANSIBLE_VAULT_IDENTITY_LIST**
@@ -143,7 +141,7 @@ overriden in a project- or playbook-specific `vault.yml` file.
 
 ## Replication
 
-Copying production data from production to qa can be done for some projects
+Copying production data from production to staging can be done for some projects
 using a special replication playbook. It is defined with multiple hosts, but
 for typical use you should limit to the host group you want to replicate, e.g.:
 
@@ -152,43 +150,36 @@ ansible-playbook playbooks/replicate.yml --limit=geniza
 ```
 
 On subsequent runs for the same host group on the same day, to skip regenerating
-production database dumps and media archive files, you can limit to just the qa host:
+production database dumps and media archive files, you can limit to just the staging host:
 
 ```{bash}
-ansible-playbook playbooks/replicate.yml --limit=geniza_qa
+ansible-playbook playbooks/replicate.yml --limit=geniza_staging
 ```
 
 Currently replication consists of:
-- dumping the production database, restoring it to qa, and running
+- dumping the production database, restoring it to staging, and running
   django migrations in the current deploy
-- update django sites in the database to match the qa environment
+- update django sites in the database to match the staging environment
 - backing up and restoring any user-uploaded media files and setting correct ownership and permissions
 
 Replication does not yet include restoring Solr indexing or support replication to dev environments.
 
 ### Setting up replication for a new project
 
-- Add the appropriate production and qa host names to the source and destination plays
-- Define a new variable `replication_source_host` in the qa variables; it should reference the corresponding ansible hostname (e.g., for geniza `replication_source_host` is set to `geniza_prod`)
-- If database names differ between qa and production, you may need to override the `db_backup_filename` for the qa host variables.
-- Ensure that the qa host has an `application_url` variable defined; this is needed to correctly set the Django site
-entry in the migrated database.
+- Add the appropriate production and staging host names to the source and destination plays
+- Define a new variable `replication_source_host` in the staging variables; it should reference the corresponding ansible hostname (e.g., for geniza `replication_source_host` is set to `geniza_prod`)
+- If database names differ between staging and production, you may need to override the `db_backup_filename` for the staging host variables.
+- Ensure that the staging host has an `application_url` variable defined; this is needed to correctly set the Django site entry in the migrated database.
 
 
 ## Adding a playbook
 
-The rough order of creating a playbook is:
+Recommended steps for adding a new playbook:
 
-  1. Copy over an appropriate playbook as a template that is either production or QA.
-  2. Create a group in hosts (QA and production are or should be separate):
-    ```
-    [mygroup]
-    hostname.of.server.edu
-    ```
-  4. You will also want to make sure that the group names match and that your project's child files are properly grouped, i.e. all children of qa need to be in `[qa:children]` and all children of your project need to be in `[project:children]`.
-  5. Create a YAML directory in `group_vars` that has a name mirroring the new playbook: i.e. if the playbook is `my_playbook_qa`, the name should be the same, with a `vars.yml` and a `vault.yml` (for encrypted variables). You will also want to create a `group_vars` folder for the project to hold variables common to production, qa and staging. It should have the same name as the `project:children` you defined earlier in `hosts`.
-  6. Reference any playbook variables and set accordingly. See above under vault variables for how to configure those.
-  6. Add roles to the list in the new playbook in the order needed.
+  1. Copy over an appropriate playbook for a similar application to use as a starting point, and modify the list of roles as needed.
+  2. Define separate staging and production host groups for the application.
+  3. Add the staging host group to the staging group by including them in the list of `[staging:children]`, and create an application group that collects both staging and production host groups.
+  5. Add new `group_vars` directories as needed to configure the application or override any defaults.  Variables that are relevant for all environments should be set as application group variables; environment-specific configurations can be set in `_staging` or `_production` group variables.
 
 ## Documenting architectural decisions
 
