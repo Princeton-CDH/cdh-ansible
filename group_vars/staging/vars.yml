@@ -1,22 +1,23 @@
 ###
-# This file stores variables shared by all QA deploys
+# This file stores variables shared by all staging deploys
 ###
 ---
-# set QA to use develop by default
+# configure staging to deploy develop branch by default
 gitref: '{{ ref | default("develop") }}'
 # solr configurations for a local Solr instance
 solr_url: http://127.0.0.1:8983/solr/
 solr_admin_url: '{{ solr_url }}admin/cores'
 
 # qa flag, by setting to any value flags install as QA
+# TODO: rely on runtime_env instead
 qa: qa
 # allow any deploy contexts
 deploy_contexts: []
 # PUL staging VM (postgres v15)
 postgres_host: lib-postgres-staging1.princeton.edu
 
-# in QA, grant postgres app user permission to create db for replication
+# in staging, grant postgres app user permission to create db for replication
 application_dbuser_role_attr_flags: "CREATEDB"
-## nfs staging server
+# nfs staging server
 nfs_server: "128.112.203.82"
 nfs_host_server: "lib-fs-staging.princeton.edu"

@@ -1,10 +1,10 @@
 ###
-# QA specific variables for ppa-django
+# Staging specific configuration for Prosody Archive (ppa-django)
 ###
 ---
 
 # email prefix for dev account emails
-email_prefix: '[PPA QA] '
+email_prefix: '[TEST PPA] '
 
 application_url: "test-ppa.cdh.princeton.edu"
 

@@ -2,7 +2,7 @@
 #  Set to previous deploy in case of an error or problem.
 #
 # Example usage:
-# ansible-playbook -e host_group=prosody_qa revert_deployment.yml
+# ansible-playbook -e host_group=prosody_staging revert_deployment.yml
 #
 # WARNING: Reverting deploys that employed migrations may require manual
 # reversion of the database; likewise, deploys that involve changes to Solr

@@ -7,7 +7,7 @@
 # If you run the production portion without error and want to rerun
 # staging without refreshing production, specify the target host:
 #
-#     ansible-playbook playbooks/replicate.yml --limit=cdhweb_qa
+#     ansible-playbook playbooks/replicate.yml --limit=cdhweb_staging
 #
 # NOTE: has not been tested running multiple host groups at once!
 # probably won't work that way yet
