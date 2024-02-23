@@ -167,7 +167,7 @@ Replication does not yet include restoring Solr indexing or support replication 
 ### Setting up replication for a new project
 
 - Add the appropriate production and staging host names to the source and destination plays
-- Define a new variable `replication_source_host` in the staging variables; it should reference the corresponding ansible hostname (e.g., for geniza `replication_source_host` is set to `geniza_prod`)
+- Define a new variable `replication_source_host` in the staging variables; it should reference the corresponding ansible hostname (e.g., for geniza `replication_source_host` is set to `geniza_production`)
 - If database names differ between staging and production, you may need to override the `db_backup_filename` for the staging host variables.
 - Ensure that the staging host has an `application_url` variable defined; this is needed to correctly set the Django site entry in the migrated database.
 

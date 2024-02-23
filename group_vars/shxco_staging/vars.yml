@@ -19,7 +19,7 @@ application_url: "test-shakespeareandco.cdh.princeton.edu"
 passenger_server_name: "{{ application_url }}"
 
 # source host when replicating data/media (from ansible host inventory file)
-replication_source_host: shxco_prod
+replication_source_host: shxco_production
 
 # run cron jobs only on the first machine in the host group
 cronjob_host: "cdh-test-shxco1.princeton.edu"

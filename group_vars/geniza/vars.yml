@@ -65,7 +65,7 @@ metadata_backup_gitrepo: "git@github.com:Princeton-CDH/test-geniza-metadata.git"
 metadata_backup_path: "{{ data_path }}/metadata"
 
 # source when replicating data/media (from host inventory file)
-replication_source_host: geniza_prod
+replication_source_host: geniza_production
 
 # keep the warning banner off by default
 show_warning_banner: false

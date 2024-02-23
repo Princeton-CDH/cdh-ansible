@@ -18,4 +18,4 @@ solr_url: "http://lib-solr8-staging.princeton.edu:8983/solr/"
 solr_server: "{{ groups['solr_staging'][0] }}"
 
 # source host when replicating data/media (from ansible host inventory file)
-replication_source_host: prosody_prod
+replication_source_host: prosody_production
