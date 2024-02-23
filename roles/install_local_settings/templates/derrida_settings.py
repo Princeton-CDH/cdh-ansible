@@ -26,13 +26,13 @@ DJIFFY_AUTH_TOKENS = {
     'figgy.princeton.edu': '{{ figgy_token }}',
 }
 
-# Media settings for running under apache in production and QA
+# Media settings for running under apache in production and staging
 MEDIA_ROOT = '{{ media_root }}'
 MEDIA_URL = '/media/'
 
 # set compress offline for Django Compressor
 COMPRESS_OFFLINE = True
-{% if qa is not defined %}
+{% if runtime_env == "production" %}
 # turn on google analytics
 INCLUDE_ANALYTICS = True
 {% endif %}

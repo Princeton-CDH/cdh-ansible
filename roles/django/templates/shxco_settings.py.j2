@@ -16,7 +16,7 @@ OCLC_WSKEY = '{{ oclc_wskey }}'
 # Will be used in From header for OCLC API requests
 TECHNICAL_CONTACT = '{{ technical_contact }}'
 
-{% if qa is not defined %}
+{% if runtime_env == "production" %}
 # turn on google analytics in production only
 GTAGS_ANALYTICS_ID = 'G-H1FNDPYCC6'
 GTAGS_ANALYTICS_ENV = 'prod'

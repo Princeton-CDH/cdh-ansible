@@ -20,5 +20,5 @@ echo "Available project aliases: {{ alias_apps.keys()|join(', ') }}"
 {% endif %}
 
 # define django environment for split settings
-export DJANGO_ENV="{% if qa is defined %}staging{% else %}production{% endif %}"
+export DJANGO_ENV="{{ runtime_env }}"
 

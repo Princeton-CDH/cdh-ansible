@@ -5,27 +5,30 @@
 # into css/js files. It depends on webpack and all its associated js dependencies
 # having been installed, usually through the 'build_npm' role.
 #
-# The role expects that appropriate qa/prod-specific tasks will be defined in
+# The role expects that appropriate staging/prod-specific tasks will be defined in
 # package.json and callable via `npm run build:qa` and `npm run build:prod`.
+# The default commands may be customized by configuring
+# `webpack_build_prod` and `webpack_build_qa`
+#
 ###
 ---
 - name: Run webpack build tasks for static assets
   become: true
   become_user: "{{ django_user }}"
   block:
-    - name: Do a QA build if in QA
+    # NOTE: for historic reasons, the staging build is labeled as qa
+    # because that is how it is defined in the application npm package
+    - name: Run wepback in staging/QA mode
       shell: 'npm run {{ webpack_build_qa }}'
       args:
         chdir: '{{ deploy }}'
         executable: /bin/bash
-      when:
-        - qa is defined
-    - name: Do a prod build if in prod
+      when: runtime_env == "staging"
+    - name: Run webpack production build
       shell: 'npm run {{ webpack_build_prod }}'
       args:
         chdir: '{{ deploy }}'
         executable: /bin/bash
-      when:
-        - qa is not defined
+      when: runtime_env == "production"
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
