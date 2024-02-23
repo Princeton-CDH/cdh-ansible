@@ -22,7 +22,7 @@ install_root: '/srv/www/{{ app_name }}'
 # runs at a non top-level path when on the sandbox
 supervisor_programs:
   - name: 'geotaste'
-    command: "{{ install_root }}/current/env/bin/gunicorn wsgi:application --bind=127.0.0.1:1919 --workers=2"
+    command: "{{ install_root }}/current/env/bin/gunicorn wsgi:application --bind=0.0.0.0:1919 --workers=2"
     state: present
     configuration: |
       directory={{ install_root }}/current
