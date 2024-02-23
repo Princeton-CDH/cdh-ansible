@@ -6,6 +6,7 @@ api_base: https://api.github.com
 deployments_endpoint: '{{api_base}}/repos/{{ repo }}/deployments'
 # runtime env is set in the playbook; defaults to staging,
 # override when deploying to production
+runtime_env: "staging"
 deploy_description: 'Deploying {{ gitref }} to {{ runtime_env }}'
 # default for production contexts
 deploy_contexts:

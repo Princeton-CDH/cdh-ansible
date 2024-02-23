@@ -20,7 +20,7 @@
         status_code: 201
         body:
           ref: "{{ gitref }}"
-          environment: "{{ deploy_environment }}"
+          environment: "{{ runtime_env }}"
           description: "{{ deploy_description }}"
           required_contexts: "{{ deploy_contexts }}"
           auto_merge: false
