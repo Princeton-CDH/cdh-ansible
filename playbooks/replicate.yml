@@ -48,7 +48,7 @@
 - name: Restore database and media backups on target host
   # hosts: dev
   # connection: local
-  hosts: geniza_qa, cdhweb_qa, prosody_qa, shxco_qa
+  hosts: geniza_staging, cdhweb_staging, prosody_staging, shxco_staging
   connection: ssh
   remote_user: pulsys
   vars:
