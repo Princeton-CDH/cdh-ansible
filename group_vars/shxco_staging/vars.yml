@@ -3,8 +3,8 @@
 ###
 ---
 
-# email prefix for dev account emails
-email_prefix: '[TEST S&co] '
+# email prefix for staging error emails
+email_prefix: '[S&co STAGING] '
 
 # solr settings
 # NOTE: should be moved somewhere common; zk is unique but solr vars used for old deploys

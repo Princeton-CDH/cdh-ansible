@@ -4,7 +4,7 @@
 ---
 
 # email prefix for dev account emails
-email_prefix: '[TEST PPA] '
+email_prefix: '[PPA STAGING] '
 
 application_url: "test-ppa.cdh.princeton.edu"
 

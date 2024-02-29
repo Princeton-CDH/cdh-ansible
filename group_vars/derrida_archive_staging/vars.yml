@@ -1,7 +1,7 @@
 
 # Github repository
 repo: "Princeton-CDH/derridas-margins-archive"
-# set QA to use staging for now
+# set staging deploy to use staging branch for now
 gitref: '{{ ref | default("staging") }}'
 # Install root (the dir where the repo will be set up on remote)
 install_root: "/srv/www/derrida"
