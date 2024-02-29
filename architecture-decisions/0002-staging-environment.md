@@ -24,7 +24,7 @@ Option 2, for consistency and to avoid confusion between different terms that me
 ### Positive Consequences
 
 * Staging terminology will be consistent between CDH and PUL
-* The new `runtime_env` configureation used in the consolidated playbooks can be used in playbooks and roles that formerly relied on the presence or absence of a `qa` variable
+* The new `runtime_env` configuration used in the consolidated playbooks can be used in playbooks and roles that formerly relied on the presence or absence of a `qa` variable
 
 ### Negative Consequences
 
