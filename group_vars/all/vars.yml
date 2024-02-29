@@ -53,7 +53,7 @@ short_hash: '{{ repo_info.after[0:6] }}'
 # Path of the deploy directory. Generated from vars above and build_project_repo
 deploy: '{{ install_root }}/{{ version }}-{{ short_hash }}'
 # python app version. Generated in build_project_repo
-version: '{{ python_app_version.stdout }}'
+version: '{{ python_app_version }}'
 # logging directory
 logging_dir: '{{ install_root }}/logs'
 # logging file

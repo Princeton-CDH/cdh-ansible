@@ -1,0 +1,20 @@
+- hosts: geotaste_cloud, sandbox
+  vars_files:
+    - ../group_vars/sandbox/geotaste.yml
+  connection: ssh
+  remote_user: pulsys
+  become: true
+  roles:
+    - create_deployment
+    - deploy_user
+    - sandbox
+    - build_dependencies
+    - build_project_repo
+    - python
+    - geerlingguy.supervisor
+    - configure_logging
+    - finalize_deploy
+    - close_deployment
+  post_tasks:
+    - name: Use supervisorctl to restart application
+      ansible.builtin.command: "sudo supervisorctl restart geotaste"
