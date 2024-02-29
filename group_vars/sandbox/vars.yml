@@ -3,4 +3,4 @@ single_app: false
 
 alias_apps:
   simrisk: /srv/www/simulatingrisk
-
+  geotaste: /srv/www/geotaste

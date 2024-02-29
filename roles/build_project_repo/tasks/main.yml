@@ -30,7 +30,7 @@
       # (i.e. on PUL vms, where deploy user is different than remote user)
       when: deploy_user is defined and ansible_distribution != 'Springdale'
 
-    - name: Clone project repository and set to the correct version
+    - name: Clone project repository and checkout the correct git reference
       become: true
       become_user: "{{ deploy_user }}"
       git:
@@ -40,16 +40,9 @@
       # register repo_info for group_vars
       register: repo_info
 
-    - name: Get the version for the python package/app being deployed
-      become: true
-      become_user: "{{ deploy_user }}"
+    - name: Determine version of python app being deployed
+      ansible.builtin.import_tasks: python_app_version.yml
       run_once: true
-      shell:
-        cmd: "python3 -c 'import {{ python_app }}; print({{ python_app }}.__version__)'"
-        chdir: "{{ clone_root}}/{{ repo }}"
-      register: python_app_version
-      tags:
-        - python
       when:
         - python_app is defined
 

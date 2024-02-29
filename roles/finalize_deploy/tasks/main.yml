@@ -73,7 +73,8 @@
         state: link
       notify:
         - Restart nginx
-      when: ansible_distribution != 'Springdale'
+      when:
+        - "'passenger' in ansible_role_names"
 
     # On Springdale we can do this as deploy_user
     - name: Update /var/www/ symlink to make the new version live
