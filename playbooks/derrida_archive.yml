@@ -1,4 +1,8 @@
-- hosts: derrida_archive_qa
+---
+# by default this playbook runs in the staging environment
+# to run in production, pass '-e runtime_env=production'
+- name: build derrida archive page
+  hosts: derrida_archive_{{ runtime_env | default('staging') }}
   connection: ssh
   remote_user: pulsys
   roles:

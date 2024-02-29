@@ -1,8 +1,6 @@
 ---
-# Git refspec to use, either default or passed by '-e ref=<refspec>
-gitref: '{{ ref | default("develop") }}'
 # email prefix for admin emails
-email_prefix: "[QA CDH Web] "
+email_prefix: "[CDHweb STAGING] "
 # allowed_hosts for Django
 allowed_hosts:
     - "test-web.cdh.princeton.edu"
@@ -15,6 +13,3 @@ application_url: "test-web.cdh.princeton.edu"
 
 # passenger settings
 passenger_server_name: "{{ application_url }}"
-
-
-

@@ -19,7 +19,7 @@ node_version: "18"
 
 # Override clone root to use deploy user home instead of root
 clone_root: "/home/{{ deploy_user }}/repos"
-# don't distinguish between qa/prod paths
+# use the same install root path on both staging and production
 install_root: "/srv/www/{{ app_name }}"
 
 # set passenger defaults for production; override for other environments
@@ -43,7 +43,7 @@ db_host: "{{ postgres_host }}"
 # postgresql database info
 application_dbuser_name: cdh_shxco
 application_dbuser_password: "{{ vault_db_password }}"
-# same db name for qa and production to simplify syncing data
+# same db name for staging and production to simplify syncing data
 application_db_name: cdh_shxco
 application_db_host: "{{ postgres_host }}"
 

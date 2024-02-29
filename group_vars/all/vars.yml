@@ -4,8 +4,10 @@
 github_token: '{{ lookup("env", "ANSIBLE_GITHUB_TOKEN") | default("") }}'
 api_base: https://api.github.com
 deployments_endpoint: '{{api_base}}/repos/{{ repo }}/deployments'
-deploy_environment: '{{ staging|default(None) or qa|default(None) or "production" }}'
-deploy_description: 'Deploying {{ gitref }} to {{ deploy_environment }}'
+# runtime env is set in the playbook; defaults to staging,
+# override when deploying to production
+runtime_env: "staging"
+deploy_description: 'Deploying {{ gitref }} to {{ runtime_env }}'
 # default for production contexts
 deploy_contexts:
     - 'continuous-integration/travis-ci/push'
@@ -27,7 +29,7 @@ nevercache_key: '{{ 99999 |random|string|password_hash("sha256") }}'
 # Database configurations -- overriden by group_vars vaults as needed
 db_name: '{{ vault_db_name }}'
 db_password: '{{ vault_db_password }}'
-# include a blank default for QA when we want localhost
+# include a blank default for staging when we want localhost
 db_host: '{{ vault_db_host | default("") }}'
 db_username: '{{ vault_db_username }}'
 
@@ -82,7 +84,7 @@ python_venv_prompt: "{{ app_name }}-{{ version }}-{{ short_hash }}"
 requirements_type: 'txt'
 
 # CSP configuration -- two urls, one for read only, one for enforce
-# first is used in QA, rest in production
+# first is used in staging, rest in production
 # set csp_enabled: true in project vars to enable
 csp_reportonly_uri: '{{ vault_csp_reportonly_uri | default("") }}'
 csp_enforce_uri: '{{ vault_csp_enforce_uri  | default("") }}'

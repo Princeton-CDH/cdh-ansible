@@ -1,4 +1,8 @@
-- hosts: cdhweb_prod
+---
+# by default this playbook runs in the staging environment
+# to run in production, pass '-e runtime_env=production'
+- name: build the cdh website
+  hosts: cdhweb_{{ runtime_env | default('staging') }}
   connection: ssh
   remote_user: pulsys
   roles:

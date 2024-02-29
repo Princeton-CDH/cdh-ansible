@@ -8,15 +8,14 @@ python_app: "{{ app_name }}"
 python_app_path: "{{ deploy }}"
 symlink: "{{ app_name }}"
 
-# this is a dev/qa deploy, but not currently using git flow; deploy main by default
+# this is a dev/sandbox deploy, but the github repo is not currently using git flow;
+# deploy main branch by default
 gitref: '{{ ref | default("main") }}'
-
 
 # use python 3.9
 python_version: "3.9"
 # where to install the application code
 install_root: '/srv/www/{{ app_name }}'
-
 
 # configure to run via supervisor
 # runs at a non top-level path when on the sandbox
