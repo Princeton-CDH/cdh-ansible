@@ -55,7 +55,7 @@ Each application has a deploy playbook that can be used to deploy that applicati
 
 By default, deploying to production will deploy the `main` branch of the github repository for that application; deploying to staging will deploy the `develop` branch. These may be overridden by specific applications with different conventions.
 
-To deploy a branch or tag other than the default, you can specify an alternet git reference via `-e ref=GITREF` where `GITREF` is the name of the branch, tag, or a commit hash.
+To deploy a branch or tag other than the default, you can specify an alternate git reference via `-e ref=GITREF` where `GITREF` is the name of the branch, tag, or a commit hash.
 
 The playbook will run, noting success and failures. The `-v` flag adjusts verbosity (adding more `v`s will produce more verbosity. Debug tasks are usually written at `2`)
 
