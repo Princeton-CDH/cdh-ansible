@@ -1,14 +1,21 @@
 # Determine the version of the python app being deployed
+#
+# Supports determining the version in one of two ways
+# - import the package and output package.__version__
+# - import a _version.py in the repo root and output __version__
+#
+# Note that this runs before python dependencies have been installed
+
 - name: Determine python app version
   tags:
     - python
   block:
-    - name: Check if project has a version.py file
+    - name: Check if project has a _version.py file in the main directory
       stat:
         path: "{{ clone_root}}/{{ repo }}/_version.py"
       register: python_version_file
 
-    - name: Get the version for the python package/app being deployed (app.version)
+    - name: Get the version for the python package/app being deployed (_version)
       become: true
       become_user: "{{ deploy_user }}"
       shell:
@@ -44,6 +51,6 @@
       when: 
         - python_app_version_pkg.stdout is defined
 
-    - name: debug python app version
+    - name: reported determined python app version
       ansible.builtin.debug:
-        msg: python_app_version = {{ python_app_version}}
+        msg: Deploying python app version {{ python_app_version}}
