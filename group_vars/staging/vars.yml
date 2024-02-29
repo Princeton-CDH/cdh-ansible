@@ -4,9 +4,15 @@
 ---
 # configure staging to deploy develop branch by default
 gitref: '{{ ref | default("develop") }}'
-# solr configurations for a local Solr instance
-solr_url: http://127.0.0.1:8983/solr/
+
+# solr settings
+# using solr staging on jammy vm
+# - api access
+solr_url: "http://lib-solr8d-staging.princeton.edu:8983/solr/"
 solr_admin_url: '{{ solr_url }}admin/cores'
+zk_host: "lib-zk-staging1d:2181,lib-zk-staging2d:2181,lib-zk-staging3d:2181/solr8"
+# - server name for deploy setup
+solr_server: "{{ groups['solr_staging'][0] }}"
 
 # allow any deploy contexts (no ci/coverage checks before deploying)
 deploy_contexts: []
