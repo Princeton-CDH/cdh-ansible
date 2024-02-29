@@ -3,6 +3,7 @@
 # https://github.com/pulibrary/princeton_ansible/blob/main/roles/postgresql/tasks/create_users.yml
 
 - name: Ensure postgres user account for app exists
+  run_once: true
   community.postgresql.postgresql_user:
     name: "{{ application_dbuser_name }}"
     login_host: "{{ postgres_host }}"

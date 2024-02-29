@@ -2,6 +2,7 @@
 # back up the database to a location on the app's host (not the db host)
 - name: Backup postgres database
   tags: db_backup
+  run_once: true
   block:
     - name: Check postgres backup path
       become: true

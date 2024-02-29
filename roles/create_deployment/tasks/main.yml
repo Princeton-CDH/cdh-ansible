@@ -6,6 +6,7 @@
 - name: Create a GitHub deployment
   tags:
     - gh_deploy
+  run_once: true
   block:
     - name: Check for GitHub token, and fail if not present
       fail:

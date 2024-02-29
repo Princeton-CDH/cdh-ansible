@@ -21,8 +21,8 @@
         group: "{{ media_group }}"
         state: directory
         recurse: true
-      # nfs config (owner/group); this fails on bionic
-      when: ansible_distribution_version != "18.04" or "nfs" not in media_root
+      # don't recursively update ownership on nfs mount (too slow, unnecessary)
+      when: "'nfs' not in media_root"
 
     - name: Give deploy acl rwx over all files in the directory as a fall back
       become: true

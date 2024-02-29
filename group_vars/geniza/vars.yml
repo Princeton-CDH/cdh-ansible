@@ -123,6 +123,9 @@ solr_configset: geniza
 deploy_contexts:
   - "Python unit tests"
 
+# run cron jobs only on the first machine in the host group
+cronjob_host: "cdh-geniza1.princeton.edu"
+
 # configure scripts to run as cron jobs
 crontab:
   - name: "{{ app_name }} reindex"

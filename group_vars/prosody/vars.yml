@@ -13,10 +13,10 @@ django_app: "{{ app_name }}"
 symlink: "{{ app_name }}"
 # wsgi file relative to deploy location
 wsgi_path: "{{ django_app }}/wsgi.py"
-# use python 3.9
-python_version: 3.9
+# use python 3.11
+python_version: 3.11
 # nodejs version
-node_version: "16"
+node_version: "18"
 
 # pul deploy user
 deploy_user: "conan"

@@ -127,3 +127,4 @@ media_backup_filename: "{{ timestamp }}_{{ app_name }}_media.tar.gz"
 media_backup_path: "{{ backup_dir }}{{ media_backup_filename}}"
 ## nfs prod server
 nfs_server: "128.112.204.89"
+nfs_host_server: "lib-fs-prod.princeton.edu"

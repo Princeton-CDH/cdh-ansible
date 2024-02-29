@@ -19,3 +19,4 @@ postgres_host: lib-postgres-staging1.princeton.edu
 application_dbuser_role_attr_flags: "CREATEDB"
 ## nfs staging server
 nfs_server: "128.112.203.82"
+nfs_host_server: "lib-fs-staging.princeton.edu"
