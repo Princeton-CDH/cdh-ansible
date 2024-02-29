@@ -7,8 +7,8 @@ ALLOWED_HOSTS = [{% for host in allowed_hosts %}'{{ host }}', {% endfor %}]
 # http://www.miniwebtool.com/django-secret-key-generator/
 SECRET_KEY = '{{ secret_key }}'
 
-{# only show the test warning if in QA #}
-{% if qa is defined %}
+{# only show the test warning if in staging #}
+{% if runtime_env == "staging" %}
 SHOW_TEST_WARNING = True
 {% endif %}
 
@@ -64,7 +64,7 @@ SERVER_EMAIL = 'cdhdevteam@princeton.edu'
 WAGTAILADMIN_NOTIFICATION_FROM_EMAIL = SERVER_EMAIL
 WAGTAILADMIN_NOTIFICATION_USE_HTML = True
 
-{% if qa is not defined %}
+{% if runtime_env == "production" %}
 # Email configuration for sending messages
 EMAIL_HOST = 'smtp.princeton.edu'
 EMAIL_HOST_USER = 'cdhdevteam'
@@ -81,7 +81,7 @@ EMAIL_SUBJECT_PREFIX = '{{ email_prefix }}'
 
 {% if csp_enabled is defined and csp_enabled %}
 
-{% if qa is defined %}
+{% if runtime_env == "staging" %}
 CSP_REPORT_ONLY = True
 CSP_REPORT_URI = '{{ csp_reportonly_uri }}'
 {% else %}

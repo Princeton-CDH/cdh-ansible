@@ -23,8 +23,7 @@ MANAGERS = [('CDH Dev Team', 'cdhdevteam@princeton.edu'),]
 import re
 IGNORABLE_404_URLS = [re.compile('\.(php|aspx?|jspa?)(\/$|$)')]
 
-
-{% if qa is not defined %}
+{% if runtime_env == "production" %}
 # Turn on Google Analytics
 INCLUDE_ANALYTICS = True
 GTAGS_ANALYTICS_ID = 'G-864528T1N5'

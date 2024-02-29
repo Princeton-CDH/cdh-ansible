@@ -20,7 +20,7 @@
         status_code: 201
         body:
           ref: "{{ gitref }}"
-          environment: "{{ deploy_environment }}"
+          environment: "{{ runtime_env }}"
           description: "{{ deploy_description }}"
           required_contexts: "{{ deploy_contexts }}"
           auto_merge: false
@@ -39,6 +39,5 @@
           description: "Deployment in progress"
         headers:
           Authorization: "token {{ github_token }}"
-  when: deploy_environment != "staging"
 # No rescue because again, if either of these fail, the error status will
 # likely also fail out.

@@ -23,8 +23,7 @@ as follows:
 - all
   - staging
   - project
-    - project_qa
-    - project_prod
+    - project_production
     - project_staging
 
 In hosts, `project_staging` inherits from both its project and `staging`, so database variables do not have to be defined for staging playbooks.

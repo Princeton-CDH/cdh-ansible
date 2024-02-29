@@ -17,5 +17,4 @@
       description: "Deployment succeeded"
     headers:
       Authorization: "token {{ github_token }}"
-  when: deploy_environment != "staging"
   # no rescue because if this fails, closing an errored deploy will too!

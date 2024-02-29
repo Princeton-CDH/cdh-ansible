@@ -3,7 +3,7 @@
 
 - name: Setup django application
   environment:
-    DJANGO_ENV: "{% if qa is defined %}staging{% else %}production{% endif %}"
+    DJANGO_ENV: "{{ runtime_env }}"
   block:
   - name: Install local settings
     ansible.builtin.import_tasks: install_local_settings.yml

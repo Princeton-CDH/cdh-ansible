@@ -66,7 +66,7 @@ PUCAS_LDAP.update({
 {% block email_config %}
 ADMINS = [("CDH Dev Team", "cdhdevteam@princeton.edu")]
 SERVER_EMAIL = "cdhdevteam@princeton.edu"
-{% if qa is not defined %}
+{% if runtime_env == "production" %}
 EMAIL_HOST = "smtp.princeton.edu"
 EMAIL_HOST_USER = "cdhdevteam"
 EMAIL_SUBJECT_PREFIX = "{{ django_email_subject }}"
@@ -82,7 +82,7 @@ WAGTAILADMIN_NOTIFICATION_USE_HTML = True
 # https://github.com/mozilla/django-csp
 {% block csp_config %}
 {% if csp_enabled is defined and csp_enabled %}
-{% if qa is defined %}
+{% if runtime_env == "staging" %}
 CSP_REPORT_ONLY = True
 CSP_REPORT_URI = "{{ django_csp_reportonly_uri }}"
 {% else %}
@@ -128,7 +128,8 @@ LOGGING = {
         },
         '{{ django_app }}': {
             'handlers': ['debug_log'],
-            'level': {% if qa is defined %}'DEBUG'{% else %}'WARN'{% endif %},
+            ## 'level': {% if runtime_env == "staging" %}'DEBUG'{% else %}'WARN'{% endif %},            
+            'level': 'WARN',
             'propagate': True,
         },
     }

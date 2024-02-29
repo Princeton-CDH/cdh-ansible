@@ -60,8 +60,8 @@ media_root: /mnt/nfs/cdh/cdhweb/media/
 font_archive_file: cdhweb_fonts.vault
 
 # source host when replicating data/media (use host from inventory file)
-replication_source_host: cdhweb_prod
-# cdhweb prod/qa database names differ; customize db backup so the file names match
+replication_source_host: cdhweb_production
+# cdhweb prod/staging database names differ; customize db backup so the file names match
 db_backup_filename: "{{ timestamp }}_{{ app_name }}.sql.bz2"
 dest_backup_path: "{{ dest_backup_dir }}{{ db_backup_filename }}"
 

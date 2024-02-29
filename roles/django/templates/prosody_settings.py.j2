@@ -20,7 +20,7 @@ GALE_API_USERNAME = '{{ gale_api_username }}'
 # local path for cached marc records; needed for Gale/ECCO import
 MARC_DATA = '{{ marc_data_path }}'
 
-{% if qa is not defined %}
+{% if runtime_env == "production" %}
 # Turn on Google Analytics
 INCLUDE_ANALYTICS = True
 GTAGS_ANALYTICS_ID = 'G-FJG5ZQ5KGR'

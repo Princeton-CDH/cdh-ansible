@@ -25,7 +25,7 @@
         recurse: true
       when: ansible_distribution == 'Ubuntu'
 
-    - name: if on qa, set acls appropriately so www-data can access
+    - name: if on staging, set acls appropriately so www-data can access
       tags:
         - setup
         - never
@@ -37,7 +37,7 @@
         recursive: yes
         default: yes
         state: present
-      when: qa is defined
+      when: runtime_env == "staging"
 
     - name: Give deploy acl rwx over all files in the directory as a fall back
       tags:

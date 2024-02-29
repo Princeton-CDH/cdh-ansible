@@ -22,14 +22,16 @@
         group: "{{ deploy_user }}"  # deploy group doesn't exist on springdale
       when: ansible_distribution == 'Ubuntu'
 
-    - name: For QA, setfacl so that the Django project group can read it too
+    - name: For staging, setfacl so that the Django project group can read it too
       acl:
         path: '{{ local_settings_dest }}'
         entity: '{{ project_user }}'
         etype: group
         permissions: r
         state: present
-      when: qa is defined and ansible_distribution == 'Springdale'
+      when:
+        - runtime_env == "staging"
+        - ansible_distribution == 'Springdale'
 
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml

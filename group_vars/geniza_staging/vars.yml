@@ -1,6 +1,6 @@
 ---
 # email prefix for admin emails
-email_prefix: "[QA Geniza] "
+email_prefix: "[Geniza STAGING] "
 
 application_url: "test-geniza.cdh.princeton.edu"
 
