@@ -42,6 +42,7 @@
 
     - name: Determine version of python app being deployed
       ansible.builtin.import_tasks: python_app_version.yml
+      run_once: true
       when:
         - python_app is defined
 
