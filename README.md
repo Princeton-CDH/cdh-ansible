@@ -51,7 +51,7 @@ To run a playbook, with your python virtual environment activated:
 ansible-playbook playbooks/name_of_playbook.yml
 ```
 
-Each application has a deploy playbooks that can be used to deploy that application to either the production or staging environments. By default, the playbook will deploy to staging. To deploy to production, override the runtime environment with this command line option: `-e runtime_env=production`
+Each application has a deploy playbook that can be used to deploy that application to either the production or staging environments. By default, the playbook will deploy to staging. To deploy to production, override the runtime environment with this command line option: `-e runtime_env=production`
 
 By default, deploying to production will deploy the `main` branch of the github repository for that application; deploying to staging will deploy the `develop` branch. These may be overridden by specific applications with different conventions.
 
