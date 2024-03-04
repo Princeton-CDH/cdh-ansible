@@ -16,7 +16,7 @@ TINY_API_KEY = '{{ tiny_api_key }}'
 # For more information: https://docs.maptiler.com/cloud/api/authentication-key/
 MAPTILER_API_TOKEN = '{{ maptiler_api_token }}'
 
-{% if runtime == "production" %}
+{% if runtime_env == "production" %}
 GTAGS_ANALYTICS_ID = "G-3HMY094CY2"
 {% endif %}
 
