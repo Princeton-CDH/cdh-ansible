@@ -12,6 +12,10 @@ TEI_TRANSCRIPTIONS_LOCAL_PATH = "/srv/www/geniza/data/tei_xml/"
 # TinyMCE API key
 TINY_API_KEY = '{{ tiny_api_key }}'
 
+# Maptiler API token, required for showing maps on the admin site and the public site.
+# For more information: https://docs.maptiler.com/cloud/api/authentication-key/
+MAPTILER_API_TOKEN = '{{ maptiler_api_token }}'
+
 {% if runtime == "production" %}
 GTAGS_ANALYTICS_ID = "G-3HMY094CY2"
 {% endif %}
