@@ -1,0 +1,37 @@
+---
+# back up a solr collection to a location on solr server
+- name: Backup solr collection
+  run_once: true
+  tags:
+    - solr_backup
+  block:
+    - name: Request Solr collection backup
+      uri:
+        url: "{{ solr_url }}admin/collections?action=BACKUP&collection={{ solr_collection }}&name={{ solr_backup_filename }}&location={{ solr_backup_location }}&async={{ solr_backup_request_id }}"
+      register: backup_response
+      # NOTE: using async request, since backup for larger collections
+      # maky take some time
+
+      # use the async request id to check status; wait until task completes
+    - name: Request backup status
+      uri:
+        url: "{{ solr_url }}admin/collections?action=REQUESTSTATUS&requestid={{ solr_backup_request_id }}"
+      register: status_response
+      until: status_response.json["status"]["state"] in ["completed", "failed", "notfound"]
+      retries: 10
+      delay: 5
+
+    - name: Report succcess
+      ansible.builtin.debug:
+        msg: "Successfully backed up {{ solr_collection }} to {{ solr_backup_location }}{{ solr_backup_filename }}"
+      when: status_response.json["status"]["state"] == "completed"
+
+    - name: Report error
+      ansible.builtin.debug:
+        msg: "Backup failed: {{ status_response.json['exception']['msg'] }}"
+      when: status_response.json["status"]["state"] == "failed"
+
+    - name: Report status not found
+      ansible.builtin.debug:
+        msg: "Backup status not found: {{ status_response.json['exception']['msg'] }}"
+      when: status_response.json["status"]["state"] == "notfound"

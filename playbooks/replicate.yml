@@ -47,6 +47,15 @@
       become_user: "{{ deploy_user }}"
       when: media_files.matched|int != 0
 
+    - name: Request a solr collection backup, if application uses solr
+      run_once: true
+      tags:
+        - solr_backup
+      include_role:
+        name: solr_collection
+        tasks_from: backup_solr_collection.yml
+      when: solr_collection is defined
+
 # destination host tasks
 - name: Restore database and media backups on target host
   # hosts: dev
@@ -63,6 +72,8 @@
      # NOTE: override db_backup_filename if db names differ between qa/prod
   tasks:
       - name: Get replication source hostname
+        tags:
+          - always
         set_fact:
           source_hostname: "{{ item }}"
         with_inventory_hostnames:
@@ -82,6 +93,15 @@
         ansible.builtin.command: /usr/bin/rsync -avz "{{ source_user }}@{{ source_hostname }}:{{ db_backup_path }}" "{{ dest_backup_path }}" -e "ssh -o StrictHostKeyChecking=no"
         become: true
         become_user: "{{ deploy_user }}"
+
+      - name: Restore solr collection from backup, if application uses solr
+        run_once: true
+        tags:
+          - solr_backup  # must be tagged here AND in the included task
+        include_role:
+          name: solr_collection
+          tasks_from: restore_solr_collection.yml
+        when: solr_collection is defined
 
       - name: Check for media tar file on source
         stat:
@@ -187,3 +207,4 @@
           login_password: '{{ application_dbuser_password }}'
           query: "UPDATE django_site SET domain = '{{ application_url }}', name = '{{ application_url }}' WHERE id = 1;"
         when: "'prod' not in group_names"   # never run this on production
+
