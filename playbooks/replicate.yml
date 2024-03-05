@@ -208,3 +208,12 @@
           query: "UPDATE django_site SET domain = '{{ application_url }}', name = '{{ application_url }}' WHERE id = 1;"
         when: "'prod' not in group_names"   # never run this on production
 
+      - name: rsync hathitrust pairtree data from production to staging (PPA only)
+        tags:
+          - ppa_pairtree
+        become: true
+        become_user: "{{ deploy_user }}"
+        # run as conan, since we already have keys setup for conan ssh from staging to production
+        # because this is stored on nfs we can't use -avz (permissions/chown)
+        ansible.builtin.command: /usr/bin/rsync -rltDz "{{ source_user }}@{{ source_hostname }}:{{ hathitrust_pairtree_path }}" "{{ hathitrust_pairtree_path }}" -e "ssh -o StrictHostKeyChecking=no"
+        when: "'prosody' in group_names"   # this is specific to ppa
