@@ -35,3 +35,8 @@
       ansible.builtin.debug:
         msg: "Backup status not found: {{ status_response.json['exception']['msg'] }}"
       when: status_response.json["status"]["state"] == "notfound"
+
+    - name: Report status request timeout
+      ansible.builtin.debug:
+        msg: "Status request timed out; last status was: {{ status_response.json['status']['state'] }}"
+      when: status_response.json["status"]["state"] not in in ["completed", "failed", "notfound"]

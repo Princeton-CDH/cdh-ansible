@@ -34,6 +34,11 @@
         msg: "Restore status not found: {{ status_response.json['exception']['msg'] }}"
       when: status_response.json["status"]["state"] == "notfound"
 
+    - name: Report status report timeout
+      ansible.builtin.debug:
+        msg: "Status request timed out; last status was: {{ status_response.json['status']['state'] }}"
+      when: status_response.json["status"]["state"] not in ["completed", "failed", "notfound"]
+
     - name: Restore Solr collection from backup on disk
       uri:
         url: "{{ solr_url }}admin/collections?action=RESTORE&collection={{ solr_collection }}&collection.configName={{ solr_configset }}&name={{ solr_backup_filename }}&location={{ solr_backup_location }}&async={{ solr_backup_request_id }}"
@@ -64,3 +69,9 @@
       ansible.builtin.debug:
         msg: "Restore status not found: {{ status_response.json['exception']['msg'] }}"
       when: status_response.json["status"]["state"] == "notfound"
+
+    - name: Report status report timeout
+      ansible.builtin.debug:
+        msg: "Status request timed out; last status was: {{ status_response.json['status']['state'] }}"
+      when: status_response.json["status"]["state"] not in ["completed", "failed", "notfound"]
+
