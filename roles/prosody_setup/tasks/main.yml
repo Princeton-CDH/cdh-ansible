@@ -3,15 +3,14 @@
 
 - name: Ensure HathiTrust pairtree directory exists and has correct permissions
   tags:
-    - setup
     - never
   become: true
   ansible.builtin.file:
     path: "{{ hathitrust_pairtree_path }}"
     state: directory
     mode: 0775
-    owner: nobody
-    group: nogroup
+    owner: www-data
+    group: conan
     recurse: false
 
 - name: Check if MARC pairtree data is present
@@ -25,19 +24,17 @@
 
 - name: Ensure MARC data dir has correct permissions
   tags:
-    - setup
     - never
   become: true
   ansible.builtin.file:
     path: "{{ marc_data_path }}"
     state: directory
     mode: 0775
-    owner: nobody
-    group: nogroup
+    owner: www-data
+    group: conan
 
-- name: Ensure prosody data directory
+- name: Ensure prosody data directory exists
   tags:
-    - setup
     - nfs
     - never
   become: true
@@ -45,5 +42,5 @@
     path: "{{ prosody_data_path }}"
     state: directory
     mode: "0775"
-    owner: nobody
-    group: nogroup
+    owner: www-data
+    group: conan
