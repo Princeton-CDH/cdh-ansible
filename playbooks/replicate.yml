@@ -214,6 +214,6 @@
         become: true
         become_user: "{{ deploy_user }}"
         # run as conan, since we already have keys setup for conan ssh from staging to production
-        # because this is stored on nfs we can't use -avz (permissions/chown)
-        ansible.builtin.command: /usr/bin/rsync -rltDz "{{ source_user }}@{{ source_hostname }}:{{ hathitrust_pairtree_path }}" "{{ hathitrust_pairtree_path }}" -e "ssh -o StrictHostKeyChecking=no"
+        # use --delete to remove any files in staging that don't exist in production
+        ansible.builtin.command: /usr/bin/rsync -avz --delete "{{ source_user }}@{{ source_hostname }}:{{ hathitrust_pairtree_path }}" "{{ hathitrust_pairtree_path }}" -e "ssh -o StrictHostKeyChecking=no"
         when: "'prosody' in group_names"   # this is specific to ppa
