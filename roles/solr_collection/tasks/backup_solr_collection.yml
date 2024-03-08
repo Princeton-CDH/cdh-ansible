@@ -17,26 +17,18 @@
       uri:
         url: "{{ solr_url }}admin/collections?action=REQUESTSTATUS&requestid={{ solr_backup_request_id }}"
       register: status_response
-      until: status_response.json["status"]["state"] in ["completed", "failed", "notfound"]
-      retries: 10
-      delay: 5
+      # known states: running, completed, failed, notfound
+      until: status_response.json["status"]["state"] != "running"
+      retries: 15
+      delay: 10
 
-    - name: Report succcess
+    - name: Report backup success
       ansible.builtin.debug:
         msg: "Successfully backed up {{ solr_collection }} to {{ solr_backup_location }}{{ solr_backup_filename }}"
       when: status_response.json["status"]["state"] == "completed"
 
-    - name: Report error
+    - name: Report backup error
       ansible.builtin.debug:
-        msg: "Backup failed: {{ status_response.json['exception']['msg'] }}"
-      when: status_response.json["status"]["state"] == "failed"
+        msg: "Backup {{ status_response.json['status']['state'] }}: {{ status_response.json['exception']['msg'] }}"
+      when: status_response.json["status"]["state"] != "completed"
 
-    - name: Report status not found
-      ansible.builtin.debug:
-        msg: "Backup status not found: {{ status_response.json['exception']['msg'] }}"
-      when: status_response.json["status"]["state"] == "notfound"
-
-    - name: Report status request timeout
-      ansible.builtin.debug:
-        msg: "Status request timed out; last status was: {{ status_response.json['status']['state'] }}"
-      when: status_response.json["status"]["state"] not in in ["completed", "failed", "notfound"]
