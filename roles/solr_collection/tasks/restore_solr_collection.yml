@@ -1,0 +1,56 @@
+---
+# Restore a solr collection from a solr backup available on the server
+- name: Restore solr collection
+  run_once: true
+  tags:
+    - solr_backup
+  block:
+    - name: Delete existing Solr collection
+      uri:
+        url: "{{ solr_url }}admin/collections?action=DELETE&name={{ solr_collection }}&async={{ solr_delete_request_id }}"
+      when: "'prod' not in group_names"   # never run this on production
+
+     # use the async request id to check status; wait until task completes
+    - name: Request status for delete
+      uri:
+        url: "{{ solr_url }}admin/collections?action=REQUESTSTATUS&requestid={{ solr_delete_request_id }}"
+      register: status_response
+      until: status_response.json["status"]["state"] != "running"
+      retries: 5
+      delay: 10
+
+    - name: Report success (delete)
+      ansible.builtin.debug:
+        msg: "Deletion completed for solr collection {{ solr_collection }}"
+      when: status_response.json["status"]["state"] == "completed"
+
+    - name: Report error (delete)
+      ansible.builtin.debug:
+        msg: "Deletion {{ status_response.json['status']['state'] }}: {{ status_response.json['exception']['msg'] }}"
+      when: status_response.json["status"]["state"] != "completed"
+
+    - name: Restore Solr collection from backup on disk
+      uri:
+        url: "{{ solr_url }}admin/collections?action=RESTORE&collection={{ solr_collection }}&collection.configName={{ solr_configset }}&name={{ solr_backup_filename }}&location={{ solr_backup_location }}&async={{ solr_backup_request_id }}"
+      register: restore_response
+      # NOTE: using async request, since restore for larger collections
+      # maky take some time
+
+      # use the async request id to check status; wait until task completes
+    - name: Request status for restore
+      uri:
+        url: "{{ solr_url }}admin/collections?action=REQUESTSTATUS&requestid={{ solr_backup_request_id }}"
+      register: status_response
+      until: status_response.json["status"]["state"] != "running"
+      retries: 20
+      delay: 10   # restore may take longer for large collections
+
+    - name: Report succcess (restore)
+      ansible.builtin.debug:
+        msg: "Successfully restored {{ solr_collection }} from {{ solr_backup_location }}{{ solr_backup_filename }}"
+      when: status_response.json["status"]["state"] == "completed"
+
+    - name: Report error (restore)
+      ansible.builtin.debug:
+        msg: "Restore {{ status_response.json['status']['state'] }}: {{ status_response.json['exception']['msg'] }}"
+      when: status_response.json["status"]["state"] != "completed"
