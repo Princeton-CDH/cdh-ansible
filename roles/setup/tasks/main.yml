@@ -14,6 +14,7 @@
   when: geniza_deploy_only is not defined or geniza_deploy_only == ""
 
 - name: nfsserver | add fqdn for idmapping
+  become: true
   tags:
     - setup
     - nfs
@@ -25,6 +26,7 @@
     state: present  
 
 - name: nfsserver | enable id_mapping
+  become: true
   tags:
     - setup
     - nfs
@@ -36,6 +38,7 @@
   notify: restart idmapd
 
 - name: nfsserver | add fqdn for idmapping
+  become: true
   tags:
     - setup
     - nfs
@@ -47,6 +50,7 @@
     state: present  
 
 - name: Ensure the presence of cdh nfs mount
+  become: true
   tags:
     - setup
     - nfs
@@ -57,7 +61,7 @@
     state: mounted
     fstype: nfs
     opts: rw,sync,hard
-  become: true
+
 # comment this out and find out how to automatically disable idmapping
 # - name: nfsserver | reconfigure client id_mapping
   # tags:

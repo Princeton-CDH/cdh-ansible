@@ -7,6 +7,8 @@
 # Note that this runs before python dependencies have been installed
 
 - name: Determine python app version
+  become: true
+  become_user: "{{ deploy_user }}"
   tags:
     - python
   block:
@@ -16,8 +18,6 @@
       register: python_version_file
 
     - name: Get the version for the python package/app being deployed (_version)
-      become: true
-      become_user: "{{ deploy_user }}"
       shell:
         cmd: "python3 -c 'from _version import __version__; print(__version__)'"
         chdir: "{{ clone_root}}/{{ repo }}"
@@ -27,8 +27,6 @@
         - python_version_file.stat.exists
 
     - name: Get the version for the python package/app being deployed (app.__version__)
-      become: true
-      become_user: "{{ deploy_user }}"
       shell:
         cmd: "python3 -c 'import {{ python_app }}; print({{ python_app }}.__version__)'"
         chdir: "{{ clone_root}}/{{ repo }}"

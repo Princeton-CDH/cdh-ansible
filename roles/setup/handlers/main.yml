@@ -1,5 +1,5 @@
 ---
 - name: restart idmapd
   ansible.builtin.service:
-    name: idmapd
+    name: nfs-idmapd
     state: restarted
