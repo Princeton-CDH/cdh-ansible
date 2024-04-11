@@ -38,6 +38,8 @@ application_db_host: "{{ postgres_host }}"
 
 # configure app-specific local settings
 django_local_settings_template: "cdhweb_settings.py.j2"
+# cdhweb uses split-settings, so local settings is a slightly different path
+django_local_settings_dest: "{{ deploy }}/{{ django_app }}/settings/local_settings.py"
 
 # Database backup location — revert to default, with timestamp but not app version
 # db_backup_path: "/home/{{ deploy_user }}/backups/pre-{{ version }}-{{ short_hash }}.sql"
