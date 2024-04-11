@@ -14,13 +14,13 @@
   block:
     - name: Check if project has a _version.py file in the main directory
       stat:
-        path: "{{ clone_root}}/{{ repo }}/_version.py"
+        path: "{{ clone_root }}/{{ repo }}/_version.py"
       register: python_version_file
 
     - name: Get the version for the python package/app being deployed (_version)
       shell:
         cmd: "python3 -c 'from _version import __version__; print(__version__)'"
-        chdir: "{{ clone_root}}/{{ repo }}"
+        chdir: "{{ clone_root }}/{{ repo }}"
       register: python_app_version_vpy
       # when skipped, registers a variable with info with skip / conditional info
       when:
@@ -29,7 +29,7 @@
     - name: Get the version for the python package/app being deployed (app.__version__)
       shell:
         cmd: "python3 -c 'import {{ python_app }}; print({{ python_app }}.__version__)'"
-        chdir: "{{ clone_root}}/{{ repo }}"
+        chdir: "{{ clone_root }}/{{ repo }}"
       register: python_app_version_pkg
       tags:
         - python
