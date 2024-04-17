@@ -54,6 +54,8 @@ application_dbuser_password: "{{ vault_db_password }}"
 application_db_name: cdh_ppa
 application_db_host: "{{ postgres_host }}"
 
+# local settings is at a slightly different path (using django-split-settings)
+django_local_settings_dest: "{{ deploy }}/{{ django_app }}/settings/local_settings.py"
 # app-specific local settings
 django_local_settings_template: "prosody_settings.py.j2"
 

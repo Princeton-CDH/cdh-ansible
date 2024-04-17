@@ -25,5 +25,9 @@ MARC_DATA = '{{ marc_data_path }}'
 INCLUDE_ANALYTICS = True
 GTAGS_ANALYTICS_ID = 'G-FJG5ZQ5KGR'
 {% endif %}
+{% if runtime_env == "staging" %}
+# Turn on test banner to help distinguish staging from production
+SHOW_TEST_WARNING = True
+{%  endif  %}
 
 {% endblock %}
