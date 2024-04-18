@@ -1,6 +1,7 @@
 ###
 # Common variables for Shakespeare & Company Project django application
 ###
+
 # Github repository
 repo: "Princeton-CDH/mep-django"
 # application name
@@ -12,8 +13,8 @@ django_app: "{{ python_app }}"
 symlink: mep
 # wsgi file relative to deploy location
 wsgi_path: "{{ django_app }}/wsgi.py"
-# use python 3.8
-python_version: 3.8
+# use python 3.9
+python_version: 3.9
 # nodejs version
 node_version: "18"
 
