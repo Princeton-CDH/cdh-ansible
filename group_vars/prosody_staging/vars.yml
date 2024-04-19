@@ -13,3 +13,9 @@ passenger_server_name: "{{ application_url }}"
 
 # source host when replicating data/media (from ansible host inventory file)
 replication_source_host: prosody_production
+
+# PPA now using solr 9, so must override default staging solr 8 config
+zk_host: "lib-zk-staging4:2181,lib-zk-staging5:2181,lib-zk-staging6:2181/solr9"
+solr_url: "http://lib-solr9-staging.princeton.edu:8983/solr/"
+solr_server: "{{ groups['solr9_staging'][0] }}"
+solr_version: 9
