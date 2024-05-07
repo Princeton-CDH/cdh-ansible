@@ -6,8 +6,11 @@
 # and activate python virtualenv
 alias activate="[ -d "{{ install_root }}/current" ] && cd {{ install_root }}/current && source env/bin/activate"
 
-# activate on login by default
-activate
+# activate on login by default for interactive sessions only
+if [[ $- == *i* ]]
+then
+    activate
+fi
 {% else  %}
 {# for multi-app vms, create multiple aliases when configured; no activation by default #}
 {% for name, path in alias_apps.items() %}
@@ -15,7 +18,11 @@ alias {{ name }}="[ -d "{{ path }}/current" ] && cd {{ path }}/current && source
 {% endfor %}
 {# notify/remind on login #}
 {% if alias_apps %}
-echo "Available project aliases: {{ alias_apps.keys()|join(', ') }}"
+# notify / remind available aliases for interactive sessions only
+if [[ $- == *i* ]]
+then
+   echo "Available project aliases: {{ alias_apps.keys()|join(', ') }}"
+fi
 {% endif  %}
 {% endif %}
 
