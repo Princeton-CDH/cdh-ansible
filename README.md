@@ -109,7 +109,6 @@ ansible-vault edit group_vars/all/vault.yml
 You can also `ansible-vault decrypt` but need to remember to `encrypt`
 after editing. (Pre-commit check will flag if you fail to do so.)
 
-
 Ansible vault passwords are stored in shared LastPass vault and loaded
 using [lastpass-cli](https://lastpass.github.io/lastpass-cli/lpass.1.html).
 
@@ -120,10 +119,13 @@ lpass login <email@email.com>
 
 There are two different vault passwords (default and geniza), to allow limited
 contractor access for running geniza and geniza_staging playbooks without full access
-to all credentials. Both are defined in the default ansible.cfg file
-with shell scripts to pull the appropriate password from LastPass. To set a single
-vault, you can override the config setting with the **ANSIBLE_VAULT_IDENTITY_LIST**
-environment variable.
+to all credentials.  For compatibility with Ansible Tower, these are no longer
+defined in the default ansible.cfg but shell scripts are provided to
+pull the appropriate password from LastPass. For the default configuration,
+set the following environment variables:
+```sh
+ANSIBLE_VAULT_IDENTITY_LIST=default@bin/lpass_default.sh,geniza@bin/lpass_geniza.sh
+```
 
 Because there are multiple vault ids, encrypting requires specifying which
 vault id to use. Geniza variables and setup files should be encrypted with
