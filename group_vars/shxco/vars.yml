@@ -77,3 +77,33 @@ app_dependencies:
 
 # 2to3 support needed for installing rdflib-jsonld
 requires_python2to3: true
+# datadog
+datadog_api_key: "{{ vault_datadog_key }}"
+datadog_config:
+  tags: "application:prosody, env:production, type:webserver"
+  log_enabled: true
+  process_config:
+    enabled: "true"
+datadog_typed_checks:
+  - type: process
+    configuration:
+      init_config:
+      instances:
+        -   name: prosody
+            service: prosody
+            search_string:
+              - nginx
+  - type: nginx
+    configuration:
+      init_config:
+      instances:
+        - nginx_status_url: http://localhost:80/nginx_status/
+      logs:
+        - type: file
+          path: /var/log/nginx/access.log
+          source: nginx
+          service: prosody
+        - type: file
+          path: /var/log/nginx/error.log
+          source: nginx
+          service: prosody
