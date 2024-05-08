@@ -19,8 +19,6 @@
     - create_deployment
     - deploy_user
     - build_dependencies
-    - import_role:   # timezone needed for twitter bot cron/at jobs
-      name: pulibrary.princeton_ansible.timezone
     - build_project_repo
     - postgresql
     - passenger
@@ -32,3 +30,9 @@
     - finalize_deploy
     - configure_crontab  # used in production but not always in staging
     - close_deployment
+  tasks:
+    - ansible.builtin.include_role:   # timezone needed for twitter bot cron/at jobs
+      name: pulibrary.princeton_ansible.timezone
+    - ansible.builtin.include_role:   # datadog for logging
+      name: pulibrary.princeton_ansible.datadog
+      when: runtime_env | default('staging') == "production"

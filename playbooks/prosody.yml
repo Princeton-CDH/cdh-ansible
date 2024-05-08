@@ -7,6 +7,7 @@
   remote_user: pulsys
   vars:
     app_name: cdh_solr   # referenced in deploy user bash profile
+
   roles:
     - deploy_user
 
@@ -31,3 +32,7 @@
     - prosody_setup
     - finalize_deploy
     - close_deployment
+  tasks:
+  - ansible.builtin.include_role:   # datadog for logging
+      name: pulibrary.princeton_ansible.datadog
+    when: runtime_env | default('staging') == "production"
