@@ -80,7 +80,7 @@ app_dependencies:
 # datadog
 datadog_api_key: "{{ vault_datadog_key }}"
 datadog_config:
-  tags: "application:prosody, env:production, type:webserver"
+  tags: "application:cdh_prosody, env:production, type:webserver"
   log_enabled: true
   process_config:
     enabled: "true"
@@ -89,8 +89,8 @@ datadog_typed_checks:
     configuration:
       init_config:
       instances:
-        -   name: prosody
-            service: prosody
+        -   name: cdh_prosody
+            service: cdh_prosody
             search_string:
               - nginx
   - type: nginx
@@ -102,8 +102,8 @@ datadog_typed_checks:
         - type: file
           path: /var/log/nginx/access.log
           source: nginx
-          service: prosody
+          service: cdh_prosody
         - type: file
           path: /var/log/nginx/error.log
           source: nginx
-          service: prosody
+          service: cdh_prosody
