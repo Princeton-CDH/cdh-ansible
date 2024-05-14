@@ -25,10 +25,28 @@ location / {
 {% block fonts %}{% endblock %}
 
 {% block extra_config %}
-  # configure static versions of custom project error pages
+  # map sitemap urls to static copies managed with the app
+  location ~ ^/sitemap(.*)$ {
+      expires 10d;
+      root /;
+      try_files {{ passenger_app_root }}/static/sitemap$1 =404;
+   }
+
+  # configure 404 and 500 to return custom error pages included in the web archive
+  # map 404/500 locations with intercept errors disabled
+  location /404/ {
+     proxy_pass http://localhost:8080/derrida/bn_/https://derridas-margins.princeton.edu/404/;
+     proxy_set_header Host $host;
+     proxy_set_header X-Forwarded-Proto $scheme;
+     proxy_intercept_errors off;
+   }
+  location /_500/ {
+     proxy_pass http://localhost:8080/derrida/bn_/https://derridas-margins.princeton.edu/_500/;
+     proxy_set_header Host $host;
+     proxy_set_header X-Forwarded-Proto $scheme;
+     proxy_intercept_errors off;
+   }
   error_page 404 /404/;
   error_page 500 /_500/;
 
-  ## error_page 404 /static/error_pages/404.html;
-  ## error_page 500 /static/error_pages/500.html;
 {% endblock %}
