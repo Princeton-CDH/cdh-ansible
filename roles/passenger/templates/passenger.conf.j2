@@ -95,5 +95,11 @@ server {
  {% block extra_config %}
  {{ passenger_extra_config }}
  {% endblock %}
+ # we need this to for datadog logging
+  location /nginx_status {
+    stub_status;
+    allow 127.0.0.1;    # only allow requests from localhost
+    deny all;           # deny all other hosts
+  }
 
 }
