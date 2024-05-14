@@ -16,7 +16,7 @@
       passenger_nginx_site_template: "passenger.conf.j2"
       passenger_site_config_name: "derrida-wayback"
       passenger_server_name: "localhost"
-    # run a second time for the main configuration
+    # run a second time for the main configuration (proxying wayback)
     - passenger
     - finalize_deploy
     - close_deployment
