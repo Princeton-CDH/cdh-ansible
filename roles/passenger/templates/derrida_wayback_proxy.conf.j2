@@ -1,21 +1,23 @@
+{# This is the passenger/nginx configuration for PROXYING python wayback. #}
+{# There is a separate passenger config for running python wayback on port 8080. #}
 {% extends 'passenger.conf.j2' %}
-
 {% block root %}
-  location / {
+location / {
      proxy_pass http://localhost:8080/derrida/bn_/https://derridas-margins.princeton.edu/;
      proxy_set_header Host $host;
      proxy_set_header X-Forwarded-Proto $scheme;
+     # allow intercepting errors so we can customize error page
+     proxy_intercept_errors on;
   }
 {% endblock %}
 
 {% block static %}
-    # look for local static files first, then pywb static files
-    location ~ ^/pywb_static/(.*)$ {
+  # look for local static files first, then pywb static files
+  location ~ ^/pywb_static/(.*)$ {
       expires 10d;
       root /;
       try_files {{ passenger_app_root }}/static/$1 {{ passenger_app_root }}/env/lib/python{{ python_version }}/site-packages/pywb/static/$1 =404;
     }
-
 {% endblock %}
 
 {# no media or fonts for this application #}
@@ -23,4 +25,10 @@
 {% block fonts %}{% endblock %}
 
 {% block extra_config %}
+  # configure static versions of custom project error pages
+  error_page 404 /404/;
+  error_page 500 /_500/;
+
+  ## error_page 404 /static/error_pages/404.html;
+  ## error_page 500 /static/error_pages/500.html;
 {% endblock %}

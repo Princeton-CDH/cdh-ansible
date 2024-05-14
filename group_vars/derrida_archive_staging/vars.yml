@@ -27,4 +27,4 @@ passenger_startup_file: "wsgi.py"
 passenger_python: "{{ passenger_app_root }}/env/bin/python"
 # default nginx needs a root path, even though we customize static nginx block
 passenger_static_path: "{{ passenger_app_root }}/static/"
-passenger_nginx_site_template: "derrida_wayback_passenger.conf.j2"
+passenger_nginx_site_template: "derrida_wayback_proxy.conf.j2"
