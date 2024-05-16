@@ -16,8 +16,20 @@ location / {
   location ~ ^/pywb_static/(.*)$ {
       expires 10d;
       root /;
-      try_files {{ passenger_app_root }}/static/$1 {{ passenger_app_root }}/env/lib/python{{ python_version }}/site-packages/pywb/static/$1 =404;
+      try_files {{ passenger_static_path }}/$1 {{ passenger_app_root }}/env/lib/python{{ python_version }}/site-packages/pywb/static/$1 =404;
     }
+
+  # serve project static files at /static/
+  location /static/ {
+    expires 10d;
+    alias {{ passenger_static_path }};
+  }
+
+  # serve favicon.ico from /static/
+  location = /favicon.ico {
+      expires 10d;
+      alias {{ passenger_static_path }}/favicon.ico;
+  }
 {% endblock %}
 
 {# no media or fonts for this application #}
