@@ -3,6 +3,7 @@
 repo: "Princeton-CDH/derridas-margins-archive"
 # set staging deploy to use staging branch for now
 gitref: '{{ ref | default("staging") }}'
+git_shallow_clone: true
 # Install root (the dir where the repo will be set up on remote)
 install_root: "/srv/www/derrida"
 # Clone root (where deploy user clones repo)

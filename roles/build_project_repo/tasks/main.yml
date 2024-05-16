@@ -37,6 +37,7 @@
         repo: "{{ repo_url }}/"
         dest: "{{ clone_root }}/{{ repo }}"
         version: "{{ gitref }}"
+        depth: "{{ 1 if git_shallow_clone else -1 }}"
       # register repo_info for group_vars
       register: repo_info
 
