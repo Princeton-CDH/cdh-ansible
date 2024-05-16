@@ -42,6 +42,10 @@ location / {
   ##   # allow intercepting errors so we can customize error page
   ##   proxy_intercept_errors on;
   ## }
+  ## these are the only static files that 404 according to caliper web crawl:
+  ## static/safari-pinned-tab.svg, /static/manifest.json, /static/favicon-16x16.png
+  ## /static/apple-touch-icon.png
+  ## they are all present in static files directory
 
   ## # serve static fonts from the web archive
   ## location /static/fonts/ {
@@ -50,11 +54,16 @@ location / {
   ##   proxy_pass http://wayback/derrida/bn_/https://derridas-margins.princeton.edu/;
   ## }
 
-  # serve favicon.ico from /static/
+  # serve favicon.ico and robots.txt from /static/
   location = /favicon.ico {
       expires 10d;
       alias {{ passenger_static_path }}/favicon.ico;
   }
+  location = /robots.txt {
+      expires 10d;
+      alias {{ passenger_static_path }}/robots.txt;
+  }
+
 {% endblock %}
 
 {# no media or fonts for this application #}
