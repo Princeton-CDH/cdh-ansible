@@ -3,7 +3,19 @@
 {% extends 'passenger.conf.j2' %}
 
 {% block pre_server_config %}
-# upstream placeholder
+## Increase bucket for big redirects
+map_hash_bucket_size 256;
+map_hash_max_size 4092;
+
+## load iiif urls to proxy from map file
+map $uri $iiif_uri {
+  include  /etc/nginx/conf.d/derrida-iiif-proxy.map;
+}
+
+## upstream iiif-cloud.princeton.edu {
+upstream iiifcloud {
+  server iiif-cloud.princeton.edu:443;
+}
 
 {% endblock %}
 
@@ -71,6 +83,15 @@ location / {
 {% block fonts %}{% endblock %}
 
 {% block extra_config %}
+  # proxy iiif image urls on iiif server
+  location ~ ^/library/.*/iiif/(?<path>.*)$ {
+  ## example
+  ## ~^/library/levi-strauss-anthropologie-structurale-1958/gallery/images/front-cover/iiif/
+    if ($iiif_uri) {
+      proxy_pass https://$iiif_uri/$path;
+    }
+  }
+
   # map sitemap urls to static copies managed with the app
   location ~ ^/sitemap(.*)$ {
       expires 10d;
