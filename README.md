@@ -7,12 +7,12 @@
 The overall structure of this repository can be broken down as follows:
   - `playbooks` - collections of roles executed in series against a host.
   - `roles` - the various tasks that Ansible can perform in a group.
-  - `group_vars` - the group variables for different deploys
-    - `all` - any variables shared by all deploys
+  - `inventory` - hosts and variables
+    - `all_hosts` - host file with hostnames and host groups 
+    - `group_vars` - group variables for different hosts and host groups
+      - `all` - variables shared by all playbooks
       - `vars.yml`- unencrypted all variables
       - `vault.yml` - `ansible vault` encrypted variables
-    - Individual project group variables
-  - `hosts` - host file with groups and their associated host(s)
   - `architucture-decisions` - list of significant architectural decisions, as markdown files
 
 ## Using these playbooks
@@ -100,10 +100,10 @@ ansible-playbook -e host_group=shxco_staging playbooks/revert_deploy.yml
 
 ## Vault variables and passwords
 
-Variables kept in `group_vars/*/vault.yml` are sensitive configurations
+Variables kept in `inventory/group_vars/*/vault.yml` are sensitive configurations
 that should always be kept encrypted on commit. To edit them (in your system text editor):
 ```{bash}
-ansible-vault edit group_vars/all/vault.yml
+ansible-vault edit inventory/group_vars/all/vault.yml
 ```
 
 You can also `ansible-vault decrypt` but need to remember to `encrypt`
