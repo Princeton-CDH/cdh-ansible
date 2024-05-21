@@ -3,20 +3,6 @@
 {% extends 'passenger.conf.j2' %}
 
 {% block pre_server_config %}
-## Increase bucket for big redirects
-map_hash_bucket_size 256;
-map_hash_max_size 4092;
-
-## load iiif urls to proxy from map file
-map $uri $iiif_uri {
-  include  /etc/nginx/conf.d/derrida-iiif-proxy.map;
-}
-
-## upstream iiif-cloud.princeton.edu {
-upstream iiifcloud {
-  server iiif-cloud.princeton.edu:443;
-}
-
 {% endblock %}
 
 {% block root %}
@@ -40,40 +26,20 @@ location / {
       try_files {{ passenger_static_path }}/$1 {{ passenger_app_root }}/env/lib/python{{ python_version }}/site-packages/pywb/static/$1 =404;
     }
 
-  ## disabling: this causes more problems than it solves
-  ## # serve project static files at /static/ OR from web archive
-  ## location /static/ {
-  ##   expires 10d;
-  ##   root {{ passenger_app_root }};
-  ##   # first try to serve from local static files, then try the web archive
-  ##   try_files $uri http://localhost:8080/derrida/bn_/https://derridas-margins.princeton.edu/$uri;
-  ##   ## # if not found locally, try the web
-  ##   ## proxy_pass http://wayback/derrida/bn_/https://derridas-margins.princeton.edu/;
-  ##   ## proxy_set_header Host $host;
-  ##   ## proxy_set_header X-Forwarded-Proto $scheme;
-  ##   # allow intercepting errors so we can customize error page
-  ##   proxy_intercept_errors on;
-  ## }
-  ## these are the only static files that 404 according to caliper web crawl:
-  ## static/safari-pinned-tab.svg, /static/manifest.json, /static/favicon-16x16.png
-  ## /static/apple-touch-icon.png
-  ## they are all present in static files directory
-
-  ## # serve static fonts from the web archive
-  ## location /static/fonts/ {
-  ##   expires 10d;
-  ##   alias {{ passenger_static_path }};
-  ##   proxy_pass http://wayback/derrida/bn_/https://derridas-margins.princeton.edu/;
-  ## }
-
-  # serve favicon.ico and robots.txt from /static/
-  location = /favicon.ico {
+  # serve top-level favicon.ico and robots.txt from /static/
+  location ~ ^/(?<path>favicon.ico|robots.txt) {
       expires 10d;
-      alias {{ passenger_static_path }}/favicon.ico;
+      alias {{ passenger_static_path }}/$path;
   }
-  location = /robots.txt {
+
+  ## these static files are not included in the web archive; map to local static files
+  location ~ ^/static/(?<path>safari-pinned-tab.svg|manifest.json|favicon-16x16.png|apple-touch-icon.png|pul_logo_icon.png|mstile-150x150.png) {  
       expires 10d;
-      alias {{ passenger_static_path }}/robots.txt;
+      alias {{ passenger_static_path }}/$path;
+  }
+  location ~ ^/static/(?<path>safari-pinned-tab.svg|manifest.json|favicon-16x16.png|apple-touch-icon.png|pul_logo_icon.png) {  
+      expires 10d;
+      alias {{ passenger_static_path }}/$path;
   }
 
 {% endblock %}
@@ -83,13 +49,11 @@ location / {
 {% block fonts %}{% endblock %}
 
 {% block extra_config %}
-  # proxy iiif image urls on iiif server
-  location ~ ^/library/.*/iiif/(?<path>.*)$ {
+  # disable iiif image urls (requires proxy to iiif server); return permission denied
+  location ~ ^/library/.*/iiif/(?<path>.+)$ {
+    return 403;
   ## example
-  ## ~^/library/levi-strauss-anthropologie-structurale-1958/gallery/images/front-cover/iiif/
-    if ($iiif_uri) {
-      proxy_pass https://$iiif_uri/$path;
-    }
+  ## /library/levi-strauss-anthropologie-structurale-1958/gallery/images/front-cover/iiif/
   }
 
   # map sitemap urls to static copies managed with the app

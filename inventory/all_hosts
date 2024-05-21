@@ -18,18 +18,10 @@
 # See https://docs.ansible.com/ansible/2.5/user_guide/intro_inventory.html#how-variables-are-merged
 ######
 
-[derrida_staging]
-test-derrida.cdh.princeton.edu
-[derrida_production]
-derridas-margins.princeton.edu
-
-[derrida:children]
-derrida_staging
-derrida_production
-
 [cdhweb_staging]
 cdh-test-web1.princeton.edu
 cdh-test-web2.princeton.edu
+
 [cdhweb_production]
 cdh-web1.princeton.edu
 cdh-web2.princeton.edu
@@ -59,14 +51,12 @@ cdh-geniza2.princeton.edu
 [geniza:children]
 geniza_staging
 geniza_production
-dev
 
 [derrida_crawl_staging]
 cdh-test-derrida-crawl1.princeton.edu
 
 [derrida_archive_staging]
-cdh-test-derrida1.princeton.edu
-cdh-test-derrida2.princeton.edu
+cdh-test-derrida[1:2].princeton.edu
 
 [derrida_archive_production]
 cdh-derrida1.princeton.edu
@@ -119,14 +109,13 @@ solr9_production
 ### environment-based stanzas to create shared groups
 
 [prod:children]
-derrida_production
 cdhweb_production
 geniza_production
 shxco_production
 prosody_production
+derrida_archive_production
 
 [staging:children]
-derrida_staging
 cdhweb_staging
 geniza_staging
 shxco_staging
