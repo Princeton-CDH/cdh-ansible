@@ -3,19 +3,18 @@
 repo: "Princeton-CDH/derridas-margins-archive"
 # set staging deploy to use staging branch for now
 gitref: '{{ ref | default("staging") }}'
+# use a shallow git clone since the web archive files are large
 git_shallow_clone: true
-# Install root (the dir where the repo will be set up on remote)
-install_root: "/srv/www/derrida"
-# Clone root (where deploy user clones repo)
-clone_root: "/home/{{ deploy_user }}/repos"
 # name of main application
 app_name: derrida
+# Install root (the dir where the repo will be set up on remote)
+install_root: "/srv/www/{{ app_name }}"
+# Clone root (where deploy user clones repo)
+clone_root: "/home/{{ deploy_user }}/repos"
 # python version
 python_version: "3.11"
 # symlink to current deploy in /var/www
-symlink: derrida
-# use PUL deploy user of conan
-deploy_user: "conan"
+symlink: "{{ app_name }}"
 # no versioning within archive app, just call it 1.0
 version: '1.0'
 # configure where virtualenv should be created;
@@ -23,7 +22,7 @@ version: '1.0'
 python_app_path: "{{ deploy }}"
 
 passenger_app_root: "/var/www/{{ app_name }}"
-passenger_server_name: "test-derrida.cdh.princeton.edu"
+passenger_server_name: "derridas-margins.princeton.edu"
 passenger_startup_file: "wsgi.py"
 passenger_python: "{{ passenger_app_root }}/env/bin/python"
 # path to static files for use in nginx config
