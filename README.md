@@ -187,7 +187,7 @@ Recommended steps for adding a new playbook:
 
 We use the [ADR specification](https://github.com/joelparkerhenderson/architecture_decision_record) for documenting architectural decisions made over the course of work on this repository - i.e. conventions around our usage of Ansible. Decision documents are stored in the `architecture-decisions/` folder as markdown files.
 
-To propose or doucment a new decision, copy the `adr/template.md` file and rename it using a sequential number and description of the decision that needs making. Decisions that require discussion should be proposed using a pull request for discussion and review.
+To propose or doucment a new decision, copy the `architecture-decisions/template.md` file and rename it using a sequential number and description of the decision that needs making. Decisions that require discussion should be proposed using a pull request for discussion and review.
 
 ## To run the geniza deploy only
 
