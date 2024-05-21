@@ -1,3 +1,4 @@
+---
 ###
 # Common variables for cdhweb
 ###
@@ -72,3 +73,33 @@ dest_backup_path: "{{ dest_backup_dir }}{{ db_backup_filename }}"
 passenger_extra_config: |
   rewrite "^/media/uploads/(.*/)?([^/]+\.(jpg|jpeg|gif|png))$" "https://{{ passenger_server_name }}/media/original_images/$2" permanent;
   rewrite "^/grants/(.*)$" "https://{{ passenger_server_name }}/engage/grants/$1" permanent;
+# datadog
+datadog_api_key: "{{ vault_datadog_key }}"
+datadog_config:
+  tags: "application:cdh_web, env:production, type:webserver"
+  log_enabled: true
+  process_config:
+    enabled: "true"
+datadog_typed_checks:
+  - type: process
+    configuration:
+      init_config:
+      instances:
+        -   name: cdh_web
+            service: cdh_web
+            search_string:
+              - nginx
+  - type: nginx
+    configuration:
+      init_config:
+      instances:
+        - nginx_status_url: http://localhost:80/nginx_status/
+      logs:
+        - type: file
+          path: /var/log/nginx/access.log
+          source: nginx
+          service: cdh_web
+        - type: file
+          path: /var/log/nginx/error.log
+          source: nginx
+          service: cdh_web

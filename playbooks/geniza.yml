@@ -31,3 +31,7 @@
     - configure_crontab
     - finalize_deploy
     - close_deployment
+  tasks:
+    - ansible.builtin.include_role:   # datadog for logging
+        name: pulibrary.princeton_ansible.datadog
+      when: runtime_env | default('staging') == "production"
