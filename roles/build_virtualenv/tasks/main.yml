@@ -8,32 +8,17 @@
   become_user: "{{ deploy_user }}"
 
   block:
-    # not sure if this still needed
-    # - name: Set perms
-    #   file:
-    #       path: "{{ virtualenv_path }}"
-    #       state: directory
-    #       mode: "u+rwx,g+rwx,o-rw"
-    #   when:  ansible_distribution == 'Springdale'
 
     - name: Setup virtual environment
       pip:
         name: pip
-        # pip 0.15 dropped support for python 3.5
         state: "{{ 'present' if python_version == 'python3.5' else 'latest' }}"
         virtualenv: "{{ virtualenv_path }}"
         virtualenv_python: "{{ python_version }}"
-        # use site packages on springdale for mysql client
-        virtualenv_site_packages: "{{ 'true' if ansible_distribution == 'Springdale' else 'false' }}"
+        virtualenv_site_packages: false
         # set custom prompt if supported
         # Disable for now; seems to require full path, which is different on springdale and args may not even work!
         #virtualenv_command: "virtualenv --prompt '({{ repo | project_name }}-{{ short_hash }}-{{ version }}) '"
-
-    - name: Install pip to last version with 3.5 support (if python version == 3.5)
-      pip:
-        name: "pip>20,<21"
-        virtualenv: "{{ virtualenv_path }}"
-      when:  python_version == 'python3.5'
 
     - name: Install app requirements via pip
       pip:

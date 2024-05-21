@@ -2,7 +2,7 @@
 #  Configure MEDIA_ROOT and folders for a Django deploy
 ###
 - name: Configure media folder and set up Django configurations
-  become: "{{ 'true' if ansible_distribution != 'Springdale' else 'false' }}"
+  become: true
   block:
     - name: Create media root if it does not already exist
       tags:
@@ -23,7 +23,6 @@
         group: "{{ webapp_group }}"
         state: directory
         recurse: true
-      when: ansible_distribution == 'Ubuntu'
 
     - name: if on staging, set acls appropriately so www-data can access
       tags:
@@ -51,13 +50,6 @@
         recursive: yes
         default: yes
         state: present
-
-    - name: Configure selinux permissions (using command to be non-su safe)
-      # selinux settings should be made at the server level
-      shell: "/usr/sbin/restorecon -R {{ media_root }}"
-      args:
-        executable: /bin/bash
-      when: ansible_distribution == "Springdale"
 
   tags:
     - media

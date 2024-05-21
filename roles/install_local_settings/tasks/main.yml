@@ -16,22 +16,10 @@
         owner: "{{ deploy_user }}"
         mode: u+rw,g+r,o-rwx
 
-    - name: Set group ownership for local settings (Ubuntu only)
+    - name: Set group ownership for local settings
       file:
         path: '{{ local_settings_dest }}'
-        group: "{{ deploy_user }}"  # deploy group doesn't exist on springdale
-      when: ansible_distribution == 'Ubuntu'
-
-    - name: For staging, setfacl so that the Django project group can read it too
-      acl:
-        path: '{{ local_settings_dest }}'
-        entity: '{{ project_user }}'
-        etype: group
-        permissions: r
-        state: present
-      when:
-        - runtime_env == "staging"
-        - ansible_distribution == 'Springdale'
+        group: "{{ deploy_user }}"
 
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml

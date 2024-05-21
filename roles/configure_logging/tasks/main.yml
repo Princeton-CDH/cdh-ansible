@@ -6,7 +6,7 @@
   tags:
     - setup
     - never
-  become: "{{ 'true' if ansible_distribution != 'Springdale' else 'false' }}"
+  become: true
   block:
     - name: Create logging directory
       file:
@@ -19,21 +19,12 @@
         group: '{{ project_user | default(deploy_user) }}'
         recurse: true
       when: runtime_env == "staging"
-    - name: For PUL VMs, set logging directory owner and group to www-data
+    - name: Set logging directory owner and group to www-data
       file:
         path: '{{ logging_dir }}'
         owner: '{{ webapp_user }}'
         group: '{{ webapp_group }}'
         mode: 0770
         recurse: true
-      when: deploy_user is defined and ansible_distribution != 'Springdale'
-    - name: Create logging directory default acl & set sticky bit
-      shell: 'chmod g+s {{ logging_dir }} && setfacl -d -m g::rw {{ logging_dir }}'
-      args:
-        warn: false
-      when:  ansible_distribution == 'Springdale'
-      # using a command because the individual module's functionality (esp acl and file)
-      # are misbehaving when used in concert
-      # The sticky bit is really only needed in staging, but is nice insurance on prod
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
