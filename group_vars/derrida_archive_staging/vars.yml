@@ -1,0 +1,3 @@
+---
+# this repo uses staging branch rather than develop for staging deploy
+gitref: '{{ ref | default("staging") }}'
