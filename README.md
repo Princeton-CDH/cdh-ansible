@@ -13,7 +13,7 @@ The overall structure of this repository can be broken down as follows:
       - `all` - variables shared by all playbooks
       - `vars.yml`- unencrypted all variables
       - `vault.yml` - `ansible vault` encrypted variables
-  - `architucture-decisions` - list of significant architectural decisions, as markdown files
+  - `architecture-decisions` - list of significant architectural decisions, as markdown files
 
 ## Using these playbooks
 
