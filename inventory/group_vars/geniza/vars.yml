@@ -147,33 +147,5 @@ crontab:
     job: "env DJANGO_ENV=staging bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py export_metadata -ws -v 0 >> {{ logging_dir }}/sync_metadata_export.log 2>&1"
     state: present
 # datadog
-datadog_api_key: "{{ vault_datadog_key }}"
-datadog_config:
-  tags: "application:cdh_geniza, env:production, type:webserver"
-  log_enabled: true
-  process_config:
-    enabled: "true"
-datadog_typed_checks:
-  - type: process
-    configuration:
-      init_config:
-      instances:
-        -   name: cdh_geniza
-            service: cdh_geniza
-            search_string:
-              - nginx
-  - type: nginx
-    configuration:
-      init_config:
-      instances:
-        - nginx_status_url: http://localhost:80/nginx_status/
-      logs:
-        - type: file
-          path: /var/log/nginx/access.log
-          source: nginx
-          service: cdh_geniza
-        - type: file
-          path: /var/log/nginx/error.log
-          source: nginx
-          service: cdh_geniza
-    #
+datadog_app_name: cdh_geniza
+

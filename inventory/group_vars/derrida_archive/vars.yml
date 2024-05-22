@@ -29,3 +29,6 @@ passenger_python: "{{ passenger_app_root }}/env/bin/python"
 passenger_static_path: "{{ passenger_app_root }}/static"
 passenger_nginx_site_template: "derrida_wayback_proxy.conf.j2"
 passenger_site_config_name: "derrida-proxy"
+
+# common datadog configuration set in all vars
+datadog_app_name: cdh_derrida

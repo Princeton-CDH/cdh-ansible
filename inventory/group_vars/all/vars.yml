@@ -130,3 +130,36 @@ media_backup_path: "{{ backup_dir }}{{ media_backup_filename}}"
 ## nfs prod server
 nfs_server: "128.112.204.89"
 nfs_host_server: "lib-fs-prod.princeton.edu"
+
+## datadog configuration
+## applications must configure datadog_app_name
+datadog_api_key: "{{ vault_datadog_key }}"
+datadog_config:
+  tags: "application:{{ datadog_app_name }}, env:production, type:webserver"
+  log_enabled: true
+  process_config:
+    enabled: "true"
+datadog_typed_checks:
+  - type: process
+    configuration:
+      init_config:
+      instances:
+        -   name: "{{ datadog_app_name }}"
+            service: "{{ datadog_app_name }}"
+            search_string:
+              - nginx
+  - type: nginx
+    configuration:
+      init_config:
+      instances:
+        - nginx_status_url: http://localhost:80/nginx_status/
+      logs:
+        - type: file
+          path: /var/log/nginx/access.log
+          source: nginxd
+          service: "{{ datadog_app_name }}"
+        - type: file
+          path: /var/log/nginx/error.log
+          source: nginx
+          service: "{{ datadog_app_name }}"
+
