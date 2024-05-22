@@ -23,4 +23,6 @@
   tasks:
   - ansible.builtin.include_role:   # datadog for logging
       name: pulibrary.princeton_ansible.datadog
+      apply:
+        become: true
     when: runtime_env | default('staging') == "production"
