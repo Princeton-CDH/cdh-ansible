@@ -1,7 +1,7 @@
 ---
 # by default this playbook runs in the staging environment
 # to run in production, pass '-e runtime_env=production'
-- name: build derrida archive page
+- name: Deploy derrida archive web playback
   hosts: derrida_archive_{{ runtime_env | default('staging') }}
   connection: ssh
   remote_user: pulsys
@@ -16,11 +16,13 @@
       passenger_nginx_site_template: "passenger.conf.j2"
       passenger_site_config_name: "derrida-wayback"
       passenger_server_name: "localhost"
-    # run a second time for the main configuration
+    # run a second time for the main configuration (proxying wayback)
     - passenger
     - finalize_deploy
     - close_deployment
   tasks:
   - ansible.builtin.include_role:   # datadog for logging
       name: pulibrary.princeton_ansible.datadog
+      apply:
+        become: true
     when: runtime_env | default('staging') == "production"

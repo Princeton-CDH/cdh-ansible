@@ -13,11 +13,11 @@ then
 fi
 {% else  %}
 {# for multi-app vms, create multiple aliases when configured; no activation by default #}
+{% if alias_apps %}
 {% for name, path in alias_apps.items() %}
 alias {{ name }}="[ -d "{{ path }}/current" ] && cd {{ path }}/current && source env/bin/activate"
 {% endfor %}
 {# notify/remind on login #}
-{% if alias_apps %}
 # notify / remind available aliases for interactive sessions only
 if [[ $- == *i* ]]
 then

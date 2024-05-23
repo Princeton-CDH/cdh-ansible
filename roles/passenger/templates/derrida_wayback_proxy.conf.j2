@@ -1,8 +1,15 @@
 {# This is the passenger/nginx configuration for PROXYING python wayback. #}
 {# There is a separate passenger config for running python wayback on port 8080. #}
 {% extends 'passenger.conf.j2' %}
+
+{% block pre_server_config %}
+{% endblock %}
+
 {% block root %}
 location / {
+     # the two outwork essays link without a slash; redirect to add trailing slash
+     # to avoid a 404 when redirecting within the web archive
+     rewrite ^(/outwork/2018/[a-zi-]+)$ $1/ permanent;
      proxy_pass http://localhost:8080/derrida/bn_/https://derridas-margins.princeton.edu/;
      proxy_set_header Host $host;
      proxy_set_header X-Forwarded-Proto $scheme;
@@ -16,8 +23,25 @@ location / {
   location ~ ^/pywb_static/(.*)$ {
       expires 10d;
       root /;
-      try_files {{ passenger_app_root }}/static/$1 {{ passenger_app_root }}/env/lib/python{{ python_version }}/site-packages/pywb/static/$1 =404;
+      try_files {{ passenger_static_path }}/$1 {{ passenger_app_root }}/env/lib/python{{ python_version }}/site-packages/pywb/static/$1 =404;
     }
+
+  # serve top-level favicon.ico and robots.txt from /static/
+  location ~ ^/(?<path>favicon.ico|robots.txt) {
+      expires 10d;
+      alias {{ passenger_static_path }}/$path;
+  }
+
+  ## these static files are not included in the web archive; map to local static files
+  location ~ ^/static/(?<path>safari-pinned-tab.svg|manifest.json|favicon-16x16.png|apple-touch-icon.png|pul_logo_icon.png|mstile-150x150.png) {  
+      expires 10d;
+      alias {{ passenger_static_path }}/$path;
+  }
+  location ~ ^/static/(?<path>safari-pinned-tab.svg|manifest.json|favicon-16x16.png|apple-touch-icon.png|pul_logo_icon.png) {  
+      expires 10d;
+      alias {{ passenger_static_path }}/$path;
+  }
+
 {% endblock %}
 
 {# no media or fonts for this application #}
@@ -25,10 +49,35 @@ location / {
 {% block fonts %}{% endblock %}
 
 {% block extra_config %}
-  # configure static versions of custom project error pages
+  # disable iiif image urls (requires proxy to iiif server); return permission denied
+  location ~ ^/library/.*/iiif/(?<path>.+)$ {
+    return 403;
+  ## example
+  ## /library/levi-strauss-anthropologie-structurale-1958/gallery/images/front-cover/iiif/
+  }
+
+  # map sitemap urls to static copies managed with the app
+  location ~ ^/sitemap(.*)$ {
+      expires 10d;
+      root /;
+      try_files {{ passenger_app_root }}/static/sitemap$1 =404;
+   }
+
+  # configure 404 and 500 to return custom error pages included in the web archive
+  # map 404/500 locations with intercept errors disabled
+  location /404/ {
+     proxy_pass http://localhost:8080/derrida/bn_/https://derridas-margins.princeton.edu/404/;
+     proxy_set_header Host $host;
+     proxy_set_header X-Forwarded-Proto $scheme;
+     proxy_intercept_errors off;
+   }
+  location /_500/ {
+     proxy_pass http://localhost:8080/derrida/bn_/https://derridas-margins.princeton.edu/_500/;
+     proxy_set_header Host $host;
+     proxy_set_header X-Forwarded-Proto $scheme;
+     proxy_intercept_errors off;
+   }
   error_page 404 /404/;
   error_page 500 /_500/;
 
-  ## error_page 404 /static/error_pages/404.html;
-  ## error_page 500 /static/error_pages/500.html;
 {% endblock %}

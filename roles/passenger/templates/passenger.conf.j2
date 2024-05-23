@@ -1,3 +1,6 @@
+ {% block pre_server_config %}
+ {% endblock %}
+
 server {
   listen {{ passenger_listen_port }} default_server;
   server_name {{ passenger_server_name }};

@@ -1,0 +1,34 @@
+---
+# Github repository
+repo: "Princeton-CDH/derridas-margins-archive"
+# set staging deploy to use staging branch for now
+gitref: '{{ ref | default("staging") }}'
+# use a shallow git clone since the web archive files are large
+git_shallow_clone: true
+# name of main application
+app_name: derrida
+# Install root (the dir where the repo will be set up on remote)
+install_root: "/srv/www/{{ app_name }}"
+# Clone root (where deploy user clones repo)
+clone_root: "/home/{{ deploy_user }}/repos"
+# python version
+python_version: "3.11"
+# symlink to current deploy in /var/www
+symlink: "{{ app_name }}"
+# no versioning within archive app, just call it 1.0
+version: '1.0'
+# configure where virtualenv should be created;
+# normally set by django role, but we don't use that
+python_app_path: "{{ deploy }}"
+
+passenger_app_root: "/var/www/{{ app_name }}"
+passenger_server_name: "derridas-margins.princeton.edu"
+passenger_startup_file: "wsgi.py"
+passenger_python: "{{ passenger_app_root }}/env/bin/python"
+# path to static files for use in nginx config
+passenger_static_path: "{{ passenger_app_root }}/static"
+passenger_nginx_site_template: "derrida_wayback_proxy.conf.j2"
+passenger_site_config_name: "derrida-proxy"
+
+# common datadog configuration set in all vars
+datadog_app_name: cdh_derrida
