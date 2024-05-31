@@ -56,10 +56,12 @@ geniza_production
 cdh-test-derrida-crawl1.princeton.edu
 
 [derrida_archive_staging]
-cdh-test-derrida[1:2].princeton.edu
+cdh-test-derrida1.princeton.edu
+cdh-test-derrida2.princeton.edu
 
 [derrida_archive_production]
 cdh-derrida1.princeton.edu
+cdh-derrida2.princeton.edu
 
 [derrida_archive:children]
 derrida_archive_staging
