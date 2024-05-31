@@ -17,7 +17,6 @@
         classic: true
         channel: "{{ node_version }}/stable"
         state: present
-      when: ansible_distribution == "Ubuntu"
       register: snap_results
 
     # NOTE: upgrading nodejs with ansible snap fails, even though
