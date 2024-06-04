@@ -8,6 +8,10 @@
     - gh_deploy
   run_once: true
   block:
+    - name: Check for GitHub token, and fail if not present
+      fail:
+        msg: "Pass a GitHub API token to -e github_token or set in environment as ANSIBLE_GITHUB_TOKEN"
+      when: github_token == ""
     - name: Create a deployment
       uri:
         url: "{{ deployments_endpoint }}"
