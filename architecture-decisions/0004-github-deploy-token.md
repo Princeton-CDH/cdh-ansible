@@ -10,7 +10,7 @@ CDH playbooks use the GitHub deployment API to document what version of a codeba
 
 ## Decision 
 
-1. A GitHub token for the cdh-info/princetoncdh account with repository deployment permissions has been added to vaulted group variables available to all playbooks/hosts (`all/vault.yml`) and set as the default option for the `github_token` variable in `all/vars.yml`.
+1. A GitHub token for the cdh-info/princetoncdh account with repository deployment permissions has been added to vaulted group variables available to all playbooks/hosts (`all/vault.yml`) and set as the default option for the `github_token` variable in `all/vars.yml`.  (This follows the same approach used by PUL for Capistrano deploys: system account token stored in vault.)
 2. If the `ANSIBLE_GITHUB_TOKEN` environment variable is set, it will override the vaulted github token (previous behavior).
 
 ### Consequences 
