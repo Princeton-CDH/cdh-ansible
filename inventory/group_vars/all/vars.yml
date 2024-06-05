@@ -1,7 +1,8 @@
 ---
 
 # GitHub settings
-github_token: '{{ lookup("env", "ANSIBLE_GITHUB_TOKEN") | default("") }}'
+# use local environment variable if set; use vaulted cdh-info deploy token otherwise
+github_token: '{{ lookup("env", "ANSIBLE_GITHUB_TOKEN", default=vault_github_deploy_token) }}'
 api_base: https://api.github.com
 deployments_endpoint: '{{api_base}}/repos/{{ repo }}/deployments'
 # runtime env is set in the playbook; defaults to staging,
