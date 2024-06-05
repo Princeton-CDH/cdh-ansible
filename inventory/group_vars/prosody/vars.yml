@@ -40,6 +40,8 @@ data_path: "/mnt/nfs/cdh/prosody/data"
 hathitrust_pairtree_path: "{{ data_path }}/ht_text_pd/"
 # path to MARC data for Gale/ECCO
 marc_data_path: "{{ data_path }}/marc/"
+# path to EEBO TCP data
+eebo_data_path: "{{ data_path }}/eebo_tcp/"
 
 technical_contact: cdhdevteam@princeton.edu
 # flag that csp is enabled
