@@ -1,13 +1,7 @@
 ###
-# These variables are all prepended with a pattern using the following
-# convention: vault_var_name. They should always be kept encrypted
-# using the CDH vault key when they are checked into Git. If an error occurs,
-# and it is pushed to GitHub, the repository will need to be force committed to clear up any hashes that
-# contain the unencrypted copy.
+# Sensitive variables for CDH website in staging environment
 ###
-
 ---
-
 vault_db_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           33313337393432313332306265363239383936666362353036653336633764623165373361633330

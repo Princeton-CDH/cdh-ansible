@@ -1,6 +1,7 @@
 ###
 # Sensitive variables for geniza in staging environment
 ###
+---
 secret_key: !vault '$ANSIBLE_VAULT;1.1;AES256
 
   65386634383163633963363238633037373030666338323538613233643736636430663832633465
