@@ -3,11 +3,19 @@ repos:
     rev: v1.0.0
     hooks:
     - id: encryption-check
-      files: ((^|/)vault|vault.y[a]{0,1}ml$|.vault$|id_rsa$)
+      files: (.vault$|id_rsa$|role/.*/vars/vault.yml)
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.0.1
     hooks:
     - id: detect-private-key
+  - repo: local
+    hooks:
+    - id: vaulted-vars
+      name: Check vaulted variables
+      entry: ./bin/vault_vars.py -q check
+      language: python
+      files: "inventory/group_vars/.*/vault.yml"
+      additional_dependencies: ['pyyaml', 'ansible']
   # this looks potentially useful, flags fake passwords in postgres config
   # but there seems to be a yaml parsing error, maybe this:
   # https://github.com/Yelp/detect-secrets/issues/374

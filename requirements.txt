@@ -6,3 +6,4 @@ wheel
 yamllint
 pre-commit
 psycopg2
+pyyaml
