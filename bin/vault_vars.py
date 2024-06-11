@@ -1,7 +1,12 @@
 #!/usr/bin/env python
+"""
+Python script to make it easier to work with ansible vault encrypted variable
+values in an un-encrypted vars file.  Supports encrypting all values in a yaml
+variable file (preserves block comments), decrypting all values (for display only),
+and checking that all values in a yaml variable file are encrypted.
+"""
 import argparse
 
-from io import StringIO
 import os
 import re
 import subprocess
@@ -36,7 +41,15 @@ class VaultedVariable(yaml.YAMLObject):
 
 
 def encrypt_string(value):
+    # encrypt a string with vault and decode from binary to string
+    # NOTE: depends on vault variable in main namespace
     return vault.encrypt(value).decode()
+
+
+def decrypt_string(value):
+    # decrypt a string with vault and decode from binary to string
+    # NOTE: depends on vault variable in main namespace
+    return vault.decrypt(value.val).decode()
 
 
 def encrypt_yaml_vars(data):
@@ -88,14 +101,13 @@ def encrypt_vars_in_file(infile):
 
 
 def decrypt_vars(data):
+    # recursive function to decrypt yaml data with vaulted variables
     result = {}
     for name, value in data.items():
         output_value = value
         if isinstance(value, VaultedVariable):
-            # returns binary, decode to string
-            decrypted = vault.decrypt(value.val).decode()
-            # print(decrypted)
-            output_value = decrypted
+            # decrypt to get the un-encrypted string
+            output_value = decrypt_string(value.val)
         elif isinstance(value, dict):
             output_value = decrypt_vars(value)
 
@@ -147,6 +159,18 @@ def check_file_vars_encrypted(infile, quiet=False):
             return False
 
 
+def init_vault():
+    # initialize ansible VaultLib with vault secret for encrypt/decrypt
+    vault_id = os.environ.get("ANSIBLE_VAULT_IDENTITY_LIST")
+    # NOTE: currently only supports the configuration documented in the README
+    # split the vault id from the command and run the command to generate the secret
+    result = subprocess.run([vault_id.split("@")[1]], capture_output=True)
+    secret = result.stdout.strip()  # remove trailing newline
+    # TODO: use cli.vault code?
+    # initialize VaultLib object with list of tuples of vault id, vault secret
+    return VaultLib([("default", VaultSecret(secret))])
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Ansible vault variables values in a yaml file"
@@ -168,19 +192,9 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    vault_id = os.environ.get("ANSIBLE_VAULT_IDENTITY_LIST")
-    result = subprocess.run([vault_id.split("@")[1]], capture_output=True)
-    secret = result.stdout.strip()  # remove trailing newline
-
-    # TODO: use cli.vault code?
-    vault = VaultLib(
-        [
-            (
-                "default",
-                VaultSecret(secret),
-            )
-        ]
-    )
+    # initialize vault if needed (not needed if mode = check)
+    if args.mode in ["encrypt", "decrypt"]:
+        vault = init_vault()
 
     # encrypt mode: update all files to encrypt variables
     if args.mode == "encrypt":
