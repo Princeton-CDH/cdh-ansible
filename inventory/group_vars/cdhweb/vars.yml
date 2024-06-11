@@ -26,7 +26,7 @@ deploy_user: "conan"
 # wsgi path
 wsgi_path: "{{ django_app }}/wsgi.py"
 # nodejs version
-node_version: "18"
+node_version: "20"
 # django database backend
 db_backend: "postgresql"
 db_host: "{{ postgres_host }}"
@@ -70,6 +70,8 @@ media_root: /mnt/nfs/cdh/cdhweb/media/
 
 # vaulted tar file with proprietary fonts
 font_archive_file: cdhweb_fonts.vault
+# default font_path: "/var/www/fonts/"
+font_path: "{{ django_app_path }}/cdhweb/static_src/fonts/"
 
 # source host when replicating data/media (use host from inventory file)
 replication_source_host: cdhweb_production

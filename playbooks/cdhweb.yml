@@ -13,9 +13,9 @@
     - postgresql
     - passenger
     - build_npm
-    - run_webpack
     - configure_logging
     - django
+    - run_webpack   # requires font files from django task
     - finalize_deploy
     - close_deployment
   tasks:
