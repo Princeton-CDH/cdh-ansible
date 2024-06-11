@@ -32,7 +32,7 @@
     - name: "install javascript dependencies with npm ({{ npm_install_mode }} install)"
       become: true
       become_user: "{{ deploy_user }}"
-      npm:
+      community.general.npm:
         path: "{{ deploy }}"
         # NOTE: for shxco, omitting dev dependencies means the webpack build fails;
         # using production install solved a problem for cdhweb

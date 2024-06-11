@@ -13,9 +13,9 @@
     - postgresql
     - passenger
     - build_npm
+    - run_webpack
     - configure_logging
     - django
-    - django_compressor
     - finalize_deploy
     - close_deployment
   tasks:
