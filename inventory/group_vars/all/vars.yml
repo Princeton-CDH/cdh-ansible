@@ -44,8 +44,8 @@ templates_dir: 'templates/'
 repo_url: 'https://www.github.com/{{ repo }}.git'
 # home directory (on remote)
 home: '{{ ansible_env.HOME }}'
-# default to using main unless set otherwise
-gitref: '{{ ref | default("main") }}'
+# default to using main unless set otherwise; use default if ref is empty string
+gitref: '{{ ref | default("main", true) }}'
 # default install root
 install_root: '/srv/www/{{ app_name }}'
 
