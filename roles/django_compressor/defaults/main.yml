@@ -1,4 +1,0 @@
----
-# default for django compressor
-webapp_user: "www-data"
-webapp_group: "{{ webapp_user }}"
