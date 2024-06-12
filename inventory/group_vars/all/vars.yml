@@ -30,8 +30,8 @@ nevercache_key: '{{ 99999 |random|string|password_hash("sha256") }}'
 # Database configurations -- overriden by group_vars vaults as needed
 db_name: '{{ vault_db_name }}'
 db_password: '{{ vault_db_password }}'
-# include a blank default for staging when we want localhost
-db_host: '{{ vault_db_host | default("") }}'
+# by default, assume apps are using postgres
+db_host: '{{ postgres_host }}'
 db_username: '{{ vault_db_username }}'
 
 # Solr configurations
