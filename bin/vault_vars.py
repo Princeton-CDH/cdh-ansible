@@ -49,7 +49,7 @@ def encrypt_string(value):
 def decrypt_string(value):
     # decrypt a string with vault and decode from binary to string
     # NOTE: depends on vault variable in main namespace
-    return vault.decrypt(value.val).decode()
+    return vault.decrypt(value).decode()
 
 
 def encrypt_yaml_vars(data):
