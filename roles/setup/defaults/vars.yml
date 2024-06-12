@@ -1,0 +1,3 @@
+---
+# assume nfs is enabled by default, allow group vars to override and opt out
+nfs_enabled: true
