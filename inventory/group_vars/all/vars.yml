@@ -44,8 +44,8 @@ templates_dir: 'templates/'
 repo_url: 'https://www.github.com/{{ repo }}.git'
 # home directory (on remote)
 home: '{{ ansible_env.HOME }}'
-# default to using main unless set otherwise
-gitref: '{{ ref | default("main") }}'
+# default to using main unless set otherwise; use default if ref is empty string
+gitref: '{{ ref | default("main", true) }}'
 # default install root
 install_root: '/srv/www/{{ app_name }}'
 
@@ -80,11 +80,11 @@ requirements_type: 'txt'
 # CSP configuration -- two urls, one for read only, one for enforce
 # first is used in staging, rest in production
 # set csp_enabled: true in project vars to enable
-csp_reportonly_uri: '{{ vault_csp_reportonly_uri | default("") }}'
-csp_enforce_uri: '{{ vault_csp_enforce_uri  | default("") }}'
+csp_reportonly_uri: "{{ vault_csp_base_uri }}/r/d/csp/reportOnly"
+csp_enforce_uri: "{{ vault_csp_base_uri }}/r/d/csp/enforce"
 # copy to CSP variables needed for django role settings (not used for all projects)
-django_csp_reportonly_uri: '{{ vault_csp_reportonly_uri | default("") }}'
-django_csp_enforce_uri: '{{ vault_csp_enforce_uri | default("") }}'
+django_csp_reportonly_uri: '{{ csp_reportonly_uri | default("") }}'
+django_csp_enforce_uri: '{{ csp_enforce_uri | default("") }}'
 
 # Postgres configuration (version 15)
 postgres_host: lib-postgres-prod1.princeton.edu

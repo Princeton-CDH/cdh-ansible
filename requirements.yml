@@ -1,8 +1,10 @@
 ---
 collections:
   - name: community.general
+  - name: community.postgresql
   - name: https://github.com/pulibrary/princeton_ansible.git
     type: git
 
 roles:
   - name: geerlingguy.supervisor
+

@@ -3,7 +3,7 @@
 ###
 ---
 # configure staging to deploy develop branch by default
-gitref: '{{ ref | default("develop") }}'
+gitref: '{{ ref | default("develop", true) }}'
 runtime_env: "staging"
 
 # solr settings

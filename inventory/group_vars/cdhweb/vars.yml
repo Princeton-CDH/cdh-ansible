@@ -32,9 +32,11 @@ db_backend: "postgresql"
 db_host: "{{ postgres_host }}"
 
 # postgresql database info
-application_dbuser_name: "{{ vault_db_username }}"
+db_name: 'cdh_test_web'
+db_username: 'cdhweb'
+application_dbuser_name: "{{ db_username }}"
 application_dbuser_password: "{{ vault_db_password }}"
-application_db_name: "{{ vault_db_name }}"
+application_db_name: "{{ db_name }}"
 application_db_host: "{{ postgres_host }}"
 
 # configure app-specific local settings

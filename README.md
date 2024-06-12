@@ -8,7 +8,7 @@ The overall structure of this repository can be broken down as follows:
   - `playbooks` - collections of roles executed in series against a host.
   - `roles` - the various tasks that Ansible can perform in a group.
   - `inventory` - hosts and variables
-    - `all_hosts` - host file with hostnames and host groups 
+    - `all_hosts` - host file with hostnames and host groups
     - `group_vars` - group variables for different hosts and host groups
       - `all` - variables shared by all playbooks
       - `vars.yml`- unencrypted all variables
@@ -97,48 +97,49 @@ To revert to previous deploy run call the `revert_deploy` playbook with a `host_
 ansible-playbook -e host_group=shxco_staging playbooks/revert_deploy.yml
 ```
 
-## Vault variables and passwords
+## Vault sensitive variables
 
-Variables kept in `inventory/group_vars/*/vault.yml` are sensitive configurations
-that should always be kept encrypted on commit. To edit them (in your system text editor):
-```{bash}
-ansible-vault edit inventory/group_vars/all/vault.yml
+Configurations that are sensitive, such as passwords or API keys, should be
+stored in a vault variable file (i.e., `inventory/group_vars/*/vault.yml`) and the **value** of the variable should be encrypted (but not the entire file). For compatibility with Ansible Tower, which loads group variables into inventory, we [encrypt individual variables](https://docs.ansible.com/ansible/latest/vault_guide/vault_encrypting_content.html#encrypting-individual-variables-with-ansible-vault) rather than the entire vault.yml file.
+
+To encrypt a single variable, you can use `ansible-vault`:
+```sh
+ansible-vault encrypt_string <password_source> '<string_to_encrypt>' --name '<string_name_of_variable>'
 ```
 
-You can also `ansible-vault decrypt` but need to remember to `encrypt`
-after editing. (Pre-commit check will flag if you fail to do so.)
+To work with multiple encrypted variables, use the local `vault_vars.py` helper script.
+
+- If all variables in a vault file are unencrypted, use `encrypt` mode to encrypt them
+- To view the values of your vaulted variables, use the `decrypt` mode (does not replace content or preserve content)
+- To check that all variable values in a vault file are encrypted use `check`
+
+Example uage:
+```sh
+./bin/vault_vars.py encrypt inventory/group_vars/all/vault.yml
+./bin/vault_vars.py decrypt inventory/group_vars/all/vault.yml
+./bin/vault_vars.py check inventory/group_vars/all/vault.yml
+```
+
+The check mode of this script is used as a pre-commit hook to prevent sensitive
+configurations from being checked into version control in plain text.
+
+### Vault password
 
 Ansible vault passwords are stored in shared LastPass vault and loaded
 using [lastpass-cli](https://lastpass.github.io/lastpass-cli/lpass.1.html).
 
 ```{bash}
 brew install lastpass-cli
-lpass login <email@email.com>
+lpass login <email@example.com>
 ```
 
-There are two different vault passwords (default and geniza), to allow limited
-contractor access for running geniza and geniza_staging playbooks without full access
-to all credentials.  For compatibility with Ansible Tower, these are no longer
-defined in the default ansible.cfg but shell scripts are provided to
-pull the appropriate password from LastPass. For the default configuration,
-set the following environment variables:
+For convenience, a local shell script is provided to pull the vault password from lastpass.
+Due to compatibility issues with Ansible Tower, the ansible vault identity list configuration cannot be set as a default `ansible.cfg.` For local use, set this environment variable:
 ```sh
-ANSIBLE_VAULT_IDENTITY_LIST=default@bin/lpass_default.sh,geniza@bin/lpass_geniza.sh
+ANSIBLE_VAULT_IDENTITY_LIST=default@bin/lpass_default.sh
 ```
 
-Because there are multiple vault ids, encrypting requires specifying which
-vault id to use. Geniza variables and setup files should be encrypted with
-`--encrypt-vault-id geniza` ; all other vaulted files should be encrypted with
-the default vault password.
-
-
-These are included in playbooks indirectly. Typically in the appropriate `group_vars` YAML file, you'll see a stanza such as:
-```{yaml}
-db_name: {{ vault_db_name }}
-```
-
-Some encrypted variables are shared across projects and playbooks. Shared variables may be
-overriden in a project- or playbook-specific `vault.yml` file.
+Some encrypted variables are shared across host groups. As with other variables, these may be overridden in a more specific host group vault file.
 
 ## Replication
 
