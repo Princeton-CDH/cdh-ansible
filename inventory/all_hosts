@@ -129,6 +129,7 @@ geniza_production
 shxco_production
 prosody_production
 derrida_archive_production
+prodigy_production
 
 [staging:children]
 cdhweb_staging
@@ -140,6 +141,7 @@ prosody_staging
 sandbox
 simrisk_cloud
 geotaste_cloud
+prodigy_staging
 
 [dev]
 localhost
