@@ -58,7 +58,8 @@ def encrypt_yaml_vars(data):
         # if a variable is already encrypted, preserve
         if isinstance(value, VaultedVariable):
             result[name] = value
-        if isinstance(value, dict):
+        elif isinstance(value, dict):
+            # if there are nested variables, recurse
             result[name] = encrypt_yaml_vars(value)
         else:
             # encrypted the variable value

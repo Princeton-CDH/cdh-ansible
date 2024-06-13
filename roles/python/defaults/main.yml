@@ -8,3 +8,6 @@ python_requirements_file: "{{ python_app_path }}/requirements.txt"
 requires_python2to3: false
 python_venv_prompt: "env-py{{ python_version }}"
 pyproject_toml_file: "{{ python_app_path }}/pyproject.toml"
+# placeholder for optional extra args on pip install for requirements
+pip_install_extra_args: ""
+python_extra_packages_pip_extra_args: ""
