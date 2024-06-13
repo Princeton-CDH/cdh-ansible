@@ -49,7 +49,7 @@ def encrypt_string(value):
 def decrypt_string(value):
     # decrypt a string with vault and decode from binary to string
     # NOTE: depends on vault variable in main namespace
-    return vault.decrypt(value.val).decode()
+    return vault.decrypt(value).decode()
 
 
 def encrypt_yaml_vars(data):
@@ -58,7 +58,8 @@ def encrypt_yaml_vars(data):
         # if a variable is already encrypted, preserve
         if isinstance(value, VaultedVariable):
             result[name] = value
-        if isinstance(value, dict):
+        elif isinstance(value, dict):
+            # if there are nested variables, recurse
             result[name] = encrypt_yaml_vars(value)
         else:
             # encrypted the variable value

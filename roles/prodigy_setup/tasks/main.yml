@@ -1,0 +1,32 @@
+---
+# tasks to setup and configure an instance of Prodigy
+- name: Ensure install root exists and deploy user has access
+  tags:
+    - setup
+    - never
+  become: true
+  file:
+    dest: "{{ install_root }}"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    state: directory
+    recurse: no
+
+- name: Create requirements.txt for python requirements
+  tags:
+    - setup
+    - never
+  become: true
+  ansible.builtin.copy:
+    src: "requirements.txt"
+    dest: "{{ install_root }}/requirements.txt"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+
+- name: Create Prodigy config file
+  become: true
+  ansible.builtin.template:
+    src: "prodigy_config.json.j2"
+    dest: "{{ install_root }}/prodigy.json"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"

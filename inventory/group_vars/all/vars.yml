@@ -30,8 +30,8 @@ nevercache_key: '{{ 99999 |random|string|password_hash("sha256") }}'
 # Database configurations -- overriden by group_vars vaults as needed
 db_name: '{{ vault_db_name }}'
 db_password: '{{ vault_db_password }}'
-# include a blank default for staging when we want localhost
-db_host: '{{ vault_db_host | default("") }}'
+# by default, assume apps are using postgres
+db_host: '{{ postgres_host }}'
 db_username: '{{ vault_db_username }}'
 
 # Solr configurations
@@ -48,6 +48,8 @@ home: '{{ ansible_env.HOME }}'
 gitref: '{{ ref | default("main", true) }}'
 # default install root
 install_root: '/srv/www/{{ app_name }}'
+# current deploy default location
+current_deploy: "{{ install_root }}/current"
 
 # Clone root (where deploy user clones repo)
 clone_root: "/home/{{ deploy_user }}/repos"

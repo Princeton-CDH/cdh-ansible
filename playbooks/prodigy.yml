@@ -1,0 +1,17 @@
+---
+# by default this playbook runs in the staging environment
+# to run in production, pass '-e runtime_env=production'
+- name: Deploy and configure Prodigy web application
+  hosts: prodigy_{{ runtime_env | default('staging') }}
+  connection: ssh
+  remote_user: pulsys
+  become: true
+  roles:
+    - deploy_user
+    - postgresql
+    - prodigy_setup
+    - python
+    - geerlingguy.supervisor
+  tasks:
+    - name: Use supervisorctl to restart application
+      ansible.builtin.command: "sudo supervisorctl restart prodigy"

@@ -79,6 +79,19 @@ cdh-prosody2.princeton.edu
 prosody_staging
 prosody_production
 
+[prodigy_staging]
+cdh-test-prodigy1.princeton.edu
+cdh-test-prodigy2.princeton.edu
+
+[prodigy_production]
+cdh-prodigy1.princeton.edu
+cdh-prodigy2.princeton.edu
+
+[prodigy:children]
+prodigy_staging
+prodigy_production
+
+
 [sandbox]
 cdh-dev-sandbox1.princeton.edu
 
@@ -116,6 +129,7 @@ geniza_production
 shxco_production
 prosody_production
 derrida_archive_production
+prodigy_production
 
 [staging:children]
 cdhweb_staging
@@ -127,6 +141,7 @@ prosody_staging
 sandbox
 simrisk_cloud
 geotaste_cloud
+prodigy_staging
 
 [dev]
 localhost
