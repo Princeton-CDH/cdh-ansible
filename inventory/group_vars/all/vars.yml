@@ -48,6 +48,8 @@ home: '{{ ansible_env.HOME }}'
 gitref: '{{ ref | default("main", true) }}'
 # default install root
 install_root: '/srv/www/{{ app_name }}'
+# current deploy default location
+current_deploy: "{{ install_root }}/current"
 
 # Clone root (where deploy user clones repo)
 clone_root: "/home/{{ deploy_user }}/repos"
