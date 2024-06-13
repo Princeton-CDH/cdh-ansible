@@ -4,6 +4,7 @@
 - name: Ensure HathiTrust pairtree directory exists and has correct permissions
   tags:
     - never
+    - setup
   become: true
   ansible.builtin.file:
     path: "{{ hathitrust_pairtree_path }}"
@@ -12,6 +13,19 @@
     owner: www-data
     group: conan
     recurse: false
+
+- name: Ensure the presence of TigerData NFS mount
+  become: true
+  tags:
+    - setup
+    - nfs
+    - never
+  ansible.posix.mount:
+    src: "{{ tigerdata_nfs_server }}:/cdh"
+    path: "/mnt/tigerdata/cdh"
+    state: mounted
+    fstype: nfs
+    opts: nfsvers=3,mountport=9001,port=9001,nolock,proto=tcp
 
 - name: Check if MARC pairtree data is present
   ansible.builtin.stat:
