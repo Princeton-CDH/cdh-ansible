@@ -129,8 +129,8 @@ nfs_host_server: "lib-fs-prod.princeton.edu"
 nfs_enabled: true   # enable nfs by default; opt-out where not needed
 
 ## tigerdata
-tigerdata_nfs_server: "td-mf-db1"    # alternate td-mf-cl1
-tigerdata_cdh_group: "cdh"   # should we name to make clear this is a tigerdata group?
+tigerdata_nfs_server: "td-mf-cl1"
+tigerdata_cdh_group: "cdh"
 tigerdata_cdh_gid: 30369
 
 ## datadog configuration
