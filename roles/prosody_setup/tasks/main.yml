@@ -78,6 +78,6 @@
   ansible.builtin.file:
     path: "{{ prosody_data_path }}"
     state: directory
-    mode: "0775"
+    mode: 0775
     owner: www-data
     group: conan
