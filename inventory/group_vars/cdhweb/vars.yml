@@ -18,7 +18,7 @@ python_app: "{{ app_name }}"
 django_app: "{{ app_name }}"
 
 # python version
-python_version: "3.8" # can't go past 3.8 until we get to newer ubuntu
+python_version: "3.11"
 # symlink to current deploy in /var/www
 symlink: cdhweb
 # use PUL deploy user of conan
@@ -26,7 +26,7 @@ deploy_user: "conan"
 # wsgi path
 wsgi_path: "{{ django_app }}/wsgi.py"
 # nodejs version
-node_version: "18"
+node_version: "20"
 # django database backend
 db_backend: "postgresql"
 db_host: "{{ postgres_host }}"
@@ -38,6 +38,13 @@ application_dbuser_name: "{{ db_username }}"
 application_dbuser_password: "{{ vault_db_password }}"
 application_db_name: "{{ db_name }}"
 application_db_host: "{{ postgres_host }}"
+
+# customize build commmands for springload webpack config
+webpack_build_qa: 'build'
+webpack_build_prod: 'build'
+# webpack is in devDependencies, so don't do a production install
+npm_install_mode: "dev"
+
 
 # configure app-specific local settings
 django_local_settings_template: "cdhweb_settings.py.j2"
@@ -63,6 +70,8 @@ media_root: /mnt/nfs/cdh/cdhweb/media/
 
 # vaulted tar file with proprietary fonts
 font_archive_file: cdhweb_fonts.vault
+# default font_path: "/var/www/fonts/"
+font_path: "{{ django_app_path }}/cdhweb/static_src/fonts/"
 
 # source host when replicating data/media (use host from inventory file)
 replication_source_host: cdhweb_production

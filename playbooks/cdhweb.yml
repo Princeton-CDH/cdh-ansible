@@ -15,7 +15,7 @@
     - build_npm
     - configure_logging
     - django
-    - django_compressor
+    - run_webpack   # requires font files from django task
     - finalize_deploy
     - close_deployment
   tasks:

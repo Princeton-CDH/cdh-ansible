@@ -33,6 +33,7 @@
   ansible.builtin.pip:
     virtualenv: "{{ python_venv_path }}"
     requirements: "{{ python_requirements_file }}"
+    chdir: "{{ python_app_path }}"
     extra_args: "{{ pip_install_extra_args }}"
 
 - name: Check for pyproject.toml file
