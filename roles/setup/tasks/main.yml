@@ -12,69 +12,9 @@
   ansible.builtin.include_vars:
     file: vars/vault.yml
   when: geniza_deploy_only is not defined or geniza_deploy_only == ""
-
-- name: nfsserver | add fqdn for idmapping
-  become: true
-  tags:
-    - setup
-    - nfs
-    - never
+- name: Configure NFS mount point
+  ansible.builtin.import_tasks: nfs.yml
   when: nfs_enabled
-  ansible.builtin.lineinfile:
-    path: /etc/idmapd.conf
-    insertbefore: '# Domain = localdomain'
-    line: "Domain = {{ nfs_host_server }}"
-    state: present  
-
-- name: nfsserver | enable id_mapping
-  become: true
-  tags:
-    - setup
-    - nfs
-    - never
-  when: nfs_enabled
-  ansible.builtin.lineinfile:
-    path: /etc/default/nfs-common
-    regexp: '^NEED_IDMAPD='
-    line: NEED_IDMAPD=yes
-  notify: restart idmapd
-
-- name: nfsserver | add fqdn for idmapping
-  become: true
-  tags:
-    - setup
-    - nfs
-    - never
-  when: nfs_enabled
-  ansible.builtin.lineinfile:
-    path: /etc/idmapd.conf
-    insertbefore: '# Domain = localdomain'
-    line: "Domain = {{ nfs_host_server }}"
-    state: present  
-
-- name: Ensure the presence of cdh nfs mount
-  become: true
-  tags:
-    - setup
-    - nfs
-    - never
-  when: nfs_enabled
-  ansible.posix.mount:
-    src: "{{ nfs_server }}:/var/nfs/cdh"
-    path: "/mnt/nfs/cdh"
-    state: mounted
-    fstype: nfs
-    opts: rw,sync,hard
-
-# comment this out and find out how to automatically disable idmapping
-# - name: nfsserver | reconfigure client id_mapping
-  # tags:
-    # - setup
-    # - nfs
-    # - never
-  # ansible.builtin.lineinfile:
-    # path: /sys/module/nfs/parameters/nfs4_disable_idmapping
-    # regexp: '^Y'
-    # line: N
-  # become: true
-  # notify: restart idmapd
+- name: Configure TigerData NFS mount point
+  ansible.builtin.import_tasks: tigerdata_nfs.yml
+  when: tigerdata_enabled

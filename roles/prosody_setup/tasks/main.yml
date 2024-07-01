@@ -4,6 +4,7 @@
 - name: Ensure HathiTrust pairtree directory exists and has correct permissions
   tags:
     - never
+    - setup
   become: true
   ansible.builtin.file:
     path: "{{ hathitrust_pairtree_path }}"
@@ -41,6 +42,6 @@
   ansible.builtin.file:
     path: "{{ prosody_data_path }}"
     state: directory
-    mode: "0775"
+    mode: 0775
     owner: www-data
     group: conan

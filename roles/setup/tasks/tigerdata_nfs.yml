@@ -1,0 +1,38 @@
+###
+#  Configure TigerData NFS mount point
+###
+- name: Ensure TigerData group "{{ tigerdata_cdh_group }}" exists with correct gid
+  tags:
+    - setup
+    - nfs
+    - never
+  ansible.builtin.group:
+    name: "{{ tigerdata_cdh_group }}"
+    state: present
+    gid: "{{ tigerdata_cdh_gid }}"
+
+- name: Ensure system and deploy users belong to TigerData "{{ tigerdata_cdh_group }}" group
+  tags:
+    - setup
+    - nfs
+    - never
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: "{{ tigerdata_cdh_group }}"
+    append: yes
+  with_items:
+    - "{{ deploy_user }}"
+    - pulsys  #  "{{ ansible_user }}" is undefined?
+
+- name: Ensure the presence of TigerData NFS mount
+  become: true
+  tags:
+    - setup
+    - nfs
+    - never
+  ansible.posix.mount:
+    src: "{{ tigerdata_nfs_server }}:/cdh"
+    path: "/mnt/tigerdata/cdh"
+    state: mounted
+    fstype: nfs
+    opts: nfsvers=3,mountport=9001,port=9001,nolock,proto=tcp

@@ -65,6 +65,8 @@ solr_collection: cdh_ppa
 solr_configset: cdh_ppa
 solr_version: 9
 
+tigerdata_enabled: true
+
 # github contexts required for deploy production
 # deploy_contexts:
 # #   - "Python unit tests"
