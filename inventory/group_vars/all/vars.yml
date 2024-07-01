@@ -129,6 +129,8 @@ nfs_host_server: "lib-fs-prod.princeton.edu"
 nfs_enabled: true   # enable nfs by default; opt-out where not needed
 
 ## tigerdata
+# NOTE: disabled by default; must opt in by host group; requires firewall access
+tigerdata_enabled: false
 tigerdata_nfs_server: "td-mf-cl1"
 tigerdata_cdh_group: "cdh"
 tigerdata_cdh_gid: 30369
