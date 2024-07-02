@@ -51,12 +51,17 @@
     #     src: files/cdh_logo_sand.png
     #     dest: /var/www/html
     #     mode: 0644
+    - name: Run nginx as deploy user for access to tigerdata
+      ansible.builtin.lineinfile:
+        path: /etc/nginx/nginx.conf
+        regexp: '^user '
+        line: "user {{ deploy_user }};"
     - name: Install prodigy nginx site config
       ansible.builtin.template:
         src: prodigy_nginx_site.conf.j2
         dest: /etc/nginx/sites-available/prodigy.conf
         mode: 0644
-    - name: Enable sandbox nginx config
+    - name: Enable prodigy nginx config
       ansible.builtin.file:
         src: /etc/nginx/sites-available/prodigy.conf
         dest: /etc/nginx/sites-enabled/prodigy.conf
