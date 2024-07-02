@@ -115,6 +115,7 @@ timezone: America/New_York
 ## replication playbook settings
 timestamp: "{{ ansible_date_time.date }}"
 deploy_user: "conan"
+deploy_user_uid: 1002
 dest_backup_dir : "/tmp/migrate/"
 dest_backup_path: "{{ dest_backup_dir }}{{ db_backup_filename }}"
 dest_media_backup_path: "{{ dest_backup_dir }}{{ media_backup_filename}}"
@@ -134,6 +135,7 @@ tigerdata_enabled: false
 tigerdata_nfs_server: "td-mf-cl1"
 tigerdata_cdh_group: "cdh"
 tigerdata_cdh_gid: 30369
+
 
 ## datadog configuration
 ## applications must configure datadog_app_name
