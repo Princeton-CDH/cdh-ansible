@@ -1,0 +1,44 @@
+
+# Prodigy runs on port 8080
+upstream prodigy {
+    server localhost:8080;
+}
+
+server {
+        listen 80;
+
+        server_name prodigy;
+
+        root /var/www/html;
+        ## index index.html;
+
+
+
+        ## location / {
+                ## try_files $uri $uri/ =404;
+        ## }
+
+        # serve out ppa images for annotation
+        location /ppa-images/ {
+            expires 10d;
+            ## restrict by referrer if we are not requiring vpn
+            ## valid_referers '';
+            ## if ($invalid_referer) {
+            ##   return 403;
+            ## }
+            alias {{ ppa_image_dir }};  # MUST end with trailing slash
+        }
+
+        # for all other requests, proxy to prodigy app
+        location / {
+                proxy_pass http://prodigy;
+                proxy_set_header Host $http_host;
+                proxy_set_header X-Forwarded-Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_cache test_prodigycache;
+                proxy_connect_timeout      2h;
+                proxy_send_timeout         2h;
+                proxy_read_timeout         2h;
+        }
+
+}

@@ -32,7 +32,7 @@
     - never
   ansible.posix.mount:
     src: "{{ tigerdata_nfs_server }}:/cdh"
-    path: "/mnt/tigerdata/cdh"
+    path: "{{ tigerdata_mount_dir }}"
     state: mounted
     fstype: nfs
     opts: nfsvers=3,mountport=9001,port=9001,nolock,proto=tcp
