@@ -32,7 +32,7 @@ prodigy_recipe_pyfile: "{{ install_root }}/env/lib/python{{ python_version}}/sit
 prodigy_datafile: poem_testset_poetrypages_hathi.jsonl
 # current recipe options: annotate_text_and_image / annotate_page_text
 prodigy_recipe: annotate_text_and_image
-prodigy_recipe_options: "--label POETRY,PROSODY --image-prefix /ppa-images/"
+prodigy_recipe_options: "--label POETRY --image-prefix /ppa-images/"
 prodigy_dataset: poetry_spans
 prodigy_options: "{{ prodigy_recipe }} {{ prodigy_dataset }} {{ prodigy_datafile }} {{ prodigy_recipe_options }} -F {{ prodigy_recipe_pyfile}}"
 
