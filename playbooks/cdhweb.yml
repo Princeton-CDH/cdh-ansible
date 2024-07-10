@@ -23,4 +23,5 @@
       name: pulibrary.princeton_ansible.datadog
       apply:
         become: true
+    # do we want datadog turned on in preproduction? or wait until new version goes into production?
     when: runtime_env | default('staging') == "production"
