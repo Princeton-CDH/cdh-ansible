@@ -18,6 +18,7 @@
           - "{{ webapp_group }}"
         home: "/home/{{ deploy_user }}"
         shell: "{{ deploy_user_shell }}"
+        uid: "{{ deploy_user_uid }}"
 
     - name: Create bash profile
       ansible.builtin.template:

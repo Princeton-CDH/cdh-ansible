@@ -66,7 +66,7 @@ PUCAS_LDAP.update({
 {% block email_config %}
 ADMINS = [("CDH Dev Team", "cdhdevteam@princeton.edu")]
 SERVER_EMAIL = "cdhdevteam@princeton.edu"
-{% if runtime_env == "production" %}
+{% if runtime_env == "production" or runtime_env == "preproduction"%}
 EMAIL_HOST = "smtp.princeton.edu"
 EMAIL_HOST_USER = "cdhdevteam"
 EMAIL_SUBJECT_PREFIX = "{{ django_email_subject }}"

@@ -29,6 +29,6 @@
       args:
         chdir: '{{ deploy }}'
         executable: /bin/bash
-      when: runtime_env == "production"
+      when: runtime_env == "production" or  runtime_env == "preproduction"
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
