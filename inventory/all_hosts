@@ -26,9 +26,14 @@ cdh-test-web2.princeton.edu
 cdh-web1.princeton.edu
 cdh-web2.princeton.edu
 
+[cdhweb_preproduction]
+cdh-web3.princeton.edu
+cdh-web4.princeton.edu
+
 [cdhweb:children]
 cdhweb_staging
 cdhweb_production
+cdhweb_preproduction
 
 [shxco_staging]
 cdh-test-shxco1.princeton.edu
@@ -130,6 +135,7 @@ shxco_production
 prosody_production
 derrida_archive_production
 prodigy_production
+cdhweb_preproduction
 
 [staging:children]
 cdhweb_staging
