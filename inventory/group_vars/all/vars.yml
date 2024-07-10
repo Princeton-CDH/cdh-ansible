@@ -115,7 +115,7 @@ timezone: America/New_York
 ## replication playbook settings
 timestamp: "{{ ansible_date_time.date }}"
 deploy_user: "conan"
-deploy_user_uid: 1002
+deploy_user_uid: 1002  # TigerData permissions are based on uid, so set explicitly
 dest_backup_dir : "/tmp/migrate/"
 dest_backup_path: "{{ dest_backup_dir }}{{ db_backup_filename }}"
 dest_media_backup_path: "{{ dest_backup_dir }}{{ media_backup_filename}}"
