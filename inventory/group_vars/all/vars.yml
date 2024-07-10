@@ -128,6 +128,7 @@ media_backup_path: "{{ backup_dir }}{{ media_backup_filename}}"
 nfs_server: "128.112.204.89"
 nfs_host_server: "lib-fs-prod.princeton.edu"
 nfs_enabled: true   # enable nfs by default; opt-out where not needed
+nfs_domain: "princeton.edu"
 
 ## tigerdata
 # NOTE: disabled by default; must opt in by host group; requires firewall access

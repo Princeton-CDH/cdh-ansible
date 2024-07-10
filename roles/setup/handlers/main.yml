@@ -1,5 +1,14 @@
 ---
+
+# both nfs-server and nfs-idmapd should be unmasked, enabled, and running
+# (order of these may matter; if it does we should split into a task)
 - name: restart idmapd
-  ansible.builtin.service:
-    name: nfs-idmapd
+  become: true
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
     state: restarted
+    masked: false
+    enabled: true
+  with_items:
+    - nfs-server
+    - nfs-idmapd
