@@ -21,13 +21,27 @@ application_dbuser_password: "{{ vault_db_password }}"
 nfs_enabled: false
 tigerdata_enabled: true
 
+# image dir to serve out; must end in trailing slash
+ppa_image_dir: "{{ tigerdata_mount_dir }}/prosody/ppa-images/"
+
+
 # temporary recipe to test that prodigy is running and connecting to the db
-prodigy_recipe: "ner.manual ner_news_headlines blank:en /srv/www/prodigy/news_headlines.jsonl --label PERSON,ORG,PRODUCT,LOCATION"
+#prodigy_recipe: "ner.manual ner_news_headlines blank:en /srv/www/prodigy/news_headlines.jsonl --label PERSON,ORG,PRODUCT,LOCATION"
+
+prodigy_recipe_pyfile: "{{ install_root }}/env/lib/python{{ python_version}}/site-packages/corppa/poetry_detection/annotation/recipe.py"
+#prodigy_datafile: poem_testset_poetrypages_hathi.jsonl
+prodigy_datafile: "{{ tigerdata_mount_dir }}/prosody/poetry-detection/poem-focused-testset/poem_testset_300mixed_forprodigy_shuf.jsonl"
+
+# current recipe options: annotate_text_and_image / annotate_page_text
+prodigy_recipe: annotate_text_and_image
+prodigy_recipe_options: "--label POETRY --image-prefix /ppa-images/"
+prodigy_dataset: poetry_spans
+prodigy_options: "{{ prodigy_recipe }} {{ prodigy_dataset }} {{ prodigy_datafile }} {{ prodigy_recipe_options }} -F {{ prodigy_recipe_pyfile}}"
 
 # configure prodigy to run via supervisor
 supervisor_programs:
   - name: 'prodigy'
-    command: "{{ install_root }}/env/bin/python -m prodigy {{ prodigy_recipe }}"
+    command: "{{ install_root }}/env/bin/python -m prodigy {{ prodigy_options }}"
     state: present
     configuration: |
       directory={{ install_root }}

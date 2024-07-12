@@ -135,7 +135,7 @@ tigerdata_enabled: false
 tigerdata_nfs_server: "td-mf-cl1"
 tigerdata_cdh_group: "cdh"
 tigerdata_cdh_gid: 30369
-
+tigerdata_mount_dir: /mnt/tigerdata/cdh
 
 ## datadog configuration
 ## applications must configure datadog_app_name

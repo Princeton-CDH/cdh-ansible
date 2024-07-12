@@ -1,1 +1,2 @@
 psycopg2_binary
+git+https://github.com/Princeton-CDH/ppa-nlp.git@feature/prodigy-poetry-annotation

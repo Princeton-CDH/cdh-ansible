@@ -30,3 +30,40 @@
     dest: "{{ install_root }}/prodigy.json"
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
+
+- name: Setup nginx for prodigy assets
+  tags:
+    - setup
+    - never
+  block:
+    - name: Make sure nginx and passenger are configured
+      ansible.builtin.include_role:
+        name: passenger
+      vars:
+        passenger_site_config_name: false  # don't create an app config file
+    # - name: Copy index.html file to web root
+    #   ansible.builtin.copy:
+    #     src: files/index.html
+    #     dest: /var/www/html
+    #     mode: 0644
+    # - name: Copy image referenced in index.html
+    #   ansible.builtin.copy:
+    #     src: files/cdh_logo_sand.png
+    #     dest: /var/www/html
+    #     mode: 0644
+    - name: Run nginx as deploy user for access to tigerdata
+      ansible.builtin.lineinfile:
+        path: /etc/nginx/nginx.conf
+        regexp: '^user '
+        line: "user {{ deploy_user }};"
+    - name: Install prodigy nginx site config
+      ansible.builtin.template:
+        src: prodigy_nginx_site.conf.j2
+        dest: /etc/nginx/sites-available/prodigy.conf
+        mode: 0644
+    - name: Enable prodigy nginx config
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/prodigy.conf
+        dest: /etc/nginx/sites-enabled/prodigy.conf
+        state: link
+      notify: "Restart nginx"
