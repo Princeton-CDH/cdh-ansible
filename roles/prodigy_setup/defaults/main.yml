@@ -1,0 +1,15 @@
+---
+# defaults file for prodigy_setup
+
+# configuration options to be output as prodigy.json
+prodigy_config_options:
+  db: "postgresql"
+  db_settings:
+    postgresql:
+      host: "{{ db_host }}"
+      name: "{{ application_db_name }}"
+      user: "{{ application_dbuser_name }}"
+      password: "{{ application_dbuser_password }}"
+  host: "0.0.0.0"
+  project_info: ["session", "dataset", "lang", "recipe_name"]
+
