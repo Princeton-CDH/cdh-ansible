@@ -37,6 +37,10 @@ prodigy_recipe: annotate_text_and_image
 prodigy_recipe_options: "--label POETRY --image-prefix /ppa-images/"
 prodigy_dataset: poetry_spans
 prodigy_options: "{{ prodigy_recipe }} {{ prodigy_dataset }} {{ prodigy_datafile }} {{ prodigy_recipe_options }} -F {{ prodigy_recipe_pyfile}}"
+# additional prodigy configurations to include in prodigy.json file
+# values here takes precedence over the defaults in the role
+prodigy_config_extra_options:
+  feed_overlap: true
 
 # configure prodigy to run via supervisor
 supervisor_programs:

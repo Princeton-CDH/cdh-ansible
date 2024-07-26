@@ -25,9 +25,9 @@
 
 - name: Create Prodigy config file
   become: true
-  ansible.builtin.template:
-    src: "prodigy_config.json.j2"
+  ansible.builtin.copy:
     dest: "{{ install_root }}/prodigy.json"
+    content: "{{ prodigy_config_options | combine(prodigy_config_extra_options) | to_json(indent=4) }}"
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
 
@@ -41,16 +41,7 @@
         name: passenger
       vars:
         passenger_site_config_name: false  # don't create an app config file
-    # - name: Copy index.html file to web root
-    #   ansible.builtin.copy:
-    #     src: files/index.html
-    #     dest: /var/www/html
-    #     mode: 0644
-    # - name: Copy image referenced in index.html
-    #   ansible.builtin.copy:
-    #     src: files/cdh_logo_sand.png
-    #     dest: /var/www/html
-    #     mode: 0644
+    # NOTE: if we decide we want a static html web root, refer to sandbox role for an example
     - name: Run nginx as deploy user for access to tigerdata
       ansible.builtin.lineinfile:
         path: /etc/nginx/nginx.conf
