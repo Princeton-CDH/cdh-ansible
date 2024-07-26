@@ -1,6 +1,6 @@
 ---
 app_name: prodigy
-application_url: https://test-prodigy.cdh.princeton.edu
+application_url: https://prodigy.cdh.princeton.edu
 
 python_version: "3.12"
 # single deploy path - no versioning, no nesting
@@ -30,12 +30,13 @@ ppa_image_dir: "{{ tigerdata_mount_dir }}/prosody/ppa-images/"
 
 prodigy_recipe_pyfile: "{{ install_root }}/env/lib/python{{ python_version}}/site-packages/corppa/poetry_detection/annotation/recipe.py"
 #prodigy_datafile: poem_testset_poetrypages_hathi.jsonl
-prodigy_datafile: "{{ tigerdata_mount_dir }}/prosody/poetry-detection/poem-focused-testset/poem_testset_300mixed_forprodigy_shuf.jsonl"
+#prodigy_datafile: "{{ tigerdata_mount_dir }}/prosody/poetry-detection/poem-focused-testset/poem_testset_300mixed_forprodigy_shuf.jsonl"
+prodigy_datafile: "{{ install_root }}/poem_testset_300mixed_forprodigy_shuf.jsonl"
 
 # current recipe options: annotate_text_and_image / annotate_page_text
 prodigy_recipe: annotate_text_and_image
 prodigy_recipe_options: "--label POETRY --image-prefix /ppa-images/"
-prodigy_dataset: poetry_spans
+prodigy_dataset: poetry-ht300a
 prodigy_options: "{{ prodigy_recipe }} {{ prodigy_dataset }} {{ prodigy_datafile }} {{ prodigy_recipe_options }} -F {{ prodigy_recipe_pyfile}}"
 # additional prodigy configurations to include in prodigy.json file
 # values here takes precedence over the defaults in the role
