@@ -55,8 +55,8 @@ supervisor_programs:
       startretries=1
       startsecs=1
       redirect_stderr=true
-      stderr_logfile=/var/log/{{ app_name }}-err.log
-      stdout_logfile=/var/log/{{ app_name }}-out.log
+      stderr_logfile=/var/log/supervisor/{{ app_name }}-err.log
+      stdout_logfile=/var/log/supervisor/{{ app_name }}-out.log
       user={{ deploy_user }}
       killasgroup=true
       stopasgroup=true
