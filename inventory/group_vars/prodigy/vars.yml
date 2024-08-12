@@ -42,6 +42,7 @@ prodigy_options: "{{ prodigy_recipe }} {{ prodigy_dataset }} {{ prodigy_datafile
 # values here takes precedence over the defaults in the role
 prodigy_config_extra_options:
   feed_overlap: true
+prodigy_logging: verbose
 
 # configure prodigy to run via supervisor
 supervisor_programs:
@@ -50,7 +51,7 @@ supervisor_programs:
     state: present
     configuration: |
       directory={{ install_root }}
-      environment=PRODIGY_CONFIG="{{ install_root }}/prodigy.json",PRODIGY_DEPLOYED_URL="{{ application_url }}"
+      environment=PRODIGY_CONFIG="{{ install_root }}/prodigy.json",PRODIGY_DEPLOYED_URL="{{ application_url }}",PRODIGY_LOGGING="{{ prodigy_logging }}"
       autostart=true
       autorestart=true
       startretries=1
