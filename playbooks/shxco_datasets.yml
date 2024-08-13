@@ -1,0 +1,49 @@
+---
+# by default this playbook runs in the staging environment
+# to run in production, pass '-e runtime_env=production'
+- name: run data exports form the shakespeare and co application
+  hosts: shxco_{{ runtime_env | default('staging') }}
+  connection: ssh
+  remote_user: pulsys
+  vars:
+    # update currently deployed config,
+    # instead of getting path from app version and git hash
+    deploy: "{{ install_root }}/current"
+    # set python env path based on current deploy
+    # normally set in django role defaults
+    django_venv_path: "{{ deploy }}/env"
+  tasks:
+    - name: Create temporary export directory
+      ansible.builtin.tempfile:
+        state: directory
+        prefix: shxco_dataset_ # date?
+      register: output_dir
+      run_once: true
+      become: true
+      become_user: "{{ deploy_user }}"
+    - name: Report where files wil be exported
+      ansible.builtin.debug:
+        msg: "Data will be exported to {{ output_dir.path }}"
+      run_once: true
+    - name: Run export manage commands and output data in temp directory
+      community.general.django_manage:
+        command: "{{ item }} -d {{ output_dir.path }} -v 0"
+        app_path: "{{ django_app_path }}"
+        virtualenv: "{{ django_venv_path }}"
+      run_once: true
+      become: true
+      become_user: "{{ deploy_user }}"
+      with_items:
+        - export_addresses
+        - export_events
+        - export_books
+        - export_creators
+        - export_members
+    # TODO:
+    # - zip files?
+    # - upload them somewhere project team can download them
+    # - report where to download them
+    # - name: Report where files can be accessed
+    #   ansible.builtin.debug:
+    #     msg: "Data exports are available at ..."
+
