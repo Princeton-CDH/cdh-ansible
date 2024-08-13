@@ -1,2 +1,18 @@
 ---
 application_url: https://test-prodigy.cdh.princeton.edu
+
+entra_discovery_url: "https://login.microsoftonline.com/{{ entra_tenant_id }}/\
+                      v2.0/.well-known/openid-configuration"
+
+prodigy_logging: verbose
+
+prodigy_env_vars: "PRODIGY_CONFIG=\"{{ install_root }}/prodigy.json\",\
+                   PRODIGY_DEPLOYED_URL=\"{{ application_url }}\",\
+                   PRODIGY_LOGGING=\"{{ prodigy_logging }}\",\
+                   PRODIGY_OIDC_AUTH_ENABLED=\"1\",\
+                   PRODIGY_OIDC_DISCOVERY_URL=\"{{ entra_discovery_url }}\",\
+                   PRODIGY_OIDC_CLIENT_ID=\"{{ entra_app_id }}\",\
+                   PRODIGY_OIDC_CLIENT_SECRET=\"{{ entra_client_secret }}\",\
+                   PRODIGY_OIDC_REQUIRED_SCOPES=\"openid email\""
+                   #PRODIGY_OIDC_AUDIENCE=\"{{ entra_tenant_id }}\""
+
