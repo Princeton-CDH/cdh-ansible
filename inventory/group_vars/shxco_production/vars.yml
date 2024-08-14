@@ -11,8 +11,8 @@ solr_server: "{{ groups['solr_production'][0] }}"
 
 # override default deploy contexts to match current CI on GitHub Actions
 deploy_contexts:
-    - "codecov/project"
-    - "codecov/patch"
+    # - "codecov/project"
+    # - "codecov/patch"
     - "TypeScript unit tests"
     - 'Python unit tests'
 # NOTE: codeql is disabled on repositories that are inactive for 60 days
