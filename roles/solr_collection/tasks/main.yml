@@ -16,6 +16,8 @@
 
 - name: Update and configure Solr configset
   run_once: true
+  tags:
+    - solr_configset
   block:
     - name: Copy project Solr configset files for upload to zookeeper
       # rsync configset from deployed version on remote host to solr server
