@@ -13,7 +13,7 @@
     # normally set in django role defaults
     django_venv_path: "{{ deploy }}/env"
   tasks:
-    - name: Create temporary export directory
+    - name: Create temporary directory for export files
       ansible.builtin.tempfile:
         state: directory
         prefix: shxco_dataset_ # date?
@@ -21,13 +21,35 @@
       run_once: true
       become: true
       become_user: "{{ deploy_user }}"
-    - name: Report where files wil be exported
+    - name: Make temporary directory world readable
+      ansible.builtin.file:
+        path: "{{ output_dir.path }}"
+        state: directory
+        mode: '0755'
+      run_once: true
+      become: true
+      become_user: "{{ deploy_user }}"
+    - name: Set export directory name
+      ansible.builtin.set_fact:
+        output_name: "{{runtime_env}}-{{ now(fmt='%Y-%m-%d') }}"
+    - name: Set full path to dataset export directory
+      ansible.builtin.set_fact:
+        dataset_output_path: "{{ output_dir.path }}/{{ output_name }}"
+    - name: Create export directory with environment and date
+      ansible.builtin.file:
+        path: "{{ dataset_output_path }}"
+        state: directory
+        mode: '0755'
+      run_once: true
+      become: true
+      become_user: "{{ deploy_user }}"
+    - name: Report where files will be exported
       ansible.builtin.debug:
-        msg: "Data will be exported to {{ output_dir.path }}"
+        msg: "Data will be exported to {{ dataset_output_path }}"
       run_once: true
     - name: Run export manage commands and output data in temp directory
       community.general.django_manage:
-        command: "{{ item }} -d {{ output_dir.path }} -v 0"
+        command: "{{ item }} -d {{ dataset_output_path }} -v 0"
         app_path: "{{ django_app_path }}"
         virtualenv: "{{ django_venv_path }}"
       run_once: true
@@ -39,9 +61,24 @@
         - export_books
         - export_creators
         - export_members
+    - name: Create a zip file of all data exports
+      # NOTE: using command so we can chdir and create a zip file with relative path
+      ansible.builtin.command:
+        chdir: "{{ output_dir.path }}"
+        cmd: "zip -r {{ output_name }}.zip {{ output_name }}"
+      run_once: true
+      become: true
+      become_user: "{{ deploy_user }}"
+    - name: Report zip file location
+      ansible.builtin.debug:
+        msg: |
+          Data exports are available at {{ output_dir.path }}/{{ output_name }}.zip
+          To rsync to your local machine:
+            rsync {{ ansible_user }}@{{ inventory_hostname }}:{{ output_dir.path }}/{{ output_name }}.zip .
+      run_once: true
+
     # TODO:
-    # - zip files?
-    # - upload them somewhere project team can download them
+    # - upload them somewhere project team can download them ?
     # - report where to download them
     # - name: Report where files can be accessed
     #   ansible.builtin.debug:
