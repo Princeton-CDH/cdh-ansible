@@ -22,8 +22,9 @@ nfs_enabled: false
 tigerdata_enabled: true
 
 # image dir to serve out; must end in trailing slash
-ppa_image_dir: "{{ tigerdata_mount_dir }}/prosody/ppa-images/"
-
+#ppa_image_dir: "{{ tigerdata_mount_dir }}/prosody/ppa-images/"
+# temporarily serve local images
+ppa_image_dir: "{{ install_root }}/ppa-images-web/"
 
 # temporary recipe to test that prodigy is running and connecting to the db
 #prodigy_recipe: "ner.manual ner_news_headlines blank:en /srv/www/prodigy/news_headlines.jsonl --label PERSON,ORG,PRODUCT,LOCATION"
