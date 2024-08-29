@@ -22,18 +22,20 @@
 cdh-test-web1.princeton.edu
 cdh-test-web2.princeton.edu
 
-[cdhweb_production]
+# temporarily keep old site on web1-2 distinct from new version
+# remove this and go down to only 2 vms after the migration is done
+[cdhweb_oldproduction]
 cdh-web1.princeton.edu
 cdh-web2.princeton.edu
 
-[cdhweb_preproduction]
+[cdhweb_production]
 cdh-web3.princeton.edu
 cdh-web4.princeton.edu
 
 [cdhweb:children]
 cdhweb_staging
 cdhweb_production
-cdhweb_preproduction
+cdhweb_oldproduction
 
 [shxco_staging]
 cdh-test-shxco1.princeton.edu
@@ -135,7 +137,7 @@ shxco_production
 prosody_production
 derrida_archive_production
 prodigy_production
-cdhweb_preproduction
+cdhweb_oldproduction
 
 [staging:children]
 cdhweb_staging
