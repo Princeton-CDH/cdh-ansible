@@ -3,11 +3,13 @@
 gitref: '{{ ref | default("main") }}'
 # email prefix for admin emails
 email_prefix: "[CDH Web] "
-
-# preproduction must use a separate database from v3.x production
-# since both will need to run in tandem for several weeks
-# NOTE: this is currently different from staging and may impact replication
-db_name: 'cdhweb4'
+# allowed hosts for Django
+allowed_hosts:
+  - "cdh.princeton.edu"
+  - "digitalhumanities.princeton.edu"
+  - "cdh-web1"
+  - "localhost"
+  - "127.0.0.1"
 
 # cdhweb production contexts required for deploy
 deploy_contexts:
@@ -15,3 +17,4 @@ deploy_contexts:
     # - 'codecov/project'
     # - 'codecov/patch'
 
+# 2023-08 disabled codecov deploy contexts because they were not present
