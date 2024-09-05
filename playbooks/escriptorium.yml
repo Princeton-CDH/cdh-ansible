@@ -1,0 +1,19 @@
+---
+- name: Deploy eScriptorium web application and task runners
+  hosts: htr_staging
+  connection: ssh
+  remote_user: pulsys
+  become: true
+  roles:
+    - deploy_user
+    - build_dependencies
+    - build_project_repo
+    - postgresql
+    # TODO: local redis install and config; can we use princeton ansible role?
+    - passenger
+    # NOTE: escriptorium npm install needs to be run in a subdir, which we don't currently support
+    - build_npm
+    - run_webpack # ~ npm run build : escriptorium may need cd front; nm run build/production
+    - configure_logging # logging directory must exist before running django commands
+    - django
+    - finalize_deploy

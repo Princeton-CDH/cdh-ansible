@@ -1,0 +1,73 @@
+---
+app_name: escriptorium
+application_url: https://test-htr.princeton.edu
+
+# Git repository (on gitlab instead of github, so need to specify the full repo url)
+repo_url: https://gitlab.com/scripta/escriptorium.git
+# name of django application
+python_app: "{{ escriptorium }}"
+django_app: "{{ escriptorium }}"
+
+# symlink for web application
+symlink: "{{ app_name }}"
+# wsgi file relative to deploy location
+wsgi_path: "{{ django_app }}/app/wsgi.py"
+# use python 3.11; kraken doesn't yet support 3.12
+python_version: "3.11"
+# nodejs version
+node_version: "18"
+
+# pul deploy user
+deploy_user: "conan"
+
+# Override clone root to use deploy user home instead of root
+clone_root: "/home/{{ deploy_user }}/repos"
+# use the same install root path on both staging and production
+install_root: "/srv/www/{{ app_name }}"
+
+# set passenger defaults for production; override for other environments
+passenger_app_root: "/var/www/{{ app_name }}"
+passenger_server_name: test-htr.princeton.edu
+passenger_startup_file: "{{ wsgi_path }}"
+passenger_python: "{{ passenger_app_root }}/env/bin/python"
+
+# base data dir — easier if NOT under conan home directory
+# data_path: "/srv/www/data"
+# data_path: "/mnt/nfs/cdh/prosody/data"
+
+technical_contact: cdhdevteam@princeton.edu
+
+# local settings is at a slightly different path (using django-split-settings)
+django_local_settings_dest: "{{ deploy }}/{{ django_app }}/settings/local_settings.py"
+# app-specific local settings
+django_local_settings_template: "prosody_settings.py.j2"
+
+# single deploy path - no versioning, no nesting
+deploy: "{{ install_root }}"
+current_deploy: "{{ install_root }}" # no current/past, just a single deploy
+python_app_path: "{{ deploy }}"
+python_venv_prompt: "escriptorium"
+# default requirements file is directly under the app; escriptorium has it nested
+python_requirements_file: "{{ python_app_path }}/app/requirements.txt"
+# use extra packages to install dependencies
+python_extra_packages:
+  -  # todo escripto code ?
+
+# ubuntu packages to be installed
+# - from list of third party tools in escriptorium full install instructions
+app_dependencies:
+  - netcat-traditional
+  - jpegoptim
+  - pngcrush
+  - libvips
+
+application_db_name: "cdh_test_htr"
+application_dbuser_name: "cdh_test_htr"
+application_dbuser_password: "{{ vault_db_password }}"
+
+# TODO: configure paths for static files, media files
+
+# this application will need NFS; it may use TigerData in future
+nfs_enabled: true
+tigerdata_enabled: false
+# TODO: add supervisor conf for celery workers and running django channels
