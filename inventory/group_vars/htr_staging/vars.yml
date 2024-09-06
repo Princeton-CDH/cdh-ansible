@@ -4,6 +4,8 @@ application_url: https://test-htr.princeton.edu
 
 # Git repository (on gitlab instead of github, so need to specify the full repo url)
 repo_url: https://gitlab.com/scripta/escriptorium.git
+# repo variable is still needed for checkout file structure
+repo: scripta/escriptorium
 # name of django application
 python_app: "{{ escriptorium }}"
 django_app: "{{ escriptorium }}"
