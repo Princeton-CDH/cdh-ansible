@@ -79,3 +79,12 @@ app_dependencies:
 requires_python2to3: true
 # datadog app/service name
 datadog_app_name: cdh_shxco
+
+# rclone remote config
+rclone_remotes:
+  - name: "shxco_drive"
+    options:
+      type: "drive"
+      scope: "drive"
+      # test folder
+      root_folder_id: "1K8K-CUhyEh5rQ_PUSMAAZVhHQ-Y_h7VQ"

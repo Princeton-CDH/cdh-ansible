@@ -1,0 +1,11 @@
+# this is an inner loop and should only be called by rclone.yml
+- name: Set rclone config options for a specific remote
+  community.general.ini_file:
+    path: "{{ rclone_config_file }}"
+    section: "{{ remote.name }}"
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    owner: "{{ rclone_user }}"
+    mode: "0600"
+    state: present
+  loop: "{{ remote.options | dict2items(key_name='option', value_name='value')}}"
