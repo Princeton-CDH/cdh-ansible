@@ -7,8 +7,8 @@ repo_url: https://gitlab.com/scripta/escriptorium.git
 # repo variable is still needed for checkout file structure
 repo: scripta/escriptorium
 # name of django application
-python_app: "{{ escriptorium }}"
-django_app: "{{ escriptorium }}"
+python_app: "escriptorium"
+django_app: "{{ python_app }}"
 
 # symlink for web application
 symlink: "{{ app_name }}"
