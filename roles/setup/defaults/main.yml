@@ -1,0 +1,9 @@
+---
+# assume nfs is enabled by default, allow group vars to override and opt out
+nfs_enabled: true
+
+# rclone paths
+rclone_user: "{{ deploy_user }}" # set deploy user as default but allow override
+rclone_config_dir: "/home/{{ rclone_user }}/snap/rclone/current/.config/rclone"
+rclone_config_file: "{{ rclone_config_dir }}/rclone.conf"
+rclone_gdrive_credentials_file: "/home/{{ rclone_user }}/gdrive_creds.json"
