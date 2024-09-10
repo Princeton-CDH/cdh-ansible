@@ -79,3 +79,19 @@ app_dependencies:
 requires_python2to3: true
 # datadog app/service name
 datadog_app_name: cdh_shxco
+
+# data export rclone remote name and foldir id for use in dataset export playbook
+rclone_dataexport_remote: "shxco_dataexports_drive"
+# automated data exports folder in S&co shared drive under data exports
+dataexport_gdrive_folder_id: "1AoXNhUlR04gSlhetC_qNHLBnygQByH1O"
+# temp space for data exports; rclone can't copy files under /tmp
+data_exports_tmpdir: "/home/{{ deploy_user }}/data_exports/"
+
+# rclone remote config
+rclone_remotes:
+  - name: "{{ rclone_dataexport_remote }}"
+    options:
+      type: "drive"
+      scope: "drive"
+      # test folder
+      root_folder_id: "{{ dataexport_gdrive_folder_id }}"

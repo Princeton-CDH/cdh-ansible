@@ -1,0 +1,115 @@
+---
+# by default this playbook runs in the staging environment
+# to run in production, pass '-e runtime_env=production'
+- name: run data exports form the shakespeare and co application
+  hosts: shxco_{{ runtime_env | default('staging') }}
+  connection: ssh
+  remote_user: pulsys
+  vars:
+    # update currently deployed config,
+    # instead of getting path from app version and git hash
+    deploy: "{{ install_root }}/current"
+    # set python env path based on current deploy
+    # normally set in django role defaults
+    django_venv_path: "{{ deploy }}/env"
+  tasks:
+    - name: Make sure data export tmpdir exists
+      ansible.builtin.file:
+        path: "{{ data_exports_tmpdir }}"
+        state: directory
+        mode: "0755"
+      run_once: true
+      become: true
+      become_user: "{{ deploy_user }}"
+    - name: Create temporary directory for export files
+      ansible.builtin.tempfile:
+        state: directory
+        prefix: shxco_dataset_
+        # rclone can't copy files in /tmp so put these under home
+        path: "{{ data_exports_tmpdir }}"
+      register: output_dir
+      run_once: true
+      become: true
+      become_user: "{{ deploy_user }}"
+    - name: Make temporary directory world readable
+      ansible.builtin.file:
+        path: "{{ output_dir.path }}"
+        state: directory
+        mode: "0755"
+      run_once: true
+      become: true
+      become_user: "{{ deploy_user }}"
+    - name: Set export directory name
+      ansible.builtin.set_fact:
+        output_name: "{{runtime_env}}-{{ now(fmt='%Y-%m-%d') }}"
+    - name: Set full path to dataset export directory
+      ansible.builtin.set_fact:
+        dataset_output_path: "{{ output_dir.path }}/{{ output_name }}"
+    - name: Create export directory with environment and date
+      ansible.builtin.file:
+        path: "{{ dataset_output_path }}"
+        state: directory
+        mode: "0755"
+      run_once: true
+      become: true
+      become_user: "{{ deploy_user }}"
+    - name: Report where files will be exported
+      ansible.builtin.debug:
+        msg: "Data will be exported to {{ dataset_output_path }}"
+      run_once: true
+    - name: Run export manage commands and output data in temp directory
+      community.general.django_manage:
+        command: "{{ item }} -d {{ dataset_output_path }} -v 0"
+        app_path: "{{ django_app_path }}"
+        virtualenv: "{{ django_venv_path }}"
+      run_once: true
+      become: true
+      become_user: "{{ deploy_user }}"
+      with_items:
+        # - export_addresses
+        # - export_events
+        - export_books
+        # - export_creators
+        # - export_members
+
+    - name: Create a zip file of all data exports
+      # NOTE: using command so we can chdir and create a zip file with relative path
+      ansible.builtin.command:
+        chdir: "{{ output_dir.path }}"
+        cmd: "zip -r {{ output_name }}.zip {{ output_name }}"
+      run_once: true
+      become: true
+      become_user: "{{ deploy_user }}"
+
+    # do we ever want this behavior? turn off but allow by tag?
+    - name: Report zip file location
+      ansible.builtin.debug:
+        msg: |
+          Data exports are available at {{ output_dir.path }}/{{ output_name }}.zip
+          To rsync to your local machine:
+            rsync {{ ansible_user }}@{{ inventory_hostname }}:{{ output_dir.path }}/{{ output_name }}.zip .
+      run_once: true
+      when: false # skip for now
+
+    # do we ever NOT want this behavior? allow skip based on tag?
+    # NOTE: copying the whole folder since we can't easily expand the zip file in drive
+    - name: Copy to output folder to configured google drive folder with rclone
+      ansible.builtin.command:
+        cmd: "rclone copy -P {{ output_dir.path }}/{{ output_name }} {{ rclone_dataexport_remote }}:{{ output_name }}"
+      run_once: true
+      # rclone config is specific to deploy user
+      become: true
+      become_user: "{{ deploy_user }}"
+      # what kind of error handling do we need here?
+
+    - name: Report where files can be accessed
+      ansible.builtin.debug:
+        msg: "Data exports have been uploaded to https://drive.google.com/drive/folders/{{ dataexport_gdrive_folder_id }}"
+      run_once: true
+
+    # cleanup zip file on server (do we ever want to keep it / use the rsync option?)
+    - name: Cleanup temporary data exports folder
+      ansible.builtin.file:
+        state: absent
+        path: "{{ output_dir.path }}"
+      become: true
