@@ -66,11 +66,11 @@
       become: true
       become_user: "{{ deploy_user }}"
       with_items:
-        # - export_addresses
-        # - export_events
+        - export_addresses
+        - export_events
         - export_books
-        # - export_creators
-        # - export_members
+        - export_creators
+        - export_members
 
     - name: Create a zip file of all data exports
       # NOTE: using command so we can chdir and create a zip file with relative path
@@ -95,7 +95,7 @@
     # NOTE: copying the whole folder since we can't easily expand the zip file in drive
     - name: Copy to output folder to configured google drive folder with rclone
       ansible.builtin.command:
-        cmd: "rclone copy -P {{ output_dir.path }}/{{ output_name }} {{ rclone_dataexport_remote }}:{{ output_name }}"
+        cmd: "rclone copy {{ output_dir.path }}/{{ output_name }} {{ rclone_dataexport_remote }}:{{ output_name }}"
       run_once: true
       # rclone config is specific to deploy user
       become: true
