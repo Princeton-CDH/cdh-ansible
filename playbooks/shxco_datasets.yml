@@ -13,10 +13,20 @@
     # normally set in django role defaults
     django_venv_path: "{{ deploy }}/env"
   tasks:
+    - name: Make sure data export tmpdir exists
+      ansible.builtin.file:
+        path: "{{ data_exports_tmpdir }}"
+        state: directory
+        mode: "0755"
+      run_once: true
+      become: true
+      become_user: "{{ deploy_user }}"
     - name: Create temporary directory for export files
       ansible.builtin.tempfile:
         state: directory
-        prefix: shxco_dataset_ # date?
+        prefix: shxco_dataset_
+        # rclone can't copy files in /tmp so put these under home
+        path: "{{ data_exports_tmpdir }}"
       register: output_dir
       run_once: true
       become: true
@@ -25,7 +35,7 @@
       ansible.builtin.file:
         path: "{{ output_dir.path }}"
         state: directory
-        mode: '0755'
+        mode: "0755"
       run_once: true
       become: true
       become_user: "{{ deploy_user }}"
@@ -39,7 +49,7 @@
       ansible.builtin.file:
         path: "{{ dataset_output_path }}"
         state: directory
-        mode: '0755'
+        mode: "0755"
       run_once: true
       become: true
       become_user: "{{ deploy_user }}"
@@ -56,11 +66,12 @@
       become: true
       become_user: "{{ deploy_user }}"
       with_items:
-        - export_addresses
-        - export_events
+        # - export_addresses
+        # - export_events
         - export_books
-        - export_creators
-        - export_members
+        # - export_creators
+        # - export_members
+
     - name: Create a zip file of all data exports
       # NOTE: using command so we can chdir and create a zip file with relative path
       ansible.builtin.command:
@@ -69,6 +80,8 @@
       run_once: true
       become: true
       become_user: "{{ deploy_user }}"
+
+    # do we ever want this behavior? turn off but allow by tag?
     - name: Report zip file location
       ansible.builtin.debug:
         msg: |
@@ -76,11 +89,27 @@
           To rsync to your local machine:
             rsync {{ ansible_user }}@{{ inventory_hostname }}:{{ output_dir.path }}/{{ output_name }}.zip .
       run_once: true
+      when: false # skip for now
 
-    # TODO:
-    # - upload them somewhere project team can download them ?
-    # - report where to download them
-    # - name: Report where files can be accessed
-    #   ansible.builtin.debug:
-    #     msg: "Data exports are available at ..."
+    # do we ever NOT want this behavior? allow skip based on tag?
+    # NOTE: copying the whole folder since we can't easily expand the zip file in drive
+    - name: Copy to output folder to configured google drive folder with rclone
+      ansible.builtin.command:
+        cmd: "rclone copy -P {{ output_dir.path }}/{{ output_name }} {{ rclone_dataexport_remote }}:{{ output_name }}"
+      run_once: true
+      # rclone config is specific to deploy user
+      become: true
+      become_user: "{{ deploy_user }}"
+      # what kind of error handling do we need here?
 
+    - name: Report where files can be accessed
+      ansible.builtin.debug:
+        msg: "Data exports have been uploaded to https://drive.google.com/drive/folders/{{ dataexport_gdrive_folder_id }}"
+      run_once: true
+
+    # cleanup zip file on server (do we ever want to keep it / use the rsync option?)
+    - name: Cleanup temporary data exports folder
+      ansible.builtin.file:
+        state: absent
+        path: "{{ output_dir.path }}"
+      become: true
