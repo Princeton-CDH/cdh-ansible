@@ -133,7 +133,8 @@ nfs_domain: "princeton.edu"
 ## tigerdata
 # NOTE: disabled by default; must opt in by host group; requires firewall access
 tigerdata_enabled: false
-tigerdata_nfs_server: "td-mf-cl1"
+tigerdata_nfs_server: "td-mf-cl2.princeton.edu"
+tigerdata_mount_port: 9007
 tigerdata_cdh_group: "cdh"
 tigerdata_cdh_gid: 30369
 tigerdata_mount_dir: /mnt/tigerdata/cdh

@@ -35,4 +35,4 @@
     path: "{{ tigerdata_mount_dir }}"
     state: mounted
     fstype: nfs
-    opts: nfsvers=3,mountport=9001,port=9001,nolock,proto=tcp
+    opts: "nfsvers=3,mountport={{ tigerdata_mount_port }},port={{ tigerdata_mount_port }},nolock,proto=tcp"
