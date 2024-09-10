@@ -8,6 +8,9 @@ repo_url: https://gitlab.com/scripta/escriptorium.git
 repo: scripta/escriptorium
 # name of django application
 python_app: "escriptorium"
+# explicitly set a python app version since we require one and
+# ES doesn't seem to have any versions documeented anywhere
+python_app_version: "main" # ?!
 django_app: "{{ python_app }}"
 
 # symlink for web application
