@@ -12,6 +12,13 @@
         classic: true
         state: present
 
+    # create config file with rclone so it can create symlink for current
+    - name: Create rclone config directory structure
+      ansible.builtin.command:
+        cmd: rclone config touch
+      become: true
+      become_user: "{{ rclone_user }}"
+
     - name: Configure rclone remotes
       # per ansible docs, we use an included task so we can stack loops
       # to configure a list of options for a list of remotes
@@ -43,6 +50,14 @@
         owner: "{{ rclone_user }}"
         group: "{{ rclone_user }}"
         mode: 0600
+
+    - name: Set file ownership on path to rclone config file
+      ansible.builtin.file:
+        path: "{{ rclone_user_dir }}"
+        state: directory
+        recurse: yes
+        owner: "{{ rclone_user }}"
+        group: "{{ rclone_user }}"
 
   # why does this show all tasks as skipped instead of just skipping hte whole block?
   when: rclone_remotes is defined and rclone_remotes|length > 0
