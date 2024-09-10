@@ -20,10 +20,16 @@ MANAGERS = [('CDH Dev Team', 'cdhdevteam@princeton.edu'),]
 import re
 IGNORABLE_404_URLS = [re.compile('\.(php|aspx?|jspa?)(\/$|$)')]
 
-{% if runtime_env == "production" or runtime_env == "preproduction"%}
+{% if runtime_env == "production" %}
 # Turn on Google Analytics
 INCLUDE_ANALYTICS = True
 GTAGS_ANALYTICS_ID = 'G-864528T1N5'
+
+# Configure to enable Plausible analytics in production with desired options
+PLAUSIBLE_ANALYTICS_SCRIPT = (
+    "https://plausible.io/js/script.file-downloads.hash.outbound-links.js"
+)
+PLAUSIBLE_ANALYTICS_404s = True
 {% endif %}
 
 {% endblock %}
