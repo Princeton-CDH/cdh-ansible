@@ -29,6 +29,8 @@ DEBUG = {{ django_debug }}
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = [{% for host in django_allowed_hosts %}"{{ host }}", {% endfor %}]
 
+CSRF_TRUSTED_ORIGINS = ["https://*.princeton.edu", "http://localhost:8000"]
+
 # Use x-forwarded-proto header to tell if request from nginx was https or not
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
