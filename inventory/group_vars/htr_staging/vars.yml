@@ -42,6 +42,8 @@ passenger_startup_file: "{{ wsgi_path }}"
 passenger_python: "{{ passenger_app_root }}/env/bin/python"
 passenger_static_path: "{{ passenger_app_root }}/static/"
 
+passenger_nginx_site_template: "escriptorium_nginx.conf.j2"
+
 # base data dir — easier if NOT under conan home directory
 # data_path: "/srv/www/data"
 # data_path: "/mnt/nfs/cdh/prosody/data"
@@ -89,9 +91,30 @@ application_dbuser_name: "cdh_test_htr"
 application_dbuser_password: "{{ vault_db_password }}"
 application_db_host: "{{ postgres_host }}"
 
-# TODO: configure paths for static files, media files
+# TODO: configure path for media files - should be within nfs to share across vms
 
 # this application will need NFS; it may use TigerData in future
 nfs_enabled: true
 tigerdata_enabled: false
-# TODO: add supervisor conf for celery workers and running django channels
+
+# configure django channels and celery works to run via supervisor
+# runs at a non top-level path when on the sandbox
+supervisor_programs:
+  # based on the command used in the docker-compose
+  # daphne --bind 0.0.0.0 --port 5000 -v 1 escriptorium.asgi:application
+  - name: "django_channels"
+    command: "{{ django_app_path }}/env/bin/daphne --bind 0.0.0.0 --port 5000 -v 1 escriptorium.asgi:application"
+    state: present
+    configuration: |
+      directory={{ python_app_path }}
+      environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings"
+      autostart=true
+      autorestart=true
+      startretries=1
+      startsecs=1
+      redirect_stderr=true
+      stderr_logfile=/var/log/{{ app_name }}-err.log
+      stdout_logfile=/var/log/{{ app_name }}-out.log
+      user={{ deploy_user }}
+      killasgroup=true
+      stopasgroup=true

@@ -15,7 +15,11 @@
     - run_webpack # ~ npm run build : escriptorium may need cd front; nm run build/production
     - configure_logging # logging directory must exist before running django commands
     - django
+    - geerlingguy.supervisor
     - finalize_deploy # does this make sense without current/prev versioning?
+  tasks:
+    - ansible.builtin.include_role: # use PUL ansible role to install local redis instance
+        name: pulibrary.princeton_ansible.redis
   environment:
     # escriptorium local settings REPLACES default settings, must be specified
     # via env var for django manage commands to pick up
