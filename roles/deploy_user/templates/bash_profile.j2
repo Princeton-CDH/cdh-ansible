@@ -15,7 +15,7 @@ fi
 {# for multi-app vms, create multiple aliases when configured; no activation by default #}
 {% if alias_apps %}
 {% for name, path in alias_apps.items() %}
-alias {{ name }}="[ -d "{{ path }}/current" ] && cd {{ path }}/current && source env/bin/activate"
+alias {{ name }}="[ -d "{{ path }}/current" ] && cd {{ path }}/current && source {{ python_env_path_prefix }}env/bin/activate"
 {% endfor %}
 {# notify/remind on login #}
 # notify / remind available aliases for interactive sessions only
@@ -29,3 +29,9 @@ fi
 # define django environment for split settings
 export DJANGO_ENV="{{ runtime_env }}"
 
+# custom deploy user environment variables
+{% if deploy_env_vars is defined %}
+{% for name, value in deploy_env_vars.items() %}
+export {{ name }}="{{ value }}"
+{% endfor %}
+{% endif %}
