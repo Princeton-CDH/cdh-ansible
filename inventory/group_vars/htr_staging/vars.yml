@@ -12,11 +12,13 @@ python_app: "escriptorium"
 # ES doesn't seem to have any versions documeented anywhere
 python_app_version: "main" # ?!
 django_app: "{{ python_app }}"
+# django app & python requirements are nested under the app folder
+django_app_path: "{{ deploy }}/app"
+# prefix for activate shortcut in conan profile
+python_env_path_prefix: "app/"
 
 # symlink for web application
 symlink: "{{ app_name }}"
-# wsgi file relative to deploy location
-wsgi_path: "{{ django_app }}/app/wsgi.py"
 # use python 3.11; kraken doesn't yet support 3.12
 python_version: "3.11"
 # nodejs version
@@ -31,10 +33,14 @@ clone_root: "/home/{{ deploy_user }}/repos"
 install_root: "/srv/www/{{ app_name }}"
 
 # set passenger defaults for production; override for other environments
-passenger_app_root: "/var/www/{{ app_name }}"
+# escriptorium django app is nested under app/ folder to separate from frontend code
+passenger_app_root: "/var/www/{{ app_name }}/app"
 passenger_server_name: test-htr.princeton.edu
+# wsgi file relative to passenger app root
+wsgi_path: "escriptorium/wsgi.py"
 passenger_startup_file: "{{ wsgi_path }}"
 passenger_python: "{{ passenger_app_root }}/env/bin/python"
+passenger_static_path: "{{ passenger_app_root }}/static/"
 
 # base data dir — easier if NOT under conan home directory
 # data_path: "/srv/www/data"
@@ -42,10 +48,15 @@ passenger_python: "{{ passenger_app_root }}/env/bin/python"
 
 technical_contact: cdhdevteam@princeton.edu
 
-# local settings is at a slightly different path (using django-split-settings)
-django_local_settings_dest: "{{ deploy }}/{{ django_app }}/settings/local_settings.py"
+# escriptorium settings is under python app/escriptorium
+# TODO: customize to use their local settings template
+# could we just overwrite their settings instead of setting env var?
+django_local_settings_dest: "{{ django_app_path }}/escriptorium/local_settings.py"
 # app-specific local settings
-django_local_settings_template: "prosody_settings.py.j2"
+django_local_settings_template: "escriptorium_settings.py.j2"
+
+deploy_env_vars:
+  DJANGO_SETTINGS_MODULE: escriptorium.local_settings
 
 # single deploy path - no versioning, no nesting
 deploy: "{{ install_root }}"
@@ -53,14 +64,21 @@ current_deploy: "{{ install_root }}" # no current/past, just a single deploy
 python_app_path: "{{ deploy }}"
 python_venv_prompt: "escriptorium"
 # default requirements file is directly under the app; escriptorium has it nested
-python_requirements_file: "{{ python_app_path }}/app/requirements.txt"
-# use extra packages to install dependencies
-python_extra_packages:
-  -  # todo escripto code ?
+python_requirements_file: "{{ django_app_path }}/requirements.txt"
+# use extra packages to install dependencies if needed
+#python_extra_packages:
+#-  # todo escripto code ?
+# npm package.json file is in subdirectory "front"
+npm_install_path: "{{ python_app_path }}/front"
+# dev dependencies required to run the build
+npm_install_mode: "development"
+# escriptorium build command is npm run build
+webpack_build_qa: "production"
 
 # ubuntu packages to be installed
 # - from list of third party tools in escriptorium full install instructions
 app_dependencies:
+  - "libpython{{ python_version }}-dev" # must match python version
   - netcat-traditional
   - jpegoptim
   - pngcrush
@@ -69,6 +87,7 @@ app_dependencies:
 application_db_name: "cdh_test_htr"
 application_dbuser_name: "cdh_test_htr"
 application_dbuser_password: "{{ vault_db_password }}"
+application_db_host: "{{ postgres_host }}"
 
 # TODO: configure paths for static files, media files
 

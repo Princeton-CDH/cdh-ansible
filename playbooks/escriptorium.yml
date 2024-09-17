@@ -11,9 +11,12 @@
     - postgresql
     # TODO: local redis install and config; can we use princeton ansible role?
     - passenger
-    # NOTE: escriptorium npm install needs to be run in a subdir, which we don't currently support
     - build_npm
     - run_webpack # ~ npm run build : escriptorium may need cd front; nm run build/production
     - configure_logging # logging directory must exist before running django commands
     - django
-    - finalize_deploy
+    - finalize_deploy # does this make sense without current/prev versioning?
+  environment:
+    # escriptorium local settings REPLACES default settings, must be specified
+    # via env var for django manage commands to pick up
+    DJANGO_SETTINGS_MODULE: escriptorium.local_settings
