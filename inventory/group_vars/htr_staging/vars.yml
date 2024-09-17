@@ -91,7 +91,10 @@ application_dbuser_name: "cdh_test_htr"
 application_dbuser_password: "{{ vault_db_password }}"
 application_db_host: "{{ postgres_host }}"
 
-# TODO: configure path for media files - should be within nfs to share across vms
+# configure path for media files; placing within nfs to share across vms
+# for passenger config, this MUST end with a trailing slash;
+# media nfs path
+media_root: /mnt/nfs/cdh/htr/media/
 
 # this application will need NFS; it may use TigerData in future
 nfs_enabled: true
