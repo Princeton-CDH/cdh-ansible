@@ -1,4 +1,6 @@
 ---
 # main config; default build commands for webpack
-webpack_build_qa: 'build:qa'
-webpack_build_prod: 'build:prod'
+webpack_build_qa: "build:qa"
+webpack_build_prod: "build:prod"
+# TODO: consolidate with npm task
+npm_install_path: "{{ deploy }}"
