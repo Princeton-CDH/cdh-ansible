@@ -109,7 +109,7 @@ supervisor_programs:
     command: "{{ django_app_path }}/env/bin/daphne --bind 0.0.0.0 --port 5000 -v 1 escriptorium.asgi:application"
     state: present
     configuration: |
-      directory={{ python_app_path }}
+      directory={{ django_app_path }}
       environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings"
       autostart=true
       autorestart=true
