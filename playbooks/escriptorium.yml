@@ -20,6 +20,8 @@
   tasks:
     - ansible.builtin.include_role: # use PUL ansible role to install local redis instance
         name: pulibrary.princeton_ansible.redis
+    - name: Use supervisorctl to process any updated configurations
+      ansible.builtin.command: "sudo supervisorctl update"
   environment:
     # escriptorium local settings REPLACES default settings, must be specified
     # via env var for django manage commands to pick up
