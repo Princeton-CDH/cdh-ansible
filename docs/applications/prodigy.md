@@ -19,3 +19,6 @@ flowchart TD
     prodigyvm --> tigerdata[/TigerData\]
     Prodigy --> db[(PostgreSQL)]
 ```
+
+## Logging
+Prodigy logs can be found within `/var/log/supervisor` on the machine running the Prodigy instance of interest.
