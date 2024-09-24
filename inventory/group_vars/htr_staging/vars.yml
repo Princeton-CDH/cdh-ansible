@@ -95,14 +95,17 @@ application_db_host: "{{ postgres_host }}"
 # for passenger config, this MUST end with a trailing slash;
 # media nfs path
 media_root: /mnt/nfs/cdh/htr/media/
+# media root owner - for some reason on nfs this works as conan but not as www-data
+media_user: "{{ deploy_user }}" # media_group defaults to media user
 
 # this application will need NFS; it may use TigerData in future
 nfs_enabled: true
 tigerdata_enabled: false
 
-# configure django channels and celery works to run via supervisor
+# configure django channels and celery workers to run via supervisor
 # runs at a non top-level path when on the sandbox
 supervisor_programs:
+  # 1) django channels
   # based on the command used in the docker-compose
   # daphne --bind 0.0.0.0 --port 5000 -v 1 escriptorium.asgi:application
   - name: "django_channels"
@@ -116,8 +119,29 @@ supervisor_programs:
       startretries=1
       startsecs=1
       redirect_stderr=true
-      stderr_logfile=/var/log/{{ app_name }}-err.log
-      stdout_logfile=/var/log/{{ app_name }}-out.log
+      stderr_logfile=/var/log/supervisor/django_channels-err.log
+      stdout_logfile=/var/log/supervisor/django_channels-out.log
+      user={{ deploy_user }}
+      killasgroup=true
+      stopasgroup=true
+
+  # 2) celery worker
+  # based on the command in the full local deploy
+  # (docker compose starts multiple celery workers with different queues/priorities)
+  # celery -A escriptorium worker -l INFO
+  - name: "celery"
+    command: "{{ django_app_path }}/env/bin/celery -A escriptorium worker -l INFO"
+    state: present
+    configuration: |
+      directory={{ django_app_path }}
+      environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings"
+      autostart=true
+      autorestart=true
+      startretries=1
+      startsecs=1
+      redirect_stderr=true
+      stderr_logfile=/var/log/supervisor/celery-err.log
+      stdout_logfile=/var/log/supervisor/celery-out.log
       user={{ deploy_user }}
       killasgroup=true
       stopasgroup=true
