@@ -25,4 +25,12 @@
         proxy_set_header X-Forwarded-Host $server_name;
     }
 
+    # configure shortcuts to favicon and robots.txt, adapted from escriptorium example nginx config
+    location /favicon.ico {
+        alias {{ passenger_static_path }}/images/favicon.ico;
+    }
+
+    location = /robots.txt {
+        alias {{ passenger_static_path }}/robots.txt;
+    }
   {% endblock %}
