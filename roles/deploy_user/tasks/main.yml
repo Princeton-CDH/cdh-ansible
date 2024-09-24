@@ -6,9 +6,11 @@
     - setup
     - never
   block:
-    - name: Create deploy user group
+    - name: Ensure deploy user group exists with correct gid
       ansible.builtin.group:
         name: "{{ deploy_user }}"
+        state: present
+        gid:  "{{ deploy_user_uid }}"
 
     - name: Create deploy user
       ansible.builtin.user:
@@ -19,6 +21,7 @@
         home: "/home/{{ deploy_user }}"
         shell: "{{ deploy_user_shell }}"
         uid: "{{ deploy_user_uid }}"
+        group: "{{ deploy_user }}"   # primary group
 
     - name: Create bash profile
       ansible.builtin.template:
