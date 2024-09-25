@@ -2,7 +2,10 @@
 # defaults file for deploy_user
 deploy_user: conan
 deploy_user_shell: /bin/bash
-webapp_group: www-data  # default on ubuntu
+webapp_group: www-data # default on ubuntu
 # only one application/project is installed on this vm
 single_app: true
 alias_apps: []
+# by default, assume python env is in the same directory as the current deploy
+# (used for activate shortcut)
+python_venv_path_prefix: ""

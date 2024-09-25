@@ -7,6 +7,13 @@ server {
 
   # define django environment for split settings (i.e., staging/production)
   passenger_env_var DJANGO_ENV {{ runtime_env }};
+  # custom environment variables, if any
+  {% if deploy_env_vars is defined %}
+  {% for name, value in deploy_env_vars.items() %}
+  passenger_env_var {{ name }} "{{ value }}";
+  {% endfor %}
+  {% endif %}
+
 
   set_real_ip_from 128.112.203.144;
   set_real_ip_from 128.112.203.145;

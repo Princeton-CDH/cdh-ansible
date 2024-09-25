@@ -1,0 +1,147 @@
+---
+app_name: escriptorium
+application_url: https://test-htr.princeton.edu
+
+# Git repository (on gitlab instead of github, so need to specify the full repo url)
+repo_url: https://gitlab.com/scripta/escriptorium.git
+# repo variable is still needed for checkout file structure
+repo: scripta/escriptorium
+# name of django application
+python_app: "escriptorium"
+# explicitly set a python app version since we require one and
+# ES doesn't seem to have any versions documeented anywhere
+python_app_version: "main" # ?!
+django_app: "{{ python_app }}"
+# django app & python requirements are nested under the app folder
+django_app_path: "{{ deploy }}/app"
+# prefix for activate shortcut in conan profile
+python_env_path_prefix: "app/"
+
+# symlink for web application
+symlink: "{{ app_name }}"
+# use python 3.11; kraken doesn't yet support 3.12
+python_version: "3.11"
+# nodejs version
+node_version: "18"
+
+# pul deploy user
+deploy_user: "conan"
+
+# Override clone root to use deploy user home instead of root
+clone_root: "/home/{{ deploy_user }}/repos"
+# use the same install root path on both staging and production
+install_root: "/srv/www/{{ app_name }}"
+
+# set passenger defaults for production; override for other environments
+# escriptorium django app is nested under app/ folder to separate from frontend code
+passenger_app_root: "/var/www/{{ app_name }}/app"
+passenger_server_name: test-htr.princeton.edu
+# wsgi file relative to passenger app root
+wsgi_path: "escriptorium/wsgi.py"
+passenger_startup_file: "{{ wsgi_path }}"
+passenger_python: "{{ passenger_app_root }}/env/bin/python"
+passenger_static_path: "{{ passenger_app_root }}/static/"
+
+passenger_nginx_site_template: "escriptorium_nginx.conf.j2"
+
+# base data dir — easier if NOT under conan home directory
+# data_path: "/srv/www/data"
+# data_path: "/mnt/nfs/cdh/prosody/data"
+
+technical_contact: cdhdevteam@princeton.edu
+
+# escriptorium settings is under python app/escriptorium
+# TODO: customize to use their local settings template
+# could we just overwrite their settings instead of setting env var?
+django_local_settings_dest: "{{ django_app_path }}/escriptorium/local_settings.py"
+# app-specific local settings
+django_local_settings_template: "escriptorium_settings.py.j2"
+
+deploy_env_vars:
+  DJANGO_SETTINGS_MODULE: escriptorium.local_settings
+
+# single deploy path - no versioning, no nesting
+deploy: "{{ install_root }}"
+current_deploy: "{{ install_root }}" # no current/past, just a single deploy
+python_app_path: "{{ deploy }}"
+python_venv_prompt: "escriptorium"
+# default requirements file is directly under the app; escriptorium has it nested
+python_requirements_file: "{{ django_app_path }}/requirements.txt"
+# use extra packages to install dependencies if needed
+#python_extra_packages:
+#-  # todo escripto code ?
+# npm package.json file is in subdirectory "front"
+npm_install_path: "{{ python_app_path }}/front"
+# dev dependencies required to run the build
+npm_install_mode: "development"
+# escriptorium build command is npm run build
+webpack_build_qa: "production"
+
+# ubuntu packages to be installed
+# - from list of third party tools in escriptorium full install instructions
+app_dependencies:
+  - "libpython{{ python_version }}-dev" # must match python version
+  - netcat-traditional
+  - jpegoptim
+  - pngcrush
+  - libvips
+
+application_db_name: "cdh_test_htr"
+application_dbuser_name: "cdh_test_htr"
+application_dbuser_password: "{{ vault_db_password }}"
+application_db_host: "{{ postgres_host }}"
+
+# configure path for media files; placing within nfs to share across vms
+# for passenger config, this MUST end with a trailing slash;
+# media nfs path
+media_root: /mnt/nfs/cdh/htr/media/
+# media root owner - for some reason on nfs this works as conan but not as www-data
+media_user: "{{ deploy_user }}" # media_group defaults to media user
+
+# this application will need NFS; it may use TigerData in future
+nfs_enabled: true
+tigerdata_enabled: false
+
+# configure django channels and celery workers to run via supervisor
+# runs at a non top-level path when on the sandbox
+supervisor_programs:
+  # 1) django channels
+  # based on the command used in the docker-compose
+  # daphne --bind 0.0.0.0 --port 5000 -v 1 escriptorium.asgi:application
+  - name: "django_channels"
+    command: "{{ django_app_path }}/env/bin/daphne --bind 0.0.0.0 --port 5000 -v 1 escriptorium.asgi:application"
+    state: present
+    configuration: |
+      directory={{ django_app_path }}
+      environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings"
+      autostart=true
+      autorestart=true
+      startretries=1
+      startsecs=1
+      redirect_stderr=true
+      stderr_logfile=/var/log/supervisor/django_channels-err.log
+      stdout_logfile=/var/log/supervisor/django_channels-out.log
+      user={{ deploy_user }}
+      killasgroup=true
+      stopasgroup=true
+
+  # 2) celery worker
+  # based on the command in the full local deploy
+  # (docker compose starts multiple celery workers with different queues/priorities)
+  # celery -A escriptorium worker -l INFO
+  - name: "celery"
+    command: "{{ django_app_path }}/env/bin/celery -A escriptorium worker -l INFO"
+    state: present
+    configuration: |
+      directory={{ django_app_path }}
+      environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings"
+      autostart=true
+      autorestart=true
+      startretries=1
+      startsecs=1
+      redirect_stderr=true
+      stderr_logfile=/var/log/supervisor/celery-err.log
+      stdout_logfile=/var/log/supervisor/celery-out.log
+      user={{ deploy_user }}
+      killasgroup=true
+      stopasgroup=true

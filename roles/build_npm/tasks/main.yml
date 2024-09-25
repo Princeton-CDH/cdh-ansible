@@ -33,7 +33,7 @@
       become: true
       become_user: "{{ deploy_user }}"
       community.general.npm:
-        path: "{{ deploy }}"
+        path: "{{ npm_install_path }}"
         # NOTE: for shxco, omitting dev dependencies means the webpack build fails;
         # using production install solved a problem for cdhweb
         # shxco prod/dev dependencies should be adjusted so this does not fail

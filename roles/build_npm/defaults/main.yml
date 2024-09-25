@@ -1,3 +1,4 @@
 ---
 # defaults file for build_npm
-npm_install_mode: "production"  # alternate: ci
+npm_install_mode: "production" # alternate: ci
+npm_install_path: "{{ deploy }}"

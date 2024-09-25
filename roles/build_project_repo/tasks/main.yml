@@ -39,6 +39,7 @@
       run_once: true
       when:
         - python_app is defined
+        - python_app_version is not defined
 
     - name: Create the deploy directory (to recursively create parent dirs if necessary)
       become: true

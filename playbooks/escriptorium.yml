@@ -1,0 +1,27 @@
+---
+- name: Deploy eScriptorium web application and task runners
+  hosts: htr_staging
+  connection: ssh
+  remote_user: pulsys
+  become: true
+  roles:
+    - deploy_user
+    - build_dependencies
+    - build_project_repo
+    - postgresql
+    - passenger
+    - build_npm   # install npm dependencies
+    - run_webpack # compile npm dependencies
+    - configure_logging # logging directory must exist before running django commands
+    - django
+    - geerlingguy.supervisor
+    - finalize_deploy
+  tasks:
+    - ansible.builtin.include_role: # use PUL ansible role to install local redis instance
+        name: pulibrary.princeton_ansible.redis
+    - name: Use supervisorctl to process any updated configurations
+      ansible.builtin.command: "sudo supervisorctl update"
+  environment:
+    # escriptorium local settings REPLACES default settings, must be specified
+    # via env var for django manage commands to pick up
+    DJANGO_SETTINGS_MODULE: escriptorium.local_settings

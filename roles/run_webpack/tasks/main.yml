@@ -19,15 +19,15 @@
     # NOTE: for historic reasons, the staging build is labeled as qa
     # because that is how it is defined in the application npm package
     - name: Run wepback in staging/QA mode
-      shell: 'npm run {{ webpack_build_qa }}'
+      shell: "npm run {{ webpack_build_qa }}"
       args:
-        chdir: '{{ deploy }}'
+        chdir: "{{ npm_install_path }}"
         executable: /bin/bash
       when: runtime_env == "staging"
     - name: Run webpack production build
-      shell: 'npm run {{ webpack_build_prod }}'
+      shell: "npm run {{ webpack_build_prod }}"
       args:
-        chdir: '{{ deploy }}'
+        chdir: "{{ npm_install_path }}"
         executable: /bin/bash
       when: runtime_env == "production" or  runtime_env == "preproduction"
   rescue:
