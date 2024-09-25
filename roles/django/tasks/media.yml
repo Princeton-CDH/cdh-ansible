@@ -10,8 +10,8 @@
       ansible.builtin.file:
         path: "{{ media_root }}"
         state: directory
-        owner: "{{ media_user }}"
-        group: "{{ media_group }}"
+        # owner: "{{ media_user }}"
+        # group: "{{ media_group }}"
         mode: "u=rwX,g=rwX,o=rX"
         recurse: true
 
@@ -23,7 +23,8 @@
         group: "{{ media_group }}"
         state: directory
         # don't recursively update ownership on nfs mount (too slow, unnecessary)
-        recurse: "{{ false if 'nfs' in media_root else true }}"
+        recurse: true
+      when: "'nfs' not in media_root"
 
   rescue:
     - name: Close deployment as failed if error
