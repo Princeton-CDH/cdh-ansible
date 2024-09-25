@@ -42,6 +42,8 @@ hathitrust_pairtree_path: "{{ data_path }}/ht_text_pd/"
 marc_data_path: "{{ data_path }}/marc/"
 # path to EEBO TCP data
 eebo_data_path: "{{ data_path }}/eebo_tcp/"
+# path to Gale OCR data on tigerdata
+gale_ocr_data_path: "{{ tigerdata_mount_dir }}/prosody/ppa-ocr/Gale"
 
 technical_contact: cdhdevteam@princeton.edu
 # flag that csp is enabled
