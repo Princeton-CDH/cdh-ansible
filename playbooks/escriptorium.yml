@@ -9,14 +9,13 @@
     - build_dependencies
     - build_project_repo
     - postgresql
-    # TODO: local redis install and config; can we use princeton ansible role?
     - passenger
-    - build_npm
-    - run_webpack # ~ npm run build : escriptorium may need cd front; nm run build/production
+    - build_npm   # install npm dependencies
+    - run_webpack # compile npm dependencies
     - configure_logging # logging directory must exist before running django commands
     - django
     - geerlingguy.supervisor
-    - finalize_deploy # does this make sense without current/prev versioning?
+    - finalize_deploy
   tasks:
     - ansible.builtin.include_role: # use PUL ansible role to install local redis instance
         name: pulibrary.princeton_ansible.redis
