@@ -43,6 +43,8 @@ passenger_python: "{{ passenger_app_root }}/env/bin/python"
 passenger_static_path: "{{ passenger_app_root }}/static/"
 
 passenger_nginx_site_template: "escriptorium_nginx.conf.j2"
+# disable upload file size limits
+nginx_max_body_size: 0
 
 # base data dir — easier if NOT under conan home directory
 # data_path: "/srv/www/data"
