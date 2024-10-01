@@ -1,12 +1,12 @@
-# CDH Ansible Repository
+# CDH Ansible Playbooks
 
 [![Molecule Tests](https://github.com/Princeton-CDH/cdh-ansible/actions/workflows/molecule_tests.yml/badge.svg)](https://github.com/Princeton-CDH/cdh-ansible/actions/workflows/molecule_tests.yml)
 
-## Overall structure
+## Overview
 
-The overall structure of this repository can be broken down as follows:
+The overall structure of this repository is as follows:
   - `playbooks` - collections of roles executed in series against a host.
-  - `roles` - the various tasks that Ansible can perform in a group.
+  - `roles` - local Ansible functionality grouped by task
   - `inventory` - hosts and variables
     - `all_hosts` - host file with hostnames and host groups
     - `group_vars` - group variables for different hosts and host groups
@@ -15,22 +15,21 @@ The overall structure of this repository can be broken down as follows:
       - `vault.yml` - `ansible vault` encrypted variables
   - `architecture-decisions` - list of significant architectural decisions, as markdown files
 
-## Using these playbooks
+## Usage instructions
 
-### Requirements
+### Setup and install dependencies
+
   - Python virtual environment.
-    - See `.python-version` for the recommended version of Python; we recommend [pyenv](https://github.com/pyenv/pyenv) for managing python versions.
-    - If you use `env` or `venv`, the `.gitignore` will exclude it.
+    - See `.python-version` for the recommended version of Python. If you use [pyenv](https://github.com/pyenv/pyenv) for managing python versions, run `pyenv install`.
+    - If you create a python virtualenv in this directory and name it `env` or `venv`, it is included in `.gitignore` to be excluded by git
     - Install python dependencies: `pip install -r requirements.txt`
-
   -  Install required Ansible galaxy collections and roles:
       - `ansible-galaxy install -r requirements.yml`
 
   - The CDH Ansible vault keys are stored in LastPass. You need to be added to the appropriate LastPass share and install [lastpass-cli](https://github.com/lastpass/lastpass-cli).  There are two command-line scripts in the `bin/` directory to call `lpass` to retrieve the vault keys, and the default configuration is set in `ansible.cfg`. See below for more details on the vault setup.
-  - A GitHub [personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) for any playbook that uses the `create_deployment` and `close_deployment` tasks. You can set this as an environment variable
-  as `ANSIBLE_GITHUB_TOKEN` or pass it on the command line as `-e github_token=`. If not specified, a fallback token will be used, which will deploy as the `princetoncdh` user. When running ansible locally, we recommend setting a personal GitHub token.
+  - A GitHub [personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) for any playbook that uses the `create_deployment` and `close_deployment` tasks. You can set this as an environment variable as `ANSIBLE_GITHUB_TOKEN` or pass it on the command line as `-e github_token=`. If not specified, a fallback token will be used, which will deploy as the `princetoncdh` user. When running ansible locally, we recommend setting a personal GitHub token.
 
-### Precommit hook
+### Enable pre-commit hooks
 
 If you plan to contribute to this repository, you should install the configured pre-commit hooks. (If you installed python dependencies, pre-commit should already be installed)
 
@@ -62,7 +61,7 @@ The playbook will run, noting success and failures. The `-v` flag adjusts verbos
 
 By default, initial provisioning and setup tasks are configured to be skipped.  Tasks or groups of tasks should be tagged with both `setup` and `never`.
 
-To run playbook without skipping setup tasks, pass the `setup` and `all` tags, so untagged tasks and tasks tagged `setup` run:
+To run a playbook without skipping setup tasks, pass the `setup` and `all` tags, so untagged tasks and tasks tagged `setup` run:
 
 ```{bash}
 ansible-playbook --tags=all,setup playbooks/name_of_playbook.yml
