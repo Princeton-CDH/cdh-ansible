@@ -15,7 +15,7 @@ django_app: "{{ python_app }}"
 # django app & python requirements are nested under the app folder
 django_app_path: "{{ deploy }}/app"
 # prefix for activate shortcut in conan profile
-python_env_path_prefix: "app/"
+python_venv_path_prefix: "app/"
 
 # symlink for web application
 symlink: "{{ app_name }}"

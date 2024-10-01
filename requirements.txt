@@ -5,5 +5,5 @@ passlib
 wheel
 yamllint
 pre-commit
-psycopg2
+psycopg2_binary
 pyyaml
