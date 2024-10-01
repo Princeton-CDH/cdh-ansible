@@ -25,6 +25,8 @@ application_dbuser_role_attr_flags: "CREATEDB"
 # nfs staging server
 nfs_server: "128.112.203.82"
 nfs_host_server: "lib-fs-staging.princeton.edu"
+# in staging, the host domain should be set to host server for idmap to work
+nfs_domain: "{{ nfs_host_server }}"
 
 # turn on test banner for sites that support it
 django_test_warning: true
