@@ -41,8 +41,8 @@ prodigy_dataset: poetry-ht300a
 prodigy_options: "{{ prodigy_recipe }} {{ prodigy_dataset }} {{ prodigy_datafile }} {{ prodigy_recipe_options }} -F {{ prodigy_recipe_pyfile}}"
 # additional prodigy configurations to include in prodigy.json file
 # values here takes precedence over the defaults in the role
-# prodigy_config_extra_options:
-prodigy_logging: simple
+prodigy_config_extra_options:
+prodigy_logging: basic
 
 # configure prodigy to run via supervisor
 supervisor_programs:
