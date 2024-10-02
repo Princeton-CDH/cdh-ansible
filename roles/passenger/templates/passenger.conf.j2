@@ -24,7 +24,7 @@ server {
   access_log /var/log/nginx/access.log custom;
 
   # increase upload size from nginx default of 1MB
-  client_max_body_size 50M;
+  client_max_body_size {{ nginx_max_body_size }};
 
   # Enable Gzip
   gzip  on;
