@@ -1,2 +1,3 @@
 ---
 application_url: https://test-prodigy.cdh.princeton.edu
+prodigy_logging: verbose

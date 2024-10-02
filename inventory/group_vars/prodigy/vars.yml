@@ -42,8 +42,7 @@ prodigy_options: "{{ prodigy_recipe }} {{ prodigy_dataset }} {{ prodigy_datafile
 # additional prodigy configurations to include in prodigy.json file
 # values here takes precedence over the defaults in the role
 prodigy_config_extra_options:
-  feed_overlap: true
-prodigy_logging: verbose
+prodigy_logging: basic
 
 # configure prodigy to run via supervisor
 supervisor_programs:
