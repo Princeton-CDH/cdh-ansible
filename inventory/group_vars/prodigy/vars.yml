@@ -22,33 +22,30 @@ nfs_enabled: false
 tigerdata_enabled: true
 
 # image dir to serve out; must end in trailing slash
-#ppa_image_dir: "{{ tigerdata_mount_dir }}/prosody/ppa-images/"
-# temporarily serve local images
-ppa_image_dir: "{{ install_root }}/ppa-images-web/"
+ppa_image_dir: "{{ tigerdata_mount_dir }}/prosody/ppa-images-web/"
 
 # temporary recipe to test that prodigy is running and connecting to the db
 #prodigy_recipe: "ner.manual ner_news_headlines blank:en /srv/www/prodigy/news_headlines.jsonl --label PERSON,ORG,PRODUCT,LOCATION"
 
 prodigy_recipe_pyfile: "{{ install_root }}/env/lib/python{{ python_version}}/site-packages/corppa/poetry_detection/annotation/recipe.py"
-#prodigy_datafile: poem_testset_poetrypages_hathi.jsonl
-#prodigy_datafile: "{{ tigerdata_mount_dir }}/prosody/poetry-detection/poem-focused-testset/poem_testset_300mixed_forprodigy_shuf.jsonl"
-prodigy_datafile: "{{ install_root }}/poem_testset_300mixed_forprodigy_shuf.jsonl"
+prodigy_datafile: "{{ tigerdata_mount_dir }}/prosody/ppa-prodigy/datasets/poetry-gale300a.jsonl"
 
 # current recipe options: annotate_text_and_image / annotate_page_text
 prodigy_recipe: annotate_text_and_image
 prodigy_recipe_options: "--label POETRY --image-prefix /ppa-images/"
-prodigy_dataset: poetry-ht300a
+prodigy_dataset: poetry-gale300a
 prodigy_options: "{{ prodigy_recipe }} {{ prodigy_dataset }} {{ prodigy_datafile }} {{ prodigy_recipe_options }} -F {{ prodigy_recipe_pyfile}}"
 # additional prodigy configurations to include in prodigy.json file
 # values here takes precedence over the defaults in the role
 prodigy_config_extra_options:
+  - annotations_per_task: 2
 # For setting shared and local Prodigy environment variables
 prodigy_common_envs: 
   PRODIGY_CONFIG: "{{ install_root }}/prodigy.json"
   PRODIGY_DEPLOYED_URL: "{{ application_url }}"
   PRODIGY_LOGGING: "basic"
 prodigy_local_envs:
-#  PRODIGY_ALLOWED_SESSIONS: "{{ vault_prodigy_sessions }}"
+  PRODIGY_ALLOWED_SESSIONS: "{{ vault_prodigy_sessions }}"
 prodigy_envs: "{{ prodigy_common_envs | ansible.builtin.combine(prodigy_local_envs)}}"
 
 # configure prodigy to run via supervisor
