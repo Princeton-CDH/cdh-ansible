@@ -21,6 +21,9 @@
         name: pulibrary.princeton_ansible.redis
     - name: Use supervisorctl to process any updated configurations
       ansible.builtin.command: "sudo supervisorctl update"
+    - name: Restart supervisor apps to load any python/django configuration changes
+      ansible.builtin.command: "sudo supervisorctl restart {{ item.name }}"
+      loop: "{{ supervisor_programs }}"
   environment:
     # escriptorium local settings REPLACES default settings, must be specified
     # via env var for django manage commands to pick up
