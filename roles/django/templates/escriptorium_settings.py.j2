@@ -80,6 +80,8 @@ DATABASES = {
 {% block email_config %}
 ADMINS = [("CDH Dev Team", "cdhdevteam@princeton.edu")]
 SERVER_EMAIL = "cdhdevteam@princeton.edu"
+# eScriptorium uses a non-standard from email configuration; use same for now
+DEFAULT_FROM_EMAIL = SERVER_EMAIL
 # use PUL pony express relay
 EMAIL_HOST = "lib-ponyexpr-prod.princeton.edu"
 EMAIL_SUBJECT_PREFIX = "{{ django_email_subject }}"
