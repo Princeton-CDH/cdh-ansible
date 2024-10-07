@@ -1,2 +1,2 @@
 psycopg2_binary
-git+https://github.com/Princeton-CDH/ppa-nlp.git@develop
+git+https://github.com/Princeton-CDH/ppa-nlp.git@0.2
