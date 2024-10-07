@@ -81,10 +81,10 @@ DATABASES = {
 ADMINS = [("CDH Dev Team", "cdhdevteam@princeton.edu")]
 SERVER_EMAIL = "cdhdevteam@princeton.edu"
 # use PUL pony express relay
-EMAIL_HOST = "lib-ponyexpr.princeton.edu"
+EMAIL_HOST = "lib-ponyexpr-prod.princeton.edu"
 EMAIL_SUBJECT_PREFIX = "{{ django_email_subject }}"
 EMAIL_USE_TLS = False
-#EMAIL_PORT = 587
+#EMAIL_PORT = 587  # use default 25
 {% endblock %}
 
 # Logging configuration
