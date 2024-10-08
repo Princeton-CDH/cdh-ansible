@@ -23,6 +23,9 @@ symlink: "{{ app_name }}"
 python_version: "3.11"
 # nodejs version
 node_version: "18"
+# install local customizations as an extra package
+python_extra_packages:
+  - git+https://github.com/Princeton-CDH/htr2hpc.git@cas-login#egg=htr2hpc
 
 # pul deploy user
 deploy_user: "conan"
