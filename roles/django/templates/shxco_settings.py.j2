@@ -18,8 +18,17 @@ TECHNICAL_CONTACT = '{{ technical_contact }}'
 
 {% if runtime_env == "production" %}
 # turn on google analytics in production only
+INCLUDE_ANALYTICS = True
 GTAGS_ANALYTICS_ID = 'G-H1FNDPYCC6'
 GTAGS_ANALYTICS_ENV = 'prod'
+
+# Configure to enable Plausible analytics in production with desired options
+PLAUSIBLE_ANALYTICS_SCRIPT = (
+    "https://plausible.io/js/script.file-downloads.hash.outbound-links.js"
+)
+PLAUSIBLE_ANALYTICS_404s = True
+{% endif %}
+
 {% endif %}
 
 # configure content security policy reporting
