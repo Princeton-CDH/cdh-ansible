@@ -26,6 +26,8 @@
     - name: Clone project repository and checkout the correct git reference
       become: true
       become_user: "{{ deploy_user }}"
+      tags:
+        - always
       git:
         repo: "{{ repo_url }}/"
         dest: "{{ clone_root }}/{{ repo }}"
@@ -37,6 +39,8 @@
     - name: Determine version of python app being deployed
       ansible.builtin.import_tasks: python_app_version.yml
       run_once: true
+      tags:
+        - always
       when:
         - python_app is defined
         - python_app_version is not defined
