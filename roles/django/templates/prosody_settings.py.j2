@@ -42,4 +42,9 @@ PLAUSIBLE_ANALYTICS_404s = True
 SHOW_TEST_WARNING = True
 {%  endif  %}
 
+# Allow Plausible analytics
+CSP_SCRIPT_SRC += ("plausible.io",)
+CSP_CONNECT_SRC += ("plausible.io",)
+
+
 {% endblock %}
