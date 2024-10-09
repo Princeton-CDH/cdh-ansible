@@ -24,6 +24,10 @@
     - name: Restart supervisor apps to load any python/django configuration changes
       ansible.builtin.command: "sudo supervisorctl restart {{ item.name }}"
       loop: "{{ supervisor_programs }}"
+    - name: Notify handler to restart nginx
+      ansible.builtin.meta: noop
+      notify:
+        - Restart nginx
   environment:
     # escriptorium local settings REPLACES default settings, must be specified
     # via env var for django manage commands to pick up

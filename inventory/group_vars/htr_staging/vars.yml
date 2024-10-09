@@ -4,6 +4,10 @@ application_url: https://test-htr.princeton.edu
 
 # Git repository (on gitlab instead of github, so need to specify the full repo url)
 repo_url: https://gitlab.com/scripta/escriptorium.git
+# staging default branch is develop; install a specific tag for testing/documenting
+gitref: dev-0.14.2
+
+
 # repo variable is still needed for checkout file structure
 repo: scripta/escriptorium
 # name of django application
@@ -23,6 +27,10 @@ symlink: "{{ app_name }}"
 python_version: "3.11"
 # nodejs version
 node_version: "18"
+# install local customizations as an extra package
+python_extra_packages:
+  # 19a3fca = vm-stats branch
+  - git+https://github.com/Princeton-CDH/htr2hpc.git@19a3fca#egg=htr2hpc
 
 # pul deploy user
 deploy_user: "conan"
@@ -61,6 +69,7 @@ django_local_settings_template: "escriptorium_settings.py.j2"
 
 deploy_env_vars:
   DJANGO_SETTINGS_MODULE: escriptorium.local_settings
+  VERSION_DATE: "{{ gitref }}"  # deployed version, for display on home page
 
 # single deploy path - no versioning, no nesting
 deploy: "{{ install_root }}"
