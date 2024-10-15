@@ -29,11 +29,11 @@ PLAUSIBLE_ANALYTICS_SCRIPT = (
 PLAUSIBLE_ANALYTICS_404s = True
 {% endif %}
 
-{% endif %}
-
 # configure content security policy reporting
 CSP_REPORT_ONLY = False
 CSP_REPORT_URI = '{{ csp_enforce_uri }}'
+CSP_SCRIPT_SRC += ("plausible.io",)
+CSP_CONNECT_SRC += ("plausible.io",)
 
 # map-related configuration
 MAPBOX_ACCESS_TOKEN = '{{ mapbox_token }}'
