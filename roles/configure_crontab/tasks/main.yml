@@ -1,5 +1,7 @@
 - name: Configure cron jobs
   when: inventory_hostname == cronjob_host
+  tags:
+    - crontab
   block:
   - name: "Configure crontab — special times"
     cron:

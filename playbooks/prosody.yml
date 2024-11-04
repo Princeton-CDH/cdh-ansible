@@ -31,10 +31,13 @@
     - solr_collection
     - prosody_setup
     - finalize_deploy
+    - configure_crontab  # used in production but not always in staging
     - close_deployment
   tasks:
-  - ansible.builtin.include_role:   # datadog for logging
-      name: pulibrary.princeton_ansible.datadog
-    when: runtime_env | default('staging') == "production"
-    tags:
-      - datadog
+    - ansible.builtin.include_role:   # timezone needed for cron jobs
+        name: pulibrary.princeton_ansible.timezone
+    - ansible.builtin.include_role:   # datadog for logging
+        name: pulibrary.princeton_ansible.datadog
+      when: runtime_env | default('staging') == "production"
+      tags:
+        - datadog

@@ -43,7 +43,7 @@ marc_data_path: "{{ data_path }}/marc/"
 # path to EEBO TCP data
 eebo_data_path: "{{ data_path }}/eebo_tcp/"
 # path to Gale OCR data on tigerdata
-gale_ocr_data_path: "{{ tigerdata_mount_dir }}/prosody/ppa-ocr/Gale"
+gale_ocr_data_path: "{{ tigerdata_mount_dir }}/prosody/ppa-ocr/Gale-by-vol"
 
 technical_contact: cdhdevteam@princeton.edu
 # flag that csp is enabled
@@ -80,8 +80,11 @@ tigerdata_enabled: true
 # media nfs path
 media_root: /mnt/nfs/cdh/prosody/media/
 
-# app-specific system dependencies
-app_dependencies:
-  - libmysqlclient-dev # for mysql installation during the migration
+# app-specific system dependencies - no longer needed
+#app_dependencies:
 # common datadog configuration set in all vars
 datadog_app_name: cdh_prosody
+
+# configure scripts to run as cron jobs
+crontab: []
+# currently production only
