@@ -3,14 +3,40 @@
 ###
 
 - name: Install and configure rclone
+  block:
+    - name: Ensure required packages are installed
+      ansible.builtin.apt:
+        name: unzip
+        state: present
+        update_cache: true
+
+    - name: Download the latest Rclone binary
+      ansible.builtin.get_url:
+        url: "{{ rclone_download_url }}"
+        dest: "{{ rclone_download_dest }}"
+        mode: "0644"
+
+    - name: Extract rclone binary
+      ansible.builtin.unarchive:
+        src: "{{ rclone_download_dest }}"
+        dest: /tmp
+        remote_src: true
+
+    - name: Copy rclone binary
+      ansible.builtin.copy:
+        src: "{{ rclone_extract_path }}/rclone"
+        dest: /usr/local/bin/rclone
+        remote_src: true
+        mode: "0755"
+        owner: root
+        group: root
+
+    - name: Clean up temporary files
+      ansible.builtin.file:
+        path: "{{ rclone_extract_path }}"
+        state: absent
   tags:
     - rclone
-  block:
-    - name: Ensure rclone is installed
-      community.general.snap:
-        name: rclone
-        classic: true
-        state: present
 
     # create config file with rclone so it can create symlink for current
     - name: Create rclone config directory structure
