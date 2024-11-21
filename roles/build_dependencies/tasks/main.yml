@@ -9,22 +9,24 @@
 #     state: latest
 
 - name: Install configured dependencies
-  become: true
-  tags:
-    - setup
-    - never
   ansible.builtin.apt:
-    name: "{{ common_dependencies + app_dependencies }}"
+    name: "{{ item }}"
     state: present
     update_cache: true
-  changed_when: false
-
-- name: Configure tmux
+  loop:
+    - "{{ common_dependencies }}"
+    - "{{ app_dependencies }}"
   become: true
   tags:
     - setup
     - never
+
+- name: Configure tmux
   ansible.builtin.copy:
     src: "tmux.conf"
     dest: "/etc/tmux.conf"
     mode: u=rw,g=r,o=r
+  become: true
+  tags:
+    - setup
+    - never
