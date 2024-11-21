@@ -3,6 +3,8 @@
 ###
 
 - name: Install and configure rclone
+  tags:
+    - rclone
   block:
     - name: Ensure required packages are installed
       ansible.builtin.apt:
@@ -35,8 +37,7 @@
       ansible.builtin.file:
         path: "{{ rclone_extract_path }}"
         state: absent
-  tags:
-    - rclone
+
 
     # create config file with rclone so it can create symlink for current
     - name: Create rclone config directory structure
