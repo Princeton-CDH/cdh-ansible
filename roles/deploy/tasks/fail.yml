@@ -1,5 +1,6 @@
-- name: Close a deploy as a failure
-  uri:
+---
+- name: Deploy | close a deploy as a failure
+  ansible.builtin.uri:
       url: '{{ deployment.json.url }}/statuses'
       body_format: json
       method: POST
@@ -10,6 +11,7 @@
       headers:
           Authorization: "token {{ github_token }}"
   when: deployment is defined
+
 - name: Force an unhandled failure to stop deploy
-  fail:
+  ansible.builtin.fail:
       msg: "Deploy did not complete successfully."
