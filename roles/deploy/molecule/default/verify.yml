@@ -1,20 +1,52 @@
 ---
 - name: Verify
-  hosts: all
+  hosts: localhost
+  connection: local
   gather_facts: false
-  tasks:
-    - name: Check ruby package status
-      ansible.builtin.package:
-        name: "{{ item }}"
-        state: present
-      check_mode: true
-      register: pkg_status
-      loop:
-        - ruby-switch
-        - ruby2.6-dev
-        - ruby2.6
+  vars:
+    deployments_endpoint: "https://api.github.com/repos/Princeton-CDH/cdh-ansible/deployments"
+    gitref: "main"
+    runtime_env: "production"
+    deploy_description: "Test deployment"
+    deploy_contexts: []
+    github_token: "your-github-token"
 
-    - name: Test for ruby packages
+  tasks:
+    - name: Include the role
+      ansible.builtin.include_role:
+        name: deploy
+
+    - name: Assert deployment was created
       ansible.builtin.assert:
         that:
-          - not pkg_status.changed
+          - deployment is defined
+          - deployment.status == 201
+
+    - name: Assert deployment status is pending
+      ansible.builtin.uri:
+        url: "{{ deployment.json.url }}"
+        headers:
+          Authorization: "token {{ github_token }}"
+      register: deployment_status
+
+    - name: Assert deployment status is pending
+      ansible.builtin.assert:
+        that:
+          - deployment_status.json.state == "pending"
+
+    - name: Run close_deployment task
+      ansible.builtin.include_tasks:
+        file: roles/deploy/tasks/main.yml
+        tags: gh_deploy
+
+    - name: Assert deployment status is success
+      ansible.builtin.uri:
+        url: "{{ deployment.json.url }}"
+        headers:
+          Authorization: "token {{ github_token }}"
+      register: deployment_status
+
+    - name: Assert deployment status is success
+      ansible.builtin.assert:
+        that:
+          - deployment_status.json.state == "success"
