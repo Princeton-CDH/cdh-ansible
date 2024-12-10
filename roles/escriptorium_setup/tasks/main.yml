@@ -31,3 +31,19 @@
            HostName della.princeton.edu
            IdentityFile ~/.ssh/htr2hpc_id_ed25519
 
+    - name: Rename default segtrain task
+      ansible.builtin.replace:
+        path: "{{ install_root }}/app/apps/core/tasks.py"
+        regexp: '^def (segtrain\(model.*)$'
+        replace: 'def es_\1'
+
+    - name: Import htr2hpc segtrain task to override default
+      ansible.builtin.blockinfile:
+        path: "{{ install_root }}/app/apps/core/tasks.py"
+        block: |
+          # import htr2hpc replacement segmentation training task
+          from htr2hpc.tasks import segtrain
+
+        insertbefore: '(?m)@shared_task.*\ndef es_segtrain\(model_pk=None'
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+
