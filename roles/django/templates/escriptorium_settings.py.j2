@@ -133,6 +133,11 @@ LOGGING = {
             'level': 'WARN',
             'propagate': True,
         },
+        'htr2hpc': {
+            'handlers': ['debug_log'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
     }
 }
 {% endblock %}
@@ -152,4 +157,11 @@ SOLR_CONNECTIONS = {
 {% endblock %}
 
 # Extra app-specific configuration
-{% block extra_config %}{% endblock %}
+{% block extra_config %}
+# custom config for htr2hpc
+HPC_HOSTNAME = "della.princeton.edu"
+# copied in place by escriptorium_setup role
+HPC_SSH_KEYFILE = "/home/{{ deploy_user }}/.ssh/htr2hpc_id_ed25519"
+
+
+{% endblock %}

@@ -3,7 +3,6 @@
 - name: Customize eScriptorium
   become: true
   tags:
-    - setup
     - never
     - escriptorium
   block:
@@ -21,15 +20,15 @@
         owner: "{{ deploy_user }}"
         group: "{{ deploy_user }}"
         state: touch
-    - name: Configure ssh key for HPC access in ~/.ssh/config
-      become: true
-      become_user: "{{ deploy_user }}"
-      ansible.builtin.blockinfile:
-        path: "/home/{{ deploy_user }}/.ssh/config"
-        block: |
-          Host della
-           HostName della.princeton.edu
-           IdentityFile ~/.ssh/htr2hpc_id_ed25519
+    # - name: Configure ssh key for HPC access in ~/.ssh/config
+    #   become: true
+    #   become_user: "{{ deploy_user }}"
+    #   ansible.builtin.blockinfile:
+    #     path: "/home/{{ deploy_user }}/.ssh/config"
+    #     block: |
+    #       Host della
+    #        HostName della.princeton.edu
+    #        IdentityFile ~/.ssh/htr2hpc_id_ed25519
 
     - name: Rename default segtrain task
       ansible.builtin.replace:

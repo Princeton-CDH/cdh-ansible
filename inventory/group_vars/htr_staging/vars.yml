@@ -29,11 +29,11 @@ python_version: "3.11"
 node_version: "18"
 # install local customizations as an extra package
 python_extra_packages:
-  # ce80fb0 = django-integration branch
-  - git+https://github.com/Princeton-CDH/htr2hpc.git@ce80fb0#egg=htr2hpc
+  # django-integration branch
+  - git+https://github.com/Princeton-CDH/htr2hpc.git@b1016a6#egg=htr2hpc
 
-# use force reinstall option to ensure package gets updated
-python_extra_packages_pip_extra_args: "--force-reinstall"
+# don't use force reinstall option to ensure package gets updated, it breaks things
+#python_extra_packages_pip_extra_args: "--force-reinstall"
 
 # pul deploy user
 deploy_user: "conan"
