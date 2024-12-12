@@ -7,6 +7,7 @@ jobs:
     strategy:
       matrix:
         role:
+          - build_dependencies
           - deploy_user
           - passenger
           - python

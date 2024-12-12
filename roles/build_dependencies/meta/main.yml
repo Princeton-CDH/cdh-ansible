@@ -3,9 +3,9 @@ galaxy_info:
   role_name: build_dependencies
   company: Princeton University Library
   description: build_dependencies
-  author: pulibrary
+  author: CDH
 
-  license: MIT
+  license: apache 2
 
   min_ansible_version: 2.2
 

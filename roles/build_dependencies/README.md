@@ -5,7 +5,7 @@ This role builds dependencies for CDH applications.
 
 Requirements
 ------------
-
+Ubuntu operating system (tested on Jammy)
 
 Role Variables
 --------------
@@ -13,7 +13,7 @@ Role Variables
 
 Dependencies
 ------------
-
+No dependencies
 
 Example Playbook
 ----------------
@@ -27,7 +27,7 @@ Including an example of how to use your role (for instance, with variables passe
 License
 -------
 
-BSD
+Apache 2
 
 Author Information
 ------------------
