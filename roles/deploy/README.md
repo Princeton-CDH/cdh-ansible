@@ -1,7 +1,7 @@
 Role Name
 =========
 
-Role that deploys applications
+Role that deploys CDH applications
 
 Requirements
 ------------
@@ -17,6 +17,7 @@ github_token: "your_token"
 Dependencies
 ------------
 
+No dependencies
 
 Example Playbook
 ----------------
@@ -30,7 +31,7 @@ Including an example of how to use your role (for instance, with variables passe
 License
 -------
 
-BSD
+Apache2
 
 Author Information
 ------------------

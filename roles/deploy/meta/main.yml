@@ -3,9 +3,9 @@ galaxy_info:
   role_name: deploy
   company: Princeton University Library
   description: deploy
-  author: pulibrary
+  author: cdh
 
-  license: MIT
+  license: Apache2
 
   min_ansible_version: 2.2
 
