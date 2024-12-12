@@ -8,16 +8,16 @@
 - name: npm configuration tasks
   block:
     - name: "Install nodejs from --channel={{ node_version }}/stable"
-      become: true
-      tags:
-        - setup
-        - never
       community.general.snap:
         name: node
         classic: true
         channel: "{{ node_version }}/stable"
         state: present
       register: snap_results
+      become: true
+      tags:
+        - setup
+        - never
 
     # NOTE: upgrading nodejs with ansible snap fails, even though
     # the documentation claims it should refresh when then channel changes.
@@ -26,12 +26,10 @@
     # NOTE2: could add a node -v check and only refresh on mismatch
 
     - name: Refresh nodejs to ensure version changes take effect
-      become: true
       ansible.builtin.command: "snap refresh node --channel={{ node_version }}/stable"
+      become: true
 
     - name: "install javascript dependencies with npm ({{ npm_install_mode }} install)"
-      become: true
-      become_user: "{{ deploy_user }}"
       community.general.npm:
         path: "{{ npm_install_path }}"
         # NOTE: for shxco, omitting dev dependencies means the webpack build fails;
@@ -39,6 +37,8 @@
         # shxco prod/dev dependencies should be adjusted so this does not fail
         production: "{{ npm_install_mode == 'production' }}"
         ci: "{{ npm_install_mode == 'ci' }}"
+      become: true
+      become_user: "{{ deploy_user }}"        
 
   rescue:
-    - include_tasks: roles/create_deployment/tasks/fail.yml
+    - ansible.builtin.include_tasks: roles/create_deployment/tasks/fail.yml
