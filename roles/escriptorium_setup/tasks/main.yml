@@ -37,13 +37,19 @@
         regexp: '^def (segtrain\(model.*)$'
         replace: 'def es_\1'
 
-    - name: Import htr2hpc segtrain task to override default
+    - name: Rename default train task
+      ansible.builtin.replace:
+        path: "{{ install_root }}/app/apps/core/tasks.py"
+        regexp: '^def (train\(.*)$'
+        replace: 'def es_\1'
+
+    - name: Import htr2hpc segtrain and train tasks to override defaults
       ansible.builtin.blockinfile:
         path: "{{ install_root }}/app/apps/core/tasks.py"
         block: |
-          # import htr2hpc replacement segmentation training task
-          from htr2hpc.tasks import segtrain
+          # import htr2hpc replacement training tasks
+          from htr2hpc.tasks import segtrain, train
 
-        insertbefore: '(?m)@shared_task.*\ndef es_segtrain\(model_pk=None'
+        insertbefore: '(?m)\n@shared_task.*\ndef es_segtrain\(model_pk=None'
         marker: "# {mark} ANSIBLE MANAGED BLOCK"
 
