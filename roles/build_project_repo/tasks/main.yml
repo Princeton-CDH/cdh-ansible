@@ -28,7 +28,7 @@
       become_user: "{{ deploy_user }}"
       tags:
         - always
-      git:
+      ansible.builtin.git:
         repo: "{{ repo_url }}/"
         dest: "{{ clone_root }}/{{ repo }}"
         version: "{{ gitref }}"
@@ -60,12 +60,13 @@
     - name: Create a shallow checkout of deploy branch to deploy directory
       become: true
       become_user: "{{ deploy_user }}"
-      git:
+      ansible.builtin.git:
         repo: "{{ clone_root }}/{{ repo }}"
         dest: "{{ deploy }}/"
         version: "{{ gitref }}"
         single_branch: true
         depth: 1
+        force: true  # ignore/overwrite any local changes
 
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
