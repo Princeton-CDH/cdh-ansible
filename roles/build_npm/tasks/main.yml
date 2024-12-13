@@ -5,19 +5,67 @@
 # present in the project root directory (deploy).
 ###
 ---
-- name: npm configuration tasks
-  block:
-    - name: "Install nodejs from --channel={{ node_version }}/stable"
-      community.general.snap:
-        name: node
-        classic: true
-        channel: "{{ node_version }}/stable"
-        state: present
-      register: snap_results
-      become: true
-      tags:
-        - setup
-        - never
+- name: Uninstall any apt installed node
+  ansible.builtin.apt:
+    name: ["nodejs"]
+    state: absent
+  changed_when: false
+
+- name: Determine architecture
+  ansible.builtin.set_fact:
+    architecture: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'x64' }}"
+
+- name: Download node version
+  ansible.builtin.unarchive:
+    src: "{{ node_release_url }}/{{ desired_node_version }}/node-{{ desired_node_version }}-linux-{{ architecture }}.tar.gz"
+    dest: /usr/local
+    creates: /usr/local/node-{{ desired_node_version }}-linux-{{ architecture }}
+    remote_src: true
+    tags:
+      - setup
+      - never
+
+- name: Create symbolic links for node and npm
+  ansible.builtin.file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    state: link
+  loop:
+    - {src: "/usr/local/node-{{ desired_node_version }}-linux-{{ architecture }}/bin/node", dest: "/usr/local/bin/node"}
+    - {src: "/usr/local/node-{{ desired_node_version }}-linux-{{ architecture }}/lib/node_modules/npm/bin/npm-cli.js", dest: "/usr/local/bin/npm"}
+  changed_when: false
+  tags:
+    - setup
+    - never
+
+- name: Install corepack
+  ansible.builtin.shell:
+    cmd: npm install -g corepack
+  changed_when: false
+  tags:
+    - setup
+    - never
+
+- name: Create symbolic link for corepack
+  ansible.builtin.file:
+    src: "/usr/local/node-{{ desired_node_version }}-linux-{{ architecture }}/lib/node_modules/corepack/dist/corepack.js"
+    dest: "/usr/local/bin/corepack"
+    owner: root
+    group: root
+    state: link
+  tags:
+    - setup
+    - never
+
+- name: Enable Corepack
+  ansible.builtin.shell:
+    cmd: corepack enable
+  changed_when: false
+  tags:
+    - setup
+    - never
 
     # NOTE: upgrading nodejs with ansible snap fails, even though
     # the documentation claims it should refresh when then channel changes.
@@ -25,20 +73,5 @@
     #   sudo snap refresh node --channel=18
     # NOTE2: could add a node -v check and only refresh on mismatch
 
-    - name: Refresh nodejs to ensure version changes take effect
-      ansible.builtin.command: "snap refresh node --channel={{ node_version }}/stable"
-      become: true
-
-    - name: "install javascript dependencies with npm ({{ npm_install_mode }} install)"
-      community.general.npm:
-        path: "{{ npm_install_path }}"
-        # NOTE: for shxco, omitting dev dependencies means the webpack build fails;
-        # using production install solved a problem for cdhweb
-        # shxco prod/dev dependencies should be adjusted so this does not fail
-        production: "{{ npm_install_mode == 'production' }}"
-        ci: "{{ npm_install_mode == 'ci' }}"
-      become: true
-      become_user: "{{ deploy_user }}"        
-
-  rescue:
+  ansible.builtin.rescue:
     - ansible.builtin.include_tasks: roles/create_deployment/tasks/fail.yml
