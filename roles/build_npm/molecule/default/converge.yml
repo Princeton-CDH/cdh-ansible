@@ -1,9 +1,9 @@
 ---
 - name: Converge
   hosts: all
-  vars:
-    - running_on_server: false
-    - node_version: "20"
+  # vars:
+    # - running_on_server: false
+    # - node_version: "20"
   become: true
   pre_tasks:
     - name: Update cache

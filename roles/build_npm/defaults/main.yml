@@ -1,5 +1,8 @@
 ---
+# default node
+node_release_url: "https://pulmirror.princeton.edu/mirror/node/dist/"
+node_version: "20"
+desired_node_version: "16"
 # defaults file for build_npm
 npm_install_mode: "production" # alternate: ci
 npm_install_path: "{{ deploy }}"
-node_version: "20"

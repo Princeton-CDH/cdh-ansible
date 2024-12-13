@@ -41,8 +41,7 @@
     - never
 
 - name: Install corepack
-  ansible.builtin.shell:
-    cmd: npm install -g corepack
+  ansible.builtin.shell: npm install -g corepack
   changed_when: false
   tags:
     - setup
@@ -60,8 +59,7 @@
     - never
 
 - name: Enable Corepack
-  ansible.builtin.shell:
-    cmd: corepack enable
+  ansible.builtin.shell: corepack enable
   changed_when: false
   tags:
     - setup
@@ -73,5 +71,5 @@
     #   sudo snap refresh node --channel=18
     # NOTE2: could add a node -v check and only refresh on mismatch
 
-  ansible.builtin.rescue:
-    - ansible.builtin.include_tasks: roles/create_deployment/tasks/fail.yml
+  # ansible.builtin.rescue:
+  #   - ansible.builtin.include_tasks: roles/create_deployment/tasks/fail.yml
