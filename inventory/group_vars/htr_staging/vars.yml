@@ -30,7 +30,7 @@ node_version: "18"
 # install local customizations as an extra package
 python_extra_packages:
   # django-integration branch
-  - git+https://github.com/Princeton-CDH/htr2hpc.git@b1016a6#egg=htr2hpc
+  - git+https://github.com/Princeton-CDH/htr2hpc.git@3ecd197#egg=htr2hpc
 
 # don't use force reinstall option to ensure package gets updated, it breaks things
 #python_extra_packages_pip_extra_args: "--force-reinstall"

@@ -13,22 +13,10 @@
         owner: "{{ deploy_user }}"
         group: "{{ deploy_user }}"
         mode: 0600
-    - name: Make sure ssh config file exists
-      ansible.builtin.file:
-        path: "/home/{{ deploy_user }}/.ssh/config"
-        mode: 0600
-        owner: "{{ deploy_user }}"
-        group: "{{ deploy_user }}"
-        state: touch
-    # - name: Configure ssh key for HPC access in ~/.ssh/config
-    #   become: true
-    #   become_user: "{{ deploy_user }}"
-    #   ansible.builtin.blockinfile:
-    #     path: "/home/{{ deploy_user }}/.ssh/config"
-    #     block: |
-    #       Host della
-    #        HostName della.princeton.edu
-    #        IdentityFile ~/.ssh/htr2hpc_id_ed25519
+
+    # NOTE: we don't configure the key to be used automatically for della
+    # because we don't want to make it any easier than necessary
+    # to ssh into other users accounts
 
     - name: Rename default segtrain task
       ansible.builtin.replace:
@@ -51,4 +39,28 @@
 
         insertbefore: '(?m)\n@shared_task.*\ndef es_segtrain\(model_pk=None'
         marker: "# {mark} ANSIBLE MANAGED BLOCK"
+
+- name: Reinstall htr2hpc code
+  become: true
+  become_user: "{{ python_user }}"
+  tags:
+    - reinstall-htr2hpc
+    - never  # don't run by default
+  block:
+    # remove the current version
+    - name: uninstall htr2hpc python package
+      ansible.builtin.pip:
+        virtualenv: "{{ django_venv_path }}"
+        name: htr2hpc
+        state: absent
+    # reinstall with whatever version is in settings
+    - name: install currently configured htr2hpc python package
+      ansible.builtin.pip:
+        virtualenv: "{{ django_venv_path }}"
+        name: "{{ python_extra_packages }}"
+        extra_args: "{{ python_extra_packages_pip_extra_args }}"
+      notify:
+        - Restart nginx
+        - Restart celery
+        - Restart django_channels
 
