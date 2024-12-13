@@ -26,5 +26,5 @@ crontab:
     hour: 2
     weekday: "SAT"
     day: "1-7"
-    job: "bin/cron-wrapper {{ deploy }}/env/bin/python {{ deploy }}/manage.py index_pages -p 4 --gale --no-progress >> {{ logging_dir }}/cron_reindex_gale_pages.log  2>&1"
+    job: "bin/cron-wrapper {{ deploy }}/env/bin/python {{ deploy }}/manage.py index_pages -p 4 --gale >> {{ logging_dir }}/cron_reindex_gale_pages.log  2>&1"
     state: present
