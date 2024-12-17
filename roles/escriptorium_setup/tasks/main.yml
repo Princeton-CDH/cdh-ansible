@@ -1,0 +1,66 @@
+---
+# custom setup tasks file for escriptorium deploy
+- name: Customize eScriptorium
+  become: true
+  tags:
+    - never
+    - escriptorium
+  block:
+    - name: Install private htr2hpc ssh key
+      ansible.builtin.copy:
+        src: files/htr2hpc_id_ed25519
+        dest: "/home/{{ deploy_user }}/.ssh/htr2hpc_id_ed25519"
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        mode: 0600
+
+    # NOTE: we don't configure the key to be used automatically for della
+    # because we don't want to make it any easier than necessary
+    # to ssh into other users accounts
+
+    - name: Rename default segtrain task
+      ansible.builtin.replace:
+        path: "{{ install_root }}/app/apps/core/tasks.py"
+        regexp: '^def (segtrain\(model.*)$'
+        replace: 'def es_\1'
+
+    - name: Rename default train task
+      ansible.builtin.replace:
+        path: "{{ install_root }}/app/apps/core/tasks.py"
+        regexp: '^def (train\(.*)$'
+        replace: 'def es_\1'
+
+    - name: Import htr2hpc segtrain and train tasks to override defaults
+      ansible.builtin.blockinfile:
+        path: "{{ install_root }}/app/apps/core/tasks.py"
+        block: |
+          # import htr2hpc replacement training tasks
+          from htr2hpc.tasks import segtrain, train
+
+        insertbefore: '(?m)\n@shared_task.*\ndef es_segtrain\(model_pk=None'
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+
+- name: Reinstall htr2hpc code
+  become: true
+  become_user: "{{ python_user }}"
+  tags:
+    - reinstall-htr2hpc
+    - never  # don't run by default
+  block:
+    # remove the current version
+    - name: uninstall htr2hpc python package
+      ansible.builtin.pip:
+        virtualenv: "{{ django_venv_path }}"
+        name: htr2hpc
+        state: absent
+    # reinstall with whatever version is in settings
+    - name: install currently configured htr2hpc python package
+      ansible.builtin.pip:
+        virtualenv: "{{ django_venv_path }}"
+        name: "{{ python_extra_packages }}"
+        extra_args: "{{ python_extra_packages_pip_extra_args }}"
+      notify:
+        - Restart nginx
+        - Restart celery
+        - Restart django_channels
+

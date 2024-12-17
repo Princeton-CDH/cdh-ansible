@@ -14,6 +14,7 @@
     - run_webpack # compile npm dependencies
     - configure_logging # logging directory must exist before running django commands
     - django
+    - escriptorium_setup
     - geerlingguy.supervisor
     - finalize_deploy
   tasks:
