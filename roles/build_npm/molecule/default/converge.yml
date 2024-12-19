@@ -1,0 +1,16 @@
+---
+- name: Converge
+  hosts: all
+  # vars:
+    # - running_on_server: false
+    # - node_version: "20"
+  become: true
+  pre_tasks:
+    - name: Update cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 600
+  tasks:
+    - name: "Include build_npm"
+      ansible.builtin.include_role:
+        name: build_npm
