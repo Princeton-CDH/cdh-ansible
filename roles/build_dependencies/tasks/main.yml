@@ -8,23 +8,25 @@
 #     name: "ca-certificates"
 #     state: latest
 
-- name: install configured dependencies
-  become: true
-  tags:
-    - setup
-    - never
-  apt:
-    name: "{{ common_dependencies + app_dependencies }}"
+- name: Install configured dependencies
+  ansible.builtin.apt:
+    name: "{{ item }}"
     state: present
     update_cache: true
-  changed_when: false
-
-- name: configure tmux
+  loop:
+    - "{{ common_dependencies }}"
+    - "{{ app_dependencies }}"
   become: true
   tags:
     - setup
     - never
-  copy:
+
+- name: Configure tmux
+  ansible.builtin.copy:
     src: "tmux.conf"
     dest: "/etc/tmux.conf"
     mode: u=rw,g=r,o=r
+  become: true
+  tags:
+    - setup
+    - never
