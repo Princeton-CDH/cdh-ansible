@@ -30,6 +30,15 @@
         regexp: '^def (train\(.*)$'
         replace: 'def es_\1'
 
+    - name: Expose read-write training accuracy model field in API
+      ansible.builtin.replace:
+        path: "{{ install_root }}/app/apps/api/serializers.py"
+        # accuracy_percent only occurs once in this file, in the list of
+        # fields for OCRModelSerializer.
+        # Add training accuracy immediately after.
+        regexp: "\\'accuracy_percent\\',"
+        replace: "'accuracy_percent', 'training_accuracy',"
+
     - name: Import htr2hpc segtrain and train tasks to override defaults
       ansible.builtin.blockinfile:
         path: "{{ install_root }}/app/apps/core/tasks.py"
