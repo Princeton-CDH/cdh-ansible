@@ -3,7 +3,6 @@
 - name: Customize eScriptorium
   become: true
   tags:
-    - never
     - escriptorium
   block:
     - name: Install private htr2hpc ssh key
