@@ -15,7 +15,9 @@
     - configure_logging # logging directory must exist before running django commands
     - django
     - escriptorium_setup
-    - geerlingguy.supervisor
+    - role: geerlingguy.supervisor
+      tags:
+        - supervisor
     - finalize_deploy
   tasks:
     - ansible.builtin.include_role: # use PUL ansible role to install local redis instance
