@@ -48,6 +48,13 @@
         insertbefore: '(?m)\n@shared_task.*\ndef es_segtrain\(model_pk=None'
         marker: "# {mark} ANSIBLE MANAGED BLOCK"
 
+    - name: Update user model to allow email to be null
+      ansible.builtin.replace:
+        path: "{{ install_root }}/app/apps/users/models.py"
+        regexp: "verbose_name=_\\(\\'email address\\'\\),"
+        replace: "verbose_name=_('email address'), null=True,"
+
+
 - name: Reinstall htr2hpc code
   become: true
   become_user: "{{ python_user }}"
