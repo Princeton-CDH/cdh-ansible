@@ -35,8 +35,8 @@
         # accuracy_percent only occurs once in this file, in the list of
         # fields for OCRModelSerializer.
         # Add training accuracy immediately after.
-        regexp: "\\'accuracy_percent\\',"
-        replace: "'accuracy_percent', 'training_accuracy',"
+        regexp: "\\'accuracy_percent\\', \\'rights\\',"
+        replace: "'accuracy_percent', 'training_accuracy', 'rights',"
 
     - name: Import htr2hpc segtrain and train tasks to override defaults
       ansible.builtin.blockinfile:
@@ -51,8 +51,14 @@
     - name: Update user model to allow email to be null
       ansible.builtin.replace:
         path: "{{ install_root }}/app/apps/users/models.py"
-        regexp: "verbose_name=_\\(\\'email address\\'\\),"
+        regexp: "verbose_name=_\\(\\'email address\\'\\),$"
         replace: "verbose_name=_('email address'), null=True,"
+
+    - name: Remove UI option from profile form
+      ansible.builtin.replace:
+        path: "{{ install_root }}/app/escriptorium/templates/users/profile.html"
+        regexp: "\\{\\% render_field form.legacy_mode \\%\\}"
+        replace: "{# legacy_mode configuration disabled #}"
 
 
 - name: Reinstall htr2hpc code
