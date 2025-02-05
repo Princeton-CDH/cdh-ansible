@@ -54,11 +54,17 @@
         regexp: "verbose_name=_\\(\\'email address\\'\\),$"
         replace: "verbose_name=_('email address'), null=True,"
 
-    - name: Remove UI option from profile form
+    - name: Make legacy UI option on profile form a hidden input
+      ansible.builtin.replace:
+        path: "{{ install_root }}/app/apps/users/forms.py"
+        regexp: "(fields = \\('email', 'first_name', 'last_name', 'legacy_mode'\\))\n\n"
+        replace: "\\1\n        widgets = {\"legacy_mode\": forms.HiddenInput()}\n\n"
+
+    - name: Suppress legacy UI help text from profile form
       ansible.builtin.replace:
         path: "{{ install_root }}/app/escriptorium/templates/users/profile.html"
-        regexp: "\\{\\% render_field form.legacy_mode \\%\\}"
-        replace: "{# legacy_mode configuration disabled #}"
+        regexp: "(\\{\\% render_field form.legacy_mode) (\\%\\})"
+        replace: "\\1 help_text='' \\2"
 
 
 - name: Reinstall htr2hpc code
