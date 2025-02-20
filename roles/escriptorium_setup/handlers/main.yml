@@ -1,0 +1,9 @@
+---
+# handlers file for escriptorium
+- name: Restart celery
+  become: true
+  ansible.builtin.command: "sudo supervisorctl restart celery"
+- name: Restart django_channels
+  become: true
+  ansible.builtin.command: "sudo supervisorctl restart django_channels"
+

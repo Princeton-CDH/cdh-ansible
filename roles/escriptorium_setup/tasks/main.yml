@@ -1,0 +1,93 @@
+---
+# custom setup tasks file for escriptorium deploy
+- name: Customize eScriptorium
+  become: true
+  tags:
+    - escriptorium
+  block:
+    - name: Install private htr2hpc ssh key
+      ansible.builtin.copy:
+        src: files/htr2hpc_id_ed25519
+        dest: "/home/{{ deploy_user }}/.ssh/htr2hpc_id_ed25519"
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        mode: 0600
+
+    # NOTE: we don't configure the key to be used automatically for della
+    # because we don't want to make it any easier than necessary
+    # to ssh into other users accounts
+
+    - name: Rename default segtrain task
+      ansible.builtin.replace:
+        path: "{{ install_root }}/app/apps/core/tasks.py"
+        regexp: '^def (segtrain\(model.*)$'
+        replace: 'def es_\1'
+
+    - name: Rename default train task
+      ansible.builtin.replace:
+        path: "{{ install_root }}/app/apps/core/tasks.py"
+        regexp: '^def (train\(.*)$'
+        replace: 'def es_\1'
+
+    - name: Expose read-write training accuracy model field in API
+      ansible.builtin.replace:
+        path: "{{ install_root }}/app/apps/api/serializers.py"
+        # accuracy_percent only occurs once in this file, in the list of
+        # fields for OCRModelSerializer.
+        # Add training accuracy immediately after.
+        regexp: "\\'accuracy_percent\\', \\'rights\\',"
+        replace: "'accuracy_percent', 'training_accuracy', 'rights',"
+
+    - name: Import htr2hpc segtrain and train tasks to override defaults
+      ansible.builtin.blockinfile:
+        path: "{{ install_root }}/app/apps/core/tasks.py"
+        block: |
+          # import htr2hpc replacement training tasks
+          from htr2hpc.tasks import segtrain, train
+
+        insertbefore: '(?m)\n@shared_task.*\ndef es_segtrain\(model_pk=None'
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+
+    - name: Update user model to allow email to be null
+      ansible.builtin.replace:
+        path: "{{ install_root }}/app/apps/users/models.py"
+        regexp: "verbose_name=_\\(\\'email address\\'\\),$"
+        replace: "verbose_name=_('email address'), null=True,"
+
+    - name: Make legacy UI option on profile form a hidden input
+      ansible.builtin.replace:
+        path: "{{ install_root }}/app/apps/users/forms.py"
+        regexp: "(fields = \\('email', 'first_name', 'last_name', 'legacy_mode'\\))\n\n"
+        replace: "\\1\n        widgets = {\"legacy_mode\": forms.HiddenInput()}\n\n"
+
+    - name: Suppress legacy UI help text from profile form
+      ansible.builtin.replace:
+        path: "{{ install_root }}/app/escriptorium/templates/users/profile.html"
+        regexp: "(\\{\\% render_field form.legacy_mode) (\\%\\})"
+        replace: "\\1 help_text='' \\2"
+
+
+- name: Reinstall htr2hpc code
+  become: true
+  become_user: "{{ python_user }}"
+  tags:
+    - reinstall-htr2hpc
+    - never  # don't run by default
+  block:
+    # remove the current version
+    - name: uninstall htr2hpc python package
+      ansible.builtin.pip:
+        virtualenv: "{{ django_venv_path }}"
+        name: htr2hpc
+        state: absent
+    # reinstall with whatever version is in settings
+    - name: install currently configured htr2hpc python package
+      ansible.builtin.pip:
+        virtualenv: "{{ django_venv_path }}"
+        name: "{{ python_extra_packages }}"
+        extra_args: "{{ python_extra_packages_pip_extra_args }}"
+      notify:
+        - Restart nginx
+        - Restart celery
+        - Restart django_channels
+
