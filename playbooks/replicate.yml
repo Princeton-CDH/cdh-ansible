@@ -65,11 +65,11 @@
   remote_user: pulsys
   run_once: true
   vars:
-     - deploy_user: "conan"
-     # - source_user: pulsys
-     - source_user: conan   # geniza
-     # must define replication_source_host
-     # NOTE: override db_backup_filename if db names differ between qa/prod
+    deploy_user: "conan"
+    # - source_user: pulsys
+    source_user: conan   # geniza
+    # must define replication_source_host
+    # NOTE: override db_backup_filename if db names differ between qa/prod
   tasks:
       - name: Get replication source hostname
         tags:
