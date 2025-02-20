@@ -29,11 +29,7 @@ python_version: "3.11"
 node_version: "18"
 # install local customizations as an extra package
 python_extra_packages:
-  # feature branch with htr2hpc-train update flag
-  - git+https://github.com/Princeton-CDH/htr2hpc.git@feature/script-update-model#egg=htr2hpc
-
-# don't use force reinstall option to ensure package gets updated, it breaks things
-#python_extra_packages_pip_extra_args: "--force-reinstall"
+  - git+https://github.com/Princeton-CDH/htr2hpc.git@develop#egg=htr2hpc
 
 # pul deploy user
 deploy_user: "conan"
