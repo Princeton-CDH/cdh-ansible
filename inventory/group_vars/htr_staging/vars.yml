@@ -29,8 +29,7 @@ python_version: "3.11"
 node_version: "18"
 # install local customizations as an extra package
 python_extra_packages:
-  # 19a3fca = vm-stats branch
-  - git+https://github.com/Princeton-CDH/htr2hpc.git@19a3fca#egg=htr2hpc
+  - git+https://github.com/Princeton-CDH/htr2hpc.git@develop#egg=htr2hpc
 
 # pul deploy user
 deploy_user: "conan"
