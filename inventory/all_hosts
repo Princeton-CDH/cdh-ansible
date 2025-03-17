@@ -74,6 +74,9 @@ cdh-derrida2.princeton.edu
 derrida_archive_staging
 derrida_archive_production
 
+[prosody_sandbox]
+sandbox-prosody1.lib.princeton.edu
+
 [prosody_staging]
 cdh-test-prosody1.princeton.edu
 cdh-test-prosody2.princeton.edu
@@ -117,8 +120,11 @@ lib-solr-staging4d.princeton.edu
 [solr_production]
 lib-solr-prod7.princeton.edu
 
-[solr9_staging]
+[solr9_sandbox]
 sandbox-solr1.lib.princeton.edu
+
+[solr9_staging]
+lib-solr-staging1.princeton.edu
 
 [solr9_production]
 lib-solr-prod1.princeton.edu

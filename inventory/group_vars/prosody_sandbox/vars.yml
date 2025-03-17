@@ -1,0 +1,24 @@
+###
+# Staging specific configuration for Prosody Archive (ppa-django)
+###
+---
+
+# email prefix for dev account emails
+email_prefix: '[PPA STAGING] '
+
+application_url: "sandbox-ppa.lib.princeton.edu"
+
+# passenger settings
+passenger_server_name: "{{ application_url }}"
+
+# source host when replicating data/media (from ansible host inventory file)
+replication_source_host: prosody_production
+
+# PPA now using solr 9, so must override default staging solr 8 config
+zk_host: "sandbox-zk1.lib.princeton.edu:2181,sandbox-zk2.lib.princeton.edu:2181,sandbox-zk3.lib.princeton.edu:2181"
+solr_url: "http://sandbox-solr-staging.lib.princeton.edu:8983/solr/"
+solr_server: "{{ groups['solr9_staging'][0] }}"
+solr_version: 9
+
+# run cron jobs on the first vm
+cronjob_host: "sandbox-prosody1.lib.princeton.edu"
