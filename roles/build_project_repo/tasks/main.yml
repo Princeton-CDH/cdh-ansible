@@ -10,31 +10,32 @@
 - name: Clone and deploy a project repository
   block:
     - name: Ensure deploy user has access to install root
-      tags:
-        - setup
-        - never
-      become: true
-      file:
+      ansible.builtin.file:
         dest: "{{ install_root }}"
         owner: "{{ deploy_user }}"
         group: "{{ deploy_user }}"
         state: directory
-        recurse: no  # was yes and was super slow... surely not needed anymore?
+        mode: "0755"
+        recurse: false  # was yes and was super slow... surely not needed anymore?
       # only set owner when deploy user is defined
       # (i.e. on PUL vms, where deploy user is different than remote user)
+      become: true
+      tags:
+        - setup
+        - never
 
     - name: Clone project repository and checkout the correct git reference
-      become: true
-      become_user: "{{ deploy_user }}"
-      tags:
-        - always
       ansible.builtin.git:
         repo: "{{ repo_url }}/"
         dest: "{{ clone_root }}/{{ repo }}"
         version: "{{ gitref }}"
         depth: "{{ 1 if git_shallow_clone else 0 }}"
       # register repo_info for group_vars
+      become: true
+      become_user: "{{ deploy_user }}"
       register: repo_info
+      tags:
+        - always
 
     - name: Determine version of python app being deployed
       ansible.builtin.import_tasks: python_app_version.yml
@@ -46,20 +47,19 @@
         - python_app_version is not defined
 
     - name: Create the deploy directory (to recursively create parent dirs if necessary)
+      ansible.builtin.file:
+        state: directory
+        dest: "{{ deploy }}"
+        mode: "0755"
       become: true
+      become_user: "{{ deploy_user }}"
       tags:
         - setup
         - never
-      become_user: "{{ deploy_user }}"
-      file:
-        state: directory
-        dest: "{{ deploy }}"
 
     # using the local git repository as source, do a shallow, single branch checkout
     # for the deployed instance
     - name: Create a shallow checkout of deploy branch to deploy directory
-      become: true
-      become_user: "{{ deploy_user }}"
       ansible.builtin.git:
         repo: "{{ clone_root }}/{{ repo }}"
         dest: "{{ deploy }}/"
@@ -67,6 +67,9 @@
         single_branch: true
         depth: 1
         force: true  # ignore/overwrite any local changes
+      become: true
+      become_user: "{{ deploy_user }}"
 
   rescue:
-    - include_tasks: roles/create_deployment/tasks/fail.yml
+    - name: Close a deploy failure
+      ansible.builtin.include_tasks: roles/create_deployment/tasks/fail.yml
