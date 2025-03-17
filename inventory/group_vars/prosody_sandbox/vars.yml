@@ -2,8 +2,13 @@
 # Staging specific configuration for Prosody Archive (ppa-django)
 ###
 ---
-
+# Github repository
+repo: "Princeton-CDH/ppa-django"
+app_name: ppa
 # email prefix for dev account emails
+# use python 3.11
+python_version: 3.11
+
 email_prefix: '[PPA STAGING] '
 
 application_url: "sandbox-ppa.lib.princeton.edu"
