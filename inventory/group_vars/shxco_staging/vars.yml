@@ -27,3 +27,10 @@ crontab:
     hour: 2
     job: "bin/cron-wrapper {{ deploy }}/env/bin/python {{ deploy }}/manage.py twitterbot_100years schedule  >> {{ logging_dir }}/twitterbot_100years.log  2>&1"
     state: absent
+
+# solr settings
+# shxco is using solr 9, so must override default staging solr 8 config
+zk_host: "lib-zk-staging4:2181,lib-zk-staging5:2181,lib-zk-staging6:2181"
+solr_url: "http://lib-solr9-staging.princeton.edu:8983/solr/"
+solr_server: "{{ groups['solr9_staging'][0] }}"
+solr_version: 9

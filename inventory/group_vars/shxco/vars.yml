@@ -54,6 +54,7 @@ django_local_settings_template: "shxco_settings.py.j2"
 # - solr settings
 solr_collection: cdh_shxco
 solr_configset: cdh_shxco
+solr_version: 9
 
 # github contexts required for deploy production
 # deploy_contexts:

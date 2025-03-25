@@ -2,7 +2,7 @@
 # by default this playbook runs in the staging environment
 # to run in production, pass '-e runtime_env=production'
 - name: create solr connection
-  hosts: solr_{{ runtime_env | default('staging') }}
+  hosts: solr9_{{ runtime_env | default('staging') }}
   connection: ssh
   remote_user: pulsys
   vars:
