@@ -86,6 +86,7 @@ cdh-prosody1.princeton.edu
 cdh-prosody2.princeton.edu
 
 [prosody:children]
+prosody_sandbox
 prosody_staging
 prosody_production
 
@@ -118,6 +119,8 @@ gcp_geotaste
 
 ### PUL solr servers
 
+[solr_sandbox]
+sandbox-solr1.lib.princeton.edu
 [solr_staging]
 lib-solr-staging4d.princeton.edu
 [solr_production]
@@ -134,6 +137,7 @@ lib-solr-prod1.princeton.edu
 
 [solr:children]
 solr_staging
+solr9_sandbox
 solr9_staging
 solr_production
 solr9_production
@@ -156,11 +160,13 @@ shxco_staging
 derrida_crawl_staging
 derrida_archive_staging
 prosody_staging
-sandbox
 simrisk_cloud
 geotaste_cloud
 prodigy_staging
 htr_staging
+
+[sandbox:children]
+sandbox
 
 [dev]
 localhost

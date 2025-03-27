@@ -1,6 +1,32 @@
-# unlike most deploys, we may put multiple apps on this vm
-single_app: false
+###
+# This file stores variables shared by all staging deploys
+###
+---
+# configure staging to deploy develop branch by default
+gitref: '{{ ref | default("develop", true) }}'
+runtime_env: "staging"
 
-alias_apps:
-  simrisk: /srv/www/simulatingrisk
-  geotaste: /srv/www/geotaste
+# solr settings
+# using solr staging on jammy vm
+# - api access
+solr_url: "http://sandbox-solr-staging.lib.princeton.edu:8983/solr/"
+solr_admin_url: '{{ solr_url }}admin/cores'
+zk_host: "sandbox-zk1.lib.princeton.edu:2181,sandbox-zk2.lib.princeton.edu:2181,sandbox-zk3.lib.princeton.edu:2181"
+# - server name for deploy setup
+solr_server: "{{ groups['solr_staging'][0] }}"
+
+# allow any deploy contexts (no ci/coverage checks before deploying)
+deploy_contexts: []
+# PUL staging VM (postgres v15)
+postgres_host: lib-postgres-staging1.princeton.edu
+
+# in staging, grant postgres app user permission to create db for replication
+application_dbuser_role_attr_flags: "CREATEDB"
+# nfs staging server
+nfs_server: "128.112.203.82"
+nfs_host_server: "lib-fs-staging.princeton.edu"
+# in staging, the host domain should be set to host server for idmap to work
+nfs_domain: "{{ nfs_host_server }}"
+
+# turn on test banner for sites that support it
+django_test_warning: true
