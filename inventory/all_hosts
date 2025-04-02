@@ -103,9 +103,6 @@ prodigy_production
 cdh-test-htr1.lib.princeton.edu
 cdh-test-htr2.lib.princeton.edu
 
-[sandbox]
-cdh-dev-sandbox1.princeton.edu
-
 # simrisk must be configured in ssh config with bastion proxy command
 [simrisk_cloud]
 gcp_simrisk
@@ -150,7 +147,6 @@ shxco_staging
 derrida_crawl_staging
 derrida_archive_staging
 prosody_staging
-sandbox
 simrisk_cloud
 geotaste_cloud
 prodigy_staging

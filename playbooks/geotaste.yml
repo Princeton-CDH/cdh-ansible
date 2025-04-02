@@ -1,4 +1,4 @@
-- hosts: geotaste_cloud, sandbox
+- hosts: geotaste_cloud
   vars_files:
     - ../group_vars/sandbox/geotaste.yml
   connection: ssh
@@ -7,7 +7,6 @@
   roles:
     - create_deployment
     - deploy_user
-    - sandbox
     - build_dependencies
     - build_project_repo
     - python
