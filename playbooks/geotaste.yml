@@ -1,6 +1,6 @@
 - hosts: geotaste_cloud
   vars_files:
-    - ../group_vars/sandbox/geotaste.yml
+    - ../inventory/group_vars/sandbox/geotaste.yml
   connection: ssh
   remote_user: pulsys
   become: true

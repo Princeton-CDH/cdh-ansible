@@ -1,6 +1,6 @@
 - hosts: simrisk_cloud
   vars_files:
-    - ../group_vars/sandbox/simrisk.yml
+    - ../inventory/group_vars/sandbox/simrisk.yml
   connection: ssh
   remote_user: pulsys
   become: true
