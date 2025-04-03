@@ -1,64 +1,65 @@
 ---
 # tasks file for roles/solr_collection
 - name: Create the base directory for Solr configsets
-  tags:
-    - setup
-    - never
-  run_once: true
-  file:
+  ansible.builtin.file:
     path: "/solr/cdh_solr/"
     state: directory
-    mode: 0755
+    mode: "0755"
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
   become: true
+  run_once: true
   delegate_to: "{{ solr_server }}" # lib-solr-staging1.princeton.edu  # solr_staging
+  tags:
+    - setup
+    - never
 
 - name: Update and configure Solr configset
-  run_once: true
-  tags:
-    - solr_configset
   block:
     - name: Copy project Solr configset files for upload to zookeeper
       # rsync configset from deployed version on remote host to solr server
+      ansible.builtin.command: /usr/bin/rsync -a {{ inventory_hostname }}:{{ deploy }}/solr_conf/ /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -e "ssh -o StrictHostKeyChecking=no"
       become: true
       become_user: "{{ deploy_user }}"
-      command: /usr/bin/rsync -a {{ inventory_hostname }}:{{ deploy }}/solr_conf/ /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -e "ssh -o StrictHostKeyChecking=no"
       delegate_to: "{{ solr_server }}"
+      changed_when: false
+  run_once: true
+  tags:
+    - solr_configset
       # NOTE: this step may fail the first time it is run on a new server because
       # systemd ssh restart does not reliably work (handler in deploy_user role);
       # if it fails, try restarting ssh manually on the application server
 
     # no shards per node in solr 9; only run if solr version is < 9
     - name: Check replication factor configuration
-      fail: msg=" replication factor is greater than three; must specify shards per node > 1"
+      ansible.builtin.fail: msg=" replication factor is greater than three; must specify shards per node > 1"
       when:
         - solr_version < 9
         - num_shards * replication_factor > 3 and shards_per_node == 1
 
     - name: Update configset with zookeeper
-      command: "/opt/solr/bin/solr zk -upconfig -d /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -n {{ solr_configset }} -z {{ zk_host }}"
+      ansible.builtin.command: "/opt/solr/bin/solr zk -upconfig -d /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -n {{ solr_configset }} -z {{ zk_host }}"
       delegate_to: "{{ solr_server }}"
 
     - name: Get a list of current Solr collections
-      uri:
+      ansible.builtin.uri:
         url: "{{ solr_url }}admin/collections?action=LIST"
       register: solr_collections_list
 
     - name: Create Solr collection if it does not already exist
-      uri:
-        url: "{{ solr_url }}admin/collections?action=CREATE&name={{ solr_collection }}&collection.configName={{ solr_configset }}&numShards={{ num_shards }}&replicationFactor={{ replication_factor }}"
+      ansible.builtin.uri:
+        url: "{{ solr_url }}admin/collections?action=CREATE&name={{ solr_collection }}&collection.configName={{ solr_configset }}&numShards={{ num_shards }}&replicationFactor={{ replication_factor }}&config=_default&timeout=600&wt=json"
       when: solr_collection not in solr_collections_list.json.collections
 
     - name: Check Solr collection status if it previously existed
-      uri:
+      ansible.builtin.uri:
         url: "{{ solr_url }}admin/collections?action=COLSTATUS&collection={{ solr_collection }}&coreInfo=true"
       register: solr_collection_status
       when: solr_collection in solr_collections_list.json.collections
 
     - name: Get collection information from collection status response
       # get collection-specific portion of the collection status response
-      set_fact:
+      ansible.builtin.set_fact:
         solr_collection_info: "{{ solr_collection_status.json[ solr_collection ]}}"
       when:
         - solr_collection in solr_collections_list.json.collections
@@ -67,7 +68,7 @@
     # NOTE: number of shards can't be changed via modify collection;
     # must use reindex; warning, this may be slow
     - name: Modify Solr collection number of shards if changed
-      uri:
+      ansible.builtin.uri:
         url: "{{ solr_url }}admin/collections?action=REINDEXCOLLECTION&name={{ solr_collection }}&numShards={{ num_shards }}"
       when:
         - solr_version < 9
@@ -85,17 +86,17 @@
     #     - solr_collection_info["properties"]["maxShardsPerNode"] != shards_per_node
 
     - name: Modify Solr collection replication factor if changed
-      uri:
+      ansible.builtin.uri:
         url: "{{ solr_url }}admin/collections?action=MODIFYCOLLECTION&collection={{ solr_collection }}&replicationFactor={{ replication_factor }}"
       when:
         - solr_collection_info is defined
         - solr_collection_info["properties"]["replicationFactor"] | int != replication_factor
 
     - name: Reload Solr collection if not newly created
-      debug:
+      ansible.builtin.debug:
         msg: "Solr collection {{ solr_collection }} already exists"
       changed_when: solr_collection in solr_collections_list.json.collections
       notify: reload solr collection
 
   rescue:
-      - include_tasks: roles/create_deployment/tasks/fail.yml
+      - ansible.builtin.include_tasks: roles/create_deployment/tasks/fail.yml
