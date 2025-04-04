@@ -1,13 +1,12 @@
-- hosts: sandbox, simrisk_cloud
+- hosts: simrisk_cloud
   vars_files:
-    - ../group_vars/sandbox/simrisk.yml
+    - ../inventory/group_vars/sandbox/simrisk.yml
   connection: ssh
   remote_user: pulsys
   become: true
   roles:
     - create_deployment
     - deploy_user
-    - sandbox
     - build_dependencies
     - build_project_repo
     - python
