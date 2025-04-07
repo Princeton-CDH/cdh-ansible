@@ -165,3 +165,5 @@ htr_staging
 
 [dev:children]
 prosody_dev
+solr_dev
+solr9_dev
