@@ -4,7 +4,7 @@
 ---
 # configure staging to deploy develop branch by default
 gitref: '{{ ref | default("develop", true) }}'
-runtime_env: "staging"
+runtime_env: "dev"
 
 # solr settings
 # using solr staging on jammy vm

@@ -3,6 +3,7 @@
 ###
 ---
 email_prefix: '[PPA STAGING] '
+app_name: "ppa"
 
 application_url: "sandbox-ppa.lib.princeton.edu"
 
@@ -22,3 +23,4 @@ solr_version: 9
 cronjob_host: "sandbox-prosody1.lib.princeton.edu"
 
 solr_collection: cdh_ppa
+solr_configset: cdh_ppa
