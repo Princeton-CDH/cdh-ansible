@@ -39,30 +39,57 @@
       ansible.builtin.uri:
         url: "{{ solr_url }}admin/collections?action=LIST"
       register: solr_collections_list
-      delegate_to: "{{ solr_server }}"
+      delegate_to: "{{ inventory_hostname }}"
 
-    - name: Create Solr collection if it does not already exist
+    - name: Attempt to create Solr collection (may time out)
       ansible.builtin.uri:
-        url: "{{ solr_url }}admin/collections?action=CREATE&name={{ solr_collection }}&collection.configName={{ solr_configset }}&numShards={{ num_shards }}&replicationFactor={{ replication_factor }}&config=_default&timeout=600&wt=json"
+        url: "{{ solr_url }}admin/collections?action=CREATE&name={{ solr_collection }}&collection.configName={{ solr_configset }}&numShards=1&replicationFactor=1&maxShardsPerNode=1&config=_default&timeout=600&wt=json"
+        timeout: 180
       when: solr_collection not in (solr_collections_list.json.collections | default([]))
-      delegate_to: "{{ solr_server }}"
+      delegate_to: "{{ inventory_hostname }}"
+      register: create_result
+      failed_when: false
+      ignore_errors: true
 
-    - name: Check Solr collection status if it previously existed
+    - name: Warn about collection creation failure
+      ansible.builtin.debug:
+        msg: >
+          WARNING: Solr collection creation timed out. You may need to create the collection manually using:
+          ssh {{ solr_server }} "sudo -u {{ deploy_user }} /opt/solr/bin/solr create -c {{ solr_collection }} -n {{ solr_configset }} -shards 1 -replicationFactor 1"
+          and then increase replication if needed.
+      when: 
+        - solr_collection not in (solr_collections_list.json.collections | default([]))
+        - create_result.status is defined 
+        - create_result.status != 200
+
+    # Skip remaining Solr collection tasks if collection doesn't exist
+    - name: Check if collection exists after creation attempt
+      ansible.builtin.uri:
+        url: "{{ solr_url }}admin/collections?action=LIST"
+      register: solr_collections_list_after
+      delegate_to: "{{ inventory_hostname }}"
+
+    - name: Set fact for collection created status
+      ansible.builtin.set_fact:
+        collection_created: "{{ solr_collection in (solr_collections_list_after.json.collections | default([])) }}"
+
+    # Continue with remaining tasks only if collection exists
+    - name: Check Solr collection status
       ansible.builtin.uri:
         url: "{{ solr_url }}admin/collections?action=COLSTATUS&collection={{ solr_collection }}&coreInfo=true"
       register: solr_collection_status
-      when: solr_collection in (solr_collections_list.json.collections | default([]))
-      delegate_to: "{{ solr_server }}"
+      when: collection_created | bool
+      delegate_to: "{{ inventory_hostname }}"
 
     - name: Get collection information from collection status response
       # get collection-specific portion of the collection status response
       ansible.builtin.set_fact:
         solr_collection_info: "{{ solr_collection_status.json[ solr_collection ]}}"
       when:
-        - solr_collection in (solr_collections_list.json.collections | default([]))
+        - collection_created | bool
         - solr_collection_status is defined
         - solr_collection_status.json is defined
-      delegate_to: "{{ solr_server }}"
+      delegate_to: "{{ inventory_hostname }}"
 
     # NOTE: number of shards can't be changed via modify collection;
     # must use reindex; warning, this may be slow
@@ -70,36 +97,55 @@
       ansible.builtin.uri:
         url: "{{ solr_url }}admin/collections?action=REINDEXCOLLECTION&name={{ solr_collection }}&numShards={{ num_shards }}"
       when:
+        - collection_created | bool
         - solr_version < 9
         - solr_collection_info is defined
         - solr_collection_info["activeShards"] != num_shards
-      delegate_to: "{{ solr_server }}"
+      delegate_to: "{{ inventory_hostname }}"
 
-    # - name: Modify Solr collection shards per node if changed
-    #   uri:
-    #     url: "{{ solr_url }}admin/collections?action=MODIFYCOLLECTION&collection={{ solr_collection }}&maxShardsPerNode={{ shards_per_node }}"
-    #   when:
-    #     - solr_version < 9
-    #     - solr_collection_info is defined
-    #     - solr_collection_info["properties"]["maxShardsPerNode"] is defined
-    #     - solr_collection_info["properties"]["maxShardsPerNode"] != shards_per_node
-
-    - name: Modify Solr collection replication factor if changed
+    - name: Modify Solr collection to distribute replicas
       ansible.builtin.uri:
-        url: "{{ solr_url }}admin/collections?action=MODIFYCOLLECTION&collection={{ solr_collection }}&replicationFactor={{ replication_factor }}"
+        url: "{{ solr_url }}admin/collections?action=MODIFYCOLLECTION&collection={{ solr_collection }}&maxShardsPerNode=1&replicationFactor={{ replication_factor }}"
+        timeout: 180
       when:
+        - collection_created | bool
         - solr_collection_info is defined
         - solr_collection_info["properties"]["replicationFactor"] | int != replication_factor
-      delegate_to: "{{ solr_server }}"
+      delegate_to: "{{ inventory_hostname }}"
+      failed_when: false
+      ignore_errors: true
+
+    - name: Get cluster status after modifying replication
+      ansible.builtin.uri:
+        url: "{{ solr_url }}admin/collections?action=CLUSTERSTATUS&collection={{ solr_collection }}"
+      register: cluster_status
+      when: collection_created | bool
+      delegate_to: "{{ inventory_hostname }}"
+      failed_when: false
+
+    - name: Show replica distribution
+      ansible.builtin.debug:
+        msg: "Current replica distribution: {{ cluster_status.json.cluster.collections[solr_collection].shards.shard1.replicas | default('unknown') }}"
+      when: 
+        - collection_created | bool
+        - cluster_status is defined
+        - cluster_status.json is defined
+        - cluster_status.json.cluster is defined
+        - cluster_status.json.cluster.collections is defined
+        - cluster_status.json.cluster.collections[solr_collection] is defined
 
     - name: Reload Solr collection if not newly created
       ansible.builtin.debug:
         msg: "Solr collection {{ solr_collection }} already exists"
-      changed_when: solr_collection in (solr_collections_list.json.collections | default([]))
+      changed_when: collection_created | bool
       notify: reload solr collection
-      delegate_to: "{{ solr_server }}"
+      delegate_to: "{{ inventory_hostname }}"
   run_once: true
   tags:
     - solr_configset
   rescue:
-    - ansible.builtin.include_tasks: roles/create_deployment/tasks/fail.yml
+    - name: Warn about Solr configuration failure but continue deployment
+      ansible.builtin.debug:
+        msg: >
+          WARNING: Solr configuration tasks failed but deployment will continue.
+          You may need to manually configure Solr after deployment.
