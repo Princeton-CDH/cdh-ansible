@@ -1,0 +1,12 @@
+session_name: cdh
+start_directory: ./
+windows:
+  - window_name: cdh
+    layout: main-horizontal
+    shell_command_before:
+      - '[ -f .venv/bin/activate ] && source .venv/bin/activate && reset'
+    panes:
+      - shell_command:
+          - pipenv shell
+      - echo hello
+      - echo hello

@@ -16,7 +16,7 @@ replication_source_host: prosody_production
 # PPA now using solr 9, so must override default staging solr 8 config
 zk_host: "sandbox-zk1.lib.princeton.edu:2181,sandbox-zk2.lib.princeton.edu:2181,sandbox-zk3.lib.princeton.edu:2181"
 solr_url: "http://sandbox-solr-staging.lib.princeton.edu:8983/solr/"
-solr_server: "{{ groups['solr9_staging'][0] }}"
+solr_server: "{{ groups['solr9_dev'][0] }}"
 solr_version: 9
 
 # run cron jobs on the first vm

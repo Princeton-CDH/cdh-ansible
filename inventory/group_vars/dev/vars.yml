@@ -18,7 +18,7 @@ solr_server: "{{ groups['solr_staging'][0] }}"
 # allow any deploy contexts (no ci/coverage checks before deploying)
 deploy_contexts: []
 # PUL staging VM (postgres v15)
-postgres_host: lib-postgres-staging1.princeton.edu
+postgres_host: sandbox-postgres1.lib.princeton.edu
 
 # in staging, grant postgres app user permission to create db for replication
 application_dbuser_role_attr_flags: "CREATEDB"
