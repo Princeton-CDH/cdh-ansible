@@ -2,7 +2,7 @@
 
 {% block extra_config %}
 {# Add static root as needed now because missing from settings.py as of 0.7 #}
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = BASE_DIR / "static"
 # Separate Geonames for usage reasons
 GEONAMES_USERNAME = '{{ geonames_username }}'
 # Media settings for running under nginx in production and QA
