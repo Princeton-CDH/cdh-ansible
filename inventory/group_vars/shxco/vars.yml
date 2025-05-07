@@ -13,8 +13,8 @@ django_app: "{{ python_app }}"
 symlink: mep
 # wsgi file relative to deploy location
 wsgi_path: "{{ django_app }}/wsgi.py"
-# use python 3.9
-python_version: 3.9
+# use python 3.12
+python_version: 3.12
 # nodejs version
 node_version: "18"
 
