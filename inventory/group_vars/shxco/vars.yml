@@ -78,8 +78,6 @@ app_dependencies:
   - at # for 100 years twitter bot scheduled tweets
   - libmysqlclient-dev # for mysql installation during the migration
 
-# 2to3 support needed for installing rdflib-jsonld
-requires_python2to3: true
 # datadog app/service name
 datadog_app_name: cdh_shxco
 

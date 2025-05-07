@@ -21,6 +21,14 @@
       - python3-setuptools
       - python{{ python_version }}
       - python{{ python_version }}-venv
+    state: latest
+    update_cache: true
+
+- name: Install distutils for python < 3.12
+  become: true
+  ansible.builtin.apt:
+    name:
       - python{{ python_version }}-distutils
     state: latest
     update_cache: true
+  when: python_version is version('3.12', '<')
