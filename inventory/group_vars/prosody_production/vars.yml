@@ -24,7 +24,7 @@ crontab:
     # run at 2am on the first Saturday of every month
     minute: 0
     hour: 2
-    weekday: "SAT"
+    weekday: 6   # 0-6 for Sunday-Saturday
     day: "1-7"
     job: "bin/cron-wrapper {{ deploy }}/env/bin/python {{ deploy }}/manage.py index_pages -p 4 --gale >> {{ logging_dir }}/cron_reindex_gale_pages.log  2>&1"
     state: present
