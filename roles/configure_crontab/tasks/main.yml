@@ -19,6 +19,7 @@
       minute: "{{ item.minute | default('*') }}"
       hour: "{{ item.hour | default('*')}}"
       day: "{{ item.day | default('*')}}"
+      weekday: "{{ item.weekday | default('*')}}"
       month: "{{ item.month | default('*')}}"
       job: "{{ item.job }}"
       user: "{{ deploy_user }}"
