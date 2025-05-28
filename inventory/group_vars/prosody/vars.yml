@@ -88,3 +88,5 @@ datadog_app_name: cdh_prosody
 # configure scripts to run as cron jobs
 crontab: []
 # currently production only
+
+docraptor_limit_note: "Limited to 5 PDFs per month."
