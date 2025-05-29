@@ -1,20 +1,21 @@
-# Princeton Geniza Project 
+# Princeton Geniza Project
 
 Princeton Geniza Project (PGP or Geniza for short) is a custom
 Python/Django web application. Version 4.0-4.x developed by CDH.
 
-Production site: https://geniza.princeton.edu/en/
-software: https://github.com/Princeton-CDH/geniza/
+- Production site: https://geniza.princeton.edu/en/
+- software: https://github.com/Princeton-CDH/geniza/
 
-The site is accessed through the PUL load balancer, NGINX+. 
+The public site is accessed through the PUL load balancer (NGINX+).
 
 There are two VMs for each environment (production, staging) running in
 parallel with the same content and application code. The load balancer
 routes traffic between the two VMs; redundancy allows for one host to
-be taken down for maintenance without taking the site down.  Both
-instances of the application connect to the same PostgreSQL database and Solr
-collection. User-uploaded content is stored on a shared NFS drive
-accessible to both machines.
+be taken down for maintenance without taking the site down.
+
+Both instances of the application connect to the same PostgreSQL
+database and Solr collection. User-uploaded content is stored on a
+shared NFS drive accessible to both machines.
 
 ```mermaid
 flowchart TD
@@ -29,9 +30,9 @@ flowchart TD
      nginx2 -- serves --> static2[static assets]
     end
     Django1 --> db[(PostgreSQL)]
-    Django1 --> solr[(Solr)]    
+    Django1 --> solr[(Solr)]
     Django2 --> db[(PostgreSQL)]
-    Django2 --> solr[(Solr)]    
+    Django2 --> solr[(Solr)]
     genizavm1 --> nfs[/NFS\]
     genizavm2 --> nfs[/NFS\]
 ```
@@ -44,3 +45,11 @@ flowchart TD
 - Production data can be replicated to staging with the `replicate`
   playbook (does not currently include Solr data; requires reindexing
   after replicate)
+
+## Other details
+
+Load balancer proxy configuration is managed in
+[PUL princeton_ansible](https://github.com/pulibrary/princeton_ansible)
+
+- [production config](https://github.com/pulibrary/princeton_ansible/blob/main/roles/nginxplus/files/conf/http/cdh_prod_geniza.conf)
+- [staging config](https://github.com/pulibrary/princeton_ansible/blob/main/roles/nginxplus/files/conf/http/cdh_test_geniza.conf)
