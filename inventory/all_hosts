@@ -74,6 +74,9 @@ cdh-derrida2.princeton.edu
 derrida_archive_staging
 derrida_archive_production
 
+[prosody_dev]
+sandbox-prosody1.lib.princeton.edu
+
 [prosody_staging]
 cdh-test-prosody1.princeton.edu
 cdh-test-prosody2.princeton.edu
@@ -83,6 +86,7 @@ cdh-prosody1.princeton.edu
 cdh-prosody2.princeton.edu
 
 [prosody:children]
+prosody_dev
 prosody_staging
 prosody_production
 
@@ -112,10 +116,15 @@ gcp_geotaste
 
 ### PUL solr servers
 
+[solr_dev]
+sandbox-solr1.lib.princeton.edu
 [solr_staging]
 lib-solr-staging4d.princeton.edu
 [solr_production]
 lib-solr-prod7.princeton.edu
+
+[solr9_dev]
+sandbox-solr1.lib.princeton.edu
 
 [solr9_staging]
 lib-solr-staging1.princeton.edu
@@ -124,7 +133,9 @@ lib-solr-staging1.princeton.edu
 lib-solr-prod1.princeton.edu
 
 [solr:children]
+solr_dev
 solr_staging
+solr9_dev
 solr9_staging
 solr_production
 solr9_production
@@ -152,5 +163,7 @@ geotaste_cloud
 prodigy_staging
 htr_staging
 
-[dev]
-localhost
+[dev:children]
+prosody_dev
+solr_dev
+solr9_dev

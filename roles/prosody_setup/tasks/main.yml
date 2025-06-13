@@ -2,17 +2,17 @@
 # tasks specific to setting up prosody archive
 
 - name: Ensure HathiTrust pairtree directory exists and has correct permissions
+  ansible.builtin.file:
+    path: "{{ hathitrust_pairtree_path }}"
+    state: directory
+    mode: "0775"
+    owner: www-data
+    group: conan
+    recurse: false
   tags:
     - never
     - setup
   become: true
-  ansible.builtin.file:
-    path: "{{ hathitrust_pairtree_path }}"
-    state: directory
-    mode: 0775
-    owner: www-data
-    group: conan
-    recurse: false
 
 - name: Check if MARC pairtree data is present
   ansible.builtin.stat:
@@ -24,24 +24,24 @@
   when: not marc_pairtree_root.stat.exists
 
 - name: Ensure MARC data dir has correct permissions
-  tags:
-    - never
-  become: true
   ansible.builtin.file:
     path: "{{ marc_data_path }}"
     state: directory
-    mode: 0775
+    mode: "0775"
     owner: www-data
     group: conan
-
-- name: Ensure prosody data directory exists
   tags:
-    - nfs
     - never
   become: true
+
+- name: Ensure prosody data directory exists
   ansible.builtin.file:
     path: "{{ prosody_data_path }}"
     state: directory
-    mode: 0775
+    mode: "0775"
     owner: www-data
     group: conan
+  become: true
+  tags:
+    - nfs
+    - never
