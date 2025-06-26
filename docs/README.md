@@ -27,7 +27,7 @@ To update SSH keys on a specific server (such as a new VM), use the [Update puls
 
 ### Step 2: Update SSH key
 
-Check [https://github.com/example_user.keys](https://github.com/tanhaow.keys). If the page is empty, you need to add an SSH key to your GitHub account following: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+Check [https://github.com/example_user.keys](https://github.com/example_user.keys) to see available public keys. If the page is empty, you need to [add an SSH key to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent).
 
 After adding the SSH key, refresh the page to verify it appears.
 
