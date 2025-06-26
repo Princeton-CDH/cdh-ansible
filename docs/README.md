@@ -36,7 +36,7 @@ After adding the SSH key, refresh the page to verify it appears.
 1. Navigate to [Princeton Ansible Tower](https://ansible-tower.princeton.edu/#/home)
 2. Go to 'templates' on the side bar
 3. Find the Job template 'Update pulsys user keys'
-4. Click 'launch'
+4. Click 'launch' to open the dialog box to configure how to run the template
 5. In the `limit` field, specify the hostname you need access to (e.g., '[cdh-web3.princeton.edu](http://cdh-web3.princeton.edu/)'). Find hostnames in the [CDH ansible host doc](https://github.com/Princeton-CDH/cdh-ansible/blob/main/inventory/all_hosts).
 6. Keep all other fields at their default values
 7. Click 'launch'
