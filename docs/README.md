@@ -21,7 +21,7 @@ In a few instances, we are using PUL cloud VMs for more experimental apps that a
 
 CDH RSE team members access PUL-managed servers using SSH via the `pulsys` (PUL Systems) account.
 
-Access requires SSH keys linked to the team member's GitHub account. These are managed in [princeton_ansible variables](https://github.com/pulibrary/princeton_ansible/blob/main/group_vars/all/vars.yml#L115). Submit a pull request to add an entry under 'cdh_github_keys' (example format: [https://github.com/example_user.keys](https://github.com/tanhaow.keys)).
+Access requires SSH keys linked to the team member's GitHub account. These are managed in [princeton_ansible variables](https://github.com/pulibrary/princeton_ansible/blob/main/group_vars/all/vars.yml#L115). Submit a pull request to add an entry under 'cdh_github_keys' (example format: [https://github.com/example_user.keys](https://github.com/example_user.keys)).
 
 To update SSH keys on a specific server (such as a new VM), use the [Update pulsys user keys](https://ansible-tower.princeton.edu/#/templates/job_template/17/details) template in [Ansible Tower](https://ansible-tower.princeton.edu/).
 
