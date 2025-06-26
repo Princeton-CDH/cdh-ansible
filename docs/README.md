@@ -46,7 +46,7 @@ This step makes Ansible Tower to deploy your SSH key to the specific server you 
 ### Step 4: Verify your access to the CDH server
 
 1. Open your terminal
-2. SSH to the host (e.g., ssh [pulsys@cdh-test-web1.princeton.edu](mailto:pulsys@cdh-test-web1.princeton.edu))
+2. SSH to the host (e.g., `ssh pulsys@cdh-test-web1.princeton.edu`)
 3. Confirm you can successfully log in
 
 Note: The `pulsys` account has full `sudo` permissions. For running applications, we use a non-privileged deploy account called `conan`. To switch to the conan account while logged in as pulsys, simply type `conan` shortcut at the command prompt.
