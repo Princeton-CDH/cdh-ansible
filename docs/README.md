@@ -27,9 +27,11 @@ To update SSH keys on a specific server (such as a new VM), use the [Update puls
 
 ### Step 2: Update SSH key
 
-Check [https://github.com/example_user.keys](https://github.com/example_user.keys) to see available public keys. If the page is empty, you need to [add an SSH key to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent).
+Check [https://github.com/example_user.keys](https://github.com/example_user.keys) to see available public keys. 
 
-After adding the SSH key, refresh the page to verify it appears.
+If the page is empty, you need to [generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent). Make sure you complete both steps: "Generating a new SSH key" and "Adding your SSH key to the ssh-agent".
+
+After adding the SSH key, refresh your Github public key page to verify it appears.
 
 ### Step 3: Princeton Ansible Tower
 
@@ -37,7 +39,8 @@ After adding the SSH key, refresh the page to verify it appears.
 2. Go to 'templates' on the side bar
 3. Find the Job template 'Update pulsys user keys'
 4. Click 'launch' to open the dialog box to configure how to run the template
-5. In the `limit` field, specify the hostname you need access to (e.g., '[cdh-web3.princeton.edu](http://cdh-web3.princeton.edu/)'). Find hostnames in the [CDH ansible host doc](https://github.com/Princeton-CDH/cdh-ansible/blob/main/inventory/all_hosts).
+5. In the `limit` field, specify the hostname you need access to (e.g., '[cdh-web3.princeton.edu](http://cdh-web3.princeton.edu/)'). 
+    Find hostnames in the [CDH ansible host doc](https://github.com/Princeton-CDH/cdh-ansible/blob/main/inventory/all_hosts). Pay attention to group names (e.g. cdhweb_staging, cdhweb_production), which specify staging vs production servers. Choose the appropriate host based on your environment needs.
 6. Keep all other fields at their default values
 7. Click 'launch'
 
@@ -45,8 +48,32 @@ This step makes Ansible Tower to deploy your SSH key to the specific server you 
 
 ### Step 4: Verify your access to the CDH server
 
-1. Open your terminal
-2. SSH to the host (e.g., `ssh pulsys@cdh-test-web1.princeton.edu`)
-3. Confirm you can successfully log in
+1. Open your terminal.
+2. SSH to the host you just updated access to (e.g., `ssh pulsys@cdh-test-web1.princeton.edu`).
+3. Confirm you can successfully log in.
+    - If the login works without a password prompt, your key was successfully installed.
 
-Note: The `pulsys` account has full `sudo` permissions. For running applications, we use a non-privileged deploy account called `conan`. To switch to the conan account while logged in as pulsys, simply type `conan` shortcut at the command prompt.
+Note: The `pulsys` account has full `sudo` permissions. For running applications, we use a non-privileged deploy account called `conan`. To switch to the conan account while logged in as pulsys, simply type `conan` at the command prompt.
+
+### Troubleshooting Tips
+- If you're prompted for a password, it usually means your SSH key wasn’t correctly loaded.
+- You can run `ssh -v [hostname]` (e.g., `ssh -v pulsys@cdh-test-web1.princeton.edu`) to see what keys your SSH client is trying — look for lines like: `debug1: Offering public key: /Users/you/.ssh/id_ed25519`.
+- If no key is offered, your SSH key might not be loaded into your SSH agent. Check by running `ssh-add -l` in the terminal.
+    - It should output your SSH key (e.g., `2048 SHA256:xyz... /Users/you/.ssh/id_ed25519 (ED25519)`).
+    - If it says `The agent has no identities`, it means your key is not loaded. Load it with `ssh-add ~/.ssh/id_ed25519`.
+
+### (Optional) Automatically load key on login (macOS)
+To avoid adding your key manually every time:
+- To always use the pulsys account and the appropriate SSH key, add the following snippet to your `~/.ssh/config` (create it if it doesn’t exist: `nano ~/.ssh/config`):
+    ```
+    Host [hostname] (e.g., cdh-web3.princeton.edu)
+        User pulsys
+        IdentityFile ~/.ssh/id_ed25519
+        IdentitiesOnly yes
+    ```
+
+
+
+
+
+
