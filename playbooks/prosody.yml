@@ -24,7 +24,6 @@
     - postgresql
     - passenger
     - build_npm
-    - build_semantic
     - run_webpack   # dependency for collectstatic
     - configure_logging # logging directory must exist before running django commands
     - django
