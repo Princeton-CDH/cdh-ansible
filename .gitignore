@@ -11,6 +11,7 @@
 
 # ignore roles installed from ansible galaxy
 roles/geerlingguy.supervisor
+.ansible/roles
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
