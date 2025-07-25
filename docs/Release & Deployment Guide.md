@@ -21,22 +21,22 @@
 
 ---
 
-## **2. Create the Release Branch (Git-flow)**
+## **2. Create the Release Branch with Git-flow** \[ ]
 
-* [ ] Switch to the `develop` branch.
-* [ ] Initialize Git-flow (if not already set up):
+1. Switch to the `develop` branch.
+2. Initialize Git-flow (if not already set up):
 
   ```bash
   git flow init
   ```
-* [ ] Start the release branch (replace `3.15` with your version):
+3. Start the release branch (replace `3.15` with your version):
 
   ```bash
   git flow release start 3.15
   ```
   > **Why?** Git-flow automatically creates `release/3.15` from `develop`. This branch is for final fixes (version bumps, changelog updates, small bug fixes).
 
-* [ ] It's wise to publish the release branch so others can contribute:
+4. It's wise to publish the release branch so others can contribute:
 
   ```bash
   git flow release publish 3.15
@@ -79,7 +79,7 @@
 
 ---
 
-## **4. Deploy Release Branch to Staging**
+## **4. Deploy Release Branch to Staging** \[ ]
 
 1. Go to [Princeton Ansible Tower](https://ansible-tower.princeton.edu/#/home).
 2. Navigate to **Templates** (sidebar).
@@ -95,49 +95,51 @@
 
 ---
 
-## **5. Acceptance Testing**
+## **5. Acceptance Testing** \[ ]
 
-* [ ] In the issue, add a **Testing Instructions** section as checkboxes (what to test, pass criteria, etc.).
-* [ ] Add the **`awaiting testing`** label to relevant GitHub issues (triggers Slack notification).
-* [ ] In the project **Slack channel** (not DM), `@mention` the reviewer and link to the issues.
+1. In the issue, add a **Testing Instructions** section as checkboxes (what to test, pass criteria, etc.).
+2. Add the **`awaiting testing`** label to relevant GitHub issues (triggers Slack notification).
+3. In the project **Slack channel** (not DM), `@mention` the reviewer and link to the issues.
   Include a testing deadline.
-* [ ] Wait for testing confirmation. If passed, proceed.
+4. Wait for testing confirmation. If passed, proceed.
 
 ---
 
-## **6. Finish the Release (Git-flow)**
+## **6. Finish the Release with Git-flow** \[ ]
 
-* [ ] Finish the release:
+1. Finish the release:
 
-  ```bash
-  git flow release finish 3.15
-  ```
+    ```bash
+    git flow release finish 3.15
+    ```
 
-  Git-flow will:
+    > Git-flow will:
+    >
+    > * Merge `release/3.15` into both `main` and `develop`
+    > * Tag the release
+    > * Delete the release branch (locally)
 
-  * Merge `release/3.15` into both `main` and `develop`
-  * Tag the release
-  * Delete the release branch (locally)
+2. During this process, **Vim will open twice**:
 
-* [ ] During this process, **Vim will open twice**:
+    * **Merge message:** Can just copy-paste from `CHANGELOG`.
+    * **Tag message:** Enter `Release 3.15`.
 
-  * **Merge message:** Can just copy-paste from `CHANGELOG`.
-  * **Tag message:** Enter `Release 3.15`.
+    > Both messages are required: forgetting to add will cause the command to abort
 
-    Both messages are required: forgetting to add will cause the command to abort
+3. Remember to push tags to remote (Git-flow does not do this automatically):
 
-* [ ] Remember to push tags to remote (Git-flow does not do this automatically):
+    ```bash
+    git push origin main develop
+    git push origin --tags
+    ```
 
-  ```bash
-  git push origin main develop
-  git push origin --tags
-  ```
-
-  > Hint: You can check local tags with `git tag`.
+    > Hint: You can check local tags with `git tag`.
 
 ---
 
-## **7. Deploy Main to Production**
+## **7. Deploy Main to Production** \[ ]
+
+> **Note:** We don't do deployment Friday afternoon.
 
 1. Go to [Princeton Ansible Tower](https://ansible-tower.princeton.edu/#/home).
 2. Navigate to **Templates**.
