@@ -78,7 +78,7 @@
 
 ---
 
-## **4. Deploy Release Branch to Staging**
+## **4. Deploy Release Branch to Staging with Ansible**
 
 1. Go to [Princeton Ansible Tower](https://ansible-tower.princeton.edu/#/home).
 2. Navigate to **Templates** (sidebar).
@@ -136,7 +136,7 @@
 
 ---
 
-## **7. Deploy Main to Production**
+## **7. Deploy Main to Production with Ansible**
 
 > **Note:** We don't do deployment Friday afternoon.
 
