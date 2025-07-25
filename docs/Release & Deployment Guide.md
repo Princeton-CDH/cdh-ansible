@@ -14,33 +14,32 @@
 
 ## **1. Prep Work**
 
-* [ ] Open a new issue using the **`Software release checklist`** template. Title it:
-  *“Software release checklist for v3.15.”*
+* [ ] Open a new issue using the **`Software release checklist`** template. Title it with version number (e.g. “Software release checklist for v3.15.”)
 * [ ] Confirm all required **feature branches are merged into `develop`**.
 * [ ] Pull the latest code and verify `develop` and `main` are up to date.
 
 ---
 
-## **2. Create the Release Branch with Git-flow** \[ ]
+## **2. Create the Release Branch with Git-flow**
 
 1. Switch to the `develop` branch.
 2. Initialize Git-flow (if not already set up):
-
-  ```bash
-  git flow init
-  ```
+   
+   ```bash
+   git flow init
+   ```
 3. Start the release branch (replace `3.15` with your version):
 
-  ```bash
-  git flow release start 3.15
-  ```
-  > **Why?** Git-flow automatically creates `release/3.15` from `develop`. This branch is for final fixes (version bumps, changelog updates, small bug fixes).
+   ```bash
+   git flow release start 3.15
+   ```
+   > **Why?** Git-flow automatically creates `release/3.15` from `develop`. This branch is for final fixes (version bumps, changelog updates, small bug fixes).
 
 4. It's wise to publish the release branch so others can contribute:
 
-  ```bash
-  git flow release publish 3.15
-  ```
+   ```bash
+   git flow release publish 3.15
+   ```
 
 
 
@@ -79,7 +78,7 @@
 
 ---
 
-## **4. Deploy Release Branch to Staging** \[ ]
+## **4. Deploy Release Branch to Staging**
 
 1. Go to [Princeton Ansible Tower](https://ansible-tower.princeton.edu/#/home).
 2. Navigate to **Templates** (sidebar).
@@ -91,11 +90,11 @@
     3. Enter your release branch name (e.g., `release/3.15`).
     4. Go to **Next**, preview, and **Launch**.
 
-> **Result:** Your release branch is deployed to staging.
+> **Result:** Your release branch is deployed to staging and ready for acceptance testing.
 
 ---
 
-## **5. Acceptance Testing** \[ ]
+## **5. Acceptance Testing**
 
 1. In the issue, add a **Testing Instructions** section as checkboxes (what to test, pass criteria, etc.).
 2. Add the **`awaiting testing`** label to relevant GitHub issues (triggers Slack notification).
@@ -105,7 +104,7 @@
 
 ---
 
-## **6. Finish the Release with Git-flow** \[ ]
+## **6. Finish the Release with Git-flow**
 
 1. Finish the release:
 
@@ -137,7 +136,7 @@
 
 ---
 
-## **7. Deploy Main to Production** \[ ]
+## **7. Deploy Main to Production**
 
 > **Note:** We don't do deployment Friday afternoon.
 
