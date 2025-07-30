@@ -43,6 +43,7 @@
         path: "{{ media_root }}"
         dest: "{{ media_backup_path }}"
         owner: "{{ deploy_user }}"
+        mode: "0644"
       become: true
       become_user: "{{ deploy_user }}"
       when: media_files.matched|int != 0
