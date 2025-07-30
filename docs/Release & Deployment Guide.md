@@ -90,7 +90,7 @@
     3. Enter your release branch name (e.g., `release/3.15`).
     4. Go to **Next**, preview, and **Launch**.
 
-5. Check `DEPLOYNOTES` to see if there's any commands you need to manually run on sever.
+5. Check `DEPLOYNOTES` to see if there's any commands you need to manually run on server.
 
     - Find server hostnames in the [CDH ansible host doc](https://github.com/Princeton-CDH/cdh-ansible/blob/main/inventory/all_hosts). Pay attention to group names (e.g. cdhweb_staging, cdhweb_production), which specify staging vs production servers.
 
