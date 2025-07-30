@@ -26,3 +26,10 @@
         owner: "{{ application_dbuser_name }}"
         state: "dump"
         target: "{{ db_backup_path }}"
+    
+    - name: Explictly set read permissions on database dump for cross-user access
+      become: true
+      become_user: "{{ deploy_user }}"
+      ansible.builtin.file:
+        path: "{{ db_backup_path }}"
+        mode: 0644
