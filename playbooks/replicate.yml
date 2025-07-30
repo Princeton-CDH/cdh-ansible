@@ -43,16 +43,16 @@
         path: "{{ media_root }}"
         dest: "{{ media_backup_path }}"
         owner: "{{ deploy_user }}"
-        mode: 0644
+        mode: "0644"
       become: true
       become_user: "{{ deploy_user }}"
       when: media_files.matched|int != 0
 
-    - name: Explicitly set read permissions on database dump for cross-user access
+    - name: Set read permissions on database dump for cross-user access
       run_once: true
       ansible.builtin.file:
         path: "{{ db_backup_path }}"
-        mode: 0644
+        mode: "0644"
       become: true
       become_user: "{{ deploy_user }}"
 
