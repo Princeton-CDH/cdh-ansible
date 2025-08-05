@@ -116,3 +116,4 @@ venv.bak/
 
 # editor configs
 .vscode
+/.ansible

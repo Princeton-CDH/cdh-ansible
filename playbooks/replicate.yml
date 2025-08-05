@@ -118,6 +118,17 @@
         become_user: "{{ deploy_user }}"
         when: media_backup.stat.exists == true
 
+      - name: Set cross-user read permissions on synced backup files
+        ansible.builtin.file:
+          path: "{{ item }}"
+          mode: "0644"
+        become: true
+        become_user: "{{ deploy_user }}"
+        loop:
+          - "{{ dest_backup_path }}"
+          - "{{ dest_media_backup_path }}"
+        when: item is defined
+
       - name: Calculate unzipped db backup path based on backup path
         set_fact:
           dest_backup_path_unzipped:  "{{ dest_backup_path | replace('.bz2', '') }}"
