@@ -85,7 +85,7 @@ This guide is designed as a complete reference for developers who need to releas
 
 5. Check `DEPLOYNOTES` to see if there's any commands you need to manually run on server.
 
-    - Find server hostnames in the [`all_hosts`](../inventory/all_hosts) inventory file. Look for **staging** group names (e.g., `cdhweb_staging`, `geniza_staging`, `prosody_staging`) to identify the correct staging servers.
+    - Find server hostnames in the [`all_hosts`](../inventory/all_hosts) inventory file. Look for **staging** group names (e.g., `cdhweb_staging`, `geniza_staging`, `prosody_staging`) to identify the correct staging servers. Typically we have two VMs for each application in each environment.
 
 **✅ Result:** Your release branch is deployed to staging and ready for acceptance testing.
 
@@ -152,7 +152,7 @@ This guide is designed as a complete reference for developers who need to releas
 
 5. Check `DEPLOYNOTES` to see if there's any commands you need to manually run on server.
 
-    - Find server hostnames in the [`all_hosts`](../inventory/all_hosts) inventory file. Look for **production** group names (e.g., `cdhweb_production`, `geniza_production`, `prosody_production`) to identify the correct production servers.
+    - Find server hostnames in the [`all_hosts`](../inventory/all_hosts) inventory file. Look for **production** group names (e.g., `cdhweb_production`, `geniza_production`, `prosody_production`) to identify the correct production servers. Typically we have two VMs for each application in each environment.
 
 
 **🎉 Result:** Main is deployed to production!
