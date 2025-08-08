@@ -147,7 +147,7 @@ This guide is designed as a complete reference for developers who need to releas
 5. On the template page, click the **Launch** button, then:
 
     1. On the first page ("Credentials") and the second page ("Other prompts"), simply click "Next" without making any changes—use the default settings.
-    2. On the third page ("Survey"), select **produnction** as the environment, and enter **main** as the release branch name.
+    2. On the third page ("Survey"), select **production** as the environment, and enter **main** as the release branch name.
     3. On the fourth page ("Preview"), review your selections and then click **Launch** to start the deployment.
 
 5. Check `DEPLOYNOTES` to see if there's any commands you need to manually run on server.
