@@ -1,0 +1,6 @@
+---
+# Default number of deploy directories to keep
+deploy_keep_count: 3
+
+# Whether to automatically clean up old deploys after deployment
+auto_cleanup_deploys: true
