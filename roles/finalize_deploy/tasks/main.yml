@@ -76,5 +76,11 @@
       when:
         - "'passenger' in ansible_role_names"
 
+    - name: Trigger cleanup of old deploys (async)
+      include_tasks: roles/cleanup_deploys/tasks/main.yml
+      async: 300          # wait up to 5 minutes
+      poll: 0            # disable polling since we have logging in cleanup_deploys
+      when: auto_cleanup_deploys
+
   rescue:
     - include_tasks: roles/create_deployment/tasks/fail.yml
