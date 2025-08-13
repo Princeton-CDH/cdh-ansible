@@ -13,7 +13,6 @@
     - geerlingguy.supervisor
     - configure_logging
     - finalize_deploy
-    - cleanup_deploys
     - close_deployment
   post_tasks:
     - name: Use supervisorctl to restart application

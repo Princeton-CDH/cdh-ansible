@@ -30,5 +30,4 @@
     - solr_collection
     - configure_crontab
     - finalize_deploy
-    - cleanup_deploys
     - close_deployment

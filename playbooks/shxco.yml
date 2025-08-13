@@ -28,7 +28,6 @@
     - django
     - solr_collection
     - finalize_deploy
-    - cleanup_deploys
     - configure_crontab  # used in production but not always in staging
     - close_deployment
   tasks:
