@@ -19,6 +19,7 @@
       tags:
         - supervisor
     - finalize_deploy
+    - cleanup_deploys
   tasks:
     - ansible.builtin.include_role: # use PUL ansible role to install local redis instance
         name: pulibrary.princeton_ansible.redis
