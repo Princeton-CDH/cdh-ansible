@@ -16,6 +16,8 @@
   connection: ssh
   remote_user: pulsys
   become: true
+  vars_files:
+    - ../inventory/group_vars/prosody_{{ runtime_env | default('staging') }}/vars.yml
   roles:
     - create_deployment
     - deploy_user
