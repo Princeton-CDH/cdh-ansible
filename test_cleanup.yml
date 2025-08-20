@@ -30,58 +30,58 @@
   tasks:
 
     - name: "Create test directory"
-      file:
+      ansible.builtin.file:
         path: "{{ test_dir }}"
         state: directory
 
     - name: "Create fake deployments"
-      file:
+      ansible.builtin.file:
         path: "{{ test_dir }}/{{ item }}"
         state: directory
       loop: "{{ fake_deployments }}"
 
     - name: "Create current symlink"
-      file:
+      ansible.builtin.file:
         src: "{{ test_dir }}/{{ fake_deployments[-1] }}"
         dest: "{{ test_dir }}/current"
         state: link
 
     - name: "Create previous symlink"
-      file:
+      ansible.builtin.file:
         src: "{{ test_dir }}/{{ fake_deployments[-2] }}"
         dest: "{{ test_dir }}/previous"
         state: link
 
     - name: "Gather what we created"
-      shell: "ls -la {{ test_dir }}/"
+      ansible.builtin.shell: "ls -la {{ test_dir }}/"
       register: before
 
     - name: "Show what we created"
-      debug:
+      ansible.builtin.debug:
         msg: "{{ before.stdout_lines }}"
 
     - name: "Run the actual cleanup"
-      include_tasks: roles/cleanup_deploys/tasks/main.yml
+      ansible.builtin.include_tasks: roles/cleanup_deploys/tasks/main.yml
       vars:
         install_root: "{{ test_dir }}"
 
     - name: "Check the result: Gather what's left"
-      shell: "ls -la {{ test_dir }}/"
+      ansible.builtin.shell: "ls -la {{ test_dir }}/"
       register: after
 
     - name: "Check the result: Show what's left"
-      debug:
+      ansible.builtin.debug:
         msg: "{{ after.stdout_lines }}"
 
     - name: "Gather remaining deployments"
-      find:
+      ansible.builtin.find:
         paths: "{{ test_dir }}"
         file_type: directory
         patterns: ["[0-9]*.[0-9]*.[0-9]*-*"]
       register: remaining
 
     - name: "Check results - check that we kept the right number of deployments"
-      assert:
+      ansible.builtin.assert:
         that:
           - remaining.files | length <= deploy_keep_count | int + 2
           - remaining.files | length >= deploy_keep_count | int
@@ -89,17 +89,17 @@
         fail_msg: "Test failed! Expected to keep around {{ deploy_keep_count | int + 2 }} deployments, but found {{ remaining.files | length }}"
 
     - name: "Verify symlinks still work"
-      stat:
+      ansible.builtin.stat:
         path: "{{ test_dir }}/{{ item }}"
       loop: [current, previous]
 
     - name: "Success!"
-      debug:
+      ansible.builtin.debug:
         msg: "✅ All tests passed!"
           
 
     - name: "Clean up - Remove test directory"
-      file:
+      ansible.builtin.file:
         path: "{{ test_dir }}"
         state: absent
       tags: always
