@@ -1,20 +1,42 @@
+# molecule/default/molecule.yml
 ---
-dependency:   # no dependencies on other roles, so we turn this off
-  name: galaxy
-  enabled: false
+scenario:
+  name: default
+
 driver:
   name: docker
-platforms:    # use PUL's provided docker base image with ubuntu
+
+platforms:
   - name: instance
-    image: "pulibrary/puldocker-${MOLECULE_DISTRO:-ubuntu1804}-ansible:latest"
+    image: "ghcr.io/pulibrary/pul_containers:jammy_multi"
+    command: "/lib/systemd/systemd"
     privileged: true
+    cgroupns_mode: host
+    tmpfs:
+      - /run
+      - /run/lock
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    environment:
+      container: docker
     pre_build_image: true
+
 provisioner:
   name: ansible
-  log: true   # useful when testing; otherwise logs aren't shown
+  log: true
+  env:
+    ANSIBLE_STDOUT_CALLBACK: yaml
+    ANSIBLE_CALLBACKS_ENABLED: profile_tasks,profile_roles,timer
+    ANSIBLE_FORCE_COLOR: "true"
+    ANSIBLE_VERBOSITY: "2"
+  config_options:
+    defaults:
+      roles_path: "$MOLECULE_PROJECT_DIRECTORY/.."
+
 verifier:
   name: ansible
-lint: |       # standard config taken from molecule docs
+
+lint: |
   set -e
   yamllint .
   ansible-lint
