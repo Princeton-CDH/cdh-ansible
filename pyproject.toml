@@ -9,9 +9,10 @@ dependencies = [
     "yamllint",
     "pre-commit",
     "psycopg2",
-    "molecule[docker]>=25.7.0",
+    "molecule>=25.7.0",
     "docker>=7.1.0",
     "ansible-dev-tools>=25.8.3",
+    "molecule-plugins[docker]>=25.8.12",
 ]
 
 [dependency-groups]
