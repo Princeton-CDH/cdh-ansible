@@ -10,12 +10,12 @@
         name: conan
       register: user_info
 
-    - name: Uuser account should be set up correctly
+    - name: User account should be set up correctly
       ansible.builtin.assert:
         that:
           - user_info.name == "conan"
           - user_info.home == "/home/conan"
-          - not user_info.changed
+          - user_info.changed == false
 
     - name: Get deploy group info
       ansible.builtin.group:
