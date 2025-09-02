@@ -15,16 +15,10 @@ jobs:
           # - prosody_setup
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.9
-      - name: Install uv
-        uses: yezz123/setup-uv@v4
-        with:
-          uv-version: 'latest'
+      - name: Install uv    # includes python setup
+        uses: astral-sh/setup-uv@v6
       - name: Install dependencies
-        run: uv pip install -r requirements.txt
+        run: uv sync
       - name: Create unencrypted ssh key for testing deploy user
         run: |
           rm -f roles/deploy_user/files/id_rsa*
