@@ -11,6 +11,7 @@ dependencies = [
     "psycopg2",
     "molecule[docker]>=25.7.0",
     "docker>=7.1.0",
+    "ansible-dev-tools>=25.8.3",
 ]
 
 [dependency-groups]
