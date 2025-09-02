@@ -25,5 +25,5 @@ jobs:
           ssh-keygen -f roles/deploy_user/files/id_rsa -N ""
 
       - name: Test with molecule
-        run: cd roles/${{ matrix.role }} && molecule test
+        run: cd roles/${{ matrix.role }} && uv run molecule test
         # not using working-directory because it does not support expressions
