@@ -10,7 +10,7 @@
   become_user: "{{ deploy_user }}"
   block:
     - name: Create "next" symlink for any final steps before switching live
-      file:
+      ansible.builtin.file:
         src: "{{ deploy }}"
         dest: "{{ install_root }}/next"
         state: link
@@ -26,7 +26,7 @@
         - final-pause
 
     - name: Remove "next" symlink
-      file:
+      ansible.builtin.file:
         dest: "{{ install_root }}/next"
         state: absent
       tags:
@@ -34,23 +34,23 @@
         - final-pause
 
     - name: Check for "current" symlink; if present, save path
-      stat:
+      ansible.builtin.stat:
         path: "{{ install_root }}/current"
       register: previous
 
     - name: Set current symlink
-      file:
+      ansible.builtin.file:
         src: "{{ deploy }}"
         dest: "{{ install_root }}/current"
         state: link
 
     - name: Create "current" symlink for new deploy
-      stat:
+      ansible.builtin.stat:
         path: "{{ install_root }}/current"
       register: current
 
     - name: If deploy path differs from last "current", update "previous" symlink
-      file:
+      ansible.builtin.file:
         src: "{{ previous.stat.lnk_target }}"
         dest: "{{ install_root }}/previous"
         state: link
@@ -59,7 +59,7 @@
         previous.stat.lnk_source != current.stat.lnk_source
 
     - name: Register there is now a previous symlink
-      stat:
+      ansible.builtin.stat:
         path: "{{ install_root }}/previous"
       register: previous
 
@@ -67,20 +67,15 @@
     # and /var, so we need to be root
     - name: Update /var/www/ symlink to make the new version live
       become_user: root
-      file:
+      ansible.builtin.file:
         src: "{{ deploy }}"
         dest: "/var/www/{{ symlink }}"
         state: link
       notify:
         - Restart nginx
+        - Cleanup old deployments
       when:
         - "'passenger' in ansible_role_names"
 
-    - name: Trigger cleanup of old deploys (async)
-      include_tasks: roles/cleanup_deploys/tasks/main.yml
-      async: 300          # wait up to 5 minutes
-      poll: 0            # disable polling since we have logging in cleanup_deploys
-      when: auto_cleanup_deploys
-
   rescue:
-    - include_tasks: roles/create_deployment/tasks/fail.yml
+    - ansible.builtin.include_tasks: roles/create_deployment/tasks/fail.yml
