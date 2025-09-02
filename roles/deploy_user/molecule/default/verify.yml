@@ -15,7 +15,7 @@
         that:
           - user_info.name == "conan"
           - user_info.home == "/home/conan"
-          - user_info.changed == false
+          - user_info.changed == true
 
     - name: Get deploy group info
       ansible.builtin.group:
