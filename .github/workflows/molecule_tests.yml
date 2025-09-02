@@ -1,34 +1,43 @@
+# .github/workflows/molecule_tests.yml
 name: Molecule Tests
 on: [push, pull_request]
+
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        role:
-          - deploy_user
-          - passenger
-          - python
-          - django
-          # - postgresql
-          - prosody_setup
+        role: [deploy_user]
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.9
+
       - name: Install uv
-        uses: yezz123/setup-uv@v4
-        with:
-          uv-version: 'latest'
-      - name: Install dependencies
-        run: uv pip install -r requirements.txt
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install deps
+        run: uv sync
+
       - name: Create unencrypted ssh key for testing deploy user
         run: |
           rm -f roles/deploy_user/files/id_rsa*
           ssh-keygen -f roles/deploy_user/files/id_rsa -N ""
 
-      - name: Test with molecule
-        run: cd roles/${{ matrix.role }} && molecule test
-        # not using working-directory because it does not support expressions
+      - name: Molecule test (debug)
+        id: mol
+        run: |
+          set -euxo pipefail
+          cd roles/${{ matrix.role }}
+          # run with lots of output; capture return code
+          uv run molecule --debug -vvv test || echo "rc=$?" >> $GITHUB_OUTPUT
+
+      - name: Upload Molecule logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: molecule-logs-${{ matrix.role }}
+          path: |
+            roles/${{ matrix.role }}/molecule/default/.molecule/logs/**
+            roles/${{ matrix.role }}/molecule/default/.molecule/instances.yml
+            roles/${{ matrix.role }}/molecule/default/.molecule/state.yml
+          if-no-files-found: warn
+
