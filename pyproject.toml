@@ -9,6 +9,7 @@ dependencies = [
     "yamllint",
     "pre-commit",
     "psycopg2",
+    "molecule>=25.7.0",
 ]
 
 [dependency-groups]
