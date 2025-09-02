@@ -1,0 +1,48 @@
+---
+- name: Prepare test environment
+  hosts: all
+  gather_facts: true
+  vars:
+    test_dir: "/tmp/ansible_cleanup_test_{{ ansible_date_time.epoch }}"
+    deploy_user: "{{ ansible_user_id }}"
+    
+    # These are our fake deployment versions (oldest to newest)
+    fake_deployments:
+      - "2.1.0-old1"
+      - "2.2.0-old2" 
+      - "2.3.0-old3"
+      - "3.0.0-keep1"
+      - "3.1.0-keep2"
+      - "3.2.0-keep3"
+      - "4.0.0-previous"
+      - "4.1.0-current"
+
+  tasks:
+    - name: "Create test directory"
+      ansible.builtin.file:
+        path: "{{ test_dir }}"
+        state: directory
+
+    - name: "Create fake deployments"
+      ansible.builtin.file:
+        path: "{{ test_dir }}/{{ item }}"
+        state: directory
+      loop: "{{ fake_deployments }}"
+
+    - name: "Create current symlink"
+      ansible.builtin.file:
+        src: "{{ test_dir }}/{{ fake_deployments[-1] }}"
+        dest: "{{ test_dir }}/current"
+        state: link
+
+    - name: "Create previous symlink"
+      ansible.builtin.file:
+        src: "{{ test_dir }}/{{ fake_deployments[-2] }}"
+        dest: "{{ test_dir }}/previous"
+        state: link
+
+    - name: "Set test variables for converge"
+      ansible.builtin.set_fact:
+        install_root: "{{ test_dir }}"
+        deploy_keep_count: 3
+        auto_cleanup_deploys: true

@@ -1,0 +1,31 @@
+---
+scenario:
+  name: cleanup_disabled
+  test_sequence:
+    - dependency
+    - create
+    - prepare
+    - converge
+    - verify
+    - destroy
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: quay.io/pulibrary/jammy-ansible:latest
+    pre_build_image: true
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      host_key_checking: false
+  inventory:
+    host_vars:
+      instance:
+        deploy_keep_count: 3
+        auto_cleanup_deploys: false
+        deploy_user: root
+verifier:
+  name: ansible
