@@ -1,7 +1,7 @@
 [project]
 name = ""
 version = "0.0.1"
-requires-python = "~=3.12"
+requires-python = ">=3.12"
 dependencies = [
     "ansible>=6.7",
     "ansible-lint",
@@ -9,7 +9,8 @@ dependencies = [
     "yamllint",
     "pre-commit",
     "psycopg2",
-    "molecule>=25.7.0",
+    "molecule[docker]>=25.7.0",
+    "docker>=7.1.0",
 ]
 
 [dependency-groups]
