@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        role: [deploy_user]
+        role: [deploy_user, finalize_deploy]
     steps:
       - uses: actions/checkout@v4
 
@@ -18,6 +18,7 @@ jobs:
         run: uv sync
 
       - name: Create unencrypted ssh key for testing deploy user
+        if: matrix.role == 'deploy_user'
         run: |
           rm -f roles/deploy_user/files/id_rsa*
           ssh-keygen -f roles/deploy_user/files/id_rsa -N ""
