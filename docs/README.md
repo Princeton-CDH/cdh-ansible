@@ -5,6 +5,10 @@
 - [Prodigy](applications/prodigy.md)
 - [Princeton Geniza Project](applications/geniza.md)
 
+## Deployment and Infrastructure
+
+- [Release and Deployment Guide](release-and-deployment-guide.md) - Complete workflow for releasing and deploying CDH applications using Ansible
+
 ## General
 
 CDH ansibilized applications are deployed to virtual servers managed by PUL.
