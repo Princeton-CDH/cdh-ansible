@@ -17,8 +17,8 @@
     # Protect these two directories from deletion for rollback capability, even if they're old
     - name: Get current and previous symlink targets
       ansible.builtin.stat:
-        path: "{{ install_root }}/{{ item }}"   # Check /srv/www/app/current and /srv/www/app/previous
-      loop: [current, previous]
+        path: "{{ install_root }}/{{ item }}"
+      loop: [current, previous] # Check /srv/www/app/current and /srv/www/app/previous
       register: symlink_stats
 
     - name: Build protected directories list that must not be deleted (current and previous symlinks)
@@ -48,5 +48,5 @@
 
   rescue:
     # If any step fails, trigger deployment failure handling
-    - ansible.builtin.include_tasks: roles/create_deployment/tasks/fail.yml
+    - ansible.builtin.include_tasks: "{{ playbook_dir }}/../../../../roles/create_deployment/tasks/fail.yml"
   

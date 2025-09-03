@@ -1,6 +1,6 @@
 ###
 # This role runs all of the tasks needed to make the new code live,
-# with a handler to restart nginx and cleanup old deployments.
+# with handlers to restart nginx and cleanup old deployments.
 
 # It assumes the standard configuration /srv/www symlinks to /var/www
 # used in CDH Django projects.
@@ -65,17 +65,19 @@
 
     # On Ubuntu we need to do this with an account that can access both /srv
     # and /var, so we need to be root
+    # Update symlink and restart nginx when passenger is present
     - name: Update /var/www/ symlink to make the new version live
       become_user: root
       ansible.builtin.file:
         src: "{{ deploy }}"
         dest: "/var/www/{{ symlink }}"
         state: link
-      notify:
+      notify: 
         - Restart nginx
         - Cleanup old deployments
-      when:
+      when: 
         - "'passenger' in ansible_role_names"
+        - auto_cleanup_deploys
 
   rescue:
     - ansible.builtin.include_tasks: roles/create_deployment/tasks/fail.yml

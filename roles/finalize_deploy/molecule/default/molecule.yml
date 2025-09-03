@@ -3,15 +3,15 @@
 scenario:
   name: default
   test_sequence:
-    # 1. create: Start Docker container for testing
+    # 1. Start Docker container for testing
     - create
-    # 2. prepare: Set up test environment (create fake deployments)
+    # 2. Set up test environment (create fake deployments)
     - prepare
-    # 3. converge: Run the actual finalize_deploy role
+    # 3. Run the actual finalize_deploy role
     - converge
-    # 4. verify: Check that cleanup worked correctly
+    # 4. Check that cleanup worked correctly
     - verify
-    # 5. destroy: Clean up Docker container
+    # 5. Clean up Docker container
     - destroy
 # Use Docker to create test containers
 driver:
@@ -20,22 +20,40 @@ driver:
 # Define the test environment
 platforms:
   - name: instance
-    image: quay.io/pulibrary/jammy-ansible:latest
+    image: "ghcr.io/pulibrary/pul_containers:jammy_multi"
+    command: "/lib/systemd/systemd"
+    privileged: true
+    cgroupns_mode: host
+    tmpfs:
+      - /run
+      - /run/lock
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    environment:
+      container: docker
     pre_build_image: true
 
 # Configure how ansible runs our tests
 provisioner:
   name: ansible
+  log: true
+  env:
+    ANSIBLE_STDOUT_CALLBACK: yaml
+    ANSIBLE_CALLBACKS_ENABLED: profile_tasks,profile_roles,timer
+    ANSIBLE_FORCE_COLOR: "true"
+    ANSIBLE_VERBOSITY: "2"
   config_options:
     defaults:
-      host_key_checking: false
+      roles_path: "$MOLECULE_PROJECT_DIRECTORY/.."
+      allow_world_readable_tmpfiles: true
   inventory:
     host_vars:
       instance:
+        install_root: "/tmp/ansible_cleanup_test"  # Test directory for deployments
         deploy_keep_count: 3                # Keep 3 recent deployments
         auto_cleanup_deploys: true          # Enable cleanup functionality
         deploy_user: root                   # Run as root in test container
 
-# Use ansible for verification tests
+# Use ansible verifier for verification tests
 verifier:
   name: ansible

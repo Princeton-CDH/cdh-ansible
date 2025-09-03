@@ -1,0 +1,7 @@
+---
+# variables for molecule testing
+app_name: molecule_test
+ansible_user: root
+deploy_user: conan
+deploy: "{{ install_root }}/4.1.0-current"
+symlink: "test_app"

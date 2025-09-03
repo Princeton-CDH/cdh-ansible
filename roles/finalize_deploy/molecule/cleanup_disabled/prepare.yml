@@ -3,7 +3,7 @@
   hosts: all
   gather_facts: true
   vars:
-    test_dir: "/tmp/ansible_cleanup_test_{{ ansible_date_time.epoch }}"
+    test_dir: "/tmp/ansible_cleanup_test"
     
     # These deployments should all remain after the test
     fake_deployments:

@@ -29,9 +29,11 @@ provisioner:
   config_options:
     defaults:
       host_key_checking: false
+      roles_path: "$MOLECULE_PROJECT_DIRECTORY/.."
   inventory:
     host_vars:
       instance:
+        install_root: "/tmp/ansible_cleanup_test"  # Test directory for deployments
         deploy_keep_count: 3                # This value doesn't matter since cleanup is disabled
         auto_cleanup_deploys: false         # DISABLE cleanup functionality (key difference!)
         deploy_user: root                   # Run as root in test container

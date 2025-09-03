@@ -1,10 +1,12 @@
 ---
-- name: Converge cleanup_disabled scenario
+- name: Converge
   hosts: all
+  vars_files: ../../defaults/test.yml
   tasks:
+    - name: "Include deploy_user role"
+      ansible.builtin.include_role:
+        name: deploy_user
+    
     - name: "Include finalize_deploy role"
       ansible.builtin.include_role:
         name: finalize_deploy
-      vars:
-        deploy: "{{ install_root }}/4.1.0-current"
-        symlink: "test_app"

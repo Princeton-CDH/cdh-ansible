@@ -3,8 +3,7 @@
   hosts: all
   gather_facts: true
   vars:
-    # Create unique test directory using timestamp to avoid conflicts
-    test_dir: "/tmp/ansible_cleanup_test_{{ ansible_date_time.epoch }}"
+    test_dir: "/tmp/ansible_cleanup_test"
     deploy_user: "{{ ansible_user_id }}"
     
     # Create 8 fake deployment directories (oldest to newest)

@@ -1,0 +1,8 @@
+---
+# variables for molecule testing cleanup_disabled scenario
+app_name: molecule_test
+ansible_user: root
+deploy_user: conan
+deploy: "{{ install_root }}/4.1.0-current"
+symlink: "test_app"
+auto_cleanup_deploys: false  # Key difference: cleanup disabled
