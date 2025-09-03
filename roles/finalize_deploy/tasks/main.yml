@@ -65,19 +65,22 @@
 
     # On Ubuntu we need to do this with an account that can access both /srv
     # and /var, so we need to be root
-    # Update symlink and restart nginx when passenger is present
     - name: Update /var/www/ symlink to make the new version live
       become_user: root
       ansible.builtin.file:
         src: "{{ deploy }}"
         dest: "/var/www/{{ symlink }}"
         state: link
-      notify: 
-        - Restart nginx
-        - Cleanup old deployments
-      when: 
-        - "'passenger' in ansible_role_names"
-        - auto_cleanup_deploys | default(false)
+      notify: Restart nginx
+      when: "'passenger' in ansible_role_names"
+
+    # After symlinks are updated, trigger cleanup handler
+    - name: Trigger cleanup after symlinks are updated
+      ansible.builtin.debug:
+        msg: "All symlinks updated, triggering cleanup"
+      notify: Cleanup old deployments
+      when: auto_cleanup_deploys | default(false)
+      changed_when: true
 
   rescue:
     - ansible.builtin.include_tasks: roles/create_deployment/tasks/fail.yml
