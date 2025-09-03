@@ -77,7 +77,7 @@
         - Cleanup old deployments
       when: 
         - "'passenger' in ansible_role_names"
-        - auto_cleanup_deploys
+        - auto_cleanup_deploys | default(false)
 
   rescue:
     - ansible.builtin.include_tasks: roles/create_deployment/tasks/fail.yml

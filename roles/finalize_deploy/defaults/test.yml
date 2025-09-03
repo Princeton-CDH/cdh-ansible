@@ -2,6 +2,8 @@
 # variables for molecule testing
 app_name: molecule_test
 ansible_user: root
-deploy_user: conan
+deploy_user: root  # Use root in tests to avoid user creation complexity
 deploy: "{{ install_root }}/4.1.0-current"
 symlink: "test_app"
+# Simulate passenger role being present in the playbook
+ansible_role_names: ['finalize_deploy', 'passenger']

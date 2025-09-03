@@ -3,10 +3,6 @@
   hosts: all
   vars_files: ../../defaults/test.yml
   tasks:
-    - name: "Include deploy_user role"
-      ansible.builtin.include_role:
-        name: deploy_user
-    
     - name: "Include finalize_deploy role"
       ansible.builtin.include_role:
         name: finalize_deploy
