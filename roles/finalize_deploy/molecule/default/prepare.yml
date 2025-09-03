@@ -1,21 +1,26 @@
 ---
-- name: Prepare test environment
+- name: Prepare test environment for default scenario (cleanup_enabled)
   hosts: all
   gather_facts: true
   vars:
+    # Create unique test directory using timestamp to avoid conflicts
     test_dir: "/tmp/ansible_cleanup_test_{{ ansible_date_time.epoch }}"
     deploy_user: "{{ ansible_user_id }}"
     
-    # These are our fake deployment versions (oldest to newest)
+    # Create 8 fake deployment directories (oldest to newest)
+    # Expected behavior with deploy_keep_count=3:
+    # - Keep: 3.0.0-keep1, 3.1.0-keep2, 3.2.0-keep3 (3 most recent)
+    # - Keep: 4.0.0-previous, 4.1.0-current (protected by symlinks)
+    # - Delete: 2.1.0-old1, 2.2.0-old2, 2.3.0-old3 (old unprotected)
     fake_deployments:
-      - "2.1.0-old1"
-      - "2.2.0-old2" 
-      - "2.3.0-old3"
-      - "3.0.0-keep1"
-      - "3.1.0-keep2"
-      - "3.2.0-keep3"
-      - "4.0.0-previous"
-      - "4.1.0-current"
+      - "2.1.0-old1"        # Should be deleted (too old)
+      - "2.2.0-old2"        # Should be deleted (too old)
+      - "2.3.0-old3"        # Should be deleted (too old)
+      - "3.0.0-keep1"       # Should be kept (within keep_count)
+      - "3.1.0-keep2"       # Should be kept (within keep_count)
+      - "3.2.0-keep3"       # Should be kept (within keep_count)
+      - "4.0.0-previous"    # Should be kept (protected by previous symlink)
+      - "4.1.0-current"     # Should be kept (protected by current symlink)
 
   tasks:
     - name: "Create test directory"

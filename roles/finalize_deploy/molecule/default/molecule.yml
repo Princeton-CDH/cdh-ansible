@@ -1,21 +1,29 @@
 ---
+# Default scenario: Tests cleanup functionality when auto_cleanup_deploys is enabled
 scenario:
   name: default
   test_sequence:
-    - dependency
+    # 1. create: Start Docker container for testing
     - create
+    # 2. prepare: Set up test environment (create fake deployments)
     - prepare
+    # 3. converge: Run the actual finalize_deploy role
     - converge
+    # 4. verify: Check that cleanup worked correctly
     - verify
+    # 5. destroy: Clean up Docker container
     - destroy
-dependency:
-  name: galaxy
+# Use Docker to create test containers
 driver:
   name: docker
+
+# Define the test environment
 platforms:
   - name: instance
     image: quay.io/pulibrary/jammy-ansible:latest
     pre_build_image: true
+
+# Configure how ansible runs our tests
 provisioner:
   name: ansible
   config_options:
@@ -24,8 +32,10 @@ provisioner:
   inventory:
     host_vars:
       instance:
-        deploy_keep_count: 3
-        auto_cleanup_deploys: true
-        deploy_user: root
+        deploy_keep_count: 3                # Keep 3 recent deployments
+        auto_cleanup_deploys: true          # Enable cleanup functionality
+        deploy_user: root                   # Run as root in test container
+
+# Use ansible for verification tests
 verifier:
   name: ansible

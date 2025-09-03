@@ -1,5 +1,5 @@
 ---
-- name: Converge
+- name: Converge default scenario (cleanup_enabled)
   hosts: all
   tasks:
     - name: "Include finalize_deploy role"
