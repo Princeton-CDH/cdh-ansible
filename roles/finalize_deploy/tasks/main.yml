@@ -1,6 +1,6 @@
 ###
 # This role runs all of the tasks needed to make the new code live,
-# with a handler to restart apache.
+# with a handler to restart nginx and cleanup old deployments.
 
 # It assumes the standard configuration /srv/www symlinks to /var/www
 # used in CDH Django projects.
