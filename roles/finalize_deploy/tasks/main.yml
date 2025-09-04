@@ -83,4 +83,4 @@
       changed_when: true
 
   rescue:
-    - ansible.builtin.include_tasks: roles/create_deployment/tasks/fail.yml
+    - ansible.builtin.include_tasks: "{{ role_path }}/../create_deployment/tasks/fail.yml"
