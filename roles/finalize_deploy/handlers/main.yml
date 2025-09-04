@@ -2,51 +2,57 @@
 # handlers file for finalize_deploy
 
 - name: Cleanup old deployments
+  listen: "Cleanup old deployments"
   become: true
   become_user: "{{ deploy_user }}"  # Run as deployment user ('conan') to ensure proper permissions
-  block:
+  ansible.builtin.find:
+    paths: "{{ install_root }}"              # e.g., /srv/www/geniza
+    file_type: directory
+    patterns: ["[0-9]*.[0-9]*.[0-9]*-*"]    # Matches: 4.24.0-dev-33e737, 3.15.0-63bcea
+  register: all_deploy_dirs
 
-    - name: Find all deploy directories
-      ansible.builtin.find:
-        paths: "{{ install_root }}"              # e.g., /srv/www/geniza
-        file_type: directory
-        patterns: ["[0-9]*.[0-9]*.[0-9]*-*"]    # Matches: 4.24.0-dev-33e737, 3.15.0-63bcea
-      register: all_deploy_dirs
+- name: Get current and previous symlink targets for cleanup
+  listen: "Cleanup old deployments"
+  become: true
+  become_user: "{{ deploy_user }}"
+  ansible.builtin.stat:
+    path: "{{ install_root }}/{{ item }}"   # Check /srv/www/app/current and /srv/www/app/previous
+  loop: [current, previous]
+  register: symlink_stats
 
-    # Check what the 'current' and 'previous' symlinks point to
-    # Protect these two directories from deletion for rollback capability, even if they're old
-    - name: Get current and previous symlink targets
-      ansible.builtin.stat:
-        path: "{{ install_root }}/{{ item }}"
-      loop: [current, previous] # Check /srv/www/app/current and /srv/www/app/previous
-      register: symlink_stats
+- name: Build protected directories list for cleanup
+  listen: "Cleanup old deployments"
+  become: true
+  become_user: "{{ deploy_user }}"
+  ansible.builtin.set_fact:
+    protected_dirs: >-
+      {{ ([symlink_stats.results[0].stat.lnk_target] if symlink_stats.results[0].stat.islnk else []) +
+         ([symlink_stats.results[1].stat.lnk_target] if symlink_stats.results[1].stat.islnk else []) }}
 
-    - name: Build protected directories list that must not be deleted (current and previous symlinks)
-      ansible.builtin.set_fact:
-        protected_dirs: >-
-          {{ ([symlink_stats.results[0].stat.lnk_target] if symlink_stats.results[0].stat.islnk else []) +
-             ([symlink_stats.results[1].stat.lnk_target] if symlink_stats.results[1].stat.islnk else []) }}
+- name: Sort deployments and mark old ones for removal
+  listen: "Cleanup old deployments"
+  become: true
+  become_user: "{{ deploy_user }}"
+  ansible.builtin.set_fact:
+    sorted_unprotected: >-
+      {{ all_deploy_dirs.files
+         | rejectattr('path', 'in', protected_dirs)
+         | sort(attribute='mtime', reverse=true) }}
 
-    - name: Sort deployments by age (newest first) and skip protected ones
-      ansible.builtin.set_fact:
-        sorted_unprotected: >-
-          {{ all_deploy_dirs.files
-             | rejectattr('path', 'in', protected_dirs)
-             | sort(attribute='mtime', reverse=true) }}
+- name: Keep recent deployments, mark old ones for removal
+  listen: "Cleanup old deployments"
+  become: true
+  become_user: "{{ deploy_user }}"
+  ansible.builtin.set_fact:
+    dirs_to_remove: >-
+      {{ sorted_unprotected[deploy_keep_count|int:] | map(attribute='path') | list }}
 
-    - name: Keep recent deployments, mark old ones for removal
-      ansible.builtin.set_fact:
-        dirs_to_remove: >-
-          {{ sorted_unprotected[deploy_keep_count|int:] | map(attribute='path') | list }}
-
-    - name: Delete the old deployment directories
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: absent                           # Delete the directory and all its contents
-      loop: "{{ dirs_to_remove }}"
-      when: dirs_to_remove | length > 0        # Skip this task if nothing to remove
-
-  rescue:
-    # If any step fails, trigger deployment failure handling
-    - ansible.builtin.include_tasks: "{{ role_path }}/../create_deployment/tasks/fail.yml"
-  
+- name: Delete the old deployment directories
+  listen: "Cleanup old deployments"
+  become: true
+  become_user: "{{ deploy_user }}"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent                           # Delete the directory and all its contents
+  loop: "{{ dirs_to_remove }}"
+  when: dirs_to_remove | length > 0        # Skip this task if nothing to remove
