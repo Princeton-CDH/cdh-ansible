@@ -29,30 +29,6 @@ Example Playbook
     auto_cleanup_deploys: true
 ```
 
-Testing
--------
-
-This role includes molecule tests with two scenarios:
-
-- `default`: Tests cleanup functionality when `auto_cleanup_deploys: true`
-- `cleanup_disabled`: Tests that no cleanup occurs when `auto_cleanup_deploys: false`
-
-To run tests locally:
-
-```bash
-# Clear vault environment variable (required for local testing)
-unset ANSIBLE_VAULT_IDENTITY_LIST
-
-# Test syntax
-cd roles/finalize_deploy
-uv run molecule syntax -s default
-uv run molecule syntax -s cleanup_disabled
-
-# Full test (requires Docker)
-uv run molecule test -s default
-uv run molecule test -s cleanup_disabled
-```
-
 License
 -------
 
