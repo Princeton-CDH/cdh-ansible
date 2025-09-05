@@ -1,0 +1,9 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    deploy: "{{ install_root }}/4.1.0-current"
+    symlink: "test_app"
+  roles:
+    - role: finalize_deploy

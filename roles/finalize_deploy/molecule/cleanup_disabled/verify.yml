@@ -1,0 +1,34 @@
+---
+- name: Verify cleanup_disabled scenario
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: "Gather remaining deployments"
+      ansible.builtin.find:
+        paths: "{{ install_root }}"
+        file_type: directory
+        patterns: ["[0-9]*.[0-9]*.[0-9]*-*"]
+      register: remaining
+
+    - name: "Check that NO cleanup occurred - all deployments should remain"
+      ansible.builtin.assert:
+        that:
+          - remaining.files | length == expected_deployment_count | int
+        success_msg: "Test passed! No cleanup occurred, all {{ remaining.files | length }} deployments remain"
+        fail_msg: "Test failed! Expected {{ expected_deployment_count }} deployments, but found {{ remaining.files | length }}. Cleanup should not have run!"
+
+    - name: "Verify symlinks still work"
+      ansible.builtin.stat:
+        path: "{{ install_root }}/{{ item }}"
+      loop: [current, previous]
+      register: symlink_check
+
+    - name: "Verify symlinks are valid"
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.islnk
+        fail_msg: "Symlink {{ item.item }} is not valid"
+      loop: "{{ symlink_check.results }}"
+
+
