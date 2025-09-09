@@ -6,4 +6,3 @@
     - name: "Include deploy_user"
       ansible.builtin.include_role:
         name: deploy_user
-      tags: [setup]

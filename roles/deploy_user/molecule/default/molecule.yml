@@ -40,7 +40,7 @@ provisioner:
   playbooks:
     converge: converge.yml
   options:
-    tags: setup
+    tags: setup,all
 
 verifier:
   name: ansible
