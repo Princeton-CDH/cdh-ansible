@@ -80,7 +80,7 @@
         msg: "All symlinks updated, triggering cleanup"
       notify: Cleanup old deployments
       when: auto_cleanup_deploys | default(true)
-      changed_when: true
+      changed_when: auto_cleanup_deploys | default(true)
 
   rescue:
     - ansible.builtin.include_tasks: "{{ role_path }}/../create_deployment/tasks/fail.yml"

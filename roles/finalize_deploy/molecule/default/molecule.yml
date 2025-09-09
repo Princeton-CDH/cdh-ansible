@@ -2,6 +2,18 @@
 # Default scenario: Tests cleanup functionality when auto_cleanup_deploys is enabled
 scenario:
   name: default
+  test_sequence:
+    # Need to skip idempotence test here because cleanup handler is designed to run only once per deployment
+    - dependency
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - verify
+    - cleanup
+    - destroy
 # Use Docker to create test containers
 driver:
   name: docker
