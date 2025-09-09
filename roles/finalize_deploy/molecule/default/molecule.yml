@@ -2,17 +2,6 @@
 # Default scenario: Tests cleanup functionality when auto_cleanup_deploys is enabled
 scenario:
   name: default
-  test_sequence:
-    # 1. Start Docker container for testing
-    - create
-    # 2. Set up test environment (create fake deployments)
-    - prepare
-    # 3. Run the actual finalize_deploy role
-    - converge
-    # 4. Check that cleanup worked correctly
-    - verify
-    # 5. Clean up Docker container
-    - destroy
 # Use Docker to create test containers
 driver:
   name: docker
@@ -36,7 +25,7 @@ provisioner:
         install_root: "/tmp/ansible_cleanup_test"  # Test directory for deployments
         deploy_keep_count: 3                # Keep 3 recent deployments
         auto_cleanup_deploys: true          # Enable cleanup functionality
-        deploy_user: root                   # Run as root in test container
+        deploy_user: root                   # Run as root in test container to simplify test setup (avoids user creation complexity)
 
 # Use ansible verifier for verification tests
 verifier:
