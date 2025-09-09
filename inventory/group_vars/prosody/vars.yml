@@ -17,7 +17,7 @@ wsgi_path: "{{ django_app }}/wsgi.py"
 # use python 3.12
 python_version: 3.12
 # nodejs version
-node_version: "18"
+node_version: "20"
 
 # pul deploy user
 deploy_user: "conan"
@@ -88,3 +88,7 @@ datadog_app_name: cdh_prosody
 # configure scripts to run as cron jobs
 crontab: []
 # currently production only
+
+# override webpack build command
+webpack_build_qa: "build"
+webpack_build_prod: "build"
