@@ -45,7 +45,7 @@
   become_user: "{{ deploy_user }}"
   ansible.builtin.set_fact:
     dirs_to_remove: >-
-      {{ sorted_unprotected[deploy_keep_count|int:] | map(attribute='path') | list }}
+      {{ sorted_unprotected[deploy_keep_count|default(3)|int:] | map(attribute='path') | list }}
 
 - name: Delete the old deployment directories
   listen: "Cleanup old deployments"
