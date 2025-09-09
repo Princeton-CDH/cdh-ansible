@@ -47,12 +47,23 @@
     dirs_to_remove: >-
       {{ sorted_unprotected[deploy_keep_count|default(3)|int:] | map(attribute='path') | list }}
 
-- name: Delete the old deployment directories
+- name: Delete the old deployment directories with forced removal
   listen: "Cleanup old deployments"
   become: true
   become_user: "{{ deploy_user }}"
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: absent                           # Delete the directory and all its contents
+  ansible.builtin.shell: |
+    # First try to fix permissions, then force delete
+    chmod -R u+w "{{ item }}" 2>/dev/null || true
+    rm -rf "{{ item }}"
   loop: "{{ dirs_to_remove }}"
   when: dirs_to_remove | length > 0        # Skip this task if nothing to remove
+  register: cleanup_result
+  failed_when: false                        # Don't fail the entire deployment if cleanup has issues
+
+- name: Report cleanup results
+  listen: "Cleanup old deployments"
+  become: true
+  become_user: "{{ deploy_user }}"
+  ansible.builtin.debug:
+    msg: "Cleanup completed. Attempted to remove {{ dirs_to_remove | length }} directories."
+  when: dirs_to_remove | length > 0
