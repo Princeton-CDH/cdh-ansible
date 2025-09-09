@@ -49,11 +49,9 @@
 
 - name: Delete the old deployment directories with forced removal
   listen: "Cleanup old deployments"
-  become: true
-  become_user: "{{ deploy_user }}"
+  become: true                              # Use root privileges for deletion
   ansible.builtin.shell: |
-    # First try to fix permissions, then force delete
-    chmod -R u+w "{{ item }}" 2>/dev/null || true
+    # Force delete with root privileges to handle permission issues
     rm -rf "{{ item }}"
   loop: "{{ dirs_to_remove }}"
   when: dirs_to_remove | length > 0        # Skip this task if nothing to remove
