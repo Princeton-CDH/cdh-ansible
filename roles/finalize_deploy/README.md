@@ -12,7 +12,7 @@ Variables
 - `install_root`: root directory where deployments are stored (e.g., /srv/www/geniza)
 - `symlink`: name of the symlink in /var/www/
 - `deploy_user`: user account for running deployed applications
-- `auto_cleanup_deploys`: whether to automatically clean up old deployments (default: false)
+- `auto_cleanup_deploys`: whether to automatically clean up old deployments (default: true)
 - `deploy_keep_count`: number of recent deployments to keep when cleaning up (default: 3)
 
 Example Playbook

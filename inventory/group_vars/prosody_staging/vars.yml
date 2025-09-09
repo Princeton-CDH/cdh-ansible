@@ -22,3 +22,7 @@ solr_version: 9
 
 # run cron jobs on the first vm
 cronjob_host: "cdh-test-prosody1.princeton.edu"
+
+# TEMPORARY: Test cleanup functionality
+auto_cleanup_deploys: true
+deploy_keep_count: 3
