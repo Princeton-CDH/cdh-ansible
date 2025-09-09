@@ -2,17 +2,6 @@
 # Cleanup disabled scenario: Tests that NO cleanup occurs when auto_cleanup_deploys is false
 scenario:
   name: cleanup_disabled
-  test_sequence:
-    # 1. create: Start Docker container for testing
-    - create
-    # 2. prepare: Set up test environment (create fake deployments)
-    - prepare
-    # 3. converge: Run the actual finalize_deploy role
-    - converge
-    # 4. verify: Check that NO cleanup occurred (all deployments remain)
-    - verify
-    # 5. destroy: Clean up Docker container
-    - destroy
 # Use Docker to create test containers
 driver:
   name: docker
@@ -36,7 +25,7 @@ provisioner:
         install_root: "/tmp/ansible_cleanup_test"  # Test directory for deployments
         deploy_keep_count: 3                # This value doesn't matter since cleanup is disabled
         auto_cleanup_deploys: false         # DISABLE cleanup functionality (key difference!)
-        deploy_user: root                   # Run as root in test container
+        deploy_user: root                   # Run as root in test container to simplify test setup (avoids user creation complexity)
 
 # Use ansible verifier for verification tests
 verifier:
