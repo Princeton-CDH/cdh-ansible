@@ -79,7 +79,7 @@
       ansible.builtin.debug:
         msg: "All symlinks updated, triggering cleanup"
       notify: Cleanup old deployments
-      when: auto_cleanup_deploys | default(false)
+      when: auto_cleanup_deploys | default(true)
       changed_when: true
 
   rescue:
