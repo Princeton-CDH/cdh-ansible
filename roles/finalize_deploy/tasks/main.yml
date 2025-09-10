@@ -54,9 +54,13 @@
         src: "{{ previous.stat.lnk_target }}"
         dest: "{{ install_root }}/previous"
         state: link
-      when: >
-        previous.stat.exists == True and
-        previous.stat.lnk_source != current.stat.lnk_source
+      when:
+        - previous.stat.exists | default(false)
+        - previous.stat.islnk  | default(false)
+        - current.stat.islnk   | default(false)
+        - previous.stat.lnk_target is defined
+        - current.stat.lnk_target is defined
+        - previous.stat.lnk_target != current.stat.lnk_target
 
     - name: Register there is now a previous symlink
       ansible.builtin.stat:
@@ -75,9 +79,13 @@
       when: "'passenger' in ansible_role_names"
 
     # After symlinks are updated, run cleanup if enabled
-    - name: Run cleanup of old deployments
+    - name: Run cleanup of old deployments (per-host, sequential)
       ansible.builtin.include_tasks: cleanup_old_deployments.yml
       when: auto_cleanup_deploys | default(true)
+      become: true
+      become_user: root
+      throttle: 1 # avoid concurrent cleanup on multiple hosts
+      tags: [cleanup]
 
   rescue:
     - ansible.builtin.include_tasks: "{{ role_path }}/../create_deployment/tasks/fail.yml"

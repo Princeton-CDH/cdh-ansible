@@ -39,19 +39,18 @@
   ansible.builtin.set_fact:
     dirs_to_remove: "{{ sorted_unprotected[deploy_keep_count|default(3)|int:] | map(attribute='path') | list }}"
 
-- name: Preflight FS info
+- name: Preflight FS info (bash)
   become: true
   ansible.builtin.shell: |
-    set -euxo pipefail
-    echo "== mount =="
-    mount | grep " {{ install_root }} " || echo "No specific mount for {{ install_root }}"
-    echo "== fs type =="
-    stat -f -c "%T" "{{ install_root }}"
-    echo "== sample attrs (i flag)? =="
-    lsattr -d "{{ install_root }}" 2>/dev/null || echo "lsattr not supported"
+    set -e
+    echo "== findmnt =="
+    command -v findmnt >/dev/null 2>&1 && findmnt -T "{{ install_root }}" -o TARGET,SOURCE,FSTYPE,OPTIONS || true
+    echo "== stat -f =="
+    stat -f -c "fstype=%T" "{{ install_root }}" || true
+  args:
+    executable: /bin/bash
   register: fsinfo
   changed_when: false
-  failed_when: false
 
 - name: Show preflight
   ansible.builtin.debug:
@@ -66,22 +65,31 @@
   register: file_rm
   failed_when: false
 
-- name: Force remove stubborn dirs with bash
+- name: Post-delete stat
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop: "{{ dirs_to_remove }}"
+  register: post_stat
+
+- name: Force remove leftovers with bash
   become: true
   ansible.builtin.shell: |
     set -euxo pipefail
-    echo "Force removing {{ item }}"
-    chattr -R -i "{{ item }}" 2>&1 || echo "chattr not supported or failed"
-    chmod -R u+rwX "{{ item }}" 2>&1 || echo "chmod failed"
+    target="{{ item.stat.path }}"
+    echo "Force removing: $target"
+    command -v chattr >/dev/null 2>&1 && chattr -R -i "$target" || true
+    command -v getfacl >/dev/null 2>&1 && getfacl -Rp "$target" | head -50 || true
+    command -v setfacl >/dev/null 2>&1 && setfacl -bnR "$target" || true
+    chmod -R u+rwX "$target" || true
     echo "== lsof =="
-    lsof +D "{{ item }}" 2>&1 || echo "No open files or lsof failed"
+    command -v lsof >/dev/null 2>&1 && lsof +D "$target" || true
     echo "== fuser =="
-    fuser -vm "{{ item }}" 2>&1 || echo "No processes or fuser failed"
-    rm -rf --one-file-system "{{ item }}"
-    test ! -e "{{ item }}" && echo "OK removed {{ item }}" || echo "STILL EXISTS: {{ item }}"
+    command -v fuser >/dev/null 2>&1 && fuser -vm "$target" || true
+    rm -rf --one-file-system "$target"
+    test ! -e "$target" && echo "OK removed $target"
   args:
     executable: /bin/bash
-  loop: "{{ file_rm.results | selectattr('failed', 'defined') | selectattr('failed') | map(attribute='item') | list }}"
+  loop: "{{ post_stat.results | selectattr('stat.exists') | list }}"
   register: forced_rm
   failed_when: false
 
@@ -89,22 +97,21 @@
   ansible.builtin.debug:
     msg: |
       {{ item.item }} -> changed={{ item.changed|default(false) }} failed={{ item.failed|default(false) }}
-      {% if item.msg is defined %}
-      msg: {{ item.msg }}
-      {% endif %}
+      msg:
+      {{ (item.msg or '') | indent(2) }}
   loop: "{{ file_rm.results | default([]) }}"
   loop_control: { label: "{{ item.item }}" }
 
 - name: Show forced rm results
   ansible.builtin.debug:
     msg: |
-      {{ item.item }} -> rc={{ item.rc|default('') }}
+      {{ item.item.stat.path }} -> rc={{ item.rc|default('') }}
       stdout:
       {{ (item.stdout or '') | indent(2) }}
       stderr:
       {{ (item.stderr or '') | indent(2) }}
   loop: "{{ forced_rm.results | default([]) }}"
-  loop_control: { label: "{{ item.item }}" }
+  loop_control: { label: "{{ item.item.stat.path }}" }
 
 - name: Show final deployment status
   ansible.builtin.shell: |
