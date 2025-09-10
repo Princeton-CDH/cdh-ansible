@@ -79,12 +79,16 @@
       when: "'passenger' in ansible_role_names"
 
     # After symlinks are updated, run cleanup if enabled
-    - name: Run cleanup of old deployments (per-host, sequential)
+    - name: Run cleanup of old deployments on every host, one at a time
+      run_once: true
       ansible.builtin.include_tasks: cleanup_old_deployments.yml
+      loop: "{{ ansible_play_hosts_all }}"
+      loop_control:
+        loop_var: cleanup_host
+      delegate_to: "{{ cleanup_host }}"
       when: auto_cleanup_deploys | default(true)
       become: true
       become_user: root
-      throttle: 1 # avoid concurrent cleanup on multiple hosts
       tags: [cleanup]
 
   rescue:
