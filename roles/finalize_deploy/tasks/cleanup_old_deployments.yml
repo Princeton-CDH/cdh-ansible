@@ -56,7 +56,8 @@
 
 - name: Display cleanup completion summary
   ansible.builtin.debug:
-    msg: |
-      {{ final_status.stdout }}
-      
-      Cleanup completed! Attempted to remove {{ dirs_to_remove | length }} directories.
+    var: final_status.stdout_lines
+
+- name: Show cleanup completion message
+  ansible.builtin.debug:
+    msg: "Cleanup completed! Attempted to remove {{ dirs_to_remove | length }} directories."
