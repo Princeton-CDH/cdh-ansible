@@ -97,8 +97,9 @@
   ansible.builtin.debug:
     msg: |
       {{ item.item }} -> changed={{ item.changed|default(false) }} failed={{ item.failed|default(false) }}
-      msg:
-      {{ (item.msg or '') | indent(2) }}
+      {% if item.msg is defined %}
+      msg: {{ item.msg }}
+      {% endif %}
   loop: "{{ file_rm.results | default([]) }}"
   loop_control: { label: "{{ item.item }}" }
 
