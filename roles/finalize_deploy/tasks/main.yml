@@ -79,12 +79,14 @@
       when: "'passenger' in ansible_role_names"
 
     # After symlinks are updated, run cleanup if enabled
-    - name: Run cleanup of old deployments (per-host)
-      ansible.builtin.include_tasks: cleanup_old_deployments.yml
-      when: auto_cleanup_deploys | default(true)
+    - name: Run cleanup of old deployments (as root)
+      block:
+        - name: Include cleanup tasks
+          ansible.builtin.include_tasks: cleanup_old_deployments.yml
+          when: auto_cleanup_deploys | default(true)
+          tags: [cleanup]
       become: true
       become_user: root
-      tags: [cleanup]
 
   rescue:
     - ansible.builtin.include_tasks: "{{ role_path }}/../create_deployment/tasks/fail.yml"
