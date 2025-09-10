@@ -41,24 +41,19 @@
     dirs_to_remove: >-
       {{ sorted_unprotected[deploy_keep_count|default(3)|int:] | map(attribute='path') | list }}
 
-- name: Debug cleanup logic
-  ansible.builtin.debug:
-    msg: |
-      === CLEANUP LOGIC DEBUG ===
-      Unprotected deployments: {{ sorted_unprotected | map(attribute='path') | list }}
-      Keep count: {{ deploy_keep_count|default(3) }}
-      Will remove: {{ dirs_to_remove }}
-      Will keep unprotected: {{ sorted_unprotected[:deploy_keep_count|default(3)|int] | map(attribute='path') | list }}
-
 - name: Delete the old deployment directories with forced removal
   become: true                              # Use root privileges for deletion
   ansible.builtin.shell: |
-    # Force delete with root privileges to handle permission issues
-    rm -rf "{{ item }}"
+    echo "Attempting to delete: {{ item }}"
+    if [ -d "{{ item }}" ]; then
+      # Force delete with root privileges to handle permission issues
+      rm -rf "{{ item }}" && echo "Successfully deleted {{ item }}" || echo "Failed to delete {{ item }}: $?"
+    else
+      echo "Directory {{ item }} does not exist"
+    fi
   loop: "{{ dirs_to_remove }}"
   when: dirs_to_remove | length > 0        # Skip this task if nothing to remove
   register: cleanup_result
-  failed_when: false                        # Don't fail the entire deployment if cleanup has issues
 
 - name: Show final deployment status
   ansible.builtin.shell: |
