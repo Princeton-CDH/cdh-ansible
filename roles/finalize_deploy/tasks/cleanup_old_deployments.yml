@@ -50,7 +50,19 @@
     chattr -R -i "{{ item }}" 2>/dev/null || true
     find "{{ item }}" -type f -exec chmod 666 {} \; 2>/dev/null || true
     find "{{ item }}" -name "*.exe" -exec rm -f {} \; 2>/dev/null || true
-    rm -rf "{{ item }}" 2>/dev/null && echo "Deleted {{ item }}" || echo "Could not fully delete {{ item }}"
+    # Try normal deletion first
+    if rm -rf "{{ item }}" 2>/dev/null; then
+      echo "Deleted {{ item }}"
+    else
+      # if it not work, force delete individual files then directory
+      find "{{ item }}" -type f -exec rm -f {} \; 2>/dev/null || true
+      find "{{ item }}" -type d -exec rmdir {} \; 2>/dev/null || true
+      if [ -d "{{ item }}" ]; then
+        echo "Could not fully delete {{ item }}"
+      else
+        echo "Force deleted {{ item }}"
+      fi
+    fi
   loop: "{{ dirs_to_remove }}"
   when: dirs_to_remove | length > 0        # Skip this task if nothing to remove
   register: cleanup_result
