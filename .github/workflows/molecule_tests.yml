@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        role: [deploy_user]
+        role: [deploy_user, finalize_deploy]
     steps:
       - uses: actions/checkout@v4
 
@@ -18,6 +18,7 @@ jobs:
         run: uv sync
 
       - name: Create unencrypted ssh key for testing deploy user
+        if: matrix.role == 'deploy_user'
         run: |
           rm -f roles/deploy_user/files/id_rsa*
           ssh-keygen -f roles/deploy_user/files/id_rsa -N ""
@@ -27,8 +28,8 @@ jobs:
         run: |
           set -euxo pipefail
           cd roles/${{ matrix.role }}
-          # run with lots of output; capture return code
-          uv run molecule --debug -vvv test || echo "rc=$?" >> $GITHUB_OUTPUT
+          # run all scenarios with --all flag to test both default and cleanup_disabled scenarios
+          uv run molecule --debug -vvv test --all || echo "rc=$?" >> $GITHUB_OUTPUT
 
       - name: Upload Molecule logs
         if: always()
@@ -36,8 +37,8 @@ jobs:
         with:
           name: molecule-logs-${{ matrix.role }}
           path: |
-            roles/${{ matrix.role }}/molecule/default/.molecule/logs/**
-            roles/${{ matrix.role }}/molecule/default/.molecule/instances.yml
-            roles/${{ matrix.role }}/molecule/default/.molecule/state.yml
+            roles/${{ matrix.role }}/molecule/*/.molecule/logs/**
+            roles/${{ matrix.role }}/molecule/*/.molecule/instances.yml
+            roles/${{ matrix.role }}/molecule/*/.molecule/state.yml
           if-no-files-found: warn
 

@@ -1,0 +1,32 @@
+---
+# Default scenario: Tests cleanup functionality when auto_cleanup_deploys is enabled
+scenario:
+  name: default
+# Use Docker to create test containers
+driver:
+  name: docker
+
+# Define the test environment
+platforms:
+  - name: instance
+    image: quay.io/pulibrary/jammy-ansible:latest
+    pre_build_image: true
+
+# Configure how ansible runs our tests
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      host_key_checking: false
+      roles_path: "$MOLECULE_PROJECT_DIRECTORY/.."
+  inventory:
+    host_vars:
+      instance:
+        install_root: "/tmp/ansible_cleanup_test"  # Test directory for deployments
+        deploy_keep_count: 3                # Keep 3 recent deployments
+        auto_cleanup_deploys: true          # Enable cleanup functionality
+        deploy_user: root                   # Run as root in test container to simplify test setup (avoids user creation complexity)
+
+# Use ansible verifier for verification tests
+verifier:
+  name: ansible

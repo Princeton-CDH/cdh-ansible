@@ -32,6 +32,15 @@ provisioner:
   config_options:
     defaults:
       roles_path: "$MOLECULE_PROJECT_DIRECTORY/.."
+  inventory:
+    host_vars:
+      instance:
+        deploy_user_uid: 1000
+        runtime_env: production
+  playbooks:
+    converge: converge.yml
+  options:
+    tags: setup,all
 
 verifier:
   name: ansible
