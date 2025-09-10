@@ -43,7 +43,20 @@
   register: cleanup_result
   failed_when: false                        # Don't fail the entire deployment if cleanup has issues
 
-- name: Report cleanup results
+- name: Show final deployment status
+  ansible.builtin.shell: |
+    echo "=== CLEANUP RESULTS ==="
+    echo "Total deployments remaining: $(ls -1 {{ install_root }}/ | grep -E '[0-9]+\.[0-9]+\.[0-9]+' | wc -l)"
+    echo "=== Current Symlinks ==="
+    ls -la {{ install_root }}/ | grep -E '(current|previous)' || echo "No symlinks found"
+    echo "=== Latest Deployments ==="
+    ls -lt {{ install_root }}/ | grep -E '[0-9]+\.[0-9]+\.[0-9]+' | head -5
+  register: final_status
+  changed_when: false
+
+- name: Display cleanup completion summary
   ansible.builtin.debug:
-    msg: "Cleanup completed. Attempted to remove {{ dirs_to_remove | length }} directories."
-  when: dirs_to_remove | length > 0
+    msg: |
+      {{ final_status.stdout }}
+      
+      Cleanup completed! Attempted to remove {{ dirs_to_remove | length }} directories.
