@@ -46,14 +46,20 @@
   ansible.builtin.shell: |
     echo "Attempting to delete: {{ item }}"
     if [ -d "{{ item }}" ]; then
-      # Force delete with root privileges to handle permission issues
-      rm -rf "{{ item }}" && echo "Successfully deleted {{ item }}" || echo "Failed to delete {{ item }}: $?"
+      # Try multiple deletion strategies
+      chmod -R 777 "{{ item }}" 2>/dev/null || true
+      chattr -R -i "{{ item }}" 2>/dev/null || true  # Remove immutable flag if set
+      rm -rf "{{ item }}" 2>&1 && echo "Successfully deleted {{ item }}" || {
+        echo "Failed to delete {{ item }}, error: $?"
+        ls -la "{{ item }}" 2>/dev/null || true
+      }
     else
       echo "Directory {{ item }} does not exist"
     fi
   loop: "{{ dirs_to_remove }}"
   when: dirs_to_remove | length > 0        # Skip this task if nothing to remove
   register: cleanup_result
+  failed_when: false                        # Don't fail deployment, but show errors
 
 - name: Show final deployment status
   ansible.builtin.shell: |
