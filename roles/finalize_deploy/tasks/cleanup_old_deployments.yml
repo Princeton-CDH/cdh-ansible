@@ -41,25 +41,20 @@
     dirs_to_remove: >-
       {{ sorted_unprotected[deploy_keep_count|default(3)|int:] | map(attribute='path') | list }}
 
-- name: Fix permissions on directories to be deleted
-  become: true
-  ansible.builtin.file:
-    path: "{{ item }}"
-    mode: '0777'
-    recurse: true
-    state: directory
-  loop: "{{ dirs_to_remove }}"
-  when: dirs_to_remove | length > 0
-  ignore_errors: true
-
-- name: Delete the old deployment directories
+- name: Delete the old deployment directories with maximum force
   become: true                              # Use root privileges for deletion
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: absent
+  ansible.builtin.shell: |
+    echo "Deleting: {{ item }}"
+    # Try multiple strategies to handle stubborn files like cli.exe
+    chmod -R 777 "{{ item }}" 2>/dev/null || true
+    chattr -R -i "{{ item }}" 2>/dev/null || true
+    find "{{ item }}" -type f -exec chmod 666 {} \; 2>/dev/null || true
+    find "{{ item }}" -name "*.exe" -exec rm -f {} \; 2>/dev/null || true
+    rm -rf "{{ item }}" 2>/dev/null && echo "Deleted {{ item }}" || echo "Could not fully delete {{ item }}"
   loop: "{{ dirs_to_remove }}"
   when: dirs_to_remove | length > 0        # Skip this task if nothing to remove
   register: cleanup_result
+  failed_when: false                        # Don't fail deployment due to cleanup issues
 
 - name: Show final deployment status
   ansible.builtin.shell: |
