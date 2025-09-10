@@ -74,13 +74,10 @@
       notify: Restart nginx
       when: "'passenger' in ansible_role_names"
 
-    # After symlinks are updated, trigger cleanup handler
-    - name: Trigger cleanup after symlinks are updated
-      ansible.builtin.debug:
-        msg: "All symlinks updated, triggering cleanup"
-      notify: Cleanup old deployments
+    # After symlinks are updated, run cleanup if enabled
+    - name: Run cleanup of old deployments
+      ansible.builtin.include_tasks: cleanup_old_deployments.yml
       when: auto_cleanup_deploys | default(true)
-      changed_when: auto_cleanup_deploys | default(true)
 
   rescue:
     - ansible.builtin.include_tasks: "{{ role_path }}/../create_deployment/tasks/fail.yml"
