@@ -41,25 +41,25 @@
     dirs_to_remove: >-
       {{ sorted_unprotected[deploy_keep_count|default(3)|int:] | map(attribute='path') | list }}
 
-- name: Delete the old deployment directories with forced removal
+- name: Fix permissions on directories to be deleted
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: '0777'
+    recurse: true
+    state: directory
+  loop: "{{ dirs_to_remove }}"
+  when: dirs_to_remove | length > 0
+  ignore_errors: true
+
+- name: Delete the old deployment directories
   become: true                              # Use root privileges for deletion
-  ansible.builtin.shell: |
-    echo "Attempting to delete: {{ item }}"
-    if [ -d "{{ item }}" ]; then
-      # Try multiple deletion strategies
-      chmod -R 777 "{{ item }}" 2>/dev/null || true
-      chattr -R -i "{{ item }}" 2>/dev/null || true  # Remove immutable flag if set
-      rm -rf "{{ item }}" 2>&1 && echo "Successfully deleted {{ item }}" || {
-        echo "Failed to delete {{ item }}, error: $?"
-        ls -la "{{ item }}" 2>/dev/null || true
-      }
-    else
-      echo "Directory {{ item }} does not exist"
-    fi
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
   loop: "{{ dirs_to_remove }}"
   when: dirs_to_remove | length > 0        # Skip this task if nothing to remove
   register: cleanup_result
-  failed_when: false                        # Don't fail deployment, but show errors
 
 - name: Show final deployment status
   ansible.builtin.shell: |
