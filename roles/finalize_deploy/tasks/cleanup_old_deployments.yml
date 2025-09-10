@@ -9,64 +9,102 @@
     patterns: ["[0-9]*.[0-9]*.[0-9]*-*"]    # Matches: 4.24.0-dev-33e737, 3.15.0-63bcea
   register: all_deploy_dirs
 
-- name: Get current and previous symlink targets for cleanup
-  ansible.builtin.stat:
-    path: "{{ install_root }}/{{ item }}"   # Check /srv/www/app/current and /srv/www/app/previous
-  loop: [current, previous]
-  register: symlink_stats
 
-- name: Build protected directories list for cleanup
+- name: Resolve current/previous symlinks to absolute paths
+  ansible.builtin.shell: readlink -f "{{ install_root }}/{{ item }}" 2>/dev/null || echo ""
+  loop: [current, previous]
+  register: rp_syms
+  changed_when: false
+  failed_when: false
+
+- name: Build protected_dirs (absolute)
   ansible.builtin.set_fact:
     protected_dirs: >-
-      {{ ([symlink_stats.results[0].stat.lnk_target] if symlink_stats.results[0].stat.islnk else []) +
-         ([symlink_stats.results[1].stat.lnk_target] if symlink_stats.results[1].stat.islnk else []) }}
+      {{ rp_syms.results | map(attribute='stdout') | select('string') | select() | list }}
 
-- name: Debug protected directories
+- name: DEBUG protected + all dirs (absolute)
   ansible.builtin.debug:
     msg: |
-      === DEBUG INFO ===
-      Protected dirs: {{ protected_dirs }}
-      All deployment paths: {{ all_deploy_dirs.files | map(attribute='path') | list }}
-      Total found: {{ all_deploy_dirs.files | length }}
+      Protected: {{ protected_dirs }}
+      All: {{ all_deploy_dirs.files | map(attribute='path') | list }}
 
-- name: Sort deployments and mark old ones for removal
+- name: Sort & choose old unprotected (by mtime desc)
   ansible.builtin.set_fact:
     sorted_unprotected: >-
       {{ all_deploy_dirs.files
          | rejectattr('path', 'in', protected_dirs)
          | sort(attribute='mtime', reverse=true) }}
 
-- name: Keep recent deployments, mark old ones for removal
+- name: Keep recent N, mark old ones to remove
   ansible.builtin.set_fact:
-    dirs_to_remove: >-
-      {{ sorted_unprotected[deploy_keep_count|default(3)|int:] | map(attribute='path') | list }}
+    dirs_to_remove: "{{ sorted_unprotected[deploy_keep_count|default(3)|int:] | map(attribute='path') | list }}"
 
-- name: Delete the old deployment directories with maximum force
-  become: true                              # Use root privileges for deletion
+- name: Preflight FS info
+  become: true
   ansible.builtin.shell: |
-    echo "Deleting: {{ item }}"
-    # Try multiple strategies to handle stubborn files like cli.exe
-    chmod -R 777 "{{ item }}" 2>/dev/null || true
-    chattr -R -i "{{ item }}" 2>/dev/null || true
-    find "{{ item }}" -type f -exec chmod 666 {} \; 2>/dev/null || true
-    find "{{ item }}" -name "*.exe" -exec rm -f {} \; 2>/dev/null || true
-    # Try normal deletion first
-    if rm -rf "{{ item }}" 2>/dev/null; then
-      echo "Deleted {{ item }}"
-    else
-      # if it not work, force delete individual files then directory
-      find "{{ item }}" -type f -exec rm -f {} \; 2>/dev/null || true
-      find "{{ item }}" -type d -exec rmdir {} \; 2>/dev/null || true
-      if [ -d "{{ item }}" ]; then
-        echo "Could not fully delete {{ item }}"
-      else
-        echo "Force deleted {{ item }}"
-      fi
-    fi
+    set -euxo pipefail
+    echo "== mount =="
+    mount | grep " {{ install_root }} " || echo "No specific mount for {{ install_root }}"
+    echo "== fs type =="
+    stat -f -c "%T" "{{ install_root }}"
+    echo "== sample attrs (i flag)? =="
+    lsattr -d "{{ install_root }}" 2>/dev/null || echo "lsattr not supported"
+  register: fsinfo
+  changed_when: false
+  failed_when: false
+
+- name: Show preflight
+  ansible.builtin.debug:
+    var: fsinfo.stdout_lines
+
+- name: Remove old deployments via file module
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
   loop: "{{ dirs_to_remove }}"
-  when: dirs_to_remove | length > 0        # Skip this task if nothing to remove
-  register: cleanup_result
-  failed_when: false                        # Don't fail deployment due to cleanup issues
+  register: file_rm
+  failed_when: false
+
+- name: Force remove stubborn dirs with bash
+  become: true
+  ansible.builtin.shell: |
+    set -euxo pipefail
+    echo "Force removing {{ item }}"
+    chattr -R -i "{{ item }}" 2>&1 || echo "chattr not supported or failed"
+    chmod -R u+rwX "{{ item }}" 2>&1 || echo "chmod failed"
+    echo "== lsof =="
+    lsof +D "{{ item }}" 2>&1 || echo "No open files or lsof failed"
+    echo "== fuser =="
+    fuser -vm "{{ item }}" 2>&1 || echo "No processes or fuser failed"
+    rm -rf --one-file-system "{{ item }}"
+    test ! -e "{{ item }}" && echo "OK removed {{ item }}" || echo "STILL EXISTS: {{ item }}"
+  args:
+    executable: /bin/bash
+  loop: "{{ file_rm.results | selectattr('failed', 'defined') | selectattr('failed') | map(attribute='item') | list }}"
+  register: forced_rm
+  failed_when: false
+
+- name: Show file module results
+  ansible.builtin.debug:
+    msg: |
+      {{ item.item }} -> changed={{ item.changed|default(false) }} failed={{ item.failed|default(false) }}
+      {% if item.msg is defined %}
+      msg: {{ item.msg }}
+      {% endif %}
+  loop: "{{ file_rm.results | default([]) }}"
+  loop_control: { label: "{{ item.item }}" }
+
+- name: Show forced rm results
+  ansible.builtin.debug:
+    msg: |
+      {{ item.item }} -> rc={{ item.rc|default('') }}
+      stdout:
+      {{ (item.stdout or '') | indent(2) }}
+      stderr:
+      {{ (item.stderr or '') | indent(2) }}
+  loop: "{{ forced_rm.results | default([]) }}"
+  loop_control: { label: "{{ item.item }}" }
 
 - name: Show final deployment status
   ansible.builtin.shell: |
@@ -82,6 +120,11 @@
 - name: Display cleanup completion summary
   ansible.builtin.debug:
     var: final_status.stdout_lines
+
+- name: Show deletion details
+  ansible.builtin.debug:
+    var: cleanup_result.results
+  when: cleanup_result is defined
 
 - name: Show cleanup completion message
   ansible.builtin.debug:
