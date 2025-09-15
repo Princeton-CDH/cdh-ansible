@@ -18,11 +18,14 @@ CDH applications can be deployed to two environments:
 
 ---
 
+
 ## Method 1: Deploy with Ansible Tower Web Interface
+
+The simplest way to deploy a CDH application is to use the Ansible Tower web interface. This method offers a graphical interface for running deployments, making it accessible even if you are not familiar with the command line or Ansible itself.
 
 **⚠️ Note:** Not all playbooks are available in Ansible Tower. For playbooks not available in Tower, use the command-line method below.
 
-### Deploy to Staging
+### Deploy to the Staging Environment
 
 1. Go to [Princeton Ansible Tower](https://ansible-tower.princeton.edu/#/home).
 2. Navigate to **Resources** → **Templates** in the sidebar.
@@ -33,7 +36,7 @@ CDH applications can be deployed to two environments:
     2. On the third page ("Survey"), select **staging** as the environment. The branch name will default to **develop** (no need to change it unless you are deploying a non-default branch, such as a release or feature branch).
     3. On the fourth page ("Preview"), review your selections and then click **Launch** to start the deployment.
 
-### Deploy to Production
+### Deploy to the Production Environment
 
 **⚠️ Note:** We don't deploy to production on Friday afternoons.
 
@@ -44,24 +47,19 @@ CDH applications can be deployed to two environments:
 
 ## Method 2: Command-Line Deployment
 
-### Prerequisites
+Before you can use the command-line deployment method, you need to have a local copy of the `cdh-ansible` repository on your computer, and then follow [README](../README.md) to set up your local environment before running the deployment.
 
-Following [README](../README.md) to set up your local environment.
+### Deploy to the Staging Environment
 
-
-### Deploy to Staging (Default Branch)
+By default, it uses the `develop` branch to deploy to the staging environment.
 
 ```bash
 ansible-playbook playbooks/your_app.yml
 ```
 
-Examples:
-```bash
-ansible-playbook playbooks/cdhweb.yml
-ansible-playbook playbooks/geniza.yml
-```
+### Deploy to the Production Environment
 
-### Deploy to Production (Default Branch)
+By default, it uses the `main` branch to deploy to the production environment.
 
 ```bash
 ansible-playbook playbooks/your_app.yml -e runtime_env=production
