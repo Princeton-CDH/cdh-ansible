@@ -178,44 +178,10 @@ ansible-playbook playbooks/revert_deploy.yml -e host_group=cdhweb_staging
 
 ---
 
-## **Available Playbooks**
-
-Current playbooks in the repository:
-- `cdhweb.yml` - CDH Website
-- `derrida_archive.yml` - Derrida Archive
-- `derrida_crawl.yml` - Derrida Crawl
-- `escriptorium.yml` - eScriptorium (HTR)
-- `geniza.yml` - Princeton Geniza Project
-- `geotaste.yml` - GeoTaste (sandbox)
-- `prodigy.yml` - Prodigy
-- `prosody.yml` - Prosody
-- `shxco.yml` - Shakespeare and Company Project
-- `shxco_datasets.yml` - Shakespeare and Company Datasets
-- `simulatingrisk.yml` - Simulating Risk (sandbox)
-- `replicate.yml` - Data replication (production to staging)
-- `revert_deploy.yml` - Deployment rollback
-- `db_setup.yml` - Database setup
-
-**Note:** Not all playbooks may be available in Ansible Tower. Use command-line deployment for playbooks not yet available in Tower.
-
----
-
 ## **Post-Deployment Communication**
 
 After a successful production deployment:
 
-1. **Announce in the project Slack channel** that the new version is live
-2. **Summarize key changes** that are now available to users
-3. **Link to the CHANGELOG** if there are many updates
-4. **Tag relevant team members** who should be aware of the changes
-
-Example announcement:
-> 🚀 **Geniza v4.2.1 is now live in production!** 
-> 
-> Key changes:
-> - New advanced search filters
-> - Performance improvements for large result sets
-> - Bug fixes for transcription display
-> 
-> Full details: [CHANGELOG.rst](link-to-changelog) 
+1. Announce in the project Slack channel that the new version is live
+2. Summarize key changes that are now available to users, or link to the CHANGELOG if there are many updates
 
