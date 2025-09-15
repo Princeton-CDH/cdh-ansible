@@ -15,10 +15,10 @@ django_app: "{{ app_name }}"
 symlink: "{{ app_name }}"
 # wsgi file relative to apache location
 wsgi_path: "{{ django_app }}/wsgi.py"
-# use python 3.9
-python_version: "3.9"
+# use python 3.12
+python_version: "3.12"
 # nodejs version
-node_version: "16"
+node_version: "22"
 
 # Override clone root to use deploy user home instead of root
 clone_root: "/home/{{ deploy_user }}/repos"

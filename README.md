@@ -22,7 +22,7 @@ The overall structure of this repository is as follows:
   - Python virtual environment.
     - See `.python-version` for the recommended version of Python. If you use [pyenv](https://github.com/pyenv/pyenv) for managing python versions, run `pyenv install`.
     - If you create a python virtualenv in this directory and name it `env` or `venv`, it is included in `.gitignore` to be excluded by git
-    - Install python dependencies: `pip install -r requirements.txt`
+    - Install python dependencies: `uv sync`
   -  Install required Ansible galaxy collections and roles:
       - `ansible-galaxy install -r requirements.yml`
 
@@ -199,3 +199,4 @@ GENIZA_DEPLOY_ONLY=1
 ```
 
 Note that you will not be able to run setup tasks or decrypt setup vault secrets.
+

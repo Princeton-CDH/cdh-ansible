@@ -16,6 +16,10 @@ repos:
       language: python
       files: "inventory/group_vars/.*/vault.yml"
       additional_dependencies: ['pyyaml', 'ansible']
+  - repo: https://github.com/mpalmer/action-validator
+    rev: v0.8.0
+    hooks:
+      - id: action-validator
   # this looks potentially useful, flags fake passwords in postgres config
   # but there seems to be a yaml parsing error, maybe this:
   # https://github.com/Yelp/detect-secrets/issues/374
