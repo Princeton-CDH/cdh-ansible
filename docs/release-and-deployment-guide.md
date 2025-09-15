@@ -1,7 +1,5 @@
 # **Deployment Guide**
 
-## **What This Guide Covers**
-
 This guide provides instructions for deploying CDH applications using Ansible. It covers:
 
 - Deployment environments and default branches for CDH applications
@@ -12,7 +10,7 @@ This guide provides instructions for deploying CDH applications using Ansible. I
 
 ---
 
-## **Deployment Environments and Default Branches**
+## Deployment Environments and Default Branches
 
 CDH applications can be deployed to two environments:
 
@@ -23,11 +21,11 @@ Some applications may use different default branches. Check the application's `g
 
 ---
 
-## **Method 1: Deploy with Ansible Tower Web Interface**
+## Method 1: Deploy with Ansible Tower Web Interface
 
 **⚠️ Note:** Not all playbooks are available in Ansible Tower. For playbooks not available in Tower, use the command-line method below.
 
-### **Deploy to Staging**
+### Deploy to Staging
 
 1. Go to [Princeton Ansible Tower](https://ansible-tower.princeton.edu/#/home).
 2. Navigate to **Resources** → **Templates** in the sidebar.
@@ -38,7 +36,7 @@ Some applications may use different default branches. Check the application's `g
     2. On the third page ("Survey"), select **staging** as the environment. The branch name will default to **develop** (no need to change it unless you are deploying a non-default branch, such as a release or feature branch).
     3. On the fourth page ("Preview"), review your selections and then click **Launch** to start the deployment.
 
-### **Deploy to Production**
+### Deploy to Production
 
 **⚠️ Note:** We don't deploy to production on Friday afternoons.
 
@@ -47,14 +45,14 @@ Some applications may use different default branches. Check the application's `g
 
 ---
 
-## **Method 2: Command-Line Deployment**
+## Method 2: Command-Line Deployment
 
-### **Prerequisites**
+### Prerequisites
 
 Following [README](../README.md) to set up your local environment.
 
 
-### **Deploy to Staging (Default Branch)**
+### Deploy to Staging (Default Branch)
 
 ```bash
 ansible-playbook playbooks/your_app.yml
@@ -66,13 +64,13 @@ ansible-playbook playbooks/cdhweb.yml
 ansible-playbook playbooks/geniza.yml
 ```
 
-### **Deploy to Production (Default Branch)**
+### Deploy to Production (Default Branch)
 
 ```bash
 ansible-playbook playbooks/your_app.yml -e runtime_env=production
 ```
 
-### **Deploy a Non-Default Branch**
+### Deploy a Non-Default Branch
 
 To deploy a specific branch, tag, or commit hash:
 
@@ -98,16 +96,11 @@ ansible-playbook playbooks/geniza.yml -e runtime_env=production -e ref=v4.2.1
 ansible-playbook playbooks/prosody.yml -e ref=feature/new-search
 ```
 
-### **Additional Command-Line Options**
+### Additional Command-Line Options
 
 **Increase verbosity:**
 ```bash
 ansible-playbook playbooks/your_app.yml -v
-```
-
-**Skip GitHub deployment notifications:**
-```bash
-ansible-playbook playbooks/your_app.yml --skip-tags gh_deploy
 ```
 
 **Pause before finalizing deployment:**
@@ -115,50 +108,11 @@ ansible-playbook playbooks/your_app.yml --skip-tags gh_deploy
 ansible-playbook playbooks/your_app.yml --tags=all,final-pause
 ```
 
-**Include setup tasks (for initial provisioning):**
-```bash
-ansible-playbook playbooks/your_app.yml --tags=all,setup
-```
-
 ---
 
-## **Post-Deployment Tasks**
+## Troubleshooting
 
-### **Check DEPLOYNOTES**
-
-After deployment, check the application's `DEPLOYNOTES.rst` file for any manual steps required on the server.
-
-### **Find Server Hostnames**
-
-Server hostnames are listed in [`inventory/all_hosts`](../inventory/all_hosts). 
-Look for:
-- **Staging servers**: `app_name_staging` (e.g., `cdhweb_staging`, `geniza_staging`)
-- **Production servers**: `app_name_production` (e.g., `cdhweb_production`, `geniza_production`)
-
-Most applications have two VMs per environment mirroring each other for redundancy.
-
-### **SSH Access**
-
-Connect to servers using:
-```bash
-ssh pulsys@hostname.princeton.edu
-```
-
-### **Testing After Staging Deployment**
-
-After deploying to staging, it's important to verify the deployment:
-
-1. **Create testing instructions** in the relevant GitHub issue
-2. **Add the `awaiting testing` label** to trigger Slack notifications
-3. **In the project Slack channel**, `@mention` the reviewer and link to the issue
-4. **Include a testing deadline** to ensure timely feedback
-5. **Verify core functionality** works as expected in the staging environment
-
----
-
-## **Troubleshooting**
-
-### **Revert a Deployment**
+### Revert a Deployment
 
 To revert to the previous deployment:
 ```bash
@@ -170,18 +124,6 @@ Example:
 ansible-playbook playbooks/revert_deploy.yml -e host_group=cdhweb_staging
 ```
 
-### **Common Issues**
+### Permission errors
 
-- **Vault access errors**: Ensure you're logged into LastPass and the vault identity environment variable is set
-- **GitHub token errors**: Set your personal access token or use the fallback token
-- **Permission errors**: Ensure you have access to the target servers and vault passwords
-
----
-
-## **Post-Deployment Communication**
-
-After a successful production deployment:
-
-1. Announce in the project Slack channel that the new version is live
-2. Summarize key changes that are now available to users, or link to the CHANGELOG if there are many updates
-
+- Ensure you're logged into LastPass and the vault identity environment variable is set
