@@ -2,11 +2,9 @@
 
 This guide provides instructions for deploying CDH applications using Ansible. It covers:
 
-- Deployment environments and default branches for CDH applications
-- Deploying with Ansible Tower using web interface
-- Command-line deployment from local cdh-ansible checkout
-- Deploying non-default branches
-- Post-deployment tasks
+- Introduction to CDH Deployment environments and default branches
+- How to deploy with Ansible Tower using web interface
+- How to deploy with local cdh-ansible checkout using command-line
 
 ---
 
@@ -14,10 +12,9 @@ This guide provides instructions for deploying CDH applications using Ansible. I
 
 CDH applications can be deployed to two environments:
 
-- **Staging**: Uses `develop` branch by default
-- **Production**: Uses `main` branch by default
+1. **Staging**: Uses `develop` branch by default
+2. **Production**: Uses `main` branch by default
 
-Some applications may use different default branches. Check the application's `group_vars` for specific configurations.
 
 ---
 
@@ -96,7 +93,7 @@ ansible-playbook playbooks/geniza.yml -e runtime_env=production -e ref=v4.2.1
 ansible-playbook playbooks/prosody.yml -e ref=feature/new-search
 ```
 
-### Additional Command-Line Options
+### Additional Useful Command-Lines
 
 **Increase verbosity:**
 ```bash
@@ -108,22 +105,7 @@ ansible-playbook playbooks/your_app.yml -v
 ansible-playbook playbooks/your_app.yml --tags=all,final-pause
 ```
 
----
-
-## Troubleshooting
-
-### Revert a Deployment
-
-To revert to the previous deployment:
+**Revert a Deployment:**
 ```bash
 ansible-playbook playbooks/revert_deploy.yml -e host_group=your_app_environment
 ```
-
-Example:
-```bash
-ansible-playbook playbooks/revert_deploy.yml -e host_group=cdhweb_staging
-```
-
-### Permission errors
-
-- Ensure you're logged into LastPass and the vault identity environment variable is set
