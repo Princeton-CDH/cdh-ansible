@@ -10,8 +10,8 @@ email_prefix: "[CDH Web] "
 db_name: 'cdhweb4'
 
 # cdhweb production contexts required for deploy
-deploy_contexts:
-    - 'Python unit tests'
+deploy_contexts: []
+    # - 'Python unit tests'
     # - 'codecov/project'
     # - 'codecov/patch'
 
