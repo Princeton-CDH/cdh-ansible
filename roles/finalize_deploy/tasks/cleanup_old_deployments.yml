@@ -9,7 +9,6 @@
     patterns: ["[0-9]*.[0-9]*.[0-9]*-*"]    # Matches: 4.24.0-dev-33e737, 3.15.0-63bcea
   register: all_deploy_dirs
 
-
 - name: Resolve current/previous symlinks to absolute paths
   ansible.builtin.shell: readlink -f "{{ install_root }}/{{ item }}" 2>/dev/null || echo ""
   loop: [current, previous]
@@ -22,12 +21,6 @@
     protected_dirs: >-
       {{ rp_syms.results | map(attribute='stdout') | select('string') | select() | list }}
 
-- name: DEBUG protected + all dirs (absolute)
-  ansible.builtin.debug:
-    msg: |
-      Protected: {{ protected_dirs }}
-      All: {{ all_deploy_dirs.files | map(attribute='path') | list }}
-
 - name: Sort & choose old unprotected (by mtime desc)
   ansible.builtin.set_fact:
     sorted_unprotected: >-
@@ -39,80 +32,13 @@
   ansible.builtin.set_fact:
     dirs_to_remove: "{{ sorted_unprotected[deploy_keep_count|default(3)|int:] | map(attribute='path') | list }}"
 
-- name: Preflight FS info (bash)
-  become: true
-  ansible.builtin.shell: |
-    set -e
-    echo "== findmnt =="
-    command -v findmnt >/dev/null 2>&1 && findmnt -T "{{ install_root }}" -o TARGET,SOURCE,FSTYPE,OPTIONS || true
-    echo "== stat -f =="
-    stat -f -c "fstype=%T" "{{ install_root }}" || true
-  args:
-    executable: /bin/bash
-  register: fsinfo
-  changed_when: false
-
-- name: Show preflight
-  ansible.builtin.debug:
-    var: fsinfo.stdout_lines
-
-- name: Remove old deployments via file module
+- name: Remove old deployments
   become: true
   ansible.builtin.file:
     path: "{{ item }}"
     state: absent
   loop: "{{ dirs_to_remove }}"
-  register: file_rm
-  failed_when: false
-
-- name: Post-delete stat
-  ansible.builtin.stat:
-    path: "{{ item }}"
-  loop: "{{ dirs_to_remove }}"
-  register: post_stat
-
-- name: Force remove leftovers with bash
-  become: true
-  ansible.builtin.shell: |
-    set -euxo pipefail
-    target="{{ item.stat.path }}"
-    echo "Force removing: $target"
-    command -v chattr >/dev/null 2>&1 && chattr -R -i "$target" || true
-    command -v getfacl >/dev/null 2>&1 && getfacl -Rp "$target" | head -50 || true
-    command -v setfacl >/dev/null 2>&1 && setfacl -bnR "$target" || true
-    chmod -R u+rwX "$target" || true
-    echo "== lsof =="
-    command -v lsof >/dev/null 2>&1 && lsof +D "$target" || true
-    echo "== fuser =="
-    command -v fuser >/dev/null 2>&1 && fuser -vm "$target" || true
-    rm -rf --one-file-system "$target"
-    test ! -e "$target" && echo "OK removed $target"
-  args:
-    executable: /bin/bash
-  loop: "{{ post_stat.results | selectattr('stat.exists') | list }}"
-  register: forced_rm
-  failed_when: false
-
-- name: Show file module results
-  ansible.builtin.debug:
-    msg: |
-      {{ item.item }} -> changed={{ item.changed|default(false) }} failed={{ item.failed|default(false) }}
-      {% if item.msg is defined %}
-      msg: {{ item.msg }}
-      {% endif %}
-  loop: "{{ file_rm.results | default([]) }}"
-  loop_control: { label: "{{ item.item }}" }
-
-- name: Show forced rm results
-  ansible.builtin.debug:
-    msg: |
-      {{ item.item.stat.path }} -> rc={{ item.rc|default('') }}
-      stdout:
-      {{ (item.stdout or '') | indent(2) }}
-      stderr:
-      {{ (item.stderr or '') | indent(2) }}
-  loop: "{{ forced_rm.results | default([]) }}"
-  loop_control: { label: "{{ item.item.stat.path }}" }
+  when: dirs_to_remove | length > 0        # Skip this task if nothing to remove
 
 - name: Show final deployment status
   ansible.builtin.shell: |
@@ -128,11 +54,6 @@
 - name: Display cleanup completion summary
   ansible.builtin.debug:
     var: final_status.stdout_lines
-
-- name: Show deletion details
-  ansible.builtin.debug:
-    var: cleanup_result.results
-  when: cleanup_result is defined
 
 - name: Show cleanup completion message
   ansible.builtin.debug:
