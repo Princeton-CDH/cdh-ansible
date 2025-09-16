@@ -7,7 +7,7 @@
 
 ## Deployment and Infrastructure
 
-- [Release and Deployment Guide](release-and-deployment-guide.md) - Complete workflow for releasing and deploying CDH applications using Ansible
+- [Deployment Guide](deployment-guide.md)
 
 ## General
 
