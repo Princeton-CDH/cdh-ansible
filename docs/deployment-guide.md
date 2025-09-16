@@ -104,6 +104,7 @@ ansible-playbook playbooks/your_app.yml --tags=all,final-pause
 ```
 
 **Revert a Deployment:**
+**⚠️ Note:** Does not reverse django migrations; this playbook only switches current and previous symlinks.
 ```bash
 ansible-playbook playbooks/revert_deploy.yml -e host_group=your_app_environment
 ```
