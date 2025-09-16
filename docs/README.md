@@ -5,6 +5,10 @@
 - [Prodigy](applications/prodigy.md)
 - [Princeton Geniza Project](applications/geniza.md)
 
+## Deployment and Infrastructure
+
+- [Deployment Guide](deployment-guide.md)
+
 ## General
 
 CDH ansibilized applications are deployed to virtual servers managed by PUL.
