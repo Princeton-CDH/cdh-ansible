@@ -36,5 +36,5 @@
     - name: User should be member of deploy group and www-data group
       ansible.builtin.assert:
         that:
-          - "'conan' in '{{ user_groups.stdout.split(':')[1] }}'"
-          - "'www-data' in '{{ user_groups.stdout.split(':')[1] }}'"
+          - "'conan' in user_groups.stdout.split(':')[1]"
+          - "'www-data' in user_groups.stdout.split(':')[1]"

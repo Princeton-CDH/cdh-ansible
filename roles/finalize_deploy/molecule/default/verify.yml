@@ -1,0 +1,33 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: "Gather remaining deployments"
+      ansible.builtin.find:
+        paths: "{{ install_root }}"
+        file_type: directory
+        patterns: ["[0-9]*.[0-9]*.[0-9]*-*"]
+      register: remaining
+
+    - name: "Check results - check that we kept the right number of deployments"
+      ansible.builtin.assert:
+        that:
+          - remaining.files | length <= deploy_keep_count | int + 2
+          - remaining.files | length >= deploy_keep_count | int
+        success_msg: "Test passed! Kept {{ remaining.files | length }} deployments"
+        fail_msg: "Test failed! Expected to keep around {{ deploy_keep_count | int + 2 }} deployments, but found {{ remaining.files | length }}"
+
+    - name: "Verify symlinks still work"
+      ansible.builtin.stat:
+        path: "{{ install_root }}/{{ item }}"
+      loop: [current, previous]
+      register: symlink_check
+
+    - name: "Verify symlinks are valid"
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.islnk
+        fail_msg: "Symlink {{ item.item }} is not valid"
+      loop: "{{ symlink_check.results }}"

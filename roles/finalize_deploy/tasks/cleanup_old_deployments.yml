@@ -1,0 +1,60 @@
+---
+# Cleanup old deployment directories
+# This task file can be included by other roles or used independently
+
+- name: Find all deployment directories
+  ansible.builtin.find:
+    paths: "{{ install_root }}"              # e.g., /srv/www/geniza
+    file_type: directory
+    patterns: ["[0-9]*.[0-9]*.[0-9]*-*"]    # Matches: 4.24.0-dev-33e737, 3.15.0-63bcea
+  register: all_deploy_dirs
+
+- name: Resolve current/previous symlinks to absolute paths
+  ansible.builtin.shell: readlink -f "{{ install_root }}/{{ item }}" 2>/dev/null || echo ""
+  loop: [current, previous]
+  register: rp_syms
+  changed_when: false
+  failed_when: false
+
+- name: Build protected_dirs (absolute)
+  ansible.builtin.set_fact:
+    protected_dirs: >-
+      {{ rp_syms.results | map(attribute='stdout') | select('string') | select() | list }}
+
+- name: Sort & choose old unprotected (by mtime desc)
+  ansible.builtin.set_fact:
+    sorted_unprotected: >-
+      {{ all_deploy_dirs.files
+         | rejectattr('path', 'in', protected_dirs)
+         | sort(attribute='mtime', reverse=true) }}
+
+- name: Keep recent N, mark old ones to remove
+  ansible.builtin.set_fact:
+    dirs_to_remove: "{{ sorted_unprotected[deploy_keep_count|default(3)|int:] | map(attribute='path') | list }}"
+
+- name: Remove old deployments
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ dirs_to_remove }}"
+  when: dirs_to_remove | length > 0        # Skip this task if nothing to remove
+
+- name: Show final deployment status
+  ansible.builtin.shell: |
+    echo "=== CLEANUP RESULTS ==="
+    echo "Total deployments remaining: $(ls -1 {{ install_root }}/ | grep -E '[0-9]+\.[0-9]+\.[0-9]+' | wc -l)"
+    echo "=== Current Symlinks ==="
+    ls -la {{ install_root }}/ | grep -E '(current|previous)' || echo "No symlinks found"
+    echo "=== Latest Deployments ==="
+    ls -lt {{ install_root }}/ | grep -E '[0-9]+\.[0-9]+\.[0-9]+' | head -5
+  register: final_status
+  changed_when: false
+
+- name: Display cleanup completion summary
+  ansible.builtin.debug:
+    var: final_status.stdout_lines
+
+- name: Show cleanup completion message
+  ansible.builtin.debug:
+    msg: "Cleanup completed! Attempted to remove {{ dirs_to_remove | length }} directories."

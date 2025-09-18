@@ -1,0 +1,9 @@
+#SPDX-License-Identifier: MIT-0
+---
+# defaults file for finalize_deploy
+
+# Whether to automatically clean up old deployments
+auto_cleanup_deploys: true
+
+# Number of recent deployments to keep when cleaning up
+deploy_keep_count: 3

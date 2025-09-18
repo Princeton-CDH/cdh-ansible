@@ -1,6 +1,6 @@
 ###
 # This role runs all of the tasks needed to make the new code live,
-# with a handler to restart apache.
+# with handlers to restart nginx and cleanup old deployments.
 
 # It assumes the standard configuration /srv/www symlinks to /var/www
 # used in CDH Django projects.
@@ -10,7 +10,7 @@
   become_user: "{{ deploy_user }}"
   block:
     - name: Create "next" symlink for any final steps before switching live
-      file:
+      ansible.builtin.file:
         src: "{{ deploy }}"
         dest: "{{ install_root }}/next"
         state: link
@@ -26,7 +26,7 @@
         - final-pause
 
     - name: Remove "next" symlink
-      file:
+      ansible.builtin.file:
         dest: "{{ install_root }}/next"
         state: absent
       tags:
@@ -34,32 +34,36 @@
         - final-pause
 
     - name: Check for "current" symlink; if present, save path
-      stat:
+      ansible.builtin.stat:
         path: "{{ install_root }}/current"
       register: previous
 
     - name: Set current symlink
-      file:
+      ansible.builtin.file:
         src: "{{ deploy }}"
         dest: "{{ install_root }}/current"
         state: link
 
     - name: Create "current" symlink for new deploy
-      stat:
+      ansible.builtin.stat:
         path: "{{ install_root }}/current"
       register: current
 
     - name: If deploy path differs from last "current", update "previous" symlink
-      file:
+      ansible.builtin.file:
         src: "{{ previous.stat.lnk_target }}"
         dest: "{{ install_root }}/previous"
         state: link
-      when: >
-        previous.stat.exists == True and
-        previous.stat.lnk_source != current.stat.lnk_source
+      when:
+        - previous.stat.exists | default(false)
+        - previous.stat.islnk  | default(false)
+        - current.stat.islnk   | default(false)
+        - previous.stat.lnk_target is defined
+        - current.stat.lnk_target is defined
+        - previous.stat.lnk_target != current.stat.lnk_target
 
     - name: Register there is now a previous symlink
-      stat:
+      ansible.builtin.stat:
         path: "{{ install_root }}/previous"
       register: previous
 
@@ -67,14 +71,22 @@
     # and /var, so we need to be root
     - name: Update /var/www/ symlink to make the new version live
       become_user: root
-      file:
+      ansible.builtin.file:
         src: "{{ deploy }}"
         dest: "/var/www/{{ symlink }}"
         state: link
-      notify:
-        - Restart nginx
-      when:
-        - "'passenger' in ansible_role_names"
+      notify: Restart nginx
+      when: "'passenger' in ansible_role_names"
+
+    # After symlinks are updated, run cleanup if enabled
+    - name: Run cleanup of old deployments (as root)
+      block:
+        - name: Include cleanup tasks
+          ansible.builtin.include_tasks: cleanup_old_deployments.yml
+          when: auto_cleanup_deploys | default(true)
+          tags: [cleanup]
+      become: true
+      become_user: root
 
   rescue:
-    - include_tasks: roles/create_deployment/tasks/fail.yml
+    - ansible.builtin.include_tasks: "{{ role_path }}/../create_deployment/tasks/fail.yml"
