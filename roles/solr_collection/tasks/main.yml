@@ -37,7 +37,7 @@
         - num_shards * replication_factor > 3 and shards_per_node == 1
 
     - name: Update configset with zookeeper
-      command: "/opt/solr/bin/solr zk -upconfig -d /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -n {{ solr_configset }} -z {{ zk_host }}"
+      command: "/opt/solr/bin/solr zk upconfig -d /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -n {{ solr_configset }} -z {{ zk_host }}"
       delegate_to: "{{ solr_server }}"
 
     - name: Get a list of current Solr collections
