@@ -4,20 +4,31 @@
 - name: Setup django application
   environment:
     DJANGO_ENV: "{{ runtime_env }}"
+    # Force UTF-8 so manage.py output with smart quotes/etc doesn't crash
+    LANG: C.UTF-8
+    LC_ALL: C.UTF-8
+    PYTHONIOENCODING: utf-8
+    PYTHONUTF8: "1"
   block:
-  - name: Install local settings
-    ansible.builtin.import_tasks: install_local_settings.yml
-    tags:
-    - app_config
-  - name: Run django migrations
-    ansible.builtin.import_tasks: migrate.yml
-  - name: Run collect static
-    ansible.builtin.import_tasks: collectstatic.yml
-  - name: Run compile messages
-    ansible.builtin.import_tasks: compilemessages.yml
-  - name: Setup django media
-    ansible.builtin.import_tasks: media.yml
-    when: media_root is defined
-  - name: Setup django fonts
-    ansible.builtin.import_tasks: fonts.yml
-    when: font_archive_file is defined
+    - name: Install local settings
+      ansible.builtin.import_tasks: install_local_settings.yml
+      tags:
+        - app_config
+
+    - name: Run django migrations
+      ansible.builtin.import_tasks: migrate.yml
+
+    - name: Run collect static
+      ansible.builtin.import_tasks: collectstatic.yml
+
+    - name: Run compile messages
+      ansible.builtin.import_tasks: compilemessages.yml
+
+    - name: Setup django media
+      ansible.builtin.import_tasks: media.yml
+      when: media_root is defined
+
+    - name: Setup django fonts
+      ansible.builtin.import_tasks: fonts.yml
+      when: font_archive_file is defined
+
