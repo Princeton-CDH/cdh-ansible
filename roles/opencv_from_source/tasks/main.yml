@@ -15,18 +15,31 @@
 - name: OpenCV | Install build dependencies
   become: true
   ansible.builtin.apt:
-    name:
-      - build-essential
-      - cmake
-      - ninja-build
-      - pkg-config
-      - git
-      - ca-certificates
-      - libjpeg-dev
-      - libpng-dev
-      - libtiff-dev
-      - libwebp-dev
-      - python3-dev
+    name: >-
+      {{
+        [
+          'build-essential',
+          'cmake',
+          'ninja-build',
+          'pkg-config',
+          'git',
+          'ca-certificates',
+          'libjpeg-dev',
+          'libpng-dev',
+          'libtiff-dev',
+          'libwebp-dev',
+          'python3-dev'
+        ]
+        + (
+          [
+            'libavcodec-dev',
+            'libavformat-dev',
+            'libswscale-dev',
+            'libswresample-dev',
+            'libavutil-dev'
+          ] if opencv_with_ffmpeg else []
+        )
+      }}
     state: present
     update_cache: true
 
@@ -96,8 +109,8 @@
     -D BUILD_TESTS={{ 'ON' if opencv_build_tests else 'OFF' }}
     -D BUILD_PERF_TESTS=OFF
     -D BUILD_EXAMPLES={{ 'ON' if opencv_build_examples else 'OFF' }}
-    -D BUILD_opencv_videoio={{ 'ON' if opencv_build_videoio else 'OFF' }}
-    -D WITH_FFMPEG={{ 'ON' if opencv_with_ffmpeg else 'OFF' }}
+    -D BUILD_opencv_videoio=ON
+    -D WITH_FFMPEG=ON
     -D WITH_GSTREAMER={{ 'ON' if opencv_with_gstreamer else 'OFF' }}
     -D BUILD_opencv_python2=OFF
     -D BUILD_opencv_python3=ON
