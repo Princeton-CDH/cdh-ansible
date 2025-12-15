@@ -17,7 +17,7 @@ wsgi_path: "{{ django_app }}/wsgi.py"
 # use python 3.12
 python_version: 3.12
 # nodejs version
-node_version: "20"
+node_version: "22"
 
 # pul deploy user
 deploy_user: "conan"
