@@ -1,0 +1,19 @@
+---
+# defaults file for roles//opencv_from_source
+opencv_from_source_enabled: true
+opencv_replace_apt_package: true
+
+opencv_version: "4.10.0"
+opencv_src_dir: "/usr/local/src/opencv-{{ opencv_version }}"
+opencv_build_dir: "{{ opencv_src_dir }}/build"
+opencv_install_prefix: "/usr/local"
+
+opencv_python_executable: "/usr/bin/python3"
+opencv_with_ffmpeg: false
+opencv_build_videoio: false
+
+# We can flip these on if we ever need them:
+opencv_with_gstreamer: false
+opencv_build_tests: false
+opencv_build_examples: false
+
