@@ -1,8 +1,6 @@
 ---
 - name: Converge
   hosts: all
-  vars:
-    - running_on_server: false
   become: true
   tasks:
     - name: "Include opencv_from_source"

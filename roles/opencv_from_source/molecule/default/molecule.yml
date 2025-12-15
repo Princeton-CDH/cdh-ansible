@@ -30,9 +30,14 @@ platforms:
     pre_build_image: true
 provisioner:
   name: ansible
+  env:
+    # Parent dir of this role is .../cdh-ansible/roles
+    ANSIBLE_ROLES_PATH: "${MOLECULE_PROJECT_DIRECTORY}/..:${MOLECULE_SCENARIO_DIRECTORY}/roles:${HOME}/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles"
   config_options:
     defaults:
       remote_tmp: /tmp
+      # Belt-and-suspenders: also set roles_path in the generated ansible.cfg
+      roles_path: "${MOLECULE_PROJECT_DIRECTORY}/..:${MOLECULE_SCENARIO_DIRECTORY}/roles:${HOME}/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles"
   log: true
 verifier:
   name: ansible

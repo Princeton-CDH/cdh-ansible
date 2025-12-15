@@ -1,7 +1,7 @@
 ---
 # tasks file for roles//opencv_from_source
 - name: OpenCV | Bail if disabled
-  ansible.builtin.meta: end_play
+  ansible.builtin.meta: end_host
   when: not opencv_from_source_enabled
 
 - name: OpenCV | remove Ubuntu python3-opencv package (to drop ffmpeg dep chain)
@@ -9,9 +9,11 @@
     name: python3-opencv
     state: absent
     purge: true
+  become: true
   when: opencv_replace_apt_package
 
 - name: OpenCV | Install build dependencies
+  become: true
   ansible.builtin.apt:
     name:
       - build-essential
@@ -20,21 +22,21 @@
       - pkg-config
       - git
       - ca-certificates
-      # image codecs (common + safe)
       - libjpeg-dev
       - libpng-dev
       - libtiff-dev
       - libwebp-dev
-      # python headers for the system (venv python still uses these)
       - python3-dev
-  state: present
-  update_cache: true
+    state: present
+    update_cache: true
 
 # Ensure numpy exists in the target python environment for headers
 - name: OpenCV | Ensure numpy present in app venv
+  become: true
   ansible.builtin.pip:
     name: numpy
-    executable: "{{ opencv_python_executable }}"
+    executable: "{{ (opencv_python_executable | dirname) ~ '/pip' }}"
+
 
 - name: OpenCV | Get python site-packages path
   ansible.builtin.command: >
@@ -64,6 +66,7 @@
     path: "{{ opencv_src_dir }}"
     state: directory
     mode: "0755"
+  become: true
   when: opencv_needs_build
 
 - name: OpenCV | Fetch OpenCV source (tagged)
@@ -72,6 +75,7 @@
     dest: "{{ opencv_src_dir }}/opencv"
     version: "{{ opencv_version }}"
     depth: 1
+  become: true
   when: opencv_needs_build
 
 - name: OpenCV | Create build dir
@@ -79,6 +83,7 @@
     path: "{{ opencv_build_dir }}"
     state: directory
     mode: "0755"
+  become: true
   when: opencv_needs_build
 
 - name: OpenCV | Configure (cmake)
@@ -102,20 +107,24 @@
   args:
     chdir: "{{ opencv_build_dir }}"
   when: opencv_needs_build
+  become: true
 
 - name: OpenCV | Build
   ansible.builtin.command: >
     cmake --build {{ opencv_build_dir }}
   when: opencv_needs_build
+  become: true
 
 - name: OpenCV | Install
   ansible.builtin.command: >
     cmake --install {{ opencv_build_dir }}
   when: opencv_needs_build
+  become: true
 
 - name: OpenCV | Refresh linker cache
   ansible.builtin.command: ldconfig
   when: opencv_needs_build
+  become: true
 
 - name: OpenCV | Verify import (in app venv python)
   ansible.builtin.command: >
