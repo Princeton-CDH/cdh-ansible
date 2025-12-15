@@ -1,0 +1,152 @@
+---
+# tasks file for roles//opencv_from_source
+- name: OpenCV | Bail if disabled
+  ansible.builtin.meta: end_host
+  when: not opencv_from_source_enabled
+
+- name: OpenCV | remove Ubuntu python3-opencv package (to drop ffmpeg dep chain)
+  ansible.builtin.apt:
+    name: python3-opencv
+    state: absent
+    purge: true
+  become: true
+  when: opencv_replace_apt_package
+
+- name: OpenCV | Install build dependencies
+  become: true
+  ansible.builtin.apt:
+    name: >-
+      {{
+        [
+          'build-essential',
+          'cmake',
+          'ninja-build',
+          'pkg-config',
+          'git',
+          'ca-certificates',
+          'libjpeg-dev',
+          'libpng-dev',
+          'libtiff-dev',
+          'libwebp-dev',
+          'python3-dev'
+        ]
+        + (
+          [
+            'libavcodec-dev',
+            'libavformat-dev',
+            'libswscale-dev',
+            'libswresample-dev',
+            'libavutil-dev'
+          ] if opencv_with_ffmpeg else []
+        )
+      }}
+    state: present
+    update_cache: true
+
+# Ensure numpy exists in the target python environment for headers
+- name: OpenCV | Ensure numpy present in app venv
+  become: true
+  ansible.builtin.pip:
+    name: numpy
+    executable: "{{ (opencv_python_executable | dirname) ~ '/pip' }}"
+
+
+- name: OpenCV | Get python site-packages path
+  ansible.builtin.command: >
+    {{ opencv_python_executable }} -c "import site; print(site.getsitepackages()[0])"
+  register: opencv_py_sitepkgs
+  changed_when: false
+
+- name: OpenCV | Get numpy include path
+  ansible.builtin.command: >
+    {{ opencv_python_executable }} -c "import numpy; print(numpy.get_include())"
+  register: opencv_numpy_include
+  changed_when: false
+
+- name: OpenCV | Check currently installed cv2 version (if any)
+  ansible.builtin.command: >
+    {{ opencv_python_executable }} -c "import cv2; print(cv2.__version__)"
+  register: opencv_cv2_version
+  changed_when: false
+  failed_when: false
+
+- name: OpenCV | Decide if rebuild is needed
+  ansible.builtin.set_fact:
+    opencv_needs_build: "{{ (opencv_cv2_version.rc != 0) or (opencv_cv2_version.stdout | trim != opencv_version) }}"
+
+- name: OpenCV | Create source dir
+  ansible.builtin.file:
+    path: "{{ opencv_src_dir }}"
+    state: directory
+    mode: "0755"
+  become: true
+  when: opencv_needs_build
+
+- name: OpenCV | Fetch OpenCV source (tagged)
+  ansible.builtin.git:
+    repo: "https://github.com/opencv/opencv.git"
+    dest: "{{ opencv_src_dir }}/opencv"
+    version: "{{ opencv_version }}"
+    depth: 1
+  become: true
+  when: opencv_needs_build
+
+- name: OpenCV | Create build dir
+  ansible.builtin.file:
+    path: "{{ opencv_build_dir }}"
+    state: directory
+    mode: "0755"
+  become: true
+  when: opencv_needs_build
+
+- name: OpenCV | Configure (cmake)
+  ansible.builtin.command: >
+    cmake -G Ninja
+    -S {{ opencv_src_dir }}/opencv
+    -B {{ opencv_build_dir }}
+    -D CMAKE_BUILD_TYPE=Release
+    -D CMAKE_INSTALL_PREFIX={{ opencv_install_prefix }}
+    -D BUILD_TESTS={{ 'ON' if opencv_build_tests else 'OFF' }}
+    -D BUILD_PERF_TESTS=OFF
+    -D BUILD_EXAMPLES={{ 'ON' if opencv_build_examples else 'OFF' }}
+    -D BUILD_opencv_videoio=ON
+    -D WITH_FFMPEG=ON
+    -D WITH_GSTREAMER={{ 'ON' if opencv_with_gstreamer else 'OFF' }}
+    -D BUILD_opencv_python2=OFF
+    -D BUILD_opencv_python3=ON
+    -D PYTHON3_EXECUTABLE={{ opencv_python_executable }}
+    -D PYTHON3_NUMPY_INCLUDE_DIRS={{ opencv_numpy_include.stdout | trim }}
+    -D PYTHON3_PACKAGES_PATH={{ opencv_py_sitepkgs.stdout | trim }}
+  args:
+    chdir: "{{ opencv_build_dir }}"
+  when: opencv_needs_build
+  become: true
+
+- name: OpenCV | Build
+  ansible.builtin.command: >
+    cmake --build {{ opencv_build_dir }}
+  when: opencv_needs_build
+  become: true
+
+- name: OpenCV | Install
+  ansible.builtin.command: >
+    cmake --install {{ opencv_build_dir }}
+  when: opencv_needs_build
+  become: true
+
+- name: OpenCV | Refresh linker cache
+  ansible.builtin.command: ldconfig
+  when: opencv_needs_build
+  become: true
+
+- name: OpenCV | Verify import (in app venv python)
+  ansible.builtin.command: >
+    {{ opencv_python_executable }} -c "import cv2; print(cv2.__version__)"
+  register: opencv_verify
+  changed_when: false
+
+- name: OpenCV | Assert expected version
+  ansible.builtin.assert:
+    that:
+      - (opencv_verify.stdout | trim) == opencv_version
+    fail_msg: "cv2 imported, but version was {{ opencv_verify.stdout | trim }} (expected {{ opencv_version }})"

@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  tasks:
+    - name: "Include opencv_from_source"
+      ansible.builtin.include_role:
+        name: opencv_from_source

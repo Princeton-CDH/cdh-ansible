@@ -15,6 +15,7 @@
     - build_npm
     - configure_logging
     - django
+    - opencv_from_source
     - run_webpack   # requires font files from django task
     - finalize_deploy
     - close_deployment

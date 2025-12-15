@@ -13,6 +13,7 @@ dependencies = [
     "docker>=7.1.0",
     "ansible-dev-tools>=25.8.3",
     "molecule-plugins[docker]>=25.8.12",
+    "podman>=5.6.0",
 ]
 
 [dependency-groups]

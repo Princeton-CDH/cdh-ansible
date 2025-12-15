@@ -1,0 +1,91 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  become: true
+
+  vars:
+    # Try to reuse whichever var name your role uses; fall back to python3.
+    verify_python: >-
+      {{
+        opencv_python_executable
+          | default(opencv_from_source_python)
+          | default('python3')
+      }}
+
+    # If your role is meant to remove the apt package, enforce it here.
+    verify_expect_no_apt_python3_opencv: >-
+      {{
+        opencv_replace_apt_package
+          | default(opencv_from_source_remove_apt)
+          | default(true)
+      }}
+
+    # If your role disables ffmpeg, enforce it here.
+    verify_expect_ffmpeg_disabled: >-
+      {{
+        (not (opencv_with_ffmpeg | default(false)))
+        and (opencv_build_videoio | default(false) == false)
+      }}
+
+    # Only assert version if you set one.
+    verify_expected_version: "{{ opencv_version | default(omit) }}"
+
+  tasks:
+    - name: Verify | python3-opencv apt package absent (if expected)
+      ansible.builtin.command: dpkg-query -W -f='${Status}' python3-opencv
+      register: dpkg_python3_opencv
+      failed_when: false
+      changed_when: false
+
+    - name: Verify | Assert python3-opencv is not installed from apt
+      ansible.builtin.assert:
+        that:
+          - not verify_expect_no_apt_python3_opencv
+            or (dpkg_python3_opencv.rc != 0)
+            or ('installed' not in (dpkg_python3_opencv.stdout | default('')))
+        fail_msg: >-
+          python3-opencv is still installed from apt:
+          {{ dpkg_python3_opencv.stdout | default('') }}
+
+    - name: Verify | Import cv2, report version/path, and detect ffmpeg support
+      ansible.builtin.shell: |
+        set -euo pipefail
+        {{ verify_python }} - <<'PY'
+        import cv2
+        bi = cv2.getBuildInformation()
+        print("CV2_VERSION=" + cv2.__version__)
+        print("CV2_FILE=" + cv2.__file__)
+        print("HAS_FFMPEG=" + str("FFMPEG: YES" in bi))
+        PY
+      args:
+        executable: /bin/bash
+      register: cv2_check
+      changed_when: false
+
+    - name: Verify | Assert cv2 import worked
+      ansible.builtin.assert:
+        that:
+          - cv2_check.rc == 0
+          - "'CV2_VERSION=' in cv2_check.stdout"
+          - "'CV2_FILE=' in cv2_check.stdout"
+        fail_msg: "cv2 import failed:\n{{ cv2_check.stdout }}\n{{ cv2_check.stderr }}"
+
+    - name: Verify | Assert expected OpenCV version (if configured)
+      ansible.builtin.assert:
+        that:
+          - verify_expected_version is not defined
+            or ('CV2_VERSION=' ~ verify_expected_version) in cv2_check.stdout
+        fail_msg: >-
+          OpenCV version mismatch.
+          Expected {{ verify_expected_version }}, got:
+          {{ cv2_check.stdout }}
+
+    - name: Verify | Assert ffmpeg disabled (if expected)
+      ansible.builtin.assert:
+        that:
+          - not verify_expect_ffmpeg_disabled or ('HAS_FFMPEG=False' in cv2_check.stdout)
+        fail_msg: >-
+          OpenCV appears to be built with FFmpeg enabled.
+          {{ cv2_check.stdout }}
+

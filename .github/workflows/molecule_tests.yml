@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        role: [deploy_user, finalize_deploy]
+        role: [deploy_user, finalize_deploy, opencv_from_source]
     steps:
       - uses: actions/checkout@v4
 
