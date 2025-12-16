@@ -1,80 +1,88 @@
 # Passenger
 
-Borrowed from [pulibrary / princeton_ansible](https://github.com/pulibrary/princeton_ansible/tree/main/roles/passenger), who originally borrowed from Geerling Guy.
-
-Installs Passenger (with Nginx) Ubuntu linux servers, with configuration
-to serve wsgi application.
+This role installs and configures Nginx with Phusion Passenger, specifically optimized for serving Python WSGI applications (such as Django). It handles the setup of the Phusion Passenger apt repository, GPG key management (including the 2025 key rotation), and virtual host configuration.
 
 ## Requirements
 
-None.
+* **OS**: Debian/Ubuntu based systems (due to `apt` module usage).
+* **Root Access**: The role requires `become: true` for installation tasks.
 
 ## Role Variables
 
-Application name variable ``app_name`` must be defined.
-
 Available variables are listed below, along with default values (see `defaults/main.yml`):
 
-```yaml
-passenger_server_name: www.example.com
-```
+### Application Configuration
 
-The server name (used in the Nginx virtual host configuration).
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `passenger_server_name` | `www.example.com` | The domain name for the Nginx server block. |
+| `passenger_app_root` | `/var/www/app` | The root directory of the application. |
+| `passenger_startup_file` | `wsgi.py` | The entry point file for the WSGI application. |
+| `passenger_python` | `/usr/bin/python` | Path to the Python interpreter (e.g., inside a virtualenv). |
+| `passenger_site_config_name` | `{{ app_name }}` | Filename for the Nginx site configuration in `sites-available`. |
+| `passenger_enabled` | `on` | Toggles Passenger support for the location. |
+| `deploy_env_vars` | *undefined* | A dictionary of environment variables to pass to the application (e.g., `SECRET_KEY`). |
 
-```yaml
-passenger_app_root: /var/www/app
-```
+### Nginx Configuration
 
-The wsgi file to use and the path to the python to use (i.e., if you need python within a virtualenv):
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `passenger_listen_port` | `'80'` | Port Nginx should listen on. |
+| `nginx_max_body_size` | `50M` | Maximum allowed size of the client request body. |
+| `nginx_worker_processes` | `vcpus` or `count` | Number of worker processes (defaults to auto-detect). |
+| `nginx_worker_connections` | `768` | Maximum number of simultaneous connections per worker. |
+| `nginx_keepalive_timeout` | `65` | Timeout for keep-alive connections. |
+| `nginx_remove_default_vhost`| `true` | Whether to remove the default 'Welcome to Nginx' site. |
+| `nginx_user` | `{{ __nginx_user }}` | System user Nginx runs as (detected via OS vars). |
 
-```yaml
-passenger_startup_file: app/wsgi.py
-passenger_python: /usr/bin/python
-```
+### Static Files & Media
 
-The nginx site configuration template to use, if you want to exstend it:
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `passenger_static_path` | `{{ passenger_app_root }}/static/` | Path to serve static files from `/static/`. |
+| `media_root` | `/var/www/media/` | Path to serve user-uploaded media from `/media/`. |
+| `font_path` | `/var/www/fonts/` | Path to serve fonts from `/static/fonts/`. |
+| `font_require_referrer` | `[]` | List of valid referrers for font access (hotlink protection). |
 
-```yaml
-passenger_nginx_site_template: passenger.conf.j2
-```
+### Templates & customization
 
-Values for passenger configuration directives inside `nginx.conf`. These defaults should generally work correctly.
-
-```yaml
-nginx_worker_processes: "{{ ansible_processor_vcpus | default(ansible_processor_count) }}"
-nginx_worker_connections: "768"
-nginx_keepalive_timeout: "65"
-nginx_remove_default_vhost: true
-```
-
-Media and font paths, along with an optional list of valid referrers to restrict access to fonts in nginx.
-```yaml
-media_root: "/var/www/media/"
-font_path: "/var/www/fonts/"
-font_require_referrer: []
-```
-
-Nginx directives.
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `passenger_nginx_site_template` | `passenger.conf.j2` | The Jinja2 template used for the site config. |
+| `passenger_extra_config` | `''` | Raw Nginx config string appended to the server block. |
 
 ## Dependencies
 
-None.
+This role relies on OS-specific variables (loaded via `include_vars`) to define `nginx_passenger_packages`. Ensure your `vars/` directory contains the appropriate package lists for Ubuntu (e.g., `nginx-extras`, `passenger`, `libnginx-mod-http-passenger`).
+
+## Features
+
+### Repository & Key Management
+
+The role automatically handles the Phusion Passenger GPG keys:
+
+* Installs the **Legacy Key** (SHA1) for backward compatibility.
+* Installs the **2025 Future-Proof Key** (SHA256) for newer repositories.
+* Converts keys to the modern GPG keyring format (`/usr/local/share/keyrings`) and installs them into `/etc/apt/trusted.gpg.d/`.
+
+### Monitoring
+
+* Enables the `stub_status` module at `/nginx_status`.
+* Access is restricted to `127.0.0.1` (localhost) only, suitable for agents like Datadog.
 
 ## Example Playbook
 
 ```yaml
-- hosts: server
-    roles:
-    - passenger
+- hosts: webservers
+  roles:
+    - role: passenger
+      vars:
+        app_name: "my_django_app"
+        passenger_server_name: "app.example.com"
+        passenger_app_root: "/opt/django/my_app"
+        passenger_python: "/opt/django/venv/bin/python"
+        passenger_startup_file: "wsgi.py"
+        deploy_env_vars:
+            DATABASE_URL: "postgres://user:pass@localhost/db"
+            SECRET_KEY: "supersecret"
 ```
-
-## License
-
-See [LICENSE](https://github.com/Princeton-CDH/CDH_ansible/blob/main/LICENSE).
-
-
-## Author Information
-
-This role was originally created in 2015 by [Jeff Geerling](https://www.jeffgeerling.com/), author of [Ansible for DevOps](https://www.ansiblefordevops.com/); this version is adapted from [pulibrary / princeton_ansible](https://github.com/pulibrary/princeton_ansible/tree/main/roles/passenger); any changes are now managed locally.
-
-
