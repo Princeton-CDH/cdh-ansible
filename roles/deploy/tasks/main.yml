@@ -1,19 +1,19 @@
+---
+# tasks file for roles/deploy
 ###
 # Create a GitHub deployment for project and set its status to pending.
 # Requires close_deployment task to be added also to close deployment as
 # a success.
 ###
-- name: Create a GitHub deployment
-  tags:
-    - gh_deploy
-  run_once: true
+- name: Deploy | create a GitHub deployment
   block:
-    - name: Check for GitHub token, and fail if not present
-      fail:
+    - name: Deploy | check for GitHub token, and fail if not present
+      ansible.builtin.fail:
         msg: "Pass a GitHub API token to -e github_token or set in environment as ANSIBLE_GITHUB_TOKEN"
       when: github_token == ""
-    - name: Create a deployment
-      uri:
+
+    - name: Deploy | create a deployment
+      ansible.builtin.uri:
         url: "{{ deployments_endpoint }}"
         body_format: json
         method: POST
@@ -29,8 +29,9 @@
           X-GitHub-Api-Version: "2022-11-28"
         return_content: true
       register: deployment
-    - name: Set status to in progress
-      uri:
+
+    - name: Deploy | set status to in progress
+      ansible.builtin.uri:
         url: "{{ deployment.json.url }}/statuses"
         body_format: json
         method: POST
@@ -40,5 +41,28 @@
           description: "Deployment in progress"
         headers:
           Authorization: "token {{ github_token }}"
+  tags:
+    - gh_deploy
+  run_once: true
 # No rescue because again, if either of these fail, the error status will
-# likely also fail out.
+  # likely also fail out.
+###
+# Closes a successful GitHub deployment, depends on deployment variable
+# registered by create_deployment task
+###
+
+- name: Deploy | close GitHub deployment as a success.
+  ansible.builtin.uri:
+    url: "{{ deployment.json.url }}/statuses"
+    body_format: json
+    method: POST
+    status_code: 201
+    body:
+      state: "success"
+      description: "Deployment succeeded"
+    headers:
+      Authorization: "token {{ github_token }}"
+  run_once: true
+  tags:
+    - gh_deploy
+  # no rescue because if this fails, closing an errored deploy will too!
