@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export UV_LINK_MODE=copy
+export UV_PROJECT_ENVIRONMENT=.venv
+
+if [ ! -d .venv ]; then
+  uv venv -p 3.12 .venv
+fi
+
+uv sync

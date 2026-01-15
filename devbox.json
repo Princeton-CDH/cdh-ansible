@@ -1,0 +1,28 @@
+{
+  "name": "cdh-ansible",
+  "packages": [
+    "python@3.12",
+    "uv@latest",
+    "git@latest",
+    "gnumake@latest",
+    "openssh@latest",
+    "rsync@latest",
+    "bash@latest",
+
+    "podman@latest",
+    "podman-compose@latest",
+    "docker-client@latest"
+  ],
+  "shell": {
+    "init_hook": [
+      "bash -lc './bin/devbox-init'"
+    ],
+    "scripts": {
+      "sync": "uv sync",
+      "lint": "uv run ansible-lint . && uv run yamllint .",
+      "molecule": "uv run molecule",
+      "pre-commit": "uv run pre-commit run --all-files"
+    }
+  }
+}
+
