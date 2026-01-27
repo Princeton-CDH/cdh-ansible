@@ -211,7 +211,7 @@ This repo supports [Devbox](https://www.jetify.com/devbox/) as an alternative to
 
 1) Install Devbox
 
-  Follow Devbox install instructions for your OS.
+  Follow Devbox [install instructions](https://www.jetify.com/docs/devbox/installing-devbox) for your OS.
 
 2) Enter the Devbox shell
 
