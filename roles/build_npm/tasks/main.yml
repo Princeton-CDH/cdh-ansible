@@ -1,44 +1,151 @@
-###
-# Install JS dependencies using npm.
-#
-# This role installs npm packages and depends on there being a package.json
-# present in the project root directory (deploy).
-###
----
-- name: npm configuration tasks
+- name: Build_npm | configuration tasks
   block:
-    - name: "Install nodejs from --channel={{ node_version }}/stable"
+    - name: Build_npm | Check currently installed node (if any)
+      ansible.builtin.command: "/usr/local/bin/node --version"
+      register: node_current
+      changed_when: false
+      failed_when: false
+
+    - name: Build_npm | Define paths/URLs and whether install is needed
+      ansible.builtin.set_fact:
+        nodejs_src_url: "https://pulmirror.princeton.edu/mirror/node/dist/v{{ desired_nodejs_version }}/node-v{{ desired_nodejs_version }}.tar.gz"
+        nodejs_prefix: "/usr/local/node-v{{ desired_nodejs_version }}"
+        nodejs_build_root: "/usr/local/src/node-v{{ desired_nodejs_version }}"
+        nodejs_tarball: "/usr/local/src/node-v{{ desired_nodejs_version }}.tar.gz"
+        nodejs_needs_install: >-
+          {{ (node_current.rc != 0) or ((node_current.stdout | trim) != ('v' ~ desired_nodejs_version)) }}
+        nodejs_make_jobs: >-
+          {{ [ (ansible_processor_vcpus | default(2) | int), (nodejs_make_jobs_max | default(2) | int) ] | min }}
+
+    - name: Build_npm | Build and install Node from source (only if needed)
+      when: nodejs_needs_install
+      block:
+        - name: Build_npm | Install build dependencies
+          become: true
+          ansible.builtin.apt:
+            name:
+              - ca-certificates
+              - curl
+              - tar
+              - xz-utils
+              - gzip
+              - make
+              - gcc
+              - g++
+              - python3
+              - pkg-config
+              - perl
+              - libssl-dev
+              - zlib1g-dev
+              - libbrotli-dev
+              - libnghttp2-dev
+              - libicu-dev
+            state: present
+            update_cache: true
+
+        - name: Build_npm | Ensure build root exists
+          become: true
+          ansible.builtin.file:
+            path: "{{ nodejs_build_root }}"
+            state: directory
+            owner: root
+            group: root
+            mode: "0755"
+
+        - name: Build_npm | Download source tarball
+          become: true
+          ansible.builtin.get_url:
+            url: "{{ nodejs_src_url }}"
+            dest: "{{ nodejs_tarball }}"
+            mode: "0644"
+
+        - name: Build_npm | Unpack source tarball
+          become: true
+          ansible.builtin.unarchive:
+            src: "{{ nodejs_tarball }}"
+            dest: "/usr/local/src"
+            remote_src: true
+            creates: "{{ nodejs_build_root }}/configure"
+
+        - name: Build_npm | Configure (prefix={{ nodejs_prefix }})
+          become: true
+          ansible.builtin.command: "./configure --prefix={{ nodejs_prefix }}"
+          args:
+            chdir: "{{ nodejs_build_root }}"
+            creates: "{{ nodejs_build_root }}/config.gypi"
+          register: node_configure
+          changed_when: true
+
+        - name: Build_npm | Build (cap jobs to avoid OOM)   # <- IMPORTANT
+          become: true
+          ansible.builtin.command: "make -j {{ nodejs_make_jobs }}"
+          args:
+            chdir: "{{ nodejs_build_root }}"
+            creates: "{{ nodejs_build_root }}/out/Release/node"
+          register: node_build
+          changed_when: true
+
+        - name: Build_npm | Install
+          become: true
+          ansible.builtin.command: "make install"
+          args:
+            chdir: "{{ nodejs_build_root }}"
+            creates: "{{ nodejs_prefix }}/bin/node"
+          register: node_install
+          changed_when: true
+
+    - name: Build_npm | create/refresh symlinks for node, npm, npx
       become: true
-      tags:
-        - setup
-        - never
-      community.general.snap:
-        name: node
-        classic: true
-        channel: "{{ node_version }}/stable"
-        state: present
-      register: snap_results
+      ansible.builtin.file:
+        src: "{{ nodejs_prefix }}/bin/{{ item }}"
+        dest: "/usr/local/bin/{{ item }}"
+        state: link
+        force: true
+      loop: [node, npm, npx]
 
-    # NOTE: upgrading nodejs with ansible snap fails, even though
-    # the documentation claims it should refresh when then channel changes.
-    # Manually run a refresh command to ensure version changes take effect, e.g.:
-    #   sudo snap refresh node --channel=18
-    # NOTE2: could add a node -v check and only refresh on mismatch
+    - name: Build_npm | Verify installed node version
+      ansible.builtin.command: "/usr/local/bin/node --version"
+      register: node_version_check
+      changed_when: false
+      failed_when: node_version_check.stdout | trim != ('v' ~ desired_nodejs_version)
 
-    - name: Refresh nodejs to ensure version changes take effect
-      become: true
-      ansible.builtin.command: "snap refresh node --channel={{ node_version }}/stable"
-
-    - name: "install javascript dependencies with npm ({{ npm_install_mode }} install)"
+    - name: Build_npm | install javascript dependencies with npm
       become: true
       become_user: "{{ deploy_user }}"
       community.general.npm:
         path: "{{ npm_install_path }}"
-        # NOTE: for shxco, omitting dev dependencies means the webpack build fails;
-        # using production install solved a problem for cdhweb
-        # shxco prod/dev dependencies should be adjusted so this does not fail
         production: "{{ npm_install_mode == 'production' }}"
         ci: "{{ npm_install_mode == 'ci' }}"
 
   rescue:
-    - include_tasks: roles/create_deployment/tasks/fail.yml
+    - name: Build_npm | Debug Node build failure (if any)
+      ansible.builtin.debug:
+        msg: |
+          node_configure rc={{ node_configure.rc | default('n/a') }}
+          node_configure stderr={{ node_configure.stderr | default('') }}
+
+          node_build rc={{ node_build.rc | default('n/a') }}
+          node_build stdout={{ node_build.stdout | default('') }}
+          node_build stderr={{ node_build.stderr | default('') }}
+
+          node_install rc={{ node_install.rc | default('n/a') }}
+          node_install stderr={{ node_install.stderr | default('') }}
+      failed_when: false
+
+    - name: Build_npm | Debug failure context
+      ansible.builtin.debug:
+        msg: |
+          node_configure rc={{ node_configure.rc | default('n/a') }}
+          node_configure stderr={{ node_configure.stderr | default('') }}
+
+          node_build rc={{ node_build.rc | default('n/a') }}
+          node_build stdout={{ node_build.stdout | default('') }}
+          node_build stderr={{ node_build.stderr | default('') }}
+
+          node_install rc={{ node_install.rc | default('n/a') }}
+          node_install stderr={{ node_install.stderr | default('') }}
+      failed_when: false
+
+    - name: Build_npm | Fail (self-contained)
+      ansible.builtin.fail:
+        msg: "build_npm failed; see debug output above."
