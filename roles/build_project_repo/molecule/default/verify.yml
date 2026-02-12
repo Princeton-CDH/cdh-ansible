@@ -1,53 +1,28 @@
 ---
 - name: Verify
   hosts: all
-  become: true
-  gather_facts: false
   tasks:
-    - name: Check that curl is installed (from example role)
-      ansible.builtin.command: curl --version
-      register: curl_check
-      changed_when: false
-      failed_when: curl_check.rc != 0
-
-    - name: Check that PID 1 looks like systemd/init
-      ansible.builtin.command: ps -p 1 -o comm=
-      register: pid1
-      changed_when: false
-
-    - name: Wait for systemd to be operational (running or degraded)
-      ansible.builtin.shell: |
-        for i in {1..60}; do
-          state=$(systemctl is-system-running 2>/dev/null || echo "unknown")
-          if [[ "$state" == "running" ]] || [[ "$state" == "degraded" ]]; then
-            exit 0
-          fi
-          sleep 1
-        done
-        exit 1
-      changed_when: false
-      failed_when: false
-      register: systemd_wait
-
-    - name: Assert PID 1 is systemd-like
-      ansible.builtin.assert:
-        that:
-          - "'systemd' in pid1.stdout or 'init' in pid1.stdout"
-        fail_msg: "PID 1 is not systemd/init (got: {{ pid1.stdout | trim }})"
-
-    - name: Check that systemd runtime dir exists
+    - name: Verify deploy directory exists
       ansible.builtin.stat:
-        path: /run/systemd/system
-      register: systemd_dir
+        path: "{{ deploy }}"
+      register: d_stat
 
-    - name: Assert systemd runtime dir exists
+    - name: Assert deploy directory is correct
       ansible.builtin.assert:
         that:
-          - systemd_dir.stat.isdir | default(false)
-        fail_msg: "/run/systemd/system is missing; systemd may not be active"
+          - d_stat.stat.exists
+          - d_stat.stat.pw_name == deploy_user
 
-    - name: Log systemd overall state (best-effort)
-      ansible.builtin.command: systemctl is-system-running
-      register: systemd_state
+    - name: Check git status as deploy_user
+      become: true
+      become_user: "{{ deploy_user }}"
+      ansible.builtin.command:
+        cmd: "git rev-parse --is-shallow-repository"
+        chdir: "{{ deploy }}"
+      register: git_check
       changed_when: false
-      failed_when: false
+
+    - name: Assert it is a shallow clone
+      ansible.builtin.assert:
+        that:
+          - "'true' in git_check.stdout"

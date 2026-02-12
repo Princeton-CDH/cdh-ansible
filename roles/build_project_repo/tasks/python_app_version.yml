@@ -1,0 +1,34 @@
+---
+- name: Determine python app version
+  become: true
+  become_user: "{{ deploy_user }}"
+  tags: [python]
+  block:
+    - name: Check if project has a _version.py file
+      ansible.builtin.stat:
+        path: "{{ clone_root }}/{{ repo }}/_version.py"
+      register: python_version_file
+
+    - name: Get the version via _version.py
+      ansible.builtin.shell:
+        cmd: "python3 -c 'from _version import __version__; print(__version__)'"
+        chdir: "{{ clone_root }}/{{ repo }}"
+      register: python_app_version_vpy
+      when: python_version_file.stat.exists
+      changed_when: false
+
+    - name: Get the version via package import
+      ansible.builtin.shell:
+        cmd: "python3 -c 'import {{ python_app }}; print({{ python_app }}.__version__)'"
+        chdir: "{{ clone_root }}/{{ repo }}"
+      register: python_app_version_pkg
+      when: not python_version_file.stat.exists
+      changed_when: false
+
+    - name: Storing version number
+      ansible.builtin.set_fact:
+        python_app_version: "{{ python_app_version_vpy.stdout if python_version_file.stat.exists else python_app_version_pkg.stdout }}"
+
+    - name: Report determined python app version
+      ansible.builtin.debug:
+        msg: "Deploying python app version {{ python_app_version }}"

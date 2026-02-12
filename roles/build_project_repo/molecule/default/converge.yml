@@ -2,15 +2,30 @@
 - name: Converge
   hosts: all
   vars:
-    running_on_server: false
-  become: true
+    deploy_user: conan
+    app_name: "testapp"
+    repo: "Princeton-CDH/derridas-margins-archive"
+    repo_url: "https://github.com/{{ repo }}.git"
+    install_root: "/srv/www/{{ app_name }}"
+    clone_root: "/home/{{ deploy_user }}/repos"
+    gitref: "main"
+    short_hash: "{{ repo_info.after[0:6] | default('000000') }}"
+    version: "{{ python_app_version | default('1.0') }}"
+    deploy: "{{ install_root }}/{{ version }}-{{ short_hash }}"
+    
+    python_app: "testapp"
+    
   pre_tasks:
-    - name: Update cache
+    - name: Create deploy user
+      ansible.builtin.user:
+        name: "{{ deploy_user }}"
+    - name: Install git
       ansible.builtin.apt:
+        name: git
+        state: present
         update_cache: true
-        cache_valid_time: 600
+
   tasks:
-    # Change this when copying to another role
-    - name: "Include example"
+    - name: "Include build_project_repo"
       ansible.builtin.include_role:
-        name: example
+        name: build_project_repo
