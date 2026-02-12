@@ -2,52 +2,43 @@
 - name: Verify
   hosts: all
   become: true
-  gather_facts: false
+  gather_facts: true
+
   tasks:
-    - name: Check that curl is installed (from example role)
-      ansible.builtin.command: curl --version
-      register: curl_check
-      changed_when: false
-      failed_when: curl_check.rc != 0
-
-    - name: Check that PID 1 looks like systemd/init
-      ansible.builtin.command: ps -p 1 -o comm=
-      register: pid1
+    - name: Verify | node exists
+      ansible.builtin.command: /usr/local/bin/node --version
+      register: node_ver
       changed_when: false
 
-    - name: Wait for systemd to be operational (running or degraded)
-      ansible.builtin.shell: |
-        for i in {1..60}; do
-          state=$(systemctl is-system-running 2>/dev/null || echo "unknown")
-          if [[ "$state" == "running" ]] || [[ "$state" == "degraded" ]]; then
-            exit 0
-          fi
-          sleep 1
-        done
-        exit 1
+    - name: Verify | npm exists
+      ansible.builtin.command: /usr/local/bin/npm --version
+      register: npm_ver
       changed_when: false
-      failed_when: false
-      register: systemd_wait
 
-    - name: Assert PID 1 is systemd-like
+    - name: Verify | npx exists
+      ansible.builtin.command: /usr/local/bin/npx --version
+      register: npx_ver
+      changed_when: false
+
+    - name: Verify | Assert node version matches desired
       ansible.builtin.assert:
         that:
-          - "'systemd' in pid1.stdout or 'init' in pid1.stdout"
-        fail_msg: "PID 1 is not systemd/init (got: {{ pid1.stdout | trim }})"
+          - node_ver.stdout | trim == (desired_nodejs_version is match('^v')
+              | ternary(desired_nodejs_version, 'v' ~ desired_nodejs_version))
+        fail_msg: "node version mismatch: got {{ node_ver.stdout | trim }}"
+        success_msg: "node version OK: {{ node_ver.stdout | trim }}"
 
-    - name: Check that systemd runtime dir exists
+    - name: Verify | Assert binaries are symlinks in /usr/local/bin
       ansible.builtin.stat:
-        path: /run/systemd/system
-      register: systemd_dir
+        path: "{{ item }}"
+      register: bin_stats
+      loop:
+        - /usr/local/bin/node
+        - /usr/local/bin/npm
+        - /usr/local/bin/npx
 
-    - name: Assert systemd runtime dir exists
+    - name: Verify | Assert symlinks exist
       ansible.builtin.assert:
         that:
-          - systemd_dir.stat.isdir | default(false)
-        fail_msg: "/run/systemd/system is missing; systemd may not be active"
-
-    - name: Log systemd overall state (best-effort)
-      ansible.builtin.command: systemctl is-system-running
-      register: systemd_state
-      changed_when: false
-      failed_when: false
+          - bin_stats.results | map(attribute='stat.islnk') | list | min
+        fail_msg: "one or more /usr/local/bin/{node,npm,npx} are not symlinks"

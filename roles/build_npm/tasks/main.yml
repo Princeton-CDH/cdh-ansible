@@ -1,6 +1,4 @@
 ---
-# Opinionated Node install: prebuilt tarball from pulmirror by default.
-# No "unsupported" branch; anything non-x86_64 is treated as arm64.
 
 - name: Build_npm | Normalize version and select arch
   ansible.builtin.set_fact:
@@ -21,6 +19,22 @@
   ansible.builtin.set_fact:
     nodejs_needs_install: >-
       {{ (node_current.rc != 0) or ((node_current.stdout | trim) != desired_nodejs_version_v) }}
+
+- name: Build_npm | Install archive tooling (for tar.xz, etc.)
+  become: true
+  ansible.builtin.apt:
+    name:
+      - build-essential
+      - ca-certificates
+      - curl
+      - tar
+      - xz-utils
+      - bzip2
+      - unzip
+      - zstd
+    state: present
+    update_cache: true
+
 
 - name: Build_npm | Install Node (prebuilt)
   when: nodejs_needs_install and (nodejs_install_method | default('prebuilt')) == 'prebuilt'
