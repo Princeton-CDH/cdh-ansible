@@ -1,151 +1,62 @@
-- name: Build_npm | configuration tasks
+---
+# Opinionated Node install: prebuilt tarball from pulmirror by default.
+# No "unsupported" branch; anything non-x86_64 is treated as arm64.
+
+- name: Build_npm | Normalize version and select arch
+  ansible.builtin.set_fact:
+    desired_nodejs_version_v: >-
+      {{ (desired_nodejs_version is match('^v')) | ternary(desired_nodejs_version, 'v' ~ desired_nodejs_version) }}
+    nodejs_arch: >-
+      {{ (ansible_architecture in ['x86_64', 'amd64']) | ternary('x64', 'arm64') }}
+    nodejs_dir: "{{ nodejs_prefix_root | default('/usr/local') }}/node-{{ (desired_nodejs_version is match('^v')) | ternary(desired_nodejs_version, 'v' ~ desired_nodejs_version) }}-linux-{{ (ansible_architecture in ['x86_64','amd64']) | ternary('x64','arm64') }}"
+    nodejs_tarball: "/usr/local/src/node-{{ (desired_nodejs_version is match('^v')) | ternary(desired_nodejs_version, 'v' ~ desired_nodejs_version) }}-linux-{{ (ansible_architecture in ['x86_64','amd64']) | ternary('x64','arm64') }}.tar.xz"
+
+- name: Build_npm | Check current node (if any)
+  ansible.builtin.command: "/usr/local/bin/node --version"
+  register: node_current
+  changed_when: false
+  failed_when: false
+
+- name: Build_npm | Determine whether Node install/update is needed
+  ansible.builtin.set_fact:
+    nodejs_needs_install: >-
+      {{ (node_current.rc != 0) or ((node_current.stdout | trim) != desired_nodejs_version_v) }}
+
+- name: Build_npm | Install Node (prebuilt)
+  when: nodejs_needs_install and (nodejs_install_method | default('prebuilt')) == 'prebuilt'
   block:
-    - name: Build_npm | Check currently installed node (if any)
-      ansible.builtin.command: "/usr/local/bin/node --version"
-      register: node_current
-      changed_when: false
-      failed_when: false
+    - name: Build_npm | Download prebuilt tarball (resilient)
+      become: true
+      ansible.builtin.get_url:
+        url: "{{ nodejs_release_base_url | default('https://pulmirror.princeton.edu/mirror/node/dist') }}/{{ desired_nodejs_version_v }}/node-{{ desired_nodejs_version_v }}-linux-{{ nodejs_arch }}.tar.xz"
+        dest: "{{ nodejs_tarball }}"
+        mode: "0644"
+        tmp_dest: "/tmp"
+        timeout: "{{ nodejs_download_timeout | default(600) }}"
+      register: node_prebuilt_dl
+      retries: "{{ nodejs_download_retries | default(6) }}"
+      delay: "{{ nodejs_download_delay | default(10) }}"
+      until: node_prebuilt_dl is succeeded
 
-    - name: Build_npm | Define paths/URLs and whether install is needed
-      ansible.builtin.set_fact:
-        nodejs_src_url: "https://pulmirror.princeton.edu/mirror/node/dist/v{{ desired_nodejs_version }}/node-v{{ desired_nodejs_version }}.tar.gz"
-        nodejs_prefix: "/usr/local/node-v{{ desired_nodejs_version }}"
-        nodejs_build_root: "/usr/local/src/node-v{{ desired_nodejs_version }}"
-        nodejs_tarball: "/usr/local/src/node-v{{ desired_nodejs_version }}.tar.gz"
-        nodejs_needs_install: >-
-          {{ (node_current.rc != 0) or ((node_current.stdout | trim) != ('v' ~ desired_nodejs_version)) }}
-        nodejs_make_jobs: >-
-          {{ [ (ansible_processor_vcpus | default(2) | int), (nodejs_make_jobs_max | default(2) | int) ] | min }}
+    - name: Build_npm | Unpack prebuilt Node
+      become: true
+      ansible.builtin.unarchive:
+        src: "{{ nodejs_tarball }}"
+        dest: "{{ nodejs_prefix_root | default('/usr/local') }}"
+        remote_src: true
+        creates: "{{ nodejs_dir }}"
 
-    - name: Build_npm | Build and install Node from source (only if needed)
-      when: nodejs_needs_install
-      block:
-        - name: Build_npm | Install build dependencies
-          become: true
-          ansible.builtin.apt:
-            name:
-              - ca-certificates
-              - curl
-              - tar
-              - xz-utils
-              - gzip
-              - make
-              - gcc
-              - g++
-              - python3
-              - pkg-config
-              - perl
-              - libssl-dev
-              - zlib1g-dev
-              - libbrotli-dev
-              - libnghttp2-dev
-              - libicu-dev
-            state: present
-            update_cache: true
-
-        - name: Build_npm | Ensure build root exists
-          become: true
-          ansible.builtin.file:
-            path: "{{ nodejs_build_root }}"
-            state: directory
-            owner: root
-            group: root
-            mode: "0755"
-
-        - name: Build_npm | Download source tarball
-          become: true
-          ansible.builtin.get_url:
-            url: "{{ nodejs_src_url }}"
-            dest: "{{ nodejs_tarball }}"
-            mode: "0644"
-
-        - name: Build_npm | Unpack source tarball
-          become: true
-          ansible.builtin.unarchive:
-            src: "{{ nodejs_tarball }}"
-            dest: "/usr/local/src"
-            remote_src: true
-            creates: "{{ nodejs_build_root }}/configure"
-
-        - name: Build_npm | Configure (prefix={{ nodejs_prefix }})
-          become: true
-          ansible.builtin.command: "./configure --prefix={{ nodejs_prefix }}"
-          args:
-            chdir: "{{ nodejs_build_root }}"
-            creates: "{{ nodejs_build_root }}/config.gypi"
-          register: node_configure
-          changed_when: true
-
-        - name: Build_npm | Build (cap jobs to avoid OOM)   # <- IMPORTANT
-          become: true
-          ansible.builtin.command: "make -j {{ nodejs_make_jobs }}"
-          args:
-            chdir: "{{ nodejs_build_root }}"
-            creates: "{{ nodejs_build_root }}/out/Release/node"
-          register: node_build
-          changed_when: true
-
-        - name: Build_npm | Install
-          become: true
-          ansible.builtin.command: "make install"
-          args:
-            chdir: "{{ nodejs_build_root }}"
-            creates: "{{ nodejs_prefix }}/bin/node"
-          register: node_install
-          changed_when: true
-
-    - name: Build_npm | create/refresh symlinks for node, npm, npx
+    - name: Build_npm | Link node/npm/npx
       become: true
       ansible.builtin.file:
-        src: "{{ nodejs_prefix }}/bin/{{ item }}"
+        src: "{{ nodejs_dir }}/bin/{{ item }}"
         dest: "/usr/local/bin/{{ item }}"
         state: link
         force: true
       loop: [node, npm, npx]
 
-    - name: Build_npm | Verify installed node version
+    - name: Build_npm | Verify node version
       ansible.builtin.command: "/usr/local/bin/node --version"
       register: node_version_check
       changed_when: false
-      failed_when: node_version_check.stdout | trim != ('v' ~ desired_nodejs_version)
-
-    - name: Build_npm | install javascript dependencies with npm
-      become: true
-      become_user: "{{ deploy_user }}"
-      community.general.npm:
-        path: "{{ npm_install_path }}"
-        production: "{{ npm_install_mode == 'production' }}"
-        ci: "{{ npm_install_mode == 'ci' }}"
-
-  rescue:
-    - name: Build_npm | Debug Node build failure (if any)
-      ansible.builtin.debug:
-        msg: |
-          node_configure rc={{ node_configure.rc | default('n/a') }}
-          node_configure stderr={{ node_configure.stderr | default('') }}
-
-          node_build rc={{ node_build.rc | default('n/a') }}
-          node_build stdout={{ node_build.stdout | default('') }}
-          node_build stderr={{ node_build.stderr | default('') }}
-
-          node_install rc={{ node_install.rc | default('n/a') }}
-          node_install stderr={{ node_install.stderr | default('') }}
-      failed_when: false
-
-    - name: Build_npm | Debug failure context
-      ansible.builtin.debug:
-        msg: |
-          node_configure rc={{ node_configure.rc | default('n/a') }}
-          node_configure stderr={{ node_configure.stderr | default('') }}
-
-          node_build rc={{ node_build.rc | default('n/a') }}
-          node_build stdout={{ node_build.stdout | default('') }}
-          node_build stderr={{ node_build.stderr | default('') }}
-
-          node_install rc={{ node_install.rc | default('n/a') }}
-          node_install stderr={{ node_install.stderr | default('') }}
-      failed_when: false
-
-    - name: Build_npm | Fail (self-contained)
-      ansible.builtin.fail:
-        msg: "build_npm failed; see debug output above."
+      failed_when: node_version_check.stdout | trim != desired_nodejs_version_v
