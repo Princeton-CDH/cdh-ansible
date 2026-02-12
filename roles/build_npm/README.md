@@ -1,122 +1,85 @@
-# Example Role
+# Build NPM
 
-This role is a placeholder for creation of molecule roles
+An Ansible role that installs a specific version of **Node.js** (including `npm` and `npx`) from prebuilt binaries. This role is architecture-aware, supporting both `x86_64` and `arm64` (Apple Silicon/Graviton), and is optimized for use within the Princeton University Library (PUL) infrastructure.
 
-1. From your new role create a molecule directory
+## Features
 
-  ```bash
-  cd roles/<your_role_name>
-  mkdir -p molecule/default
-  ```
+- **Version Management**: Ensures the specific version defined in `desired_nodejs_version` is installed.
 
-1. Copy the files from the example role from the root of the repo:
+- **Architecture Detection**: Automatically selects the correct binary for `x64` or `arm64` systems.
 
-  ```bash
-  cp -a roles/example/* roles/your_role_name
-  ```
+- **PUL Mirror Integration**: Defaults to the internal Princeton mirror for faster, more reliable downloads.
 
-1. Edit the following files:
-   * `molecule/default/converge.yml`
+- **Clean Symlinking**: Links binaries to `/usr/local/bin/` for global accessibility.
 
-    ```yaml
-    roles:
-      - role: <your_role_name>
-    ```
+- **Resilient Downloads**: Built-in retries and timeouts to handle intermittent network issues.
 
-   * `meta/main.yml`
+## Role Variables
 
-    ```yaml
-    role_name: <your_role_name>
-    ...
-    description: <Description of your role>
-    ...
-    dependencies: []
-    ### or if your role depends on another
-      - role: other_role
-    ```
+The following variables are defined in `defaults/main.yml`:
 
-2. Run:
+| **Variable**              | **Default**            | **Description**                                    |
+| ------------------------- | ---------------------- | -------------------------------------------------- |
+| `desired_nodejs_version`  | `"22.4.0"`             | The version of Node.js to install.                 |
+| `nodejs_install_method`   | `"prebuilt"`           | Method of installation (`prebuilt` or `source`).   |
+| `nodejs_release_base_url` | `https://pulmirror...` | Base URL for fetching Node.js distributions.       |
+| `nodejs_prefix_root`      | `/usr/local`           | The base directory where Node.js will be unpacked. |
+| `nodejs_download_retries` | `6`                    | Number of retries for the download task.           |
+| `nodejs_download_timeout` | `600`                  | Timeout in seconds for the download.               |
 
-    ```bash
-    cd roles/<your_role_name>
-    molecule converge
-    molecule verify
-    ```
+## Dependencies
 
-## Architecture/platform notes (Apple Silicon vs GHA CI)
+None.
 
-We use a multi-arch Docker image:
+## Example Playbook
 
-  * ghcr.io/pulibrary/vm-builds/ubuntu-22.04
+YAML
 
-  * It has linux/amd64 and linux/arm64 manifests.
+```text
+- hosts: servers
+  roles:
+    - role: build_npm
+      vars:
+        desired_nodejs_version: "20.11.0"
+```
 
-  * GitHub Actions runners are amd64.
+## Architecture & Development (Molecule)
 
-  * Local Macs (M1/M2/M3) are arm64.
+This role supports multi-arch development. When testing locally on **Apple Silicon (M1/M2/M3)** versus **GitHub Actions (amd64)**, Molecule handles the platform via environment variables.
 
-Molecule’s Docker driver honors the MOLECULE_DOCKER_PLATFORM environment variable:
+### Local Testing (Apple Silicon)
 
-  * If not set, Docker chooses a platform based on the host.
+To run molecule tests locally on an ARM-based Mac, use a local environment file to prevent architecture mismatches:
 
-  * If set, Molecule passes it to Docker as the platform= option.
+1. Create a `.env.local.yml` (this is ignored by git):
 
-### Important: `.env.yml` vs GitHub Actions `env`:
+   YAML
 
-Molecule will load environment variables from `.env.yml` (or whatever `MOLECULE_ENV_FILE` points to) **inside the runner/container.**
+   ```text
+   ---
+   MOLECULE_DOCKER_PLATFORM: linux/arm64
+   ```
 
-That means:
+2. Run molecule:
 
-  * If you commit:
+   Bash
 
-    ```yaml
-    # roles/<role>/.env.yml
-      ---
-      MOLECULE_DOCKER_PLATFORM: linux/arm64
-      ```
+   ```text
+   MOLECULE_ENV_FILE=.env.local.yml molecule test
+   ```
 
+> [!IMPORTANT]
+>
+> Do **not** commit `MOLECULE_DOCKER_PLATFORM` to the main `.env.yml` file, as this will break the GitHub Actions CI which requires `linux/amd64`.
 
-  * And in GitHub Actions you also set:
+## File Structure
 
-      ```yaml
-      env:
-        MOLECULE_DOCKER_PLATFORM: linux/amd64
-      ```
+- `tasks/main.yml`: Contains the logic for version normalization, binary downloading, and symlinking.
 
+- `meta/main.yml`: Role metadata and platform support (Ubuntu Jammy).
 
-Then the value from `.env.yml` wins inside Molecule, and CI will still use `linux/arm64`.
+- `molecule/`: Contains the Docker-based testing suite.
 
-#### Rule of thumb:
+## License
 
-Let CI control the platform, so **do not commit** `MOLECULE_DOCKER_PLATFORM` in `.env.yml.`
-
-### Recommended patterns
-
-Local Apple Silicon (M1/M2/M3)
-
-Use:
-
-Export the variable when you run Molecule:
-
-Use a local, untracked env file:
-
-  * Depend on the global .gitignore (at repo root):
-
-  * Create `roles/<your_role_name>/.env.local.yml`:
-
-    ```yaml
-    ---
-    MOLECULE_DOCKER_PLATFORM: linux/arm64
-    ```
-
-
-  * Run Molecule with:
-
-    ```bash
-    cd roles/<your_role_name>
-    MOLECULE_ENV_FILE=.env.local.yml molecule test
-    ```
-
-#### GitHub Actions (CI)
-
-  * The workflow sets MOLECULE_DOCKER_PLATFORM=linux/amd64 (or relies on the default amd64 runner).
+MIT
