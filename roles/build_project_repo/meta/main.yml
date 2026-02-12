@@ -1,8 +1,8 @@
 ---
 galaxy_info:
-  role_name: example
+  role_name: build_project_repo
   company: Princeton University Library
-  description: Example Role
+  description: builds a project repo
   author: pulibrary
 
   license: MIT

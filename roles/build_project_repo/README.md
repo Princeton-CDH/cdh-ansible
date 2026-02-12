@@ -1,122 +1,78 @@
-# Example Role
+# build_project_repo
 
-This role is a placeholder for creation of molecule roles
+An Ansible role to manage project repository deployments at CDH (PUL). This role performs a two-stage deployment: it maintains a primary clone of a repository and creates a versioned, shallow checkout for the active deployment.
 
-1. From your new role create a molecule directory
+## Features
 
-  ```bash
-  cd roles/<your_role_name>
-  mkdir -p molecule/default
-  ```
+- **Dual-Stage Deployment**: Maintains a persistent local clone in `clone_root` and a production-ready shallow checkout in `deploy`.
 
-1. Copy the files from the example role from the root of the repo:
+- **Git Security Compliance**: Automatically whitelists directories via `git config safe.directory` to prevent "dubious ownership" errors.
 
-  ```bash
-  cp -a roles/example/* roles/your_role_name
-  ```
+- **Python Versioning**: Optionally detects application versions using `_version.py` or package metadata.
 
-1. Edit the following files:
-   * `molecule/default/converge.yml`
+- **Idempotency**: All Git and file operations are designed to skip work if the target state is already achieved.
 
-    ```yaml
-    roles:
-      - role: <your_role_name>
-    ```
+- **Error Recovery**: Includes a rescue block to trigger deployment failure notifications.
 
-   * `meta/main.yml`
+## Role Variables
 
-    ```yaml
-    role_name: <your_role_name>
-    ...
-    description: <Description of your role>
-    ...
-    dependencies: []
-    ### or if your role depends on another
-      - role: other_role
-    ```
+The role is designed to work seamlessly with the global variables defined in `inventory/group_vars/all/vars.yml`.
 
-2. Run:
+| **Variable**   | **Default**                                         | **Description**                                                       |
+| -------------- | --------------------------------------------------- | --------------------------------------------------------------------- |
+| `deploy_user`  | `conan`                                             | The remote user that owns the repository and deployment.              |
+| `repo_url`     | `https://github.com/{{ repo }}.git`                 | The full URL to the GitHub repository.                                |
+| `repo`         | `N/A`                                               | The repository name (e.g., `Princeton-CDH/derridas-margins-archive`). |
+| `gitref`       | `main`                                              | The branch, tag, or commit hash to deploy.                            |
+| `install_root` | `/srv/www/{{ app_name }}`                           | The base directory for application deployments.                       |
+| `clone_root`   | `/home/{{ deploy_user }}/repos`                     | Where the primary Git clone is maintained.                            |
+| `deploy`       | `{{ install_root }}/{{ version }}-{{ short_hash }}` | The final versioned path for the shallow checkout.                    |
+| `python_app`   | `N/A`                                               | (Optional) The name of the Python package to check for versioning.    |
 
-    ```bash
-    cd roles/<your_role_name>
-    molecule converge
-    molecule verify
-    ```
+## Dependencies
 
-## Architecture/platform notes (Apple Silicon vs GHA CI)
+- **`create_deployment`**: (Implicit) The role's rescue block attempts to include `roles/create_deployment/tasks/fail.yml` on failure.
 
-We use a multi-arch Docker image:
+## Example Playbook
 
-  * ghcr.io/pulibrary/vm-builds/ubuntu-22.04
+YAML
 
-  * It has linux/amd64 and linux/arm64 manifests.
+```text
+- hosts: all
+  vars:
+    app_name: "derrida"
+    repo: "Princeton-CDH/derridas-margins-archive"
+    python_app: "derrida"
+  roles:
+    - role: build_project_repo
+```
 
-  * GitHub Actions runners are amd64.
+## Internal Logic Flow
 
-  * Local Macs (M1/M2/M3) are arm64.
+The following diagram illustrates how the role moves code from GitHub to your production directory while resolving the versioning dependencies:
 
-Molecule’s Docker driver honors the MOLECULE_DOCKER_PLATFORM environment variable:
+1. **Preparation**: Ensures `install_root` and `clone_root` exist and are owned by `deploy_user`.
 
-  * If not set, Docker chooses a platform based on the host.
+2. **Safety**: Adds the clone path to Git's `safe.directory` global config.
 
-  * If set, Molecule passes it to Docker as the platform= option.
+3. **Primary Clone**: Clones the repo to `clone_root` to register `repo_info`.
 
-### Important: `.env.yml` vs GitHub Actions `env`:
+4. **Versioning**: Runs `python_app_version.yml` to set `python_app_version`.
 
-Molecule will load environment variables from `.env.yml` (or whatever `MOLECULE_ENV_FILE` points to) **inside the runner/container.**
+5. **Shallow Checkout**: Performs a `git checkout` from the local clone into the final versioned `deploy` directory.
 
-That means:
+## Testing with Molecule
 
-  * If you commit:
+To run the generalized test suite:
 
-    ```yaml
-    # roles/<role>/.env.yml
-      ---
-      MOLECULE_DOCKER_PLATFORM: linux/arm64
-      ```
+Bash
 
+```text
+# Set platform for Apple Silicon if necessary
+export MOLECULE_DOCKER_PLATFORM=linux/arm64 
 
-  * And in GitHub Actions you also set:
+molecule converge
+molecule verify
+```
 
-      ```yaml
-      env:
-        MOLECULE_DOCKER_PLATFORM: linux/amd64
-      ```
-
-
-Then the value from `.env.yml` wins inside Molecule, and CI will still use `linux/arm64`.
-
-#### Rule of thumb:
-
-Let CI control the platform, so **do not commit** `MOLECULE_DOCKER_PLATFORM` in `.env.yml.`
-
-### Recommended patterns
-
-Local Apple Silicon (M1/M2/M3)
-
-Use:
-
-Export the variable when you run Molecule:
-
-Use a local, untracked env file:
-
-  * Depend on the global .gitignore (at repo root):
-
-  * Create `roles/<your_role_name>/.env.local.yml`:
-
-    ```yaml
-    ---
-    MOLECULE_DOCKER_PLATFORM: linux/arm64
-    ```
-
-
-  * Run Molecule with:
-
-    ```bash
-    cd roles/<your_role_name>
-    MOLECULE_ENV_FILE=.env.local.yml molecule test
-    ```
-
-#### GitHub Actions (CI)
-
-  * The workflow sets MOLECULE_DOCKER_PLATFORM=linux/amd64 (or relies on the default amd64 runner).
+The verify step ensures that both the clone and deploy directories exist, have correct ownership, and are recognized as valid Git repositories by the `deploy_user`.
