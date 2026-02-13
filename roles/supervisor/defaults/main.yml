@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: MIT-0
+---
+# defaults file for roles/supervisor
+# Version to install (empty for latest)
+supervisor_version: ''
+
+# Service state
+supervisor_started: true
+supervisor_enabled: true
+
+# Paths
+supervisor_config_path: /etc/supervisor
+supervisor_log_dir: /var/log/supervisor
+supervisor_include_files: '{{ supervisor_config_path }}/conf.d/*.conf'
+
+# Authentication
+supervisor_user: root
+supervisor_password: 'change_me'
+
+# HTTP Server Settings
+supervisor_unix_http_server_enable: true
+supervisor_unix_http_server_socket_path: /var/run/supervisor.sock
+supervisor_unix_http_server_password_protect: false
+
+supervisor_inet_http_server_enable: false
+supervisor_inet_http_server_port: '*:9001'
+supervisor_inet_http_server_password_protect: true
+
+# Daemon behavior
+supervisor_nodaemon: false
+
+# Managed programs
+supervisor_programs: []

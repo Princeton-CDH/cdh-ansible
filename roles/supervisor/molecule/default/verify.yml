@@ -1,0 +1,46 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  vars:
+    supervisor_config_path: /etc/supervisor
+    supervisor_bin_path: /usr/local/bin/supervisord
+
+  tasks:
+    - name: Check if supervisord service is enabled and running
+      ansible.builtin.systemd:
+        name: supervisord
+      register: supervisor_service_status
+      failed_when: not supervisor_service_status.status.ActiveState == 'active'
+
+    - name: Verify supervisord binary exists
+      ansible.builtin.stat:
+        path: "{{ supervisor_bin_path }}"
+      register: bin_stat
+      failed_when: not bin_stat.stat.exists
+
+    - name: Verify main configuration file exists
+      ansible.builtin.stat:
+        path: "{{ supervisor_config_path }}/supervisord.conf"
+      register: conf_stat
+      failed_when: not conf_stat.stat.exists
+
+    - name: Ensure conf.d directory exists and has correct permissions
+      ansible.builtin.stat:
+        path: "{{ supervisor_config_path }}/conf.d"
+      register: dir_stat
+      failed_when: 
+        - not dir_stat.stat.isdir
+        - dir_stat.stat.mode != '0755'
+
+    - name: Check if supervisorctl can communicate with the daemon
+      ansible.builtin.command: supervisorctl status
+      changed_when: false
+      register: ctl_status
+      failed_when: ctl_status.rc != 0
+
+    - name: Verify log directory exists
+      ansible.builtin.stat:
+        path: /var/log/supervisor
+      register: log_stat
+      failed_when: not log_stat.stat.exists

@@ -10,7 +10,7 @@
     - build_dependencies
     - build_project_repo
     - python
-    - geerlingguy.supervisor
+    - supervisor
     - configure_logging
     - finalize_deploy
     - close_deployment

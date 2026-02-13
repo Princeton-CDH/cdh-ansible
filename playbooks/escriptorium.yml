@@ -15,7 +15,7 @@
     - configure_logging # logging directory must exist before running django commands
     - django
     - escriptorium_setup
-    - role: geerlingguy.supervisor
+    - supervisor
       tags:
         - supervisor
     - finalize_deploy

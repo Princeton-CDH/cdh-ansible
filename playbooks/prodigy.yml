@@ -11,7 +11,7 @@
     - postgresql
     - prodigy_setup
     - python
-    - geerlingguy.supervisor
+    - supervisor
   tasks:
     - name: Use supervisorctl to restart application
       ansible.builtin.command: "sudo supervisorctl restart prodigy"

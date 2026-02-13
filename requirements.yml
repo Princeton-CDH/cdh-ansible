@@ -1,7 +1,4 @@
 ---
-roles:
-  - name: geerlingguy.supervisor
-
 collections:
   - name: community.general
   - name: community.postgresql

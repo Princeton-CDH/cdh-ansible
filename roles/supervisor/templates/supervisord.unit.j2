@@ -1,0 +1,15 @@
+[Unit]
+Description=Supervisor daemon
+After=network.target
+
+[Service]
+Type=forking
+ExecStart={{ supervisor_bin_path }} -c {{ supervisor_config_path }}/supervisord.conf
+ExecStop={{ supervisorctl_bin_path }} shutdown
+ExecReload={{ supervisorctl_bin_path }} reload
+KillMode=process
+Restart=on-failure
+RestartSec=42s
+
+[Install]
+WantedBy=multi-user.target
