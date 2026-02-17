@@ -1,32 +1,34 @@
-# Role Name
+# setup
 
-Setup role to be used as a dependency for other roles. Includes the following:
+This role performs foundational system configuration for CDH infrastructure. It is primarily used as a dependency for other roles (like `solr_collection` or `deploy_user`) to ensure the environment is consistent across application and infrastructure servers.
 
-- Conditionally load vaulted variables for setup tasks (geniza vault var; outdated)
-- Configure NFS mount point when NFS is enabled
-- Configure TigerData mount point when TigerData is enabled
-- Install and configure rclone when `rclone_remotes` are configured
+## Features
 
-## Requirements
+- **User & Group Provisioning**: Ensures the `deploy_user` (default: `conan`) exists and belongs to the correct system groups.
 
-None
+- **SSH Access**: Manages idempotent distribution of SSH public keys to allow cross-server communication (e.g., `rsync` between app and Solr servers).
+
+- **NFS Mounts**: Conditionally configures standard CDH and TigerData NFS mount points.
+
+- **Rclone Installation**: Installs and configures `rclone` for cloud storage interactions.
+
+- **Vault Integration**: Automatically loads sensitive variables if `geniza_deploy_only` is not set.
 
 ## Role Variables
 
-Checks whether the `geniza_deploy_only` variable is defined to determine
-whether to load setup vault variables.
+### General
 
-### rclone
+| **Variable**        | **Default** | **Description**                                                    |
+| ------------------- | ----------- | ------------------------------------------------------------------ |
+| `deploy_user`       | `conan`     | The system user responsible for deployments and service ownership. |
+| `nfs_enabled`       | `true`      | Whether to attempt mounting standard NFS shares.                   |
+| `tigerdata_enabled` | `false`     | Whether to attempt mounting TigerData-specific NFS shares.         |
 
-The `rclone` task will run if any `rclone_remotes` are defined.
+### Rclone
 
-This configuration takes a list of remotes with remote names `name` and
-dictionary of options, to be put in the rclone config file.
+The `rclone` tasks trigger if `rclone_remotes` is defined.
 
-For example, this set of ansible variables:
-
-```
-# rclone remote config
+```yaml
 rclone_remotes:
   - name: "test_gdrive"
     options:
@@ -34,23 +36,33 @@ rclone_remotes:
       scope: "drive"
 ```
 
-Would result in this rclone configuration:
+## Cross-Server Communication (Rsync)
 
-```
-[test_gdrive]
-type = drive
-scope = drive
-```
+This role is critical for tasks that use `delegate_to`. By ensuring the `deploy_user` and their `authorized_keys` are present on the delegated host, it allows for passwordless `rsync` operations.
 
-This task includes credentials for a Google service account. The service credentials file
-will automatically be configured for any remotes with type `drive`. You must add the service account `cdh-gdrive@pul-gcdc.iam.gserviceaccount.com` to any folder you wish it to have access with appropriate permission for your planned usage (read/update).
-
-To set a remote to a specific Google Drive folder, set the folder id as `root_folder_id`.
+> [!IMPORTANT]
+> 
+> This role uses `exclusive: no` for SSH keys. This means Ansible will ensure your deployment keys are present without deleting manually added administrator keys.
 
 ## Dependencies
 
-None
+None. This is intended to be a "base" role.
 
-## License
+## Usage as a Dependency
 
-See [LICENSE](https://github.com/Princeton-CDH/CDH_ansible/blob/main/LICENSE).
+In your role's `meta/main.yml`:
+
+```yaml
+dependencies:
+  - role: setup
+    vars:
+      tigerdata_enabled: true
+```
+
+## Idempotency Notes
+
+- **Users/Groups**: Uses the native `ansible.builtin.user` and `group` modules.
+
+- **NFS**: Uses `ansible.posix.mount` to ensure shares are in `/etc/fstab` and mounted without re-mounting on every run.
+
+- **Vault**: Variables are conditionally loaded to prevent "Missing Vault Password" errors during limited deployment runs.

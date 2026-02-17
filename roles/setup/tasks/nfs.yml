@@ -1,43 +1,35 @@
+---
 ###
 #  Configure NFS mount point
 ###
-- name: nfsserver | add fqdn for idmapping
-  become: true
-  tags:
-    - setup
-    - nfs
-    - never
+- name: Setup -  add fqdn for idmapping
   ansible.builtin.lineinfile:
     path: /etc/idmapd.conf
     insertbefore: '# Domain = localdomain'
     line: "Domain = {{ nfs_domain }}"
     state: present
+  become: true
+  tags: [setup, nfs, never]
   notify: restart idmapd
 
-- name: nfsserver | enable id_mapping
-  become: true
-  tags:
-    - setup
-    - nfs
-    - never
+- name: Setup - enable id_mapping
   ansible.builtin.lineinfile:
     path: /etc/default/nfs-common
     regexp: '^NEED_IDMAPD='
     line: NEED_IDMAPD=yes
+  become: true
+  tags: [setup, nfs, never]
   notify: restart idmapd
 
-- name: Ensure the presence of cdh nfs mount
-  become: true
-  tags:
-    - setup
-    - nfs
-    - never
+- name: Setup - ensure the presence of cdh nfs mount
   ansible.posix.mount:
     src: "{{ nfs_server }}:/var/nfs/cdh"
     path: "/mnt/nfs/cdh"
     state: mounted
     fstype: nfs
     opts: rw,sync,hard
+  become: true
+  tags: [setup, nfs, never]
 
 # comment this out and find out how to automatically disable idmapping
 # - name: nfsserver | reconfigure client id_mapping

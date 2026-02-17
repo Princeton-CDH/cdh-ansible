@@ -1,38 +1,32 @@
-###
-#  Configure TigerData NFS mount point
-###
-- name: Ensure TigerData group "{{ tigerdata_cdh_group }}" exists with correct gid
-  tags:
-    - setup
-    - nfs
-    - never
+---
+- name: Setup - ensure the primary deploy group exists
+  ansible.builtin.group:
+    name: "deploy"
+    state: present
+  tags: [setup, nfs]
+
+- name: Setup - ensure TigerData group "{{ tigerdata_cdh_group }}" exists
   ansible.builtin.group:
     name: "{{ tigerdata_cdh_group }}"
     state: present
     gid: "{{ tigerdata_cdh_gid }}"
+  tags: [setup, nfs]
 
-- name: Ensure system and deploy users belong to TigerData "{{ tigerdata_cdh_group }}" group
-  tags:
-    - setup
-    - nfs
-    - never
+- name: Setup - ensure deploy user "{{ deploy_user }}" is provisioned
   ansible.builtin.user:
-    name: "{{ item }}"
+    name: "{{ deploy_user }}"
+    group: "deploy"
     groups: "{{ tigerdata_cdh_group }}"
-    append: yes
-  with_items:
-    - "{{ deploy_user }}"
-    - pulsys  #  "{{ ansible_user }}" is undefined?
+    append: true
+    shell: /bin/bash
+    create_home: true
+    state: present
+  tags: [setup, nfs]
 
-- name: Ensure the presence of TigerData NFS mount
-  become: true
-  tags:
-    - setup
-    - nfs
-    - never
-  ansible.posix.mount:
-    src: "{{ tigerdata_nfs_server }}:/cdh"
-    path: "{{ tigerdata_mount_dir }}"
-    state: mounted
-    fstype: nfs
-    opts: "nfsvers=3,mountport={{ tigerdata_mount_port }},port={{ tigerdata_mount_port }},nolock,proto=tcp"
+- name: Setup - distribute SSH public keys for {{ deploy_user }}
+  ansible.builtin.authorized_key:
+    user: "{{ deploy_user }}"
+    state: present
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    exclusive: no
+  tags: [setup, nfs]

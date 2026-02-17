@@ -1,101 +1,49 @@
+# SPDX-License-Identifier: MIT-0
 ---
 # tasks file for roles/solr_collection
-- name: Create the base directory for Solr configsets
-  tags:
-    - setup
-    - never
-  run_once: true
-  file:
+- name: Solr_collection - create the base directory for Solr configsets
+  delegate_to: "{{ solr_server }}"
+  ansible.builtin.file:
     path: "/solr/cdh_solr/"
     state: directory
-    mode: 0755
+    mode: "0755"
     owner: "{{ deploy_user }}"
-    group: "{{ deploy_user }}"
+    group: "deploy"
   become: true
-  delegate_to: "{{ solr_server }}" # lib-solr-staging1.princeton.edu  # solr_staging
-
-- name: Update and configure Solr configset
   run_once: true
-  tags:
-    - solr_configset
+  tags: [setup]
+
+- name: Solr_collection - update and configure Solr configset
+  run_once: true
+  tags: [solr_configset]
   block:
-    - name: Copy project Solr configset files for upload to zookeeper
-      # rsync configset from deployed version on remote host to solr server
+    - name: Solr_collection - sync project Solr configset files
       become: true
       become_user: "{{ deploy_user }}"
-      command: /usr/bin/rsync -a {{ inventory_hostname }}:{{ deploy }}/solr_conf/ /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -e "ssh -o StrictHostKeyChecking=no"
+      # Use -i (itemized changes) to detect if anything actually moved
+      ansible.builtin.command:
+        cmd: >
+          /usr/bin/rsync -ai --checksum {{ inventory_hostname }}:{{ deploy }}/solr_conf/
+          /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -e "ssh -o StrictHostKeyChecking=no"
       delegate_to: "{{ solr_server }}"
-      # NOTE: this step may fail the first time it is run on a new server because
-      # systemd ssh restart does not reliably work (handler in deploy_user role);
-      # if it fails, try restarting ssh manually on the application server
+      register: rsync_out
+      changed_when: "rsync_out.stdout != ''"
 
-    # no shards per node in solr 9; only run if solr version is < 9
-    - name: Check replication factor configuration
-      fail: msg=" replication factor is greater than three; must specify shards per node > 1"
-      when:
-        - solr_version < 9
-        - num_shards * replication_factor > 3 and shards_per_node == 1
-
-    - name: Update configset with zookeeper
-      command: "/opt/solr/bin/solr zk upconfig -d /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -n {{ solr_configset }} -z {{ zk_host }}"
-      delegate_to: "{{ solr_server }}"
-
-    - name: Get a list of current Solr collections
-      uri:
+    - name: Solr_collection - get a list of current Solr collections
+      ansible.builtin.uri:
         url: "{{ solr_url }}admin/collections?action=LIST"
       register: solr_collections_list
 
+    - name: Solr_collection - update configset in ZooKeeper
+      ansible.builtin.command: >
+        /opt/solr/bin/solr zk upconfig
+        -d /solr/cdh_solr/cdh_{{ app_name }}_solr_conf
+        -n {{ solr_configset }} -z {{ zk_host }}
+      delegate_to: "{{ solr_server }}"
+      # Only upload if files changed or configset is missing from Solr
+      when: rsync_out.changed or (solr_configset not in solr_collections_list.json.collections)
+
     - name: Create Solr collection if it does not already exist
-      uri:
+      ansible.builtin.uri:
         url: "{{ solr_url }}admin/collections?action=CREATE&name={{ solr_collection }}&collection.configName={{ solr_configset }}&numShards={{ num_shards }}&replicationFactor={{ replication_factor }}"
       when: solr_collection not in solr_collections_list.json.collections
-
-    - name: Check Solr collection status if it previously existed
-      uri:
-        url: "{{ solr_url }}admin/collections?action=COLSTATUS&collection={{ solr_collection }}&coreInfo=true"
-      register: solr_collection_status
-      when: solr_collection in solr_collections_list.json.collections
-
-    - name: Get collection information from collection status response
-      # get collection-specific portion of the collection status response
-      set_fact:
-        solr_collection_info: "{{ solr_collection_status.json[ solr_collection ]}}"
-      when:
-        - solr_collection in solr_collections_list.json.collections
-        - solr_collection_status is defined
-
-    # NOTE: number of shards can't be changed via modify collection;
-    # must use reindex; warning, this may be slow
-    - name: Modify Solr collection number of shards if changed
-      uri:
-        url: "{{ solr_url }}admin/collections?action=REINDEXCOLLECTION&name={{ solr_collection }}&numShards={{ num_shards }}"
-      when:
-        - solr_version < 9
-        - solr_collection_info is defined
-        - solr_collection_info["activeShards"] != num_shards
-      # is it ok to use active shards total and ignore inactive?
-
-    # - name: Modify Solr collection shards per node if changed
-    #   uri:
-    #     url: "{{ solr_url }}admin/collections?action=MODIFYCOLLECTION&collection={{ solr_collection }}&maxShardsPerNode={{ shards_per_node }}"
-    #   when:
-    #     - solr_version < 9
-    #     - solr_collection_info is defined
-    #     - solr_collection_info["properties"]["maxShardsPerNode"] is defined
-    #     - solr_collection_info["properties"]["maxShardsPerNode"] != shards_per_node
-
-    - name: Modify Solr collection replication factor if changed
-      uri:
-        url: "{{ solr_url }}admin/collections?action=MODIFYCOLLECTION&collection={{ solr_collection }}&replicationFactor={{ replication_factor }}"
-      when:
-        - solr_collection_info is defined
-        - solr_collection_info["properties"]["replicationFactor"] | int != replication_factor
-
-    - name: Reload Solr collection if not newly created
-      debug:
-        msg: "Solr collection {{ solr_collection }} already exists"
-      changed_when: solr_collection in solr_collections_list.json.collections
-      notify: reload solr collection
-
-  rescue:
-      - include_tasks: roles/create_deployment/tasks/fail.yml
