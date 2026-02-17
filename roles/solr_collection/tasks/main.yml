@@ -23,7 +23,7 @@
       # Use -i (itemized changes) to detect if anything actually moved
       ansible.builtin.command:
         cmd: >
-          /usr/bin/rsync -ai --checksum {{ inventory_hostname }}:{{ deploy }}/solr_conf/
+          /usr/bin/rsync -ai --checksum {{ inventory_hostname }}:{{ install_root }}/current/solr_conf/
           /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -e "ssh -o StrictHostKeyChecking=no"
       delegate_to: "{{ solr_server }}"
       register: rsync_out
