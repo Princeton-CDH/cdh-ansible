@@ -1,30 +1,22 @@
+# SPDX-License-Identifier: MIT-0
 ---
-# # need to update ca-certificates to avoid problem with phusion passenger file
-# # https://github.com/phusion/passenger/issues/2303#issuecomment-931571362
-# - name: update ca certificates
-#   become: true
-#   tags: setup
-#   apt:
-#     name: "ca-certificates"
-#     state: latest
-
-- name: install configured dependencies
-  become: true
-  tags:
-    - setup
-    - never
-  apt:
+# tasks file for roles/build_dependencies
+- name: Build_dependencies - install configured dependencies
+  ansible.builtin.apt:
     name: "{{ common_dependencies + app_dependencies }}"
     state: present
     update_cache: true
-  changed_when: false
-
-- name: configure tmux
+    # Only update cache if it hasn't been updated in the last hour (3600s)
+    cache_valid_time: 3600
   become: true
-  tags:
-    - setup
-    - never
-  copy:
+  tags: [setup, never]
+
+- name: Build_dependencies - configure tmux
+  ansible.builtin.copy:
     src: "tmux.conf"
     dest: "/etc/tmux.conf"
-    mode: u=rw,g=r,o=r
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  tags: [setup, never]
