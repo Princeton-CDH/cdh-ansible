@@ -40,6 +40,7 @@ provisioner:
   config_options:
     defaults:
       remote_tmp: /tmp
+      roles_path: "$MOLECULE_PROJECT_DIRECTORY/.."  # Add this line
   log: true
 verifier:
   name: ansible
