@@ -3,7 +3,6 @@
   hosts: all
   vars:
     deploy_user: conan
-    app_name: "testapp"
     repo: "Princeton-CDH/derridas-margins-archive"
     repo_url: "https://github.com/{{ repo }}.git"
     install_root: "/srv/www/{{ app_name }}"
