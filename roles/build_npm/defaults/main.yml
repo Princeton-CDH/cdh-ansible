@@ -3,7 +3,6 @@
 # defaults file for roles/build_npm
 npm_install_mode: "production" # alternate: ci
 npm_install_path: "{{ deploy }}"
-nodejs_release_base_url: "https://pulmirror.princeton.edu/mirror/node/dist"
 
 # Node version may be "22.4.0" or "v22.4.0"
 desired_nodejs_version: "22.4.0"
