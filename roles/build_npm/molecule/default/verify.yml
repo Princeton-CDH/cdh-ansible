@@ -3,7 +3,8 @@
   hosts: all
   become: true
   gather_facts: true
-
+  vars:
+    desired_nodejs_version: "22.4.0"
   tasks:
     - name: Verify | node exists
       ansible.builtin.command: /usr/local/bin/node --version
