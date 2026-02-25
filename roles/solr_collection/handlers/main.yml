@@ -1,6 +1,3 @@
+#SPDX-License-Identifier: MIT-0
 ---
-# handlers file for roles/solr
-- name: reload solr collection
-  uri:
-    url: "{{ solr_url }}admin/collections?action=RELOAD&name={{ solr_collection }}"
-    timeout: 180
+# handlers file for roles/solr_collection

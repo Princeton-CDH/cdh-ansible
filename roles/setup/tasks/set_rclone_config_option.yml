@@ -1,5 +1,5 @@
-# this is an inner loop and should only be called by rclone.yml
-- name: Set rclone config options for a specific remote
+---
+- name: Setup - set rclone config options for a specific remote
   community.general.ini_file:
     path: "{{ rclone_config_file }}"
     section: "{{ remote.name }}"

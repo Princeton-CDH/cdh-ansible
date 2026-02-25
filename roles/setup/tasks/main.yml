@@ -1,22 +1,19 @@
+# SPDX-License-Identifier: MIT-0
 ---
-# tasks file for setup
-
-# Conditionally load vaulted setup variables.
-# Skip based on setup tag is insufficient, ansible complains if
-# the vault key is not available.
-
-- name: Load vaulted setup variables if appropriate
-  tags:
-    - setup
-    - never
+# tasks file for roles/setup
+- name: Setup - load vaulted setup variables if appropriate
   ansible.builtin.include_vars:
     file: vars/vault.yml
   when: geniza_deploy_only is not defined or geniza_deploy_only == ""
-- name: Configure NFS mount point
+  tags: [setup, never]
+
+- name: Setup - configure NFS mount point
   ansible.builtin.import_tasks: nfs.yml
   when: nfs_enabled
-- name: Configure TigerData NFS mount point
+
+- name: Setup - configure TigerData NFS mount point
   ansible.builtin.import_tasks: tigerdata_nfs.yml
   when: tigerdata_enabled
-- name: Install and configure rclone
+
+- name: Setup - install and configure rclone
   ansible.builtin.import_tasks: rclone.yml

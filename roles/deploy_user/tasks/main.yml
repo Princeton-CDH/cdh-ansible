@@ -1,18 +1,16 @@
 ---
 # tasks file for deploy_user
-- name: Set up deploy user
+- name: Deploy_user - set up deploy user
   become: true
-  tags:
-    - setup
-    - never
+  tags: [setup, never]
   block:
-    - name: Ensure deploy user group exists with correct gid
+    - name: Deploy_user - ensure deploy user group exists with correct gid
       ansible.builtin.group:
         name: "{{ deploy_user }}"
         state: present
-        gid:  "{{ deploy_user_uid }}"
+        gid: "{{ deploy_user_uid }}"
 
-    - name: Create deploy user
+    - name: Deploy_user - create user
       ansible.builtin.user:
         name: "{{ deploy_user }}"
         groups:
@@ -23,54 +21,57 @@
         uid: "{{ deploy_user_uid }}"
         group: "{{ deploy_user }}"   # primary group
 
-    - name: Create bash profile
+    - name: Deploy_user - create bash profile
       ansible.builtin.template:
         src: "bash_profile.j2"
         dest: "/home/{{ deploy_user }}/.profile"
         owner: "{{ deploy_user }}"
         group: "{{ deploy_user }}"
-        mode: 0600
+        mode: "0600"
 
-    - name: Check to see if .ssh directory exists
-      ansible.builtin.stat:
-        path: "/home/{{ deploy_user }}/.ssh/"
-      register: deploy_user_ssh_dir
-
-    - name: Create the .ssh directory
+    - name: Deploy_user - ensure .ssh directory exists
       ansible.builtin.file:
         path: "/home/{{ deploy_user }}/.ssh/"
         state: directory
         owner: "{{ deploy_user }}"
         group: "{{ deploy_user }}"
-        mode: 0700
-      when: not deploy_user_ssh_dir.stat.exists
+        mode: "0700"
 
-    - name: Install private ssh key
+    - name: Deploy_user - install private ssh key (if provided in files)
       ansible.builtin.copy:
         src: files/id_rsa
         dest: "/home/{{ deploy_user }}/.ssh/id_rsa"
         owner: "{{ deploy_user }}"
         group: "{{ deploy_user }}"
-        mode: 0600
+        mode: "0600"
+      # Use an 'or' condition or ignore errors if the file isn't always present
+      ignore_errors: true 
 
-    - name: Add SSH public key
+    - name: Deploy_user - generate SSH key for deploy user if missing
+      ansible.builtin.user:
+        name: "{{ deploy_user }}"
+        generate_ssh_key: true
+        ssh_key_bits: 2048
+        ssh_key_file: .ssh/id_rsa
+
+    - name: Deploy_user - add control machine public key to authorized_keys
       ansible.posix.authorized_key:
         user: "{{ deploy_user }}"
         key: "{{ lookup('file', 'files/id_rsa.pub') }}"
 
-    - name: Allow "authorized_key" files
+    - name: Deploy_user - allow "authorized_key" files
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         state: present
-        backrefs: yes
+        backrefs: true
         regexp: '^#AuthorizedKeysFile(.*?)$'
         line: 'AuthorizedKeysFile\1'
 
-    - name: Allow deploy user to SSH
+    - name: Deploy_user - allow deploy user to SSH
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         state: present
-        backrefs: yes
+        backrefs: true
         regexp: '^AllowUsers(.*?)( ?)({{ deploy_user }})?$'
         line: 'AllowUsers\1 {{ deploy_user }}'
       notify:
@@ -81,13 +82,13 @@
     - name: Flush handlers (trigger ssh restart if needed)
       ansible.builtin.meta: flush_handlers
 
-    - name: Create pulsys bash alias file
+    - name: Deploy_user - create pulsys bash alias file
       ansible.builtin.template:
         src: "pulsys_bash_alias.j2"
         dest: "/home/{{ ansible_user }}/.bash_aliases"
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
-        mode: 0600
+        mode: "0600"
       when: ansible_user != "root"
 
   rescue:

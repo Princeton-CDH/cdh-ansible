@@ -1,7 +1,9 @@
+# SPDX-License-Identifier: MIT-0
 ---
+# defaults file for roles/solr_collection
 # default solr version
 # used to determine whether to run shard per node tasks (not in solr 9)
-solr_version: 8
+solr_version: 9
 
 # defaults file for roles/solr_collection
 num_shards: 1
@@ -15,5 +17,5 @@ solr_backup_date: "{{'%Y%m%d' | strftime(ansible_date_time.epoch) }}"
 # However, they are likely not yet be present for solr9
 solr_backup_location: "/solr/data/cloud_backup/solr{{ solr_version}}/production/{{ solr_backup_date }}/"
 solr_backup_filename: "{{ solr_collection }}-{{solr_backup_date}}.bk"
-solr_backup_request_id:  "{{solr_collection }}-{{ansible_date_time.iso8601 }}"
-solr_delete_request_id:  "rm-{{solr_collection }}-{{ansible_date_time.iso8601 }}"
+solr_backup_request_id: "{{solr_collection }}-{{ansible_date_time.iso8601 }}"
+solr_delete_request_id: "rm-{{solr_collection }}-{{ansible_date_time.iso8601 }}"
