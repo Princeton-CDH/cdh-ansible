@@ -37,10 +37,13 @@ provisioner:
   playbooks:
     create: create.yml
     destroy: destroy.yml
+    converge: converge.yml
   config_options:
     defaults:
       remote_tmp: /tmp
-      roles_path: "$MOLECULE_PROJECT_DIRECTORY/.."  # Add this line
+      roles_path: "../../../"
+  env:
+    ANSIBLE_ROLES_PATH: "../../../"
   log: true
 verifier:
   name: ansible
