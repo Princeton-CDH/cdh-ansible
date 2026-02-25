@@ -61,6 +61,7 @@
     state: present
     username: "{{ supervisor_user }}"
     password: "{{ supervisor_password }}"
+  when: supervisor_programs | length > 0
 
 - name: Supervisor - ensure started and enabled.
   ansible.builtin.service:
