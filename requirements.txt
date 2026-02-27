@@ -1,6 +1,10 @@
-ansible>=6.7
-molecule-plugins[docker]
-ansible-lint
+ansible==12.2.0
+ansible-builder==3.0.1
+ansible-compat==4.1.11
+ansible-core==2.19.4
+ansible-lint==6.22.1
+molecule==6.0.3
+molecule-plugins==23.5.0
 passlib
 wheel
 yamllint
