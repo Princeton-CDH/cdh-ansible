@@ -1,63 +1,61 @@
-###
-# Clone and deploy a project repository
-#
-# This module clones and deploys a project repository to clone_root, which
-# should be specified in the group_vars for a particular project.
-# It provides repo_info and ver, which are both used to produce the folder
-# directory.
-#
-###
+---
 - name: Clone and deploy a project repository
   block:
-    - name: Ensure deploy user has access to install root
-      tags:
-        - setup
-        - never
+    - name: Ensure base clone and install roots exist
       become: true
-      file:
-        dest: "{{ install_root }}"
+      ansible.builtin.file:
+        path: "{{ item }}"
         owner: "{{ deploy_user }}"
         group: "{{ deploy_user }}"
         state: directory
-        recurse: no  # was yes and was super slow... surely not needed anymore?
-      # only set owner when deploy user is defined
-      # (i.e. on PUL vms, where deploy user is different than remote user)
+        mode: '0755'
+      loop:
+        - "{{ install_root }}"
+        - "{{ clone_root }}"
+      tags: [setup]
 
-    - name: Clone project repository and checkout the correct git reference
+    - name: Mark clone path as safe for git
       become: true
       become_user: "{{ deploy_user }}"
-      tags:
-        - always
+      ansible.builtin.command:
+        cmd: "git config --global --add safe.directory {{ clone_root }}/{{ repo }}"
+      changed_when: false
+
+    - name: Primary clone of repository
+      become: true
+      become_user: "{{ deploy_user }}"
       ansible.builtin.git:
-        repo: "{{ repo_url }}/"
+        repo: "{{ repo_url }}"
         dest: "{{ clone_root }}/{{ repo }}"
         version: "{{ gitref }}"
-        depth: "{{ 1 if git_shallow_clone else 0 }}"
-      # register repo_info for group_vars
+        depth: "{{ 1 if git_shallow_clone | default(false) else 0 }}"
       register: repo_info
+      tags: [always]
 
     - name: Determine version of python app being deployed
       ansible.builtin.import_tasks: python_app_version.yml
-      run_once: true
-      tags:
-        - always
-      when:
-        - python_app is defined
-        - python_app_version is not defined
+      when: python_app is defined
+      tags: [always]
 
-    - name: Create the deploy directory (to recursively create parent dirs if necessary)
+    - name: Create the specific deploy directory
       become: true
-      tags:
-        - setup
-        - never
-      become_user: "{{ deploy_user }}"
-      file:
+      ansible.builtin.file:
+        path: "{{ deploy }}"
         state: directory
-        dest: "{{ deploy }}"
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        mode: '0755'
+        recurse: yes
+      tags: [setup]
 
-    # using the local git repository as source, do a shallow, single branch checkout
-    # for the deployed instance
-    - name: Create a shallow checkout of deploy branch to deploy directory
+    - name: Mark deploy path as safe for git
+      become: true
+      become_user: "{{ deploy_user }}"
+      ansible.builtin.command:
+        cmd: "git config --global --add safe.directory {{ deploy }}"
+      changed_when: false
+
+    - name: Create shallow checkout of deploy branch to deploy directory
       become: true
       become_user: "{{ deploy_user }}"
       ansible.builtin.git:
@@ -66,7 +64,10 @@
         version: "{{ gitref }}"
         single_branch: true
         depth: 1
-        force: true  # ignore/overwrite any local changes
+        force: true
+      tags: [always]
 
   rescue:
-    - include_tasks: roles/create_deployment/tasks/fail.yml
+    - name: Include failure tasks
+      ansible.builtin.include_tasks: "../../create_deployment/tasks/fail.yml"
+      ignore_errors: true

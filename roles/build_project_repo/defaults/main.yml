@@ -1,3 +1,11 @@
+#SPDX-License-Identifier: MIT-0
 ---
-# defaults for build_project_repo role
-git_shallow_clone: false
+# defaults file for roles/build_project_repo
+deploy_user: "conan"
+install_root: "/srv/www"
+clone_root: "/home/{{ deploy_user }}/repos"
+
+# Git defaults
+gitref: main
+git_shallow_clone: true
+git_force_checkout: true

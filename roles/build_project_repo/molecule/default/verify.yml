@@ -1,0 +1,58 @@
+---
+- name: Verify
+  hosts: all
+  vars:
+    deploy_user: conan
+    app_name: "derrida"
+    install_root: "/srv/www/{{ app_name }}"
+    clone_root: "/home/{{ deploy_user }}/repos"
+    repo: "derridas-margins-archive"
+
+  tasks:
+    - name: Verify clone directory exists and is a git repo
+      become: true
+      become_user: "{{ deploy_user }}"
+      ansible.builtin.command:
+        cmd: "git rev-parse --is-inside-work-tree"
+        chdir: "{{ clone_root }}/{{ repo }}"
+      register: is_git_repo
+      changed_when: false
+
+    - name: Assert clone is a valid git repo
+      ansible.builtin.assert:
+        that:
+          - is_git_repo.rc == 0
+
+    - name: Find the actual versioned deploy directory
+      ansible.builtin.find:
+        paths: "{{ install_root }}"
+        file_type: directory
+        # Matches the format: 1.0-abcdef
+        patterns: "*-*"
+      register: deploy_dir_find
+
+    - name: Verify deploy directory permissions and ownership
+      ansible.builtin.stat:
+        path: "{{ deploy_dir_find.files[0].path }}"
+      register: deploy_stat
+
+    - name: Assert deploy directory ownership is correct
+      ansible.builtin.assert:
+        that:
+          - deploy_stat.stat.pw_name == deploy_user
+          - deploy_stat.stat.gr_name == deploy_user
+          - deploy_stat.stat.mode == '0755'
+
+    - name: Verify shallow checkout config
+      become: true
+      become_user: "{{ deploy_user }}"
+      ansible.builtin.command:
+        cmd: "git rev-parse --is-shallow-repository"
+        chdir: "{{ deploy_dir_find.files[0].path }}"
+      register: is_shallow
+      changed_when: false
+
+    - name: Assert deployment is a shallow clone
+      ansible.builtin.assert:
+        that:
+          - "'true' in is_shallow.stdout"
