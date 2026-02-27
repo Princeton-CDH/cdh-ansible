@@ -1,4 +1,27 @@
+#SPDX-License-Identifier: MIT-0
 ---
-# defaults file for build_npm
+# defaults file for roles/build_npm
 npm_install_mode: "production" # alternate: ci
 npm_install_path: "{{ deploy }}"
+
+# Node version may be "22.4.0" or "v22.4.0"
+desired_nodejs_version: "22.4.0"
+
+# Opinionated default: do NOT compile in CI by surprise.
+# Options: prebuilt | source
+nodejs_install_method: "prebuilt"
+
+# Internal mirror by default (fast + reliable + consistent)
+nodejs_release_base_url: "https://pulmirror.princeton.edu/mirror/node/dist"
+
+# Download resilience
+nodejs_download_timeout: 600
+nodejs_download_retries: 6
+nodejs_download_delay: 10
+
+# Where to put node
+nodejs_prefix_root: "/usr/local"
+
+# (Only used if nodejs_install_method=source)
+nodejs_make_jobs_max: 2
+
