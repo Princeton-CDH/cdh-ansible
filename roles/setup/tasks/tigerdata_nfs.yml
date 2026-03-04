@@ -22,11 +22,3 @@
     create_home: true
     state: present
   tags: [setup, nfs]
-
-- name: Setup - distribute SSH public keys for {{ deploy_user }}
-  ansible.builtin.authorized_key:
-    user: "{{ deploy_user }}"
-    state: present
-    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-    exclusive: no
-  tags: [setup, nfs]
