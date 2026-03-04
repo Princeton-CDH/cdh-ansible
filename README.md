@@ -18,12 +18,24 @@ The overall structure of this repository is as follows:
 
 ## Usage instructions
 
-### Setup and install dependencies
+### Python environment & dependencies (recommended: uv + pyproject.toml)
 
-- Python virtual environment.
-  - See `.python-version` for the recommended version of Python. If you use [pyenv](https://github.com/pyenv/pyenv) for managing python versions, run `pyenv install`.
-  - If you create a python virtualenv in this directory and name it `env` or `venv`, it is included in `.gitignore` to be excluded by git
-  - Install python dependencies: `uv sync`
+This repository uses `pyproject.toml` + `uv` for Python dependency management.
+UV will need to be [installed](https://docs.astral.sh/uv/) 
+
+- See `.python-version` for the recommended version of Python.
+- Create/activate a virtual environment (any tool is fine), then install dependencies:
+
+```sh
+uv sync
+```
+
+> Note: `requirements.txt` is no longer used. Dependencies are defined in `pyproject.toml` and locked in `uv.lock`.
+
+This will install the locked dependencies from uv.lock (and update the environment if pyproject.toml changes).
+
+If you create a local virtualenv in this directory, `.venv/` is the default used by our Devbox setup (if you use Devbox).
+
 - Install required Ansible galaxy collections and roles:
   - `ansible-galaxy install -r requirements.yml`
 
@@ -47,7 +59,7 @@ This will add install a pre-commit hook to prevent committing an unencrypted vau
 To run a playbook, with your python virtual environment activated:
 
 ```{bash}
-ansible-playbook playbooks/name_of_playbook.yml
+uv run ansible-playbook playbooks/name_of_playbook.yml
 ```
 
 Each application has a deploy playbook that can be used to deploy that application to either the production or staging environments. By default, the playbook will deploy to staging. To deploy to production, override the runtime environment with this command line option: `-e runtime_env=production`
@@ -65,7 +77,7 @@ By default, initial provisioning and setup tasks are configured to be skipped. T
 To run a playbook without skipping setup tasks, pass the `setup` and `all` tags, so untagged tasks and tasks tagged `setup` run:
 
 ```{bash}
-ansible-playbook --tags=all,setup playbooks/name_of_playbook.yml
+uv run ansible-playbook --tags=all,setup playbooks/name_of_playbook.yml
 ```
 
 ### Skip deployment tasks
@@ -80,13 +92,13 @@ If you want to pause the playbook before the new version is switched live,
 there is an optional pause step you can enable using tags. When running normally and skipping setup tasks, run as follows:
 
 ```{bash}
-ansible-playbook --tags=all,final-pause playbooks/playbook.yml
+uv run ansible-playbook --tags=all,final-pause playbooks/playbook.yml
 ```
 
 When running with setup steps enabled:
 
 ```{bash}
-ansible-playbook --tags=all,setup,final-pause playbooks/playbook.yml
+uv run ansible-playbook --tags=all,setup,final-pause playbooks/playbook.yml
 ```
 
 ## Revert last deploy
@@ -94,7 +106,7 @@ ansible-playbook --tags=all,setup,final-pause playbooks/playbook.yml
 To revert to previous deploy run call the `revert_deploy` playbook with a `host_group` matching the deploy you want to revert, e.g.:
 
 ```{bash}
-ansible-playbook -e host_group=shxco_staging playbooks/revert_deploy.yml
+uv run ansible-playbook -e host_group=shxco_staging playbooks/revert_deploy.yml
 ```
 
 ## Vault sensitive variables
@@ -105,7 +117,7 @@ stored in a vault variable file (i.e., `inventory/group_vars/*/vault.yml`) and t
 To encrypt a single variable, you can use `ansible-vault`:
 
 ```sh
-ansible-vault encrypt_string <password_source> '<string_to_encrypt>' --name '<string_name_of_variable>'
+uv run ansible-vault encrypt_string <password_source> '<string_to_encrypt>' --name '<string_name_of_variable>'
 ```
 
 To work with multiple encrypted variables, use the local `vault_vars.py` helper script.
@@ -228,7 +240,7 @@ This repo supports [Devbox](https://www.jetify.com/devbox/) as an alternative to
 3) Install Ansible Galaxy dependencies
 
 ```sh
-ansible-galaxy install -r requirements.yml
+uv run ansible-galaxy install -r requirements.yml
 ```
 
 Common commands (from inside `devbox shell`):
