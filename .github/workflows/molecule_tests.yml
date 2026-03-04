@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        role: [build_dependencies, build_project_repo, build_npm, deploy_user, finalize_deploy, opencv_from_source]
+        role: [build_dependencies, build_project_repo, build_npm, deploy_user, finalize_deploy, opencv_from_source, postgresql]
     steps:
       - uses: actions/checkout@v4
 
