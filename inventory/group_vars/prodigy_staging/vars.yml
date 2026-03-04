@@ -2,4 +2,4 @@
 application_url: https://test-prodigy.cdh.princeton.edu
 prodigy_local_envs:
   PRODIGY_LOGGING: "verbose"
-#  PRODIGY_ALLOWED_SESSIONS: "{{ vault_prodigy_sessions }}"
+  PRODIGY_ALLOWED_SESSIONS: "{{ vault_prodigy_sessions }}"
