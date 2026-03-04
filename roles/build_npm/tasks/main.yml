@@ -1,44 +1,76 @@
-###
-# Install JS dependencies using npm.
-#
-# This role installs npm packages and depends on there being a package.json
-# present in the project root directory (deploy).
-###
 ---
-- name: npm configuration tasks
+
+- name: Build_npm | Normalize version and select arch
+  ansible.builtin.set_fact:
+    desired_nodejs_version_v: >-
+      {{ (desired_nodejs_version is match('^v')) | ternary(desired_nodejs_version, 'v' ~ desired_nodejs_version) }}
+    nodejs_arch: >-
+      {{ (ansible_architecture in ['x86_64', 'amd64']) | ternary('x64', 'arm64') }}
+    nodejs_dir: "{{ nodejs_prefix_root | default('/usr/local') }}/node-{{ (desired_nodejs_version is match('^v')) | ternary(desired_nodejs_version, 'v' ~ desired_nodejs_version) }}-linux-{{ (ansible_architecture in ['x86_64','amd64']) | ternary('x64','arm64') }}"
+    nodejs_tarball: "/usr/local/src/node-{{ (desired_nodejs_version is match('^v')) | ternary(desired_nodejs_version, 'v' ~ desired_nodejs_version) }}-linux-{{ (ansible_architecture in ['x86_64','amd64']) | ternary('x64','arm64') }}.tar.xz"
+
+- name: Build_npm | Check current node (if any)
+  ansible.builtin.command: "/usr/local/bin/node --version"
+  register: node_current
+  changed_when: false
+  failed_when: false
+
+- name: Build_npm | Determine whether Node install/update is needed
+  ansible.builtin.set_fact:
+    nodejs_needs_install: >-
+      {{ (node_current.rc != 0) or ((node_current.stdout | trim) != desired_nodejs_version_v) }}
+
+- name: Build_npm | Install archive tooling (for tar.xz, etc.)
+  become: true
+  ansible.builtin.apt:
+    name:
+      - build-essential
+      - ca-certificates
+      - curl
+      - tar
+      - xz-utils
+      - bzip2
+      - unzip
+      - zstd
+    state: present
+    update_cache: true
+
+
+- name: Build_npm | Install Node (prebuilt)
+  when: nodejs_needs_install and (nodejs_install_method | default('prebuilt')) == 'prebuilt'
   block:
-    - name: "Install nodejs from --channel={{ node_version }}/stable"
+    - name: Build_npm | Download prebuilt tarball (resilient)
       become: true
-      tags:
-        - setup
-        - never
-      community.general.snap:
-        name: node
-        classic: true
-        channel: "{{ node_version }}/stable"
-        state: present
-      register: snap_results
+      ansible.builtin.get_url:
+        url: "{{ nodejs_release_base_url | default('https://pulmirror.princeton.edu/mirror/node/dist') }}/{{ desired_nodejs_version_v }}/node-{{ desired_nodejs_version_v }}-linux-{{ nodejs_arch }}.tar.xz"
+        dest: "{{ nodejs_tarball }}"
+        mode: "0644"
+        tmp_dest: "/tmp"
+        timeout: "{{ nodejs_download_timeout | default(600) }}"
+      register: node_prebuilt_dl
+      retries: "{{ nodejs_download_retries | default(6) }}"
+      delay: "{{ nodejs_download_delay | default(10) }}"
+      until: node_prebuilt_dl is succeeded
 
-    # NOTE: upgrading nodejs with ansible snap fails, even though
-    # the documentation claims it should refresh when then channel changes.
-    # Manually run a refresh command to ensure version changes take effect, e.g.:
-    #   sudo snap refresh node --channel=18
-    # NOTE2: could add a node -v check and only refresh on mismatch
-
-    - name: Refresh nodejs to ensure version changes take effect
+    - name: Build_npm | Unpack prebuilt Node
       become: true
-      ansible.builtin.command: "snap refresh node --channel={{ node_version }}/stable"
+      ansible.builtin.unarchive:
+        src: "{{ nodejs_tarball }}"
+        dest: "{{ nodejs_prefix_root | default('/usr/local') }}"
+        remote_src: true
+        creates: "{{ nodejs_dir }}"
 
-    - name: "install javascript dependencies with npm ({{ npm_install_mode }} install)"
+    - name: Build_npm | Link node/npm/npx
       become: true
-      become_user: "{{ deploy_user }}"
-      community.general.npm:
-        path: "{{ npm_install_path }}"
-        # NOTE: for shxco, omitting dev dependencies means the webpack build fails;
-        # using production install solved a problem for cdhweb
-        # shxco prod/dev dependencies should be adjusted so this does not fail
-        production: "{{ npm_install_mode == 'production' }}"
-        ci: "{{ npm_install_mode == 'ci' }}"
+      ansible.builtin.file:
+        src: "{{ nodejs_dir }}/bin/{{ item }}"
+        dest: "/usr/local/bin/{{ item }}"
+        state: link
+        force: true
+      loop: [node, npm, npx]
 
-  rescue:
-    - include_tasks: roles/create_deployment/tasks/fail.yml
+    - name: Build_npm | Verify node version
+      ansible.builtin.command: "/usr/local/bin/node --version"
+      register: node_version_check
+      changed_when: false
+      failed_when: node_version_check.stdout | trim != desired_nodejs_version_v

@@ -1,0 +1,45 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  gather_facts: true
+  vars:
+    desired_nodejs_version: "22.4.0"
+  tasks:
+    - name: Verify | node exists
+      ansible.builtin.command: /usr/local/bin/node --version
+      register: node_ver
+      changed_when: false
+
+    - name: Verify | npm exists
+      ansible.builtin.command: /usr/local/bin/npm --version
+      register: npm_ver
+      changed_when: false
+
+    - name: Verify | npx exists
+      ansible.builtin.command: /usr/local/bin/npx --version
+      register: npx_ver
+      changed_when: false
+
+    - name: Verify | Assert node version matches desired
+      ansible.builtin.assert:
+        that:
+          - node_ver.stdout | trim == (desired_nodejs_version is match('^v')
+              | ternary(desired_nodejs_version, 'v' ~ desired_nodejs_version))
+        fail_msg: "node version mismatch: got {{ node_ver.stdout | trim }}"
+        success_msg: "node version OK: {{ node_ver.stdout | trim }}"
+
+    - name: Verify | Assert binaries are symlinks in /usr/local/bin
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      register: bin_stats
+      loop:
+        - /usr/local/bin/node
+        - /usr/local/bin/npm
+        - /usr/local/bin/npx
+
+    - name: Verify | Assert symlinks exist
+      ansible.builtin.assert:
+        that:
+          - bin_stats.results | map(attribute='stat.islnk') | list | min
+        fail_msg: "one or more /usr/local/bin/{node,npm,npx} are not symlinks"
