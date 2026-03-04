@@ -1,54 +1,34 @@
-# Determine the version of the python app being deployed
-#
-# Supports determining the version in one of two ways
-# - import the package and output package.__version__
-# - import a _version.py in the repo root and output __version__
-#
-# Note that this runs before python dependencies have been installed
-
+---
 - name: Determine python app version
   become: true
   become_user: "{{ deploy_user }}"
-  tags:
-    - python
+  tags: [python]
   block:
-    - name: Check if project has a _version.py file in the main directory
-      stat:
+    - name: Check if project has a _version.py file
+      ansible.builtin.stat:
         path: "{{ clone_root }}/{{ repo }}/_version.py"
       register: python_version_file
 
-    - name: Get the version for the python package/app being deployed (_version)
-      shell:
+    - name: Get the version via _version.py
+      ansible.builtin.shell:
         cmd: "python3 -c 'from _version import __version__; print(__version__)'"
         chdir: "{{ clone_root }}/{{ repo }}"
       register: python_app_version_vpy
-      # when skipped, registers a variable with info with skip / conditional info
-      when:
-        - python_version_file.stat.exists
+      when: python_version_file.stat.exists
+      changed_when: false
 
-    - name: Get the version for the python package/app being deployed (app.__version__)
-      shell:
+    - name: Get the version via package import
+      ansible.builtin.shell:
         cmd: "python3 -c 'import {{ python_app }}; print({{ python_app }}.__version__)'"
         chdir: "{{ clone_root }}/{{ repo }}"
       register: python_app_version_pkg
-      tags:
-        - python
-      when:
-        - not python_version_file.stat.exists
-        # alternately, could check if python_app_version.skipped is True
+      when: not python_version_file.stat.exists
+      changed_when: false
 
-    - name: Storing version number from version.py
-      set_fact:
-        python_app_version: "{{ python_app_version_vpy.stdout }}"
-      when: 
-        - python_app_version_vpy.stdout is defined
+    - name: Storing version number
+      ansible.builtin.set_fact:
+        python_app_version: "{{ python_app_version_vpy.stdout if python_version_file.stat.exists else python_app_version_pkg.stdout }}"
 
-    - name: Storing version number from python package import
-      set_fact:
-        python_app_version: "{{ python_app_version_pkg.stdout }}"
-      when: 
-        - python_app_version_pkg.stdout is defined
-
-    - name: reported determined python app version
+    - name: Report determined python app version
       ansible.builtin.debug:
-        msg: Deploying python app version {{ python_app_version}}
+        msg: "Deploying python app version {{ python_app_version }}"
