@@ -12,6 +12,21 @@
     state: directory
     recurse: no
 
+- name: Ensure muse data and recipe directories exist with write permissions
+  tags:
+    - setup
+    - never
+  become: true
+  file:
+    path: "{{ item }}"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ install_root }}/muse/recipes"
+    - "{{ install_root }}/muse/data"
+
 - name: Create requirements.txt for python requirements
   tags:
     - setup
