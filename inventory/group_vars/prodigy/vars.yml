@@ -10,7 +10,7 @@ python_app_path: "{{ deploy }}"
 python_venv_prompt: "prodigy"
 # use pip install with special index url to install with the configured license
 python_extra_packages:
-  - prodigy[company]
+  - prodigy>=1.18
 python_extra_packages_pip_extra_args: "--extra-index-url https://{{ prodigy_license }}@download.prodi.gy"
 
 application_db_name: 'cdh_prodigy'
@@ -34,7 +34,7 @@ prodigy_options: "{{ prodigy_recipe }} {{ prodigy_dataset }} {{ prodigy_datafile
 # additional prodigy configurations to include in prodigy.json file
 # values here takes precedence over the defaults in the role
 prodigy_config_extra_options:
-  - total_examples_target: 1281 # Number of items in dataset
+  # don't have an extra options at this time
 # For setting shared and local Prodigy environment variables
 prodigy_common_envs: 
   PRODIGY_CONFIG: "{{ install_root }}/prodigy.json"
