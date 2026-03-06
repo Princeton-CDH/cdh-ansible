@@ -14,6 +14,3 @@
     owner: "{{ application_dbuser_name }}"
     state: "present"
   changed_when: false
-  tags:
-    - setup
-    - never
