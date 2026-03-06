@@ -40,7 +40,7 @@
       ansible.builtin.include_role:
         name: passenger
       vars:
-        passenger_site_config_name: false  # don't create an app config file
+        passenger_site_config_name: ""  # don't create an app config file
     # NOTE: if we decide we want a static html web root, refer to sandbox role for an example
     - name: Run nginx as deploy user for access to tigerdata
       ansible.builtin.lineinfile:
