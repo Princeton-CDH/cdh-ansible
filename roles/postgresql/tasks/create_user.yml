@@ -14,7 +14,3 @@
     encrypted: true
     role_attr_flags: "{{ application_dbuser_role_attr_flags }}"
     state: "present"
-  tags:
-    - create_user
-    - setup
-    - never
