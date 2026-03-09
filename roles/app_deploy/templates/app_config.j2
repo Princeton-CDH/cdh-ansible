@@ -1,6 +1,13 @@
-# managed by Ansible
-#
-# environment variables for {{app_name}}
+
+# Environment variables for {{ app_name }}
+# Managed by Ansible - manual changes will be overwritten
+
 {% for variable in app_vars %}
-export {{variable.name}}={{variable.value}}
+{% if variable.value is defined and variable.value != none %}
+export {{ variable.name }}="{{ variable.value | string }}"
+{% endif %}
 {% endfor %}
+
+# Add the virtualenv to the PATH for this app session
+export PATH="{{ python_venv_path }}/bin:$PATH"
+export VIRTUAL_ENV="{{ python_venv_path }}"

@@ -115,15 +115,26 @@
         line: 'for f in ~/app_configs/*; do source $f; done'
         insertbefore: BOF
 
+    - name: App_deploy - install cron wrapper script
+      ansible.builtin.template:
+        src: "cron-wrapper.j2"
+        dest: "/home/{{ deploy_user }}/bin/cron-wrapper"
+        mode: "0700"
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+
     - name: App_deploy - configure Crontab
       ansible.builtin.cron:
         name: "{{ item.name }}"
-        job: "{{ item.job }}"
+        job: "/home/{{ deploy_user }}/bin/cron-wrapper {{ item.job }}"
         user: "{{ deploy_user }}"
+        state: "{{ item.state | default('present') }}"
         special_time: "{{ item.special_time | default(omit) }}"
         minute: "{{ item.minute | default(omit) }}"
         hour: "{{ item.hour | default(omit) }}"
-        state: "{{ item.state | default('present') }}"
+        day: "{{ item.day | default(omit) }}"
+        month: "{{ item.month | default(omit) }}"
+        weekday: "{{ item.weekday | default(omit) }}"
       loop: "{{ crontab }}"
       when: inventory_hostname == cronjob_host
 
