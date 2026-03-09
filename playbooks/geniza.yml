@@ -25,9 +25,8 @@
     - geniza_setup
     - build_npm
     - run_webpack   # dependency for collectstatic
-    - configure_logging
+    - app_deploy
     - django
     - solr_collection
-    - configure_crontab
     - finalize_deploy
     - close_deployment
