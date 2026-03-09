@@ -9,7 +9,7 @@
   roles:
     - deploy_user
     - postgresql
-    - role: princeton_ansible.nginx
+    - pulibrary.princeton_ansible.nginx
     - prodigy_setup
     - python
     - supervisor
