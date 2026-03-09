@@ -1,0 +1,132 @@
+---
+- name: App_deploy - deployment Configuration Block
+  block:
+    - name: App_deploy - add python apt repository
+      ansible.builtin.apt_repository:
+        repo: ppa:deadsnakes/ppa
+
+    - name: App_deploy - install python and system dependencies
+      ansible.builtin.apt:
+        name:
+          - python{{ python_version }}
+          - python{{ python_version }}-venv
+          - python3-pip
+          - acl
+        state: present
+        update_cache: true
+
+    - name: App_deploy - install distutils for python < 3.12
+      ansible.builtin.apt:
+        name: "python{{ python_version }}-distutils"
+        state: latest
+      when: python_version is version('3.12', '<')
+
+    - name: App_deploy - install Astral UV via pip (system-wide for root/deploy use)
+      ansible.builtin.pip:
+        name: uv
+        state: "{{ uv_version == 'latest' | ternary('latest', 'present') }}"
+
+    - name: App_deploy - ensure deployment group exists
+      ansible.builtin.group:
+        name: "{{ deploy_user }}"
+        state: present
+
+    - name: App_deploy - ensure deployment user exists
+      ansible.builtin.user:
+        name: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        home: "/home/{{ deploy_user }}"
+        shell: "{{ deploy_user_shell | default('/bin/bash') }}"
+
+    - name: App_deploy - setup directory structure
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        owner: "{{ item.owner | default(deploy_user) }}"
+        group: "{{ item.group | default(deploy_user) }}"
+        mode: "{{ item.mode | default('0755') }}"
+      loop:
+        - { path: "/home/{{ deploy_user }}/app_configs" }
+        - { path: "/home/{{ deploy_user }}/bin", mode: '0700' }
+        - { path: "{{ media_root }}", group: "{{ webapp_group }}", mode: '2775' }
+        - { path: "{{ logging_dir }}", owner: "{{ webapp_user }}", group: "{{ webapp_group }}", mode: '0770' }
+
+    - name: App_deploy - ensure Virtualenv exists (via UV)
+      ansible.builtin.command:
+        cmd: "uv venv {{ python_venv_path }} --python python{{ python_version }} --seed"
+        creates: "{{ python_venv_path }}/bin/python"
+      become: true
+      become_user: "{{ python_user }}"
+
+    - name: App_deploy - check for requirement files
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      register: _repo_files
+      loop:
+        - "{{ python_requirements_file }}"
+        - "{{ pyproject_toml_file }}"
+
+    - name: App_deploy - install dependencies using UV
+      become: true
+      become_user: "{{ python_user }}"
+      ansible.builtin.command:
+        chdir: "{{ python_app_path }}"
+        cmd: "uv pip install -r {{ python_requirements_file }}"
+      when: _repo_files.results[0].stat.exists
+      # Use changed_when to keep it idempotent (uv is fast enough to check)
+      changed_when: false
+
+    - name: App_deploy - install from pyproject.toml if no requirements.txt
+      ansible.builtin.command:
+        chdir: "{{ python_app_path }}"
+        cmd: "uv pip install ."
+      when: 
+        - not _repo_files.results[0].stat.exists 
+        - _repo_files.results[1].stat.exists
+      become: true
+      become_user: "{{ python_user }}"
+      changed_when: false
+
+    - name: App_deploy - handle legacy setuptools if required
+      become: true
+      become_user: "{{ python_user }}"
+      ansible.builtin.command:
+        cmd: "uv pip install 'setuptools<58'"
+      environment:
+        VIRTUAL_ENV: "{{ python_venv_path }}"
+      when: requires_python2to3
+      changed_when: false
+
+    - name: App_deploy - install app configurations
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        mode: "0600"
+      loop:
+        - { src: 'app_config.j2', dest: "/home/{{ deploy_user }}/app_configs/{{ app_name }}" }
+        - { src: "{{ template_path }}", dest: "{{ local_settings_dest }}" }
+
+    - name: App_deploy - configure .bashrc
+      ansible.builtin.lineinfile:
+        path: "/home/{{ deploy_user }}/.bashrc"
+        regexp: '^for f in ~/app_configs/\*; do source \$f; done$'
+        line: 'for f in ~/app_configs/*; do source $f; done'
+        insertbefore: BOF
+
+    - name: App_deploy - configure Crontab
+      ansible.builtin.cron:
+        name: "{{ item.name }}"
+        job: "{{ item.job }}"
+        user: "{{ deploy_user }}"
+        special_time: "{{ item.special_time | default(omit) }}"
+        minute: "{{ item.minute | default(omit) }}"
+        hour: "{{ item.hour | default(omit) }}"
+        state: "{{ item.state | default('present') }}"
+      loop: "{{ crontab }}"
+      when: inventory_hostname == cronjob_host
+
+  rescue:
+    - name: Failure handler
+      ansible.builtin.include_tasks: "{{ fail_tasks_path }}"
