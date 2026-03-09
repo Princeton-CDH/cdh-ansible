@@ -23,8 +23,8 @@ nfs_enabled: false
 
 # temporary recipe to test that prodigy is running and connecting to the db
 #prodigy_recipe: "ner.manual ner_news_headlines blank:en /srv/www/prodigy/news_headlines.jsonl --label PERSON,ORG,PRODUCT,LOCATION"
-
-prodigy_recipe_pyfile: "{{ install_root }}/muse/recipes/annotation_recipes.py"
+prodigy_recipe_url: 'https://github.com/Princeton-CDH/muse/blob/develop/src/muse/annotation/annotation_recipes.py'
+prodigy_recipe_pyfile: "{{ install_root }}/muse/recipes/recipes.py"
 prodigy_datafile: "{{ install_root }}/muse/data/notion-concept-tasks.jsonl"
 
 # current recipe options: annotate_text_and_image / annotate_page_text
@@ -34,7 +34,7 @@ prodigy_options: "{{ prodigy_recipe }} {{ prodigy_dataset }} {{ prodigy_datafile
 # additional prodigy configurations to include in prodigy.json file
 # values here takes precedence over the defaults in the role
 prodigy_config_extra_options:
-  # don't have an extra options at this time
+  # don't have any extra options at this time
 # For setting shared and local Prodigy environment variables
 prodigy_common_envs: 
   PRODIGY_CONFIG: "{{ install_root }}/prodigy.json"

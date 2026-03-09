@@ -27,6 +27,13 @@
     - "{{ install_root }}/muse/recipes"
     - "{{ install_root }}/muse/data"
 
+- name: Download recipe file
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ prodigy_recipe_url }}"
+    dest: "{{ prodigy_recipe_pyfile }}"
+    mode: '0755'
+
 - name: Create requirements.txt for python requirements
   tags:
     - setup
@@ -51,11 +58,6 @@
     - setup
     - never
   block:
-    - name: Make sure nginx and passenger are configured
-      ansible.builtin.include_role:
-        name: passenger
-      vars:
-        passenger_site_config_name: ""  # don't create an app config file
     # NOTE: if we decide we want a static html web root, refer to sandbox role for an example
     - name: Run nginx as deploy user for access to tigerdata
       ansible.builtin.lineinfile:
