@@ -5,7 +5,7 @@
     - setup
     - never
   become: true
-  file:
+  ansible.builtin.file:
     dest: "{{ install_root }}"
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
@@ -17,7 +17,7 @@
     - setup
     - never
   become: true
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
@@ -63,14 +63,13 @@
         path: "{{ nginx_config_file }}"
         regexp: '^user '
         line: "user {{ deploy_user }};"
+    - name: remove default nginx config
+      ansible.builtin.file:
+        path: /etc/nginx/conf.d/default.conf
+        state: absent
     - name: Install prodigy nginx site config
       ansible.builtin.template:
         src: prodigy_nginx_site.conf.j2
-        dest: /etc/nginx/sites-available/prodigy.conf
+        dest: /etc/nginx/conf.d/prodigy.conf
         mode: 0644
-    - name: Enable prodigy nginx config
-      ansible.builtin.file:
-        src: /etc/nginx/sites-available/prodigy.conf
-        dest: /etc/nginx/sites-enabled/prodigy.conf
-        state: link
-      notify: "Restart nginx"
+      notify: "Restart Nginx"
