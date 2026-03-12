@@ -17,7 +17,7 @@ galaxy_info:
 
 dependencies:
   - role: setup
-  - role: python
+  - role: app_deploy
     vars:
       python_app_path: "{{ django_app_path }}"
       python_user: "{{ django_user }}"

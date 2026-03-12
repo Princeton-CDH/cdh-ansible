@@ -3,8 +3,23 @@
 # to run in production, pass '-e runtime_env=production'
 - name: build the cdh website
   hosts: cdhweb_{{ runtime_env | default('staging') }}
+  # hosts: cdh-sandbox-web1.princeton.edu
   connection: ssh
   remote_user: pulsys
+  become: true
+
+  vars:
+    # Define app-specific settings here
+    # These will be passed into the generic django role
+    django_settings_module: "cdhweb.settings.local_settings"
+    django_venv_path: "/home/conan/venv"
+
+  environment:
+    PYTHONPATH: "{{ deploy | default(install_root) }}"
+    DJANGO_SETTINGS_MODULE: "{{ django_settings_module }}"
+    DJANGO_ENV: "{{ runtime_env | default('staging') }}"
+
+
   roles:
     - create_deployment
     - deploy_user

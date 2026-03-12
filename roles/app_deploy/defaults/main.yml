@@ -6,7 +6,10 @@ deploy_user_shell: "/bin/bash"
 webapp_user: "www-data"
 webapp_group: "www-data"
 
+uv_version: "latest"
+
 app_name: "my_django_app"
+app_vars: []
 runtime_env: "production"  # Options: staging, production
 
 media_root: "/var/www/{{ app_name }}/media"
@@ -33,7 +36,7 @@ python_version: "3.11"
 python_user: "{{ deploy_user }}"
 python_venv_path: "/home/{{ deploy_user }}/venv"
 python_venv_prompt: "{{ app_name }}"
-python_app_path: "/home/{{ deploy_user }}/app"
+python_app_path: "/home/{{ deploy_user }}/"
 python_requirements_file: "{{ python_app_path }}/requirements.txt"
 pyproject_toml_file: "{{ python_app_path }}/pyproject.toml"
 python_extra_packages: []

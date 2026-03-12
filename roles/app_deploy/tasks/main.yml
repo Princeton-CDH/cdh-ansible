@@ -23,8 +23,8 @@
 
     - name: App_deploy - install Astral UV via pip (system-wide for root/deploy use)
       ansible.builtin.pip:
-        name: uv
-        state: "{{ uv_version == 'latest' | ternary('latest', 'present') }}"
+        name: "uv{{ ((uv_version | default('latest')) == 'latest') | ternary('', '==' + (uv_version | default(''))) }}"
+        state: "{{ ((uv_version | default('latest')) == 'latest') | ternary('latest', 'present') }}"
 
     - name: App_deploy - ensure deployment group exists
       ansible.builtin.group:
@@ -73,6 +73,8 @@
         chdir: "{{ python_app_path }}"
         cmd: "uv pip install -r {{ python_requirements_file }}"
       when: _repo_files.results[0].stat.exists
+      environment:
+        VIRTUAL_ENV: "{{ python_venv_path }}"
       # Use changed_when to keep it idempotent (uv is fast enough to check)
       changed_when: false
 
@@ -80,6 +82,8 @@
       ansible.builtin.command:
         chdir: "{{ python_app_path }}"
         cmd: "uv pip install ."
+      environment:
+        VIRTUAL_ENV: "{{ python_venv_path }}"
       when: 
         - not _repo_files.results[0].stat.exists 
         - _repo_files.results[1].stat.exists
@@ -96,6 +100,20 @@
         VIRTUAL_ENV: "{{ python_venv_path }}"
       when: requires_python2to3
       changed_when: false
+
+    - name: App_deploy - setup directory structure
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        owner: "{{ item.owner | default(deploy_user) }}"
+        group: "{{ item.group | default(deploy_user) }}"
+        mode: "{{ item.mode | default('0755') }}"
+      loop:
+        - { path: "/home/{{ deploy_user }}/app_configs" }
+        - { path: "/home/{{ deploy_user }}/bin", mode: '0700' }
+        - { path: "{{ python_app_path }}" } 
+        - { path: "{{ media_root }}", group: "{{ webapp_group }}", mode: '2775' }
+        - { path: "{{ logging_dir }}", owner: "{{ webapp_user }}", group: "{{ webapp_group }}", mode: '0770' }
 
     - name: App_deploy - install app configurations
       ansible.builtin.template:
@@ -135,9 +153,9 @@
         day: "{{ item.day | default(omit) }}"
         month: "{{ item.month | default(omit) }}"
         weekday: "{{ item.weekday | default(omit) }}"
-      loop: "{{ crontab }}"
+      loop: "{{ crontab | default([]) }}"
       when: inventory_hostname == cronjob_host
 
   rescue:
     - name: Failure handler
-      ansible.builtin.include_tasks: "{{ fail_tasks_path }}"
+      ansible.builtin.include_tasks: "{{ role_path }}/../create_deployment/tasks/fail.yml"

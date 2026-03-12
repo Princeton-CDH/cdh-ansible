@@ -18,3 +18,11 @@
     command: compilemessages
     app_path: "{{ django_app_path }}"
     virtualenv: "{{ django_venv_path }}"
+  environment:
+    # Most CDH apps require the settings module to be explicitly set
+    DJANGO_SETTINGS_MODULE: "{{ django_settings_module | default('cdhweb.settings') }}"
+    # Ensure the app code is in the python path so settings can be imported
+    PYTHONPATH: "{{ django_app_path }}"
+    # Force UTF-8 encoding for message files
+    LANG: C.UTF-8
+    LC_ALL: C.UTF-8

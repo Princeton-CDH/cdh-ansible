@@ -72,9 +72,10 @@ django_allowed_hosts:
 django_secret_key: "{{ secret_key }}"
 
 # some apps are on older versions, but set a reasonable default
-python_version: "python3.11"
+python_version: "3.11"
 # set python virtualenv prompt based on application & version (used by python role only)
 python_venv_prompt: "{{ app_name }}-{{ version }}-{{ short_hash }}"
+python_venv_path: "/home/{{ deploy_user }}/venv"
 
 # custom hook for requirements, allows for override to use lock or txt
 requirements_type: 'txt'
@@ -106,6 +107,7 @@ django_db_name: "{{ application_db_name }}"
 django_db_user: "{{ application_dbuser_name }}"
 django_db_password: "{{ application_dbuser_password }}"
 django_db_host: "{{ application_db_host }}"
+django_venv_path: "{{ python_venv_path }}"
 
 # configure VMs to use local timezone
 # (requires including pul timezone role in playbook)
