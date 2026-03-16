@@ -5,12 +5,34 @@
     - setup
     - never
   become: true
-  file:
+  ansible.builtin.file:
     dest: "{{ install_root }}"
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
     state: directory
     recurse: no
+
+- name: Ensure muse data and recipe directories exist with write permissions
+  tags:
+    - setup
+    - never
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ install_root }}/muse/recipes"
+    - "{{ install_root }}/muse/data"
+
+- name: Download recipe file
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ prodigy_recipe_url }}"
+    dest: "{{ prodigy_recipe_pyfile }}"
+    mode: '0755'
 
 - name: Create requirements.txt for python requirements
   tags:
@@ -36,25 +58,18 @@
     - setup
     - never
   block:
-    - name: Make sure nginx and passenger are configured
-      ansible.builtin.include_role:
-        name: passenger
-      vars:
-        passenger_site_config_name: false  # don't create an app config file
-    # NOTE: if we decide we want a static html web root, refer to sandbox role for an example
     - name: Run nginx as deploy user for access to tigerdata
       ansible.builtin.lineinfile:
-        path: /etc/nginx/nginx.conf
+        path: "{{ nginx_config_file }}"
         regexp: '^user '
         line: "user {{ deploy_user }};"
+    - name: remove default nginx config
+      ansible.builtin.file:
+        path: /etc/nginx/conf.d/default.conf
+        state: absent
     - name: Install prodigy nginx site config
       ansible.builtin.template:
         src: prodigy_nginx_site.conf.j2
-        dest: /etc/nginx/sites-available/prodigy.conf
+        dest: /etc/nginx/conf.d/prodigy.conf
         mode: 0644
-    - name: Enable prodigy nginx config
-      ansible.builtin.file:
-        src: /etc/nginx/sites-available/prodigy.conf
-        dest: /etc/nginx/sites-enabled/prodigy.conf
-        state: link
-      notify: "Restart nginx"
+      notify: "Restart Nginx"
