@@ -25,12 +25,11 @@
     - passenger
     - build_npm
     - run_webpack   # dependency for collectstatic
-    - configure_logging # logging directory must exist before running django commands
+    - app_deploy # logging directory must exist before running django commands
     - django
     - solr_collection
     - prosody_setup
     - finalize_deploy
-    - configure_crontab  # used in production but not always in staging
     - close_deployment
   tasks:
     - ansible.builtin.include_role:   # timezone needed for cron jobs

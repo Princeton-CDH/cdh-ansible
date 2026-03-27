@@ -36,9 +36,12 @@
       become: true
       ansible.builtin.lineinfile:
         path: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
-        line: "host    all             all             {{ ansible_default_ipv4.address }}/32       md5"
+        line: "host    all             all             {{ hostvars[inventory_hostname].ansible_default_ipv4.address }}/32    md5"
       delegate_to: "{{ postgres_host }}"
       notify: Reload remote postgres
+
+    - name: Flush handlers to apply pg_hba changes immediately
+      ansible.builtin.meta: flush_handlers
 
 - name: Create postgres user
   ansible.builtin.import_tasks: create_user.yml

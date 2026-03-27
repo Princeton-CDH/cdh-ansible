@@ -1,0 +1,73 @@
+---
+- name: Verify Deployment
+  hosts: all
+  gather_facts: yes
+  vars:
+    deploy_user: "conan"
+    python_version: "3.11"
+    python_venv_path: "/home/deploy/venv"
+
+  tasks:
+    - name: Verify Python Version
+      ansible.builtin.command: "python{{ python_version }} --version"
+      register: python_check
+      changed_when: false
+
+    - name: Assert Python version is correct
+      ansible.builtin.assert:
+        that: "'Python {{ python_version }}' in python_check.stdout"
+        fail_msg: "Python version mismatch or not installed."
+
+    - name: Verify UV Installation
+      ansible.builtin.command: "uv --version"
+      register: uv_check
+      changed_when: false
+
+    - name: Assert UV is installed
+      ansible.builtin.assert:
+        that: "uv_check.rc == 0"
+        fail_msg: "Astral UV binary not found in PATH."
+
+    - name: Verify Virtualenv and UV integration
+      ansible.builtin.stat:
+        path: "{{ python_venv_path }}/bin/python"
+      register: venv_stat
+
+    - name: Assert Virtualenv exists
+      ansible.builtin.assert:
+        that: venv_stat.stat.exists
+        fail_msg: "Virtual environment was not created at {{ python_venv_path }}."
+
+    - name: Verify User Permissions and Directory structure
+      ansible.builtin.file:
+        path: "/home/{{ deploy_user }}/app_configs"
+        state: directory
+      check_mode: yes
+      register: dir_check
+
+    - name: Assert directory ownership
+      ansible.builtin.assert:
+        that: 
+          - dir_check.stat.pw_name == deploy_user
+          - dir_check.stat.mode == '0755'
+
+    - name: Verify .bashrc config loading
+      ansible.builtin.command: "grep 'app_configs' /home/{{ deploy_user }}/.bashrc"
+      register: bashrc_check
+      changed_when: false
+
+    - name: Assert bashrc is configured
+      ansible.builtin.assert:
+        that: bashrc_check.rc == 0
+        fail_msg: ".bashrc does not contain the app_config loader."
+
+    - name: Verify Cron access
+      ansible.builtin.command: "crontab -u {{ deploy_user }} -l"
+      register: cron_check
+      changed_when: false
+      failed_when: false
+
+    - name: Assert Cron is functional
+      ansible.builtin.assert:
+        that: cron_check.rc == 0
+        fail_msg: "Could not access crontab for user {{ deploy_user }}."
