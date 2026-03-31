@@ -42,20 +42,6 @@
     mode: "0755"
   when: prodigy_commands_url is defined
 
-- name: Copy Prodigy input task data from TigerData
-  become: true
-  ansible.builtin.copy:
-    src: "{{ prodigy_datafile_src }}"
-    dest: "{{ prodigy_datafile }}"
-    mode: "0755"
-
-- name: Copy Prodigy instructions file from TigerData
-  become: true
-  ansible.builtin.copy:
-    src: "{{ prodigy_instruct_src }}"
-    dest: "{{ prodigy_instruct }}"
-    mode: "0755"
-
 - name: Create requirements.txt for python requirements
   tags:
     - setup

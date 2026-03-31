@@ -23,13 +23,11 @@ running_on_server: true
 
 # this application does not need NFS
 nfs_enabled: false
-tigerdata_enabled: true
+# TODO: Investigate the issue with the TigerData mount
+tigerdata_enabled: false
 
-# Copying files from tigerdata
-prodigy_data_dir_src: "{{ tigerdata_mount_dir }}/muse/phase-1/prodigy/notion-concept"
-prodigy_datafile_src: "{{ prodigy_data_dir_src }}/notion-concept-tasks.jsonl"
+# NOTE: Currently need to upload these files manually to each server
 prodigy_datafile: "{{ install_root }}/muse/data/notion-concept-tasks.jsonl"
-prodigy_instruct_src: "{{ tigerdata_mount_dir_src }}/instructions.html"
 prodigy_instruct: "{{ install_root }}/muse/data/instructions.html"
 
 # Fetch annotation recipes from develop branch
