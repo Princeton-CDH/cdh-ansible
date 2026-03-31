@@ -21,28 +21,32 @@ application_dbuser_password: "{{ vault_db_password }}"
 nginx_config_file: '/etc/nginx/nginx.conf'
 running_on_server: true
 
-# this application does not need NFS or TigerData
+# this application does not need NFS
 nfs_enabled: false
-#tigerdata_enabled: false
+tigerdata_enabled: true
 
-# temporary recipe to test that prodigy is running and connecting to the db
-#prodigy_recipe: "ner.manual ner_news_headlines blank:en /srv/www/prodigy/news_headlines.jsonl --label PERSON,ORG,PRODUCT,LOCATION"
+# Copying files from tigerdata
+prodigy_data_dir_src: "{{ tigerdata_mount_dir }}/muse/phase-1/prodigy/notion-concept"
+prodigy_datafile_src: "{{ prodigy_data_dir_src }}/notion-concept-tasks.jsonl"
+prodigy_datafile: "{{ install_root }}/muse/data/notion-concept-tasks.jsonl"
+prodigy_instruct_src: "{{ tigerdata_mount_dir_src }}/instructions.html"
+prodigy_instruct: "{{ install_root }}/muse/data/instructions.html"
 
-# Fetching annotation recipes from develop branch
+# Fetch annotation recipes from develop branch
 prodigy_recipe_url: 'https://raw.githubusercontent.com/Princeton-CDH/muse/refs/heads/develop/src/muse/annotation/annotation_recipes.py'
 prodigy_recipe_pyfile: "{{ install_root }}/muse/recipes/annotation_recipes.py"
-# NOTE: Need to upload this manually
-prodigy_datafile: "{{ install_root }}/muse/data/notion-concept-tasks.jsonl"
+# Optional: Fetch command recipes from develop branch
+prodigy_commands_url: 'https://raw.githubusercontent.com/Princeton-CDH/muse/refs/heads/develop/src/muse/annotation/command_recipes.py'
 
-# current recipe options: concept-eval
+# Current recipe options
 prodigy_recipe: concept-eval
+# Label for datat stored in database
 prodigy_dataset: muse-concepts
-prodigy_options: "{{ prodigy_recipe }} {{ prodigy_dataset }} {{ prodigy_datafile }} -F {{ prodigy_recipe_pyfile}}"
+prodigy_options: "{{ prodigy_recipe }} {{ prodigy_dataset }} {{ prodigy_datafile }} -F {{ prodigy_recipe_pyfile }} -I {{ prodigy_instruct }}"
 # additional prodigy configurations to include in prodigy.json file
 # values here takes precedence over the defaults in the role
-# NOTE: it's unlikely this will be used much any more
 prodigy_config_extra_options:
-  # don't have any extra options at this time
+  - history_size: 3
 
 # For setting shared and local Prodigy environment variables
 prodigy_common_envs: 
@@ -51,7 +55,7 @@ prodigy_common_envs:
   PRODIGY_LOGGING: "basic"
 prodigy_local_envs:
   PRODIGY_ALLOWED_SESSIONS: "{{ vault_prodigy_sessions }}"
-prodigy_envs: "{{ prodigy_common_envs | ansible.builtin.combine(prodigy_local_envs)}}"
+prodigy_envs: "{{ prodigy_common_envs | ansible.builtin.combine(prodigy_local_envs) }}"
 
 # configure prodigy to run via supervisor
 supervisor_programs:
