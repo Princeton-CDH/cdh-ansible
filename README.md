@@ -126,12 +126,12 @@ To work with multiple encrypted variables, use the local `vault_vars.py` helper 
 - To view the values of your vaulted variables, use the `decrypt` mode (does not replace content or preserve content)
 - To check that all variable values in a vault file are encrypted use `check`
 
-Example uage:
+Example usage:
 
 ```sh
-./bin/vault_vars.py encrypt inventory/group_vars/all/vault.yml
-./bin/vault_vars.py decrypt inventory/group_vars/all/vault.yml
-./bin/vault_vars.py check inventory/group_vars/all/vault.yml
+uv run bin/vault_vars.py encrypt inventory/group_vars/all/vault.yml
+uv run bin/vault_vars.py decrypt inventory/group_vars/all/vault.yml
+uv run bin/vault_vars.py check inventory/group_vars/all/vault.yml
 ```
 
 The check mode of this script is used as a pre-commit hook to prevent sensitive

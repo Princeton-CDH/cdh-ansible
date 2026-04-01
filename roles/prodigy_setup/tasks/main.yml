@@ -27,12 +27,20 @@
     - "{{ install_root }}/muse/recipes"
     - "{{ install_root }}/muse/data"
 
-- name: Download recipe file
+- name: Download Prodigy annotation recipes file
   become: true
   ansible.builtin.get_url:
     url: "{{ prodigy_recipe_url }}"
     dest: "{{ prodigy_recipe_pyfile }}"
     mode: '0755'
+
+- name: Download Prodigy command recipes file
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ prodigy_commands_url }}"
+    dest: "{{ install_root }}/muse/recipes"
+    mode: "0755"
+  when: prodigy_commands_url is defined
 
 - name: Create requirements.txt for python requirements
   tags:
