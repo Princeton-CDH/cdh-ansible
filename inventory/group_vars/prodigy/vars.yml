@@ -24,7 +24,7 @@ running_on_server: true
 # this application does not need NFS
 nfs_enabled: false
 # TODO: Investigate the issue with the TigerData mount
-tigerdata_enabled: false
+tigerdata_enabled: true
 
 # NOTE: Currently need to upload these files manually to each server
 prodigy_datafile: "{{ install_root }}/muse/data/notion-concept-tasks.jsonl"

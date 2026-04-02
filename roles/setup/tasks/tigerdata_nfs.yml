@@ -3,14 +3,14 @@
   ansible.builtin.group:
     name: "deploy"
     state: present
-  tags: [setup, nfs]
+  tags: [setup, nfs, never]
 
 - name: Setup - ensure TigerData group "{{ tigerdata_cdh_group }}" exists
   ansible.builtin.group:
     name: "{{ tigerdata_cdh_group }}"
     state: present
     gid: "{{ tigerdata_cdh_gid }}"
-  tags: [setup, nfs]
+  tags: [setup, nfs, never]
 
 - name: Setup - ensure deploy user "{{ deploy_user }}" is provisioned
   ansible.builtin.user:
@@ -21,4 +21,22 @@
     shell: /bin/bash
     create_home: true
     state: present
-  tags: [setup, nfs]
+  tags: [setup, nfs, never]
+
+- name: Setup - ensure system user belongs to TigerData "{{ tigerdata_cdh_group }}" group
+  ansible.builtin.user:
+    name: "pulsys"
+    groups: "{{ tigerdata_cdh_group }}"
+    append: true
+  tags: [setup, nfs, never]
+
+- name: Setup - ensure the presence of TigerData NFS mount
+  ansible.posix.mount:
+    src: "{{ tigerdata_nfs_server }}:/cdh"
+    path: "{{ tigerdata_mount_dir }}"
+    state: mounted
+    fstype: nfs
+    opts: "nfsvers=3,mountport={{ tigerdata_mount_port }},port={{ tigerdata_mount_port }},nolock,proto=tcp"
+  become: true
+  tags: [setup, nfs, never]
+
