@@ -29,7 +29,7 @@ The NGINX+ configuration files can be found in PUL's [`princeton_ansible`](https
 There is a separate file for each environment.
 Production's is [`cdh_prod_prodigy.conf`](https://github.com/pulibrary/princeton_ansible/blob/main/roles/nginxplus/files/conf/http/cdh_prod_prodigy.conf) and staging's is [`cdh_test_prodigy.conf`](https://github.com/pulibrary/princeton_ansible/blob/main/roles/nginxplus/files/conf/http/dev/cdh_test_prodigy.conf).
 
-NOTE: Setting session names in advance (by setting `ALLOWED_SESSION_NAMES`) may resolve the need for this workaround. In the future, we should investigate this further.
+NOTE: Setting session names in advance (by setting `PRODIGY_ALLOWED_SESSIONS`) may resolve the need for this workaround. In the future, we should investigate this further.
 
 ## Logging
 
