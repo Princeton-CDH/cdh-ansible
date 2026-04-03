@@ -3,6 +3,8 @@
 email_prefix: "[CDHweb STAGING] "
 # allowed_hosts for Django
 allowed_hosts:
+    - "cdh-sandbox-web1"
+    - "cdh-sandbox-web1.princeton.edu"
     - "test-web.cdh.princeton.edu"
     - "cdh-test-web.princeton.edu"
     - "cdh-test-web1"

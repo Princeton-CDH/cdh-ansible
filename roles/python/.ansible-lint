@@ -1,4 +1,0 @@
----
-# Ignore "package installs should not use latest" error
-skip_list:
-  - 'package-latest'

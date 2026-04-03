@@ -1,0 +1,45 @@
+#SPDX-License-Identifier: MIT-0
+---
+# defaults file for roles/app_deploy
+deploy_user: "conan"
+deploy_user_shell: "/bin/bash"
+webapp_user: "www-data"
+webapp_group: "www-data"
+
+uv_version: "latest"
+
+app_name: "my_django_app"
+app_vars: []
+runtime_env: "production"  # Options: staging, production
+
+media_root: "/var/www/{{ app_name }}/media"
+logging_dir: "/var/log/{{ app_name }}"
+# Note: local_settings_dest is usually inside project source code
+local_settings_dest: "/home/{{ deploy_user }}/{{ app_name }}/local_settings.py"
+template_path: "local_settings.py.j2"
+
+cronjob_host: "{{ inventory_hostname }}"
+
+# This list handles both 'special_time' and 'standard' cron formats
+crontab:
+  - name: "Clear Django Sessions"
+    job: "/home/{{ deploy_user }}/bin/cron-wrapper python manage.py clearsessions"
+    special_time: "daily"
+    state: "present"
+  - name: "Custom Background Task"
+    job: "/home/{{ deploy_user }}/bin/cron-wrapper python manage.py run_custom_task"
+    minute: "0"
+    hour: "*/2"
+    state: "present"
+
+python_version: "3.11"
+python_user: "{{ deploy_user }}"
+python_venv_path: "/home/{{ deploy_user }}/venv"
+python_venv_prompt: "{{ app_name }}"
+python_app_path: "/home/{{ deploy_user }}/"
+python_requirements_file: "{{ python_app_path }}/requirements.txt"
+pyproject_toml_file: "{{ python_app_path }}/pyproject.toml"
+python_extra_packages: []
+requires_python2to3: false
+
+fail_tasks_path: "roles/create_deployment/tasks/fail.yml"

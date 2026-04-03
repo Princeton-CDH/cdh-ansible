@@ -1,7 +1,0 @@
----
-# Basic sequence of tasks for setting up a Python app.
-
-- name: Install python
-  ansible.builtin.import_tasks: install_python.yml
-- name: Install dependencies
-  ansible.builtin.import_tasks: install_dependencies.yml

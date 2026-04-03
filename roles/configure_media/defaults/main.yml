@@ -1,5 +1,0 @@
----
-# default for configure_media
-media_root: "/var/www/media/"
-webapp_user: "www-data"
-webapp_group: "{{ webapp_user }}"
