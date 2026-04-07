@@ -149,3 +149,6 @@ crontab:
 # datadog
 datadog_app_name: cdh_geniza
 
+# npm_for staging
+npm_install_mode: "dev"
+npm_install_path: "/srv/www/geniza/current"

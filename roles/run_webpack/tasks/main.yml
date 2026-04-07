@@ -1,34 +1,58 @@
-###
-# Run webpack to compile static assets (css and javascript).
-#
-# This role runs Webpack to compile and compress source javascript and styles
-# into css/js files. It depends on webpack and all its associated js dependencies
-# having been installed, usually through the 'build_npm' role.
-#
-# The role expects that appropriate staging/prod-specific tasks will be defined in
-# package.json and callable via `npm run build:qa` and `npm run build:prod`.
-# The default commands may be customized by configuring
-# `webpack_build_prod` and `webpack_build_qa`
-#
-###
 ---
 - name: Run webpack build tasks for static assets
   become: true
   become_user: "{{ django_user }}"
   block:
-    # NOTE: for historic reasons, the staging build is labeled as qa
-    # because that is how it is defined in the application npm package
-    - name: Run wepback in staging/QA mode
-      shell: "npm run {{ webpack_build_qa }}"
+    - name: run_webpack | Preflight package.json exists
+      ansible.builtin.stat:
+        path: "{{ npm_install_path }}/package.json"
+      register: pkg
+      changed_when: false
+
+    - name: run_webpack | Preflight webpack shim exists
+      ansible.builtin.stat:
+        path: "{{ npm_install_path }}/node_modules/.bin/webpack"
+      register: webpack_shim
+      changed_when: false
+
+    - name: run_webpack | Fail early if prerequisites missing
+      ansible.builtin.fail:
+        msg: >-
+          Missing webpack prerequisites in {{ npm_install_path }}.
+          package.json={{ pkg.stat.exists | default(false) }},
+          node_modules/.bin/webpack={{ webpack_shim.stat.exists | default(false) }}.
+          Ensure build_npm ran for this release and npm_install_path points at /srv/www/<app>/current.
+      when: not (pkg.stat.exists | default(false)) or not (webpack_shim.stat.exists | default(false))
+
+    - name: run_webpack | Run webpack in staging/QA mode
+      ansible.builtin.shell: |
+        set -euo pipefail
+        export PATH="{{ npm_install_path }}/node_modules/.bin:${PATH}"
+        npm run {{ webpack_build_qa }}
       args:
         chdir: "{{ npm_install_path }}"
         executable: /bin/bash
       when: runtime_env == "staging"
-    - name: Run webpack production build
-      shell: "npm run {{ webpack_build_prod }}"
+
+    - name: run_webpack | Run webpack production build
+      ansible.builtin.shell: |
+        set -euo pipefail
+        export PATH="{{ npm_install_path }}/node_modules/.bin:${PATH}"
+        npm run {{ webpack_build_prod }}
       args:
         chdir: "{{ npm_install_path }}"
         executable: /bin/bash
-      when: runtime_env == "production" or  runtime_env == "preproduction"
+      when: runtime_env in ["production", "preproduction"]
+
   rescue:
-    - include_tasks: roles/create_deployment/tasks/fail.yml
+    - name: run_webpack | Show webpack failure output
+      ansible.builtin.debug:
+        msg: |
+          stdout: {{ ansible_failed_result.stdout | default('') }}
+          stderr: {{ ansible_failed_result.stderr | default('') }}
+          rc: {{ ansible_failed_result.rc | default('') }}
+      failed_when: false
+
+    - name: run_webpack | Fail
+      ansible.builtin.fail:
+        msg: "run_webpack failed (npm/webpack build). See debug output above."
