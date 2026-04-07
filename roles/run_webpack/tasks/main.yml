@@ -21,7 +21,7 @@
           Missing webpack prerequisites in {{ npm_install_path }}.
           package.json={{ pkg.stat.exists | default(false) }},
           node_modules/.bin/webpack={{ webpack_shim.stat.exists | default(false) }}.
-          Ensure build_npm ran for this release and npm_install_path points at /srv/www/<app>/current.
+          Ensure build_npm ran for this same npm_install_path.
       when: not (pkg.stat.exists | default(false)) or not (webpack_shim.stat.exists | default(false))
 
     - name: run_webpack | Run webpack in staging/QA mode
@@ -43,6 +43,24 @@
         chdir: "{{ npm_install_path }}"
         executable: /bin/bash
       when: runtime_env in ["production", "preproduction"]
+
+    # Post-build: validate stats + atomically rewrite it in-place to avoid
+    # partial-read races by Passenger/Django.
+    - name: run_webpack | Validate webpack stats JSON
+      ansible.builtin.command: >
+        python3 -c 'import json; json.load(open("{{ npm_install_path }}/sitemedia/webpack-stats.json")); print("ok")'
+      changed_when: false
+
+    - name: run_webpack | Atomically publish stats file (same dir)
+      ansible.builtin.shell: |
+        set -euo pipefail
+        src="{{ npm_install_path }}/sitemedia/webpack-stats.json"
+        tmp="{{ npm_install_path }}/sitemedia/webpack-stats.json.tmp"
+        cp -f "$src" "$tmp"
+        mv -f "$tmp" "$src"
+      args:
+        executable: /bin/bash
+      changed_when: true
 
   rescue:
     - name: run_webpack | Show webpack failure output
