@@ -98,6 +98,11 @@ cdh-prodigy2.princeton.edu
 prodigy_staging
 prodigy_production
 
+# escriptorium installation
+[htr_production]
+cdh-htr1.lib.princeton.edu
+cdh-htr2.lib.princeton.edu
+
 # escriptorium test installation
 [htr_staging]
 cdh-test-htr1.lib.princeton.edu
@@ -134,6 +139,7 @@ solr9_production
 [prod:children]
 cdhweb_production
 geniza_production
+htr_production
 shxco_production
 prosody_production
 derrida_archive_production
