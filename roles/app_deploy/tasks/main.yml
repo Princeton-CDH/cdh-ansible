@@ -124,7 +124,6 @@
         mode: "0600"
       loop:
         - { src: 'app_config.j2', dest: "/home/{{ deploy_user }}/app_configs/{{ app_name }}" }
-        - { src: "{{ template_path }}", dest: "{{ local_settings_dest }}" }
 
     - name: App_deploy - configure .bashrc
       ansible.builtin.lineinfile:

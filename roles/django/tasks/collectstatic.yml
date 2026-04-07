@@ -1,11 +1,21 @@
 ---
 # Runs the `collectstatic` command for collecting static files.
 # https://docs.djangoproject.com/en/dev/ref/django-admin/#collectstatic
-
-- name: Collect static files
+#
+- name: Django - show available commands
+  ansible.builtin.command:
+    cmd: "{{ django_venv_path }}/bin/python ./manage.py help"
+    chdir: "{{ django_app_path }}"
+  register: django_help
+  changed_when: false
   become: true
   become_user: "{{ django_user }}"
+
+- name: Django - collect static files
   community.general.django_manage:
     command: collectstatic
     app_path: "{{ django_app_path }}"
     virtualenv: "{{ django_venv_path }}"
+  when: django_collectstatic | default(false) | bool
+  become: true
+  become_user: "{{ django_user }}"
