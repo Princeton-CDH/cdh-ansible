@@ -1,13 +1,15 @@
 ---
-
+# roles/build_npm/tasks/main.yml
 - name: Build_npm | Normalize version and select arch
   ansible.builtin.set_fact:
     desired_nodejs_version_v: >-
       {{ (desired_nodejs_version is match('^v')) | ternary(desired_nodejs_version, 'v' ~ desired_nodejs_version) }}
     nodejs_arch: >-
       {{ (ansible_architecture in ['x86_64', 'amd64']) | ternary('x64', 'arm64') }}
-    nodejs_dir: "{{ nodejs_prefix_root | default('/usr/local') }}/node-{{ (desired_nodejs_version is match('^v')) | ternary(desired_nodejs_version, 'v' ~ desired_nodejs_version) }}-linux-{{ (ansible_architecture in ['x86_64','amd64']) | ternary('x64','arm64') }}"
-    nodejs_tarball: "/usr/local/src/node-{{ (desired_nodejs_version is match('^v')) | ternary(desired_nodejs_version, 'v' ~ desired_nodejs_version) }}-linux-{{ (ansible_architecture in ['x86_64','amd64']) | ternary('x64','arm64') }}.tar.xz"
+    nodejs_dir: >-
+      {{ nodejs_prefix_root | default('/usr/local') }}/node-{{ (desired_nodejs_version is match('^v')) | ternary(desired_nodejs_version, 'v' ~ desired_nodejs_version) }}-linux-{{ (ansible_architecture in ['x86_64','amd64']) | ternary('x64','arm64') }}
+    nodejs_tarball: >-
+      /usr/local/src/node-{{ (desired_nodejs_version is match('^v')) | ternary(desired_nodejs_version, 'v' ~ desired_nodejs_version) }}-linux-{{ (ansible_architecture in ['x86_64','amd64']) | ternary('x64','arm64') }}.tar.xz
 
 - name: Build_npm | Check current node (if any)
   ansible.builtin.command: "/usr/local/bin/node --version"
@@ -24,7 +26,6 @@
   become: true
   ansible.builtin.apt:
     name:
-      - build-essential
       - ca-certificates
       - curl
       - tar
@@ -34,7 +35,6 @@
       - zstd
     state: present
     update_cache: true
-
 
 - name: Build_npm | Install Node (prebuilt)
   when: nodejs_needs_install and (nodejs_install_method | default('prebuilt')) == 'prebuilt'
@@ -74,3 +74,24 @@
       register: node_version_check
       changed_when: false
       failed_when: node_version_check.stdout | trim != desired_nodejs_version_v
+
+- name: Build_npm | Verify package.json exists
+  become: true
+  ansible.builtin.stat:
+    path: "{{ npm_install_path }}/package.json"
+  register: pkgjson
+  changed_when: false
+
+- name: Build_npm | Fail if package.json is missing
+  ansible.builtin.fail:
+    msg: "package.json not found at {{ npm_install_path }}; check npm_install_path."
+  when: not (pkgjson.stat.exists | default(false))
+
+- name: Build_npm | Install javascript dependencies with npm
+  become: true
+  become_user: "{{ deploy_user }}"
+  community.general.npm:
+    path: "{{ npm_install_path }}"
+    production: "{{ npm_install_mode == 'production' }}"
+    ci: "{{ npm_install_mode == 'ci' }}"
+  when: pkgjson.stat.exists | default(false)
