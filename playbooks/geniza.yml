@@ -31,8 +31,3 @@
     - configure_crontab
     - finalize_deploy
     - close_deployment
-  post_tasks:
-    - name: restart passenger
-      ansible.builtin.systemd:
-        name: nginx
-        state: restarted

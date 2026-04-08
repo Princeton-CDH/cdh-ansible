@@ -1,3 +1,7 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # handlers file for roles/setup
+- name: restart idmapd
+  ansible.builtin.systemd:
+    name: nfs-idmapd
+    state: restarted
