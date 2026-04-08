@@ -1,4 +1,0 @@
----
-# variables for molecule
-app_name: molecule_test
-ansible_user: root

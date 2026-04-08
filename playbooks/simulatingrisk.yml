@@ -11,7 +11,7 @@
     - build_project_repo
     - python
     - supervisor
-    - configure_logging
+    - app_deploy
     - finalize_deploy
     - close_deployment
   post_tasks:

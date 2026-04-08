@@ -38,3 +38,6 @@ media_root: "/var/www/media/"
 
 # font path when needed
 font_path: "/var/www/fonts/"
+
+django_collectstatic: false
+django_compilemessages: false

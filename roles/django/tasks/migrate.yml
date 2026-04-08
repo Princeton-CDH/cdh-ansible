@@ -11,4 +11,5 @@
   community.general.django_manage:
     command: migrate
     app_path: "{{ django_app_path }}"
+    settings: "{{ django_settings_module }}"
     virtualenv: "{{ django_venv_path }}"

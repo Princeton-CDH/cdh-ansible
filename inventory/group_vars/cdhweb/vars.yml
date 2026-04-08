@@ -50,6 +50,7 @@ npm_install_mode: "dev"
 django_local_settings_template: "cdhweb_settings.py.j2"
 # cdhweb uses split-settings, so local settings is a slightly different path
 django_local_settings_dest: "{{ deploy }}/{{ django_app }}/settings/local_settings.py"
+local_settings_dest: "{{ deploy | default(install_root) }}/cdhweb/settings/local_settings.py"
 
 # Database backup location — revert to default, with timestamp but not app version
 # db_backup_path: "/home/{{ deploy_user }}/backups/pre-{{ version }}-{{ short_hash }}.sql"

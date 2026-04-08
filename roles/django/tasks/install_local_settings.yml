@@ -1,12 +1,34 @@
 ---
 # Creates a new `local_settings.py` file based on a template.
 # https://docs.djangoproject.com/en/dev/ref/settings/
+#
+- name: Show template source
+  ansible.builtin.debug:
+    msg:
+      - "template_path={{ template_path }}"
+      - "local_settings_dest={{ local_settings_dest }}"
 
-- name: Install django local settings
-  become: true
-  become_user: "{{ django_user }}"
+- name: Django - install django local settings
   ansible.builtin.template:
     src: "{{ django_local_settings_template }}"
     dest: "{{ django_local_settings_dest }}"
     owner: "{{ django_user }}"
-    mode: 0644
+    mode: "0644"
+  become: true
+  become_user: "{{ django_user }}"
+
+- name: Show rendered local settings location
+  ansible.builtin.debug:
+    msg: "Rendered local settings to {{ local_settings_dest }}"
+
+- name: Verify rendered local settings content
+  ansible.builtin.command:
+    cmd: grep -n PUCAS_LDAP "{{ local_settings_dest }}"
+  changed_when: false
+
+- name: Fail if rendered local settings still contains bare update
+  ansible.builtin.command:
+    cmd: grep -n "PUCAS_LDAP.update({" "{{ local_settings_dest }}"
+  register: local_settings_grep
+  failed_when: local_settings_grep.rc == 0
+  changed_when: false

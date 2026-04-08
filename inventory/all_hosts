@@ -19,6 +19,7 @@
 ######
 
 [cdhweb_staging]
+cdh-sandbox-web1.princeton.edu
 cdh-test-web1.princeton.edu
 cdh-test-web2.princeton.edu
 
