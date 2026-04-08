@@ -1,4 +1,6 @@
 ---
+# roles/run_webpack/tasks/main.yml
+
 - name: Run webpack build tasks for static assets
   become: true
   become_user: "{{ django_user }}"
@@ -44,23 +46,24 @@
         executable: /bin/bash
       when: runtime_env in ["production", "preproduction"]
 
-    # Post-build: validate stats + atomically rewrite it in-place to avoid
-    # partial-read races by Passenger/Django.
+    # Post-build: validate the stats file that Geniza/Django reads.
+    - name: run_webpack | Check webpack stats file exists
+      ansible.builtin.stat:
+        path: "{{ npm_install_path }}/sitemedia/webpack-stats.json"
+      register: stats
+      changed_when: false
+
+    - name: run_webpack | Fail if webpack stats missing/empty
+      ansible.builtin.fail:
+        msg: >-
+          Missing or empty webpack stats file:
+          {{ npm_install_path }}/sitemedia/webpack-stats.json
+      when: not (stats.stat.exists | default(false)) or (stats.stat.size | default(0) | int == 0)
+
     - name: run_webpack | Validate webpack stats JSON
       ansible.builtin.command: >
         python3 -c 'import json; json.load(open("{{ npm_install_path }}/sitemedia/webpack-stats.json")); print("ok")'
       changed_when: false
-
-    - name: run_webpack | Atomically publish stats file (same dir)
-      ansible.builtin.shell: |
-        set -euo pipefail
-        src="{{ npm_install_path }}/sitemedia/webpack-stats.json"
-        tmp="{{ npm_install_path }}/sitemedia/webpack-stats.json.tmp"
-        cp -f "$src" "$tmp"
-        mv -f "$tmp" "$src"
-      args:
-        executable: /bin/bash
-      changed_when: true
 
   rescue:
     - name: run_webpack | Show webpack failure output
