@@ -33,6 +33,7 @@
     url: "{{ prodigy_recipe_url }}"
     dest: "{{ prodigy_recipe_pyfile }}"
     mode: '0755'
+    force: true
 
 - name: Download Prodigy command recipes file
   become: true
@@ -40,7 +41,36 @@
     url: "{{ prodigy_commands_url }}"
     dest: "{{ install_root }}/muse/recipes"
     mode: "0755"
+    force: true
   when: prodigy_commands_url is defined
+
+- name: Copy Prodigy input task data from TigerData
+  become: true
+  # NOTE: builtin copy command fails
+  #ansible.builtin.copy:
+  #  src: "{{ prodigy_datafile_src }}"
+  #  dest: "{{ prodigy_datafile }}"
+  #  force: true
+  #  mode: "0755"
+  #  remote_src: true
+  ansible.builtin.shell:
+    cmd: |
+      cp "{{ prodigy_datafile_src }}" "{{ prodigy_datafile }}"
+      chmod 755 "{{ prodigy_datafile }}"
+
+- name: Copy Prodigy instructions file from TigerData
+  become: true
+  # NOTE: builtin copy command fails
+  #ansible.builtin.copy:
+  #  src: "{{ prodigy_instruct_src }}"
+  #  dest: "{{ prodigy_instruct }}"
+  #  force: true
+  #  mode: "0755"
+  #  remote_src: true
+  ansible.builtin.shell:
+    cmd: |
+      cp "{{ prodigy_instruct_src }}" "{{ prodigy_instruct }}"
+      chmod 755 "{{ prodigy_instruct }}"
 
 - name: Create requirements.txt for python requirements
   tags:
