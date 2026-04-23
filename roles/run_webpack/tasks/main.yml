@@ -1,4 +1,6 @@
 ---
+# roles/run_webpack/tasks/main.yml
+
 - name: Run webpack build tasks for static assets
   become: true
   become_user: "{{ django_user }}"
@@ -21,7 +23,7 @@
           Missing webpack prerequisites in {{ npm_install_path }}.
           package.json={{ pkg.stat.exists | default(false) }},
           node_modules/.bin/webpack={{ webpack_shim.stat.exists | default(false) }}.
-          Ensure build_npm ran for this release and npm_install_path points at /srv/www/<app>/current.
+          Ensure build_npm ran for this same npm_install_path.
       when: not (pkg.stat.exists | default(false)) or not (webpack_shim.stat.exists | default(false))
 
     - name: run_webpack | Run webpack in staging/QA mode
@@ -43,6 +45,25 @@
         chdir: "{{ npm_install_path }}"
         executable: /bin/bash
       when: runtime_env in ["production", "preproduction"]
+
+    # Post-build: validate the stats file that Geniza/Django reads.
+    - name: run_webpack | Check webpack stats file exists
+      ansible.builtin.stat:
+        path: "{{ npm_install_path }}/sitemedia/webpack-stats.json"
+      register: stats
+      changed_when: false
+
+    - name: run_webpack | Fail if webpack stats missing/empty
+      ansible.builtin.fail:
+        msg: >-
+          Missing or empty webpack stats file:
+          {{ npm_install_path }}/sitemedia/webpack-stats.json
+      when: not (stats.stat.exists | default(false)) or (stats.stat.size | default(0) | int == 0)
+
+    - name: run_webpack | Validate webpack stats JSON
+      ansible.builtin.command: >
+        python3 -c 'import json; json.load(open("{{ npm_install_path }}/sitemedia/webpack-stats.json")); print("ok")'
+      changed_when: false
 
   rescue:
     - name: run_webpack | Show webpack failure output
