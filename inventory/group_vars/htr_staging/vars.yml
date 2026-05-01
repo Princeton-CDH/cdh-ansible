@@ -5,3 +5,7 @@
 
 application_url: https://test-htr.princeton.edu
 passenger_server_name: test-htr.princeton.edu
+
+# staging uses a different database name than production
+application_db_name: "cdh_test_htr"
+application_dbuser_name: "cdh_test_htr"
