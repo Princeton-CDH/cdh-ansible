@@ -96,7 +96,7 @@ media_user: "{{ deploy_user }}"
 # media files on NFS, shared between VMs
 media_root: /mnt/nfs/cdh/htr/media/
 
-# enable both NFS and TigerData; TigerData integration will be partial and come later
+# enable both NFS and TigerData
 nfs_enabled: true
 tigerdata_enabled: true
 
