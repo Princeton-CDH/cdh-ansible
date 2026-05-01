@@ -1,7 +1,7 @@
+###
+# Variables for eScriptorium that apply across all deploy groups (production and staging)
+###
 ---
-###
-# Common variables for eScriptorium (htr) application
-###
 
 app_name: escriptorium
 
