@@ -5,8 +5,3 @@
 
 application_url: https://htr.cdh.princeton.edu
 passenger_server_name: htr.cdh.princeton.edu
-
-# production uses TigerData, not NFS
-nfs_enabled: false
-tigerdata_enabled: true
-media_root: /mnt/tigerdata/cdh/htr/media/
