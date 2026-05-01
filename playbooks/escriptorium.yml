@@ -1,6 +1,8 @@
 ---
+# by default this playbook runs in the staging environment
+# to run in production, pass '-e runtime_env=production'
 - name: Deploy eScriptorium web application and task runners
-  hosts: htr_staging
+  hosts: htr_{{ runtime_env | default('staging') }}
   connection: ssh
   remote_user: pulsys
   become: true
