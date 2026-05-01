@@ -15,7 +15,6 @@ import shutil
 from pathlib import Path
 
 import yaml
-import ansible.cli
 from ansible.constants import DEFAULT_VAULT_ID_MATCH
 from ansible.parsing.vault import VaultSecret, VaultLib
 
@@ -91,10 +90,13 @@ def encrypt_vars_in_file(infile):
                 output.append(chunk)
             else:
                 parsed_chunk = yaml.load(chunk, Loader=yaml.Loader)
-                output_chunk = encrypt_yaml_vars(parsed_chunk)
-                # add a new line before the section
-                yaml_output = f"\n{yaml.dump(output_chunk)}"
-                output.append(yaml_output)
+                # in some cases, load returns None; ignore it
+                if parsed_chunk:
+                    output_chunk = encrypt_yaml_vars(parsed_chunk)
+                    # dump as multiline strings
+                    yaml_output = yaml.dump(output_chunk, default_style="|", indent=4)
+                    # add a new line before each new chunk in the output
+                    output.append(f"\n{yaml_output}")
 
     print(f"Saving changes to {filepath}; backup is in {backup_file}")
     with filepath.open("w") as varfile:
