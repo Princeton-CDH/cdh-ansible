@@ -108,6 +108,10 @@ cdh-htr2.lib.princeton.edu
 cdh-test-htr1.lib.princeton.edu
 cdh-test-htr2.lib.princeton.edu
 
+[htr:children]
+htr_production
+htr_staging
+
 # simrisk must be configured in ssh config with bastion proxy command
 [simrisk_cloud]
 gcp_simrisk
