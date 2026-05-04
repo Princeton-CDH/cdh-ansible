@@ -75,6 +75,8 @@ npm_install_mode: "development"
 # escriptorium webpack build commands (npm scripts defined in front/package.json)
 webpack_build_qa: "production"
 webpack_build_prod: "production"
+# escriptorium does not generate webpack-stats.json, skip that check
+webpack_stats_check_enabled: false
 
 # ubuntu packages to be installed
 # - from list of third party tools in escriptorium full install instructions

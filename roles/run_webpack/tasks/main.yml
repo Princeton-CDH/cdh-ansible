@@ -47,23 +47,28 @@
       when: runtime_env in ["production", "preproduction"]
 
     # Post-build: validate the stats file that Geniza/Django reads.
+    # Set webpack_stats_check_enabled: false to skip for apps that don't generate this file.
     - name: run_webpack | Check webpack stats file exists
       ansible.builtin.stat:
         path: "{{ npm_install_path }}/sitemedia/webpack-stats.json"
       register: stats
       changed_when: false
+      when: webpack_stats_check_enabled | default(true)
 
     - name: run_webpack | Fail if webpack stats missing/empty
       ansible.builtin.fail:
         msg: >-
           Missing or empty webpack stats file:
           {{ npm_install_path }}/sitemedia/webpack-stats.json
-      when: not (stats.stat.exists | default(false)) or (stats.stat.size | default(0) | int == 0)
+      when:
+        - webpack_stats_check_enabled | default(true)
+        - not (stats.stat.exists | default(false)) or (stats.stat.size | default(0) | int == 0)
 
     - name: run_webpack | Validate webpack stats JSON
       ansible.builtin.command: >
         python3 -c 'import json; json.load(open("{{ npm_install_path }}/sitemedia/webpack-stats.json")); print("ok")'
       changed_when: false
+      when: webpack_stats_check_enabled | default(true)
 
   rescue:
     - name: run_webpack | Show webpack failure output
