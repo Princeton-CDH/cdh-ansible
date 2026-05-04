@@ -72,8 +72,9 @@ python_requirements_file: "{{ django_app_path }}/requirements.txt"
 npm_install_path: "{{ python_app_path }}/front"
 # dev dependencies required to run the build
 npm_install_mode: "development"
-# escriptorium build command is npm run build
+# escriptorium webpack build commands (npm scripts defined in front/package.json)
 webpack_build_qa: "production"
+webpack_build_prod: "production"
 
 # ubuntu packages to be installed
 # - from list of third party tools in escriptorium full install instructions
