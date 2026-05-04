@@ -12,11 +12,9 @@ gitref: dev-0.14.2
 # repo variable is still needed for checkout file structure
 repo: scripta/escriptorium
 # name of django application
-python_app: "escriptorium"
-# explicitly set a python app version since we require one and
-# ES doesn't seem to have any versions documented anywhere
-python_app_version: "main" # ?!
-django_app: "{{ python_app }}"
+# NOTE: do not set python_app here — escriptorium has no __version__ attribute,
+# so build_project_repo's version check would fail on first deploy
+django_app: "escriptorium"
 # django app & python requirements are nested under the app folder
 django_app_path: "{{ deploy }}/app"
 # prefix for activate shortcut in conan profile
