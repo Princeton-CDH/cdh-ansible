@@ -1,0 +1,77 @@
+---
+- name: Converge
+  hosts: all
+  vars:
+    running_on_server: false
+    deploy_user: deploy
+    install_root: /opt/prodigy
+
+    db_host: localhost
+    application_db_name: prodigy_test
+    application_dbuser_name: prodigy
+    application_dbuser_password: test-password
+
+    prodigy_config_extra_options: {}
+
+    prodigy_recipe_url: file:///tmp/prodigy_recipe.py
+    prodigy_recipe_pyfile: /opt/prodigy/muse/recipes/prodigy_recipe.py
+
+    prodigy_datafile_src: /tmp/debug-task1.jsonl
+    prodigy_datafile: /opt/prodigy/muse/data/debug-task1.jsonl
+
+    prodigy_instruct_src: /tmp/instructions.html
+    prodigy_instruct: /opt/prodigy/muse/data/instructions.html
+
+    nginx_config_file: /etc/nginx/nginx.conf
+
+  become: true
+
+  pre_tasks:
+    - name: Update cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 600
+
+    - name: Install test dependencies
+      ansible.builtin.apt:
+        name:
+          - nginx
+        state: present
+
+    - name: Create deploy user
+      ansible.builtin.user:
+        name: "{{ deploy_user }}"
+        system: true
+        create_home: true
+        shell: /bin/bash
+
+    - name: Create mock Prodigy recipe source
+      ansible.builtin.copy:
+        dest: /tmp/prodigy_recipe.py
+        mode: "0644"
+        content: |
+          def recipe():
+              return {}
+
+    - name: Create mock Prodigy data source
+      ansible.builtin.copy:
+        dest: "{{ prodigy_datafile_src }}"
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        mode: "0644"
+        content: |
+          {"text": "example task"}
+
+    - name: Create mock Prodigy instructions source
+      ansible.builtin.copy:
+        dest: "{{ prodigy_instruct_src }}"
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        mode: "0644"
+        content: |
+          <h1>Instructions</h1>
+
+  tasks:
+    - name: Include prodigy_setup
+      ansible.builtin.include_role:
+        name: prodigy_setup
