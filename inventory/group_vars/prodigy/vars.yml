@@ -33,10 +33,10 @@ prodigy_datafile: "{{ install_root }}/muse/data/notion-concept-tasks.jsonl"
 prodigy_instruct: "{{ install_root }}/muse/data/instructions.html"
 
 # Fetch annotation recipes from develop branch
-prodigy_recipe_url: 'https://raw.githubusercontent.com/Princeton-CDH/muse/refs/heads/develop/src/muse/annotation/annotation_recipes.py'
+prodigy_recipe_url: 'https://raw.githubusercontent.com/Princeton-CDH/muse/refs/heads/main/src/muse/annotation/annotation_recipes.py'
 prodigy_recipe_pyfile: "{{ install_root }}/muse/recipes/annotation_recipes.py"
 # Optional: Fetch command recipes from develop branch
-prodigy_commands_url: 'https://raw.githubusercontent.com/Princeton-CDH/muse/refs/heads/develop/src/muse/annotation/command_recipes.py'
+prodigy_commands_url: 'https://raw.githubusercontent.com/Princeton-CDH/muse/refs/heads/main/src/muse/annotation/command_recipes.py'
 
 # Current recipe options
 prodigy_recipe: concept-eval
