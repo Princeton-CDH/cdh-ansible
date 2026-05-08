@@ -1,22 +1,15 @@
 ---
 # tasks to setup and configure an instance of Prodigy
 - name: Ensure install root exists and deploy user has access
-  tags:
-    - setup
-    - never
-  become: true
   ansible.builtin.file:
-    dest: "{{ install_root }}"
+    path: "{{ install_root }}"
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
     state: directory
-    recurse: no
+    recurse: false
+  become: true
 
 - name: Ensure muse data and recipe directories exist with write permissions
-  tags:
-    - setup
-    - never
-  become: true
   ansible.builtin.file:
     path: "{{ item }}"
     owner: "{{ deploy_user }}"
@@ -26,6 +19,7 @@
   loop:
     - "{{ install_root }}/muse/recipes"
     - "{{ install_root }}/muse/data"
+  become: true
 
 - name: Download Prodigy annotation recipes file
   become: true
@@ -44,57 +38,89 @@
     force: true
   when: prodigy_commands_url is defined
 
+- name: Check Prodigy input task data exists on TigerData
+  become: true
+  become_user: "{{ deploy_user }}"
+  ansible.builtin.stat:
+    path: "{{ prodigy_datafile_src }}"
+  register: prodigy_datafile_src_stat
+
+- name: Fail when Prodigy input task data is not readable
+  ansible.builtin.fail:
+    msg: >-
+      Prodigy input task data file is missing or unreadable by {{ deploy_user }}:
+      {{ prodigy_datafile_src }}
+  when: not prodigy_datafile_src_stat.stat.exists
+
 - name: Copy Prodigy input task data from TigerData
   become: true
-  # NOTE: builtin copy command fails
-  #ansible.builtin.copy:
-  #  src: "{{ prodigy_datafile_src }}"
-  #  dest: "{{ prodigy_datafile }}"
-  #  force: true
-  #  mode: "0755"
-  #  remote_src: true
-  ansible.builtin.shell:
-    cmd: |
-      cp "{{ prodigy_datafile_src }}" "{{ prodigy_datafile }}"
-      chmod 755 "{{ prodigy_datafile }}"
+  become_user: "{{ deploy_user }}"
+  ansible.builtin.copy:
+    src: "{{ prodigy_datafile_src }}"
+    dest: "{{ prodigy_datafile }}"
+    remote_src: true
+    mode: "0755"
+    force: true
+
+- name: Ensure Prodigy input task data ownership
+  become: true
+  ansible.builtin.file:
+    path: "{{ prodigy_datafile }}"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: "0755"
+    state: file
+
+- name: Check Prodigy instructions file exists on TigerData
+  become: true
+  become_user: "{{ deploy_user }}"
+  ansible.builtin.stat:
+    path: "{{ prodigy_instruct_src }}"
+  register: prodigy_instruct_src_stat
+
+- name: Fail when Prodigy instructions file is not readable
+  ansible.builtin.fail:
+    msg: >-
+      Prodigy instructions file is missing or unreadable by {{ deploy_user }}:
+      {{ prodigy_instruct_src }}
+  when: not prodigy_instruct_src_stat.stat.exists
 
 - name: Copy Prodigy instructions file from TigerData
   become: true
-  # NOTE: builtin copy command fails
-  #ansible.builtin.copy:
-  #  src: "{{ prodigy_instruct_src }}"
-  #  dest: "{{ prodigy_instruct }}"
-  #  force: true
-  #  mode: "0755"
-  #  remote_src: true
-  ansible.builtin.shell:
-    cmd: |
-      cp "{{ prodigy_instruct_src }}" "{{ prodigy_instruct }}"
-      chmod 755 "{{ prodigy_instruct }}"
+  become_user: "{{ deploy_user }}"
+  ansible.builtin.copy:
+    src: "{{ prodigy_instruct_src }}"
+    dest: "{{ prodigy_instruct }}"
+    remote_src: true
+    mode: "0755"
+    force: true
+
+- name: Ensure Prodigy instructions file ownership
+  become: true
+  ansible.builtin.file:
+    path: "{{ prodigy_instruct }}"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: "0755"
+    state: file
 
 - name: Create requirements.txt for python requirements
-  tags:
-    - setup
-    - never
-  become: true
   ansible.builtin.copy:
     src: "requirements.txt"
     dest: "{{ install_root }}/requirements.txt"
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
+  become: true
 
 - name: Create Prodigy config file
-  become: true
   ansible.builtin.copy:
     dest: "{{ install_root }}/prodigy.json"
     content: "{{ prodigy_config_options | combine(prodigy_config_extra_options) | to_json(indent=4) }}"
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
+  become: true
 
 - name: Setup nginx for prodigy assets
-  tags:
-    - setup
-    - never
   block:
     - name: Run nginx as deploy user for access to tigerdata
       ansible.builtin.lineinfile:
