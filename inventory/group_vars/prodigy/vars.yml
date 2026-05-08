@@ -28,7 +28,7 @@ tigerdata_enabled: true
 # Copying files from TigerData
 prodigy_data_dir_src: "{{ tigerdata_mount_dir }}/muse/phase-1/prodigy/notion-concept"
 prodigy_datafile_src: "{{ prodigy_data_dir_src }}/notion-concept-tasks.jsonl"
-prodigy_instruct_src: "{{ tigerdata_mount_dir }}/instructions.html"
+prodigy_instruct_src: "{{ prodigy_data_dir_src }}/instructions.html"
 prodigy_datafile: "{{ install_root }}/muse/data/notion-concept-tasks.jsonl"
 prodigy_instruct: "{{ install_root }}/muse/data/instructions.html"
 
@@ -46,7 +46,7 @@ prodigy_options: "{{ prodigy_recipe }} {{ prodigy_dataset }} {{ prodigy_datafile
 # additional prodigy configurations to include in prodigy.json file
 # values here takes precedence over the defaults in the role
 prodigy_config_extra_options:
-  - history_size: 3
+  history_size: 3
 
 # For setting shared and local Prodigy environment variables
 prodigy_common_envs: 

@@ -47,5 +47,3 @@ prodigy_instruct: /opt/prodigy/muse/data/instructions.html
 
 nginx_config_file: /etc/nginx/nginx.conf
 ```
-
-
