@@ -88,6 +88,14 @@ app_dependencies:
   - pngcrush
   - libvips
 
+# Override the default postgres_apt_repository to include signed-by.
+# Ubuntu 22.04 (jammy) requires the signed-by option to avoid an apt conflict
+# when the keyring file already exists at the default path. Without this override,
+# the postgresql role writes a line without signed-by, which conflicts with the
+# existing signed-by entry and causes apt to fail with "Conflicting values set
+# for option Signed-By".
+postgres_apt_repository: 'deb [signed-by=/usr/share/keyrings/postgresql-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main {{ postgres_version }}'
+
 application_db_name: "cdh_htr"
 application_dbuser_name: "cdh_htr"
 application_dbuser_password: "{{ vault_db_password }}"
