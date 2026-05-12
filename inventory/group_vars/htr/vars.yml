@@ -3,6 +3,9 @@
 ###
 ---
 
+# required by pulibrary.princeton_ansible.redis role (via common role)
+running_on_server: true
+
 app_name: escriptorium
 
 # Git repository (on gitlab instead of github, so need to specify the full repo url)
