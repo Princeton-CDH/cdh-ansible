@@ -34,7 +34,9 @@
 
     - name: Determine version of python app being deployed
       ansible.builtin.import_tasks: python_app_version.yml
-      when: python_app is defined
+      when:
+        - python_app is defined
+        - python_app_version is not defined
       tags: [always]
 
     - name: Create the specific deploy directory
