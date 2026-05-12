@@ -6,6 +6,10 @@
 # required by pulibrary.princeton_ansible.redis role (via common role)
 running_on_server: true
 
+# disable Princeton math mirror — it is currently broken (sync issues cause apt-get update to fail);
+# setting to empty list prevents the common role from writing 00-princeton.list on the servers
+preferred_mirrors: []
+
 app_name: escriptorium
 
 # Git repository (on gitlab instead of github, so need to specify the full repo url)
