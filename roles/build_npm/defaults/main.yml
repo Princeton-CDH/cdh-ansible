@@ -12,7 +12,7 @@ desired_nodejs_version: "22.4.0"
 nodejs_install_method: "prebuilt"
 
 # Internal mirror by default (fast + reliable + consistent)
-nodejs_release_base_url: "https://pulmirror.princeton.edu/mirror/node/dist"
+nodejs_release_base_url: "https://pulmirror.princeton.edu/mirror/nodejs"
 
 # Download resilience
 nodejs_download_timeout: 600
