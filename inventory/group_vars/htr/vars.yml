@@ -101,6 +101,7 @@ app_dependencies:
 # the postgresql role writes a line without signed-by, which conflicts with the
 # existing signed-by entry and causes apt to fail with "Conflicting values set
 # for option Signed-By".
+# TODO: remove this override once https://github.com/Princeton-CDH/cdh-ansible/issues/356 is resolved
 postgres_apt_repository: 'deb [signed-by=/usr/share/keyrings/postgresql-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main {{ postgres_version }}'
 
 application_db_name: "cdh_htr"
