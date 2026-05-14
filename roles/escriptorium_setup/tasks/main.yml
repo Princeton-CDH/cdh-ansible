@@ -19,19 +19,19 @@
 
     - name: Rename default segtrain task
       ansible.builtin.replace:
-        path: "{{ install_root }}/app/apps/core/tasks.py"
+        path: "{{ django_app_path }}/apps/core/tasks.py"
         regexp: '^def (segtrain\(model.*)$'
         replace: 'def es_\1'
 
     - name: Rename default train task
       ansible.builtin.replace:
-        path: "{{ install_root }}/app/apps/core/tasks.py"
+        path: "{{ django_app_path }}/apps/core/tasks.py"
         regexp: '^def (train\(.*)$'
         replace: 'def es_\1'
 
     - name: Expose read-write training accuracy model field in API
       ansible.builtin.replace:
-        path: "{{ install_root }}/app/apps/api/serializers.py"
+        path: "{{ django_app_path }}/apps/api/serializers.py"
         # accuracy_percent only occurs once in this file, in the list of
         # fields for OCRModelSerializer.
         # Add training accuracy immediately after.
@@ -40,7 +40,7 @@
 
     - name: Import htr2hpc segtrain and train tasks to override defaults
       ansible.builtin.blockinfile:
-        path: "{{ install_root }}/app/apps/core/tasks.py"
+        path: "{{ django_app_path }}/apps/core/tasks.py"
         block: |
           # import htr2hpc replacement training tasks
           from htr2hpc.tasks import segtrain, train
@@ -50,19 +50,19 @@
 
     - name: Update user model to allow email to be null
       ansible.builtin.replace:
-        path: "{{ install_root }}/app/apps/users/models.py"
+        path: "{{ django_app_path }}/apps/users/models.py"
         regexp: "verbose_name=_\\(\\'email address\\'\\),$"
         replace: "verbose_name=_('email address'), null=True,"
 
     - name: Make legacy UI option on profile form a hidden input
       ansible.builtin.replace:
-        path: "{{ install_root }}/app/apps/users/forms.py"
+        path: "{{ django_app_path }}/apps/users/forms.py"
         regexp: "(fields = \\('email', 'first_name', 'last_name', 'legacy_mode'\\))\n\n"
         replace: "\\1\n        widgets = {\"legacy_mode\": forms.HiddenInput()}\n\n"
 
     - name: Suppress legacy UI help text from profile form
       ansible.builtin.replace:
-        path: "{{ install_root }}/app/escriptorium/templates/users/profile.html"
+        path: "{{ django_app_path }}/escriptorium/templates/users/profile.html"
         regexp: "(\\{\\% render_field form.legacy_mode) (\\%\\})"
         replace: "\\1 help_text='' \\2"
 

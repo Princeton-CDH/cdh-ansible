@@ -1,0 +1,7 @@
+---
+###
+# Production-specific variables for eScriptorium
+###
+
+application_url: https://htr.cdh.princeton.edu
+passenger_server_name: htr.cdh.princeton.edu
