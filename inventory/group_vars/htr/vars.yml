@@ -37,7 +37,7 @@ python_version: "3.11"
 node_version: "18"
 # install local customizations as an extra package
 python_extra_packages:
-  - git+https://github.com/Princeton-CDH/htr2hpc.git@develop#egg=htr2hpc
+  - git+https://github.com/Princeton-CDH/htr2hpc.git@adroit#egg=htr2hpc
 
 # pul deploy user
 deploy_user: "conan"
