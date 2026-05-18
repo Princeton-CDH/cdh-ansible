@@ -140,11 +140,11 @@ supervisor_programs:
       killasgroup=true
       stopasgroup=true
 
-  # 2) celery worker
+  # 2) celery workers (split by queue to prevent concurrent jobs from hanging)
   # based on the command in the full local deploy
-  # celery -A escriptorium worker -l INFO
-  - name: "celery"
-    command: "{{ django_app_path }}/env/bin/celery -A escriptorium worker -l INFO"
+  # (docker compose starts multiple celery workers with different queues/priorities)
+  - name: "celery-main"
+    command: "{{ django_app_path }}/env/bin/celery -A escriptorium worker -Q default --concurrency 1 -l INFO"
     state: present
     configuration: |
       directory={{ django_app_path }}
@@ -154,8 +154,59 @@ supervisor_programs:
       startretries=1
       startsecs=1
       redirect_stderr=true
-      stderr_logfile=/var/log/supervisor/celery-err.log
-      stdout_logfile=/var/log/supervisor/celery-out.log
+      stderr_logfile=/var/log/supervisor/celery-main-err.log
+      stdout_logfile=/var/log/supervisor/celery-main-out.log
+      user={{ deploy_user }}
+      killasgroup=true
+      stopasgroup=true
+
+  - name: "celery-gpu"
+    command: "{{ django_app_path }}/env/bin/celery -A escriptorium worker -Q gpu --concurrency 8 -l INFO"
+    state: present
+    configuration: |
+      directory={{ django_app_path }}
+      environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings"
+      autostart=true
+      autorestart=true
+      startretries=1
+      startsecs=1
+      redirect_stderr=true
+      stderr_logfile=/var/log/supervisor/celery-gpu-err.log
+      stdout_logfile=/var/log/supervisor/celery-gpu-out.log
+      user={{ deploy_user }}
+      killasgroup=true
+      stopasgroup=true
+
+  - name: "celery-live"
+    command: "{{ django_app_path }}/env/bin/celery -A escriptorium worker -Q live --concurrency 8 -l INFO"
+    state: present
+    configuration: |
+      directory={{ django_app_path }}
+      environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings"
+      autostart=true
+      autorestart=true
+      startretries=1
+      startsecs=1
+      redirect_stderr=true
+      stderr_logfile=/var/log/supervisor/celery-live-err.log
+      stdout_logfile=/var/log/supervisor/celery-live-out.log
+      user={{ deploy_user }}
+      killasgroup=true
+      stopasgroup=true
+
+  - name: "celery-low-priority"
+    command: "{{ django_app_path }}/env/bin/celery -A escriptorium worker -Q low-priority --concurrency 7 -l INFO"
+    state: present
+    configuration: |
+      directory={{ django_app_path }}
+      environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings"
+      autostart=true
+      autorestart=true
+      startretries=1
+      startsecs=1
+      redirect_stderr=true
+      stderr_logfile=/var/log/supervisor/celery-low-priority-err.log
+      stdout_logfile=/var/log/supervisor/celery-low-priority-out.log
       user={{ deploy_user }}
       killasgroup=true
       stopasgroup=true
