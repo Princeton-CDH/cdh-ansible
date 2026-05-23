@@ -2,6 +2,7 @@
 ###
 # Staging-specific variables for eScriptorium
 ###
+running_on_server: true
 
 application_url: https://test-htr.princeton.edu
 passenger_server_name: test-htr.princeton.edu
@@ -9,3 +10,129 @@ passenger_server_name: test-htr.princeton.edu
 # staging uses a different database name than production
 application_db_name: "cdh_test_htr"
 application_dbuser_name: "cdh_test_htr"
+# beyla
+beyla_enabled: true
+beyla_service_name: htr
+beyla_environment: staging
+beyla_otlp_endpoint: "http://127.0.0.1:4318"
+beyla_otlp_protocol: "http/protobuf"
+
+beyla_open_ports:
+  - 80
+# signoz
+otel_default_resource_attributes:
+  host.name: "{{ inventory_hostname }}"
+  service.name: htr
+  service.version: staging
+  environment: staging
+
+otel_receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 127.0.0.1:4317
+      http:
+        endpoint: 127.0.0.1:4318
+  filelog/nginx-access:
+    include: ["/var/log/nginx/access.log*"]
+    start_at: end
+    operators:
+      - type: regex_parser
+        regex: '^(?P<remote_addr>[^\s]+) \((?P<remote_user>[^)]*)\) - - \[(?P<time_local>[^\]]+)\] "(?P<method>\S+) (?P<path>\S+) (?P<protocol>[^"]+)" (?P<status>\d+) (?P<body_bytes_sent>\d+) "(?P<http_referer>[^"]*)" "(?P<http_user_agent>[^"]*)"'
+        parse_from: body
+      - type: time_parser
+        parse_from: attributes.time_local
+        layout_type: strptime
+        layout: '%d/%b/%Y:%H:%M:%S %z'
+      - type: add
+        field: attributes.log_type
+        value: "htr_access"
+      - type: add
+        field: attributes.service_name
+        value: htr_access
+
+  filelog/nginx-error:
+    include: ["/var/log/nginx/error.log*"]
+    start_at: end
+    operators:
+      - type: add
+        field: attributes.log_type
+        value: "htr_error"
+      - type: add
+        field: attributes.service_name
+        value: "htr"
+
+  hostmetrics:
+    collection_interval: 30s
+    scrapers:
+      cpu: {}
+      disk: {}
+      filesystem: {}
+      load: {}
+      memory: {}
+      network: {}
+
+otel_processors:
+  batch:
+    send_batch_max_size: 1024
+    send_batch_size: 512
+    timeout: 30s
+
+otel_exporters:
+  loadbalancing:
+    routing_key: service
+    protocol:
+      otlp:
+        timeout: 10s
+        tls:
+          insecure: true
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 5000
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_interval: 30s
+          max_elapsed_time: 300s
+    resolver:
+      static:
+        hostnames:
+          - k8s-staging1.lib.princeton.edu:30374
+          - k8s-staging2.lib.princeton.edu:30374
+          - k8s-staging3.lib.princeton.edu:30374
+
+  debug:
+    verbosity: basic
+
+otel_service_pipelines:
+  logs:
+    receivers:
+      - filelog/nginx-access
+      - filelog/nginx-error
+    processors:
+      - resource
+      - batch
+    exporters:
+      - loadbalancing
+      - debug
+
+  metrics:
+    receivers:
+      - otlp
+      - hostmetrics
+    processors:
+      - resource
+      - batch
+    exporters:
+      - loadbalancing
+      - debug
+
+  traces:
+    receivers:
+      - otlp
+    processors:
+      - resource
+      - batch
+    exporters:
+      - loadbalancing
