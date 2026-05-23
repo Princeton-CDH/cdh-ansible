@@ -14,6 +14,7 @@ application_url: "test-web.cdh.princeton.edu"
 
 # passenger settings
 passenger_server_name: "{{ application_url }}"
+# beyla
 beyla_enabled: true
 beyla_service_name: cdh-web
 beyla_environment: staging
