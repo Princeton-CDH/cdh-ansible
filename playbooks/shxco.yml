@@ -17,6 +17,8 @@
   become: true
   roles:
     - create_deployment
+    - pulibrary.princeton_ansible.otel_collector
+    - pulibrary.princeton_ansible.beyla
     - deploy_user
     - build_dependencies
     - build_project_repo

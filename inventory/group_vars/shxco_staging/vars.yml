@@ -1,7 +1,9 @@
+---
 ###
 # Staging specific configuration for Shakespeare and Company Project
 ###
----
+
+running_on_server: true
 
 # email prefix for staging error emails
 email_prefix: '[S&co STAGING] '
@@ -20,7 +22,6 @@ cronjob_host: "cdh-test-shxco1.princeton.edu"
 
 # configure scripts to run as cron jobs
 crontab:
-
   # disable 100 years tweets for staging for now
   - name: "{{ django_app }} schedule 100 years tweets"
     minute: 30
@@ -34,3 +35,7 @@ zk_host: "lib-zk-staging4:2181,lib-zk-staging5:2181,lib-zk-staging6:2181"
 solr_url: "http://lib-solr9-staging.princeton.edu:8983/solr/"
 solr_server: "{{ groups['solr9_staging'][0] }}"
 solr_version: 9
+
+# observability
+beyla_enabled: true
+beyla_service_name: shxco

@@ -8,6 +8,8 @@
   become: true
   roles:
     - deploy_user
+    - pulibrary.princeton_ansible.otel_collector
+    - pulibrary.princeton_ansible.beyla
     - postgresql
     - pulibrary.princeton_ansible.nginx
     - prodigy_setup

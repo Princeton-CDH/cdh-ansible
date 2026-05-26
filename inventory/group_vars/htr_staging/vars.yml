@@ -3,9 +3,15 @@
 # Staging-specific variables for eScriptorium
 ###
 
+running_on_server: true
+
 application_url: https://test-htr.princeton.edu
 passenger_server_name: test-htr.princeton.edu
 
 # staging uses a different database name than production
 application_db_name: "cdh_test_htr"
 application_dbuser_name: "cdh_test_htr"
+
+# observability
+beyla_enabled: true
+beyla_service_name: htr

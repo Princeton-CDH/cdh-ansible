@@ -5,8 +5,11 @@
   hosts: cdhweb_{{ runtime_env | default('staging') }}
   connection: ssh
   remote_user: pulsys
+  become: true
   roles:
     - create_deployment
+    - pulibrary.princeton_ansible.otel_collector
+    - pulibrary.princeton_ansible.beyla
     - deploy_user
     - build_dependencies
     - build_project_repo

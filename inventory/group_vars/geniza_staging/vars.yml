@@ -1,4 +1,6 @@
 ---
+running_on_server: true
+
 # email prefix for admin emails
 email_prefix: "[Geniza STAGING] "
 
@@ -19,6 +21,11 @@ cronjob_host: "cdh-test-geniza1.princeton.edu"
 
 # enable warning banner; configured in geniza local settings
 show_warning_banner: true
+
 # use defaults for test site warning/reminder
 # warning_banner_heading:
 # warning_banner_message:
+
+# observability
+beyla_enabled: true
+beyla_service_name: geniza

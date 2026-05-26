@@ -1,5 +1,12 @@
 ---
+running_on_server: true
+
 application_url: https://test-prodigy.cdh.princeton.edu
+
 prodigy_local_envs:
   PRODIGY_LOGGING: "verbose"
   PRODIGY_ALLOWED_SESSIONS: "{{ vault_prodigy_sessions }}"
+
+# observability
+beyla_enabled: true
+beyla_service_name: prodigy

@@ -18,6 +18,8 @@
   roles:
     - create_deployment
     - deploy_user
+    - pulibrary.princeton_ansible.otel_collector
+    - pulibrary.princeton_ansible.beyla
     - build_dependencies
     - build_project_repo
     - postgresql

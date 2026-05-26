@@ -1,15 +1,22 @@
 ---
+running_on_server: true
+
 # email prefix for admin emails
 email_prefix: "[CDHweb STAGING] "
+
 # allowed_hosts for Django
 allowed_hosts:
-    - "test-web.cdh.princeton.edu"
-    - "cdh-test-web.princeton.edu"
-    - "cdh-test-web1"
-    - "localhost"
-    - "127.0.0.1"
+  - "test-web.cdh.princeton.edu"
+  - "cdh-test-web.princeton.edu"
+  - "cdh-test-web1"
+  - "localhost"
+  - "127.0.0.1"
 
 application_url: "test-web.cdh.princeton.edu"
 
 # passenger settings
 passenger_server_name: "{{ application_url }}"
+
+# observability
+beyla_enabled: true
+beyla_service_name: cdh-web
