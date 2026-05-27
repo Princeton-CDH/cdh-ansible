@@ -36,8 +36,12 @@ python_version: "3.11"
 # nodejs version
 node_version: "18"
 # install local customizations as an extra package
+# Note: the standard `-e ref=GITREF` override controls the eScriptorium gitref only,
+# not the htr2hpc package. To deploy a specific htr2hpc branch or tag, use:
+#   -e htr2hpc_gitref=adroit
+htr2hpc_gitref: main
 python_extra_packages:
-  - git+https://github.com/Princeton-CDH/htr2hpc.git@adroit#egg=htr2hpc
+  - git+https://github.com/Princeton-CDH/htr2hpc.git@{{ htr2hpc_gitref }}#egg=htr2hpc
 
 # pul deploy user
 deploy_user: "conan"
