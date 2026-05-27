@@ -17,15 +17,11 @@ _If this PR has a deadline, specify it here. Leave blank if none._
 
 **Deadline:**
 
-### Geniza
-_Does this PR affect any Geniza-related configuration or playbooks?_
-
-- [ ] This PR affects Geniza — please tag @mabdellatif88 for review
-
 ### Reviewer Checklist
 _Include **discrete** checks that should be done by the reviewer beyond looking through
 code and/or file changes. Note that this check list will correspond to tasks within
 the PR overview page._
 
+- [ ] If this PR affects Geniza-related configuration or playbooks, @mabdellatif88 has been tagged for review
 - [ ] Check 1
 - [ ] Check 2
