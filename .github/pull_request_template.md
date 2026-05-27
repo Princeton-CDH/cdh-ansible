@@ -1,23 +1,31 @@
-## Description
+**Associated Issue(s):** resolves #
 
-<!-- Describe the changes in this PR and the motivation behind them. -->
+### Changes in this PR
+_Include all key changes in this pull request_
 
-## Deadline
+- Change 1
+- Change 2
 
-<!-- If this PR has a deadline, please specify it here (e.g., must be merged by YYYY-MM-DD). Leave blank if none. -->
+### Notes
+_Include any additional notes that will help in the reviewing of this pull request_
 
-**Deadline:** 
+- Note 1
+- Note 2
 
-## Geniza
+### Deadline
+_If this PR has a deadline, specify it here. Leave blank if none._
 
-<!-- Does this PR affect any Geniza-related configuration or playbooks? -->
+**Deadline:**
 
-- [ ] This PR affects Geniza
+### Geniza
+_Does this PR affect any Geniza-related configuration or playbooks?_
 
-If checked, please tag @mabdellatif88 for review.
+- [ ] This PR affects Geniza — please tag @mabdellatif88 for review
 
-## Checklist
+### Reviewer Checklist
+_Include **discrete** checks that should be done by the reviewer beyond looking through
+code and/or file changes. Note that this check list will correspond to tasks within
+the PR overview page._
 
-- [ ] Tested in a non-production environment
-- [ ] Relevant documentation updated
-- [ ] Reviewers assigned
+- [ ] Check 1
+- [ ] Check 2
