@@ -39,7 +39,7 @@ node_version: "18"
 # Note: the standard `-e ref=GITREF` override controls the eScriptorium gitref only,
 # not the htr2hpc package. To deploy a specific htr2hpc branch or tag, use:
 #   -e htr2hpc_gitref=adroit
-htr2hpc_gitref: develop
+htr2hpc_gitref: main
 python_extra_packages:
   - git+https://github.com/Princeton-CDH/htr2hpc.git@{{ htr2hpc_gitref }}#egg=htr2hpc
 
