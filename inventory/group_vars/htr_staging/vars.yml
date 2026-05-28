@@ -12,6 +12,9 @@ passenger_server_name: test-htr.princeton.edu
 application_db_name: "cdh_test_htr"
 application_dbuser_name: "cdh_test_htr"
 
+# staging deploys htr2hpc from develop; production uses main (set in group_vars/htr)
+htr2hpc_gitref: develop
+
 # observability
 beyla_enabled: true
 beyla_service_name: htr
