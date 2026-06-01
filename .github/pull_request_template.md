@@ -1,9 +1,8 @@
 **Associated Issue(s):** resolves #
 
-### Deadline
-_If this PR has a deadline, specify it here. Leave blank if none._
+_If this PR has a deadline, note it here. Remove if there is no deadline._
 
-**Deadline:**
+**Deadline for review**: 
 
 ### Changes in this PR
 _Include all key changes in this pull request_
