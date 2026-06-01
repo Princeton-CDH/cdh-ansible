@@ -147,6 +147,11 @@ supervisor_programs:
   # 2) celery workers (split by queue to prevent concurrent jobs from hanging)
   # based on the command in the full local deploy
   # (docker compose starts multiple celery workers with different queues/priorities)
+
+  # Remove the old single celery worker (replaced by per-queue workers below)
+  - name: "celery"
+    state: absent
+
   - name: "celery-main"
     command: "{{ django_app_path }}/env/bin/celery -A escriptorium worker -Q default --concurrency 1 -l INFO"
     state: present
