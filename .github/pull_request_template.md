@@ -1,5 +1,10 @@
 **Associated Issue(s):** resolves #
 
+### Deadline
+_If this PR has a deadline, specify it here. Leave blank if none._
+
+**Deadline:**
+
 ### Changes in this PR
 _Include all key changes in this pull request_
 
@@ -12,10 +17,6 @@ _Include any additional notes that will help in the reviewing of this pull reque
 - Note 1
 - Note 2
 
-### Deadline
-_If this PR has a deadline, specify it here. Leave blank if none._
-
-**Deadline:**
 
 ### Reviewer Checklist
 _Include **discrete** checks that should be done by the reviewer beyond looking through
