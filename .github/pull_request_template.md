@@ -20,8 +20,7 @@ _If this PR has a deadline, specify it here. Leave blank if none._
 ### Reviewer Checklist
 _Include **discrete** checks that should be done by the reviewer beyond looking through
 code and/or file changes. Note that this check list will correspond to tasks within
-the PR overview page._
+the PR overview page. If these changes has any impact on Geniza configuration or playbooks, include @mabdellatif88 on the request for review. If he should be tagged for secondary review, include a review task for the review to tag him after first-round review is complete._
 
-- [ ] If this PR affects Geniza-related configuration or playbooks, @mabdellatif88 has been tagged for review
 - [ ] Check 1
 - [ ] Check 2
