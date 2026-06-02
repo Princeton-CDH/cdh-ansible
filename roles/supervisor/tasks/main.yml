@@ -52,9 +52,6 @@
   when: item.state | default('present') == 'absent'
   notify: restart supervisor
 
-- name: Supervisor - force restart of Supervisor immediately if config changed
-  meta: flush_handlers
-
 - name: Supervisor - update to read new program configs
   community.general.supervisorctl:
     name: all
