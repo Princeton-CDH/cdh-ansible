@@ -33,10 +33,10 @@
       loop: "{{ supervisor_programs }}"
       # skip absent programs because they have already been removed and cannot be restarted
       when: item.state | default('present') != 'absent'
-    - name: Notify handler to restart nginx
-      ansible.builtin.meta: noop
-      notify:
-        - Restart nginx
+    - name: Restart nginx after escriptorium patches are applied
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
   environment:
     # escriptorium local settings REPLACES default settings, must be specified
     # via env var for django manage commands to pick up
