@@ -7,11 +7,12 @@
   remote_user: pulsys
   become: true
   roles:
+    - role: pulibrary.princeton_ansible.otel_collector
+      when: runtime_env == "staging"
+    - role: pulibrary.princeton_ansible.beyla
+      when: runtime_env == "staging"
+
     - deploy_user
-    - pulibrary.princeton_ansible.otel_collector
-  when: runtime_env == "staging"
-    - pulibrary.princeton_ansible.beyla
-  when: runtime_env == "staging"
     - postgresql
     - pulibrary.princeton_ansible.nginx
     - prodigy_setup
