@@ -7,11 +7,14 @@
   remote_user: pulsys
   become: true
   roles:
-    - create_deployment
+    - role: pulibrary.princeton_ansible.otel_collector
+      when: runtime_env | default('staging') == "staging"
+
+    - role: pulibrary.princeton_ansible.beyla
+      when: runtime_env | default('staging') == "staging"
+
     - pulibrary.princeton_ansible.otel_collector
-  when: runtime_env == "staging"
-    - pulibrary.princeton_ansible.beyla
-  when: runtime_env == "staging"
+    - create_deployment
     - deploy_user
     - build_dependencies
     - build_project_repo
