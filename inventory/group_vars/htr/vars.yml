@@ -20,6 +20,9 @@ gitref: dev-0.14.2
 repo: scripta/escriptorium
 # name of django application (used by build_project_repo)
 python_app: "escriptorium"
+# set version to match gitref since eScriptorium has no __version__ attribute;
+# build_project_repo will skip auto-detection when python_app_version is pre-set
+python_app_version: "{{ gitref }}"
 django_app: "{{ python_app }}"
 # django app & python requirements are nested under the app folder
 django_app_path: "{{ deploy }}/app"
