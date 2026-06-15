@@ -31,6 +31,6 @@ branch or tag, override the variable:
 ansible-playbook playbooks/escriptorium.yml -t reinstall-htr2hpc -e htr2hpc_gitref=0.6.0
 ```
 
-After reinstalling, the tag restarts nginx, Celery, and Django Channels to
+After reinstalling, the task restarts nginx, Celery, and Django Channels to
 pick up the new code. Use this tag whenever a new htr2hpc release has been
 published and needs to be deployed — it is not needed for other playbook changes.
