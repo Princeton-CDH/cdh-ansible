@@ -17,7 +17,7 @@
 
 The full deploy playbook does **not** reinstall the htr2hpc Python package by
 default — it only runs when eScriptorium itself is being redeployed. To update
-htr2hpc to a new release, use the `reinstall-htr2hpc` tag:
+htr2hpc to a new branch or release or to ensure changes on an existing branch are installed, use the `reinstall-htr2hpc` tag:
 
 ```sh
 ansible-playbook playbooks/escriptorium.yml -t reinstall-htr2hpc
