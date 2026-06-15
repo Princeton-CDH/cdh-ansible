@@ -74,8 +74,9 @@ deploy_env_vars:
   DJANGO_SETTINGS_MODULE: escriptorium.local_settings
   VERSION_DATE: "{{ gitref }}"  # deployed version, for display on home page
 
-deploy: "{{ install_root }}/{{ python_app_version }}-{{ short_hash }}"
-current_deploy: "{{ install_root }}/{{ python_app_version }}-{{ short_hash }}"
+# single deploy path - no versioning, no nesting
+deploy: "{{ install_root }}"
+current_deploy: "{{ install_root }}"
 python_app_path: "{{ deploy }}"
 python_venv_prompt: "escriptorium"
 # default requirements file is directly under the app; escriptorium has it nested
