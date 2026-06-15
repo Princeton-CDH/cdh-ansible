@@ -24,7 +24,7 @@ ansible-playbook playbooks/escriptorium.yml -t reinstall-htr2hpc
 ```
 
 This tag uninstalls the current htr2hpc package and reinstalls the version
-specified by `htr2hpc_gitref` (defaults to `main`). To deploy a specific
+specified by `htr2hpc_gitref` (defaults to `main` for production environment). To deploy a specific
 branch or tag, override the variable:
 
 ```sh
