@@ -4,6 +4,7 @@ gitref: '{{ ref | default("main") }}'
 # email prefix for admin emails
 email_prefix: "[CDH Web] "
 
+webpack_stats_check_enabled: false
 # preproduction must use a separate database from v3.x production
 # since both will need to run in tandem for several weeks
 # NOTE: this is currently different from staging and may impact replication
