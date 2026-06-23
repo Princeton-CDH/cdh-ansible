@@ -5,6 +5,29 @@
   become: true
   become_user: "{{ django_user }}"
   block:
+    - name: run_webpack | Set build command and stats path
+      ansible.builtin.set_fact:
+        run_webpack_build_command: >-
+          {{
+            webpack_build_qa
+            if runtime_env == "staging"
+            else webpack_build_prod
+            if runtime_env in ["production", "preproduction"]
+            else ""
+          }}
+        run_webpack_stats_file: >-
+          {{
+            webpack_stats_file
+            | default(npm_install_path ~ "/sitemedia/webpack-stats.json")
+          }}
+
+    - name: run_webpack | Fail if runtime_env is unsupported
+      ansible.builtin.fail:
+        msg: >-
+          Unsupported runtime_env={{ runtime_env }}.
+          Expected staging, production, or preproduction.
+      when: run_webpack_build_command | length == 0
+
     - name: run_webpack | Preflight package.json exists
       ansible.builtin.stat:
         path: "{{ npm_install_path }}/package.json"
@@ -24,33 +47,36 @@
           package.json={{ pkg.stat.exists | default(false) }},
           node_modules/.bin/webpack={{ webpack_shim.stat.exists | default(false) }}.
           Ensure build_npm ran for this same npm_install_path.
-      when: not (pkg.stat.exists | default(false)) or not (webpack_shim.stat.exists | default(false))
+      when: >
+        not (pkg.stat.exists | default(false))
+        or
+        not (webpack_shim.stat.exists | default(false))
 
-    - name: run_webpack | Run webpack in staging/QA mode
+    - name: run_webpack | Run webpack build
       ansible.builtin.shell: |
         set -euo pipefail
         export PATH="{{ npm_install_path }}/node_modules/.bin:${PATH}"
-        npm run {{ webpack_build_qa }}
+        npm run {{ run_webpack_build_command | quote }}
       args:
         chdir: "{{ npm_install_path }}"
         executable: /bin/bash
-      when: runtime_env == "staging"
+      register: webpack_build_result
+      changed_when: true
 
-    - name: run_webpack | Run webpack production build
-      ansible.builtin.shell: |
-        set -euo pipefail
-        export PATH="{{ npm_install_path }}/node_modules/.bin:${PATH}"
-        npm run {{ webpack_build_prod }}
-      args:
-        chdir: "{{ npm_install_path }}"
-        executable: /bin/bash
-      when: runtime_env in ["production", "preproduction"]
+    - name: run_webpack | Show webpack build output
+      ansible.builtin.debug:
+        msg: |
+          command: npm run {{ run_webpack_build_command }}
+          cwd: {{ npm_install_path }}
+          stdout:
+          {{ webpack_build_result.stdout | default('') }}
+          stderr:
+          {{ webpack_build_result.stderr | default('') }}
+      when: webpack_build_debug | default(false) | bool
 
-    # Post-build: validate the stats file that Geniza/Django reads.
-    # Set webpack_stats_check_enabled: false to skip for apps that don't generate this file.
     - name: run_webpack | Check webpack stats file exists
       ansible.builtin.stat:
-        path: "{{ npm_install_path }}/sitemedia/webpack-stats.json"
+        path: "{{ run_webpack_stats_file }}"
       register: stats
       changed_when: false
       when: webpack_stats_check_enabled | default(true)
@@ -58,27 +84,63 @@
     - name: run_webpack | Fail if webpack stats missing/empty
       ansible.builtin.fail:
         msg: >-
-          Missing or empty webpack stats file:
-          {{ npm_install_path }}/sitemedia/webpack-stats.json
+          Missing or empty webpack stats file: {{ run_webpack_stats_file }}.
+          The webpack build completed successfully, but did not create the stats
+          file expected by Django. Either fix the webpack config to write this
+          file or set webpack_stats_file to the actual generated stats path.
       when:
         - webpack_stats_check_enabled | default(true)
-        - not (stats.stat.exists | default(false)) or (stats.stat.size | default(0) | int == 0)
+        - >
+          not (stats.stat.exists | default(false))
+          or
+          (stats.stat.size | default(0) | int == 0)
 
     - name: run_webpack | Validate webpack stats JSON
-      ansible.builtin.command: >
-        python3 -c 'import json; json.load(open("{{ npm_install_path }}/sitemedia/webpack-stats.json")); print("ok")'
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - "import json, sys; json.load(open(sys.argv[1])); print('ok')"
+          - "{{ run_webpack_stats_file }}"
       changed_when: false
       when: webpack_stats_check_enabled | default(true)
 
   rescue:
+    - name: run_webpack | Find possible webpack stats files
+      ansible.builtin.find:
+        paths: "{{ npm_install_path }}"
+        patterns:
+          - "*webpack*stats*.json"
+          - "*stats*.json"
+        recurse: true
+        file_type: file
+      register: possible_webpack_stats
+      failed_when: false
+
     - name: run_webpack | Show webpack failure output
       ansible.builtin.debug:
         msg: |
-          stdout: {{ ansible_failed_result.stdout | default('') }}
-          stderr: {{ ansible_failed_result.stderr | default('') }}
-          rc: {{ ansible_failed_result.rc | default('') }}
+          failed task: {{ ansible_failed_task.name | default('unknown') }}
+          failed message: {{ ansible_failed_result.msg | default('') }}
+
+          npm command:
+          npm run {{ run_webpack_build_command | default('unknown') }}
+
+          npm stdout:
+          {{ webpack_build_result.stdout | default('') }}
+
+          npm stderr:
+          {{ webpack_build_result.stderr | default('') }}
+
+          possible stats files:
+          {{
+            possible_webpack_stats.files
+            | default([])
+            | map(attribute='path')
+            | list
+          }}
       failed_when: false
 
     - name: run_webpack | Fail
       ansible.builtin.fail:
-        msg: "run_webpack failed (npm/webpack build). See debug output above."
+        msg: "run_webpack failed. See debug output above."
