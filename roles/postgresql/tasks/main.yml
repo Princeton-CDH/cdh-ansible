@@ -2,11 +2,47 @@
 - name: Setup Postgres Client and Configuration
   when: postgres_setup_enabled | bool
   block:
-    - name: Make sure CA certificates are available
+    - name: Make sure CA certificates and curl are available
       become: true
       ansible.builtin.apt:
-        pkg: ca-certificates
+        name:
+          - ca-certificates
+          - curl
         state: present
+        update_cache: true
+
+    - name: Ensure PostgreSQL apt key directory exists
+      become: true
+      ansible.builtin.file:
+        path: /usr/share/postgresql-common/pgdg
+        state: directory
+        mode: "0755"
+
+    - name: Install PostgreSQL apt repository key
+      become: true
+      ansible.builtin.get_url:
+        url: "{{ postgres_apt_key_url }}"
+        dest: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+        mode: "0644"
+
+    - name: Configure PostgreSQL apt repository
+      become: true
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/pgdg.sources
+        mode: "0644"
+        content: |
+          Types: deb
+          URIs: https://apt.postgresql.org/pub/repos/apt
+          Suites: {{ ansible_distribution_release }}-pgdg
+          Components: main
+          Signed-By: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+      register: postgres_apt_repo
+
+    - name: Update apt cache after adding PostgreSQL repository
+      become: true
+      ansible.builtin.apt:
+        update_cache: true
+      when: postgres_apt_repo.changed
 
     - name: Install postgres client libraries
       become: true
@@ -19,22 +55,14 @@
         state: present
         update_cache: true
 
+    - name: set fqdn for use in pg_hba
+      ansible.builtin.set_fact:
+        "pg_hba_fqdn={{ ansible_facts['fqdn'] }}"
+
     - name: Ensure access to postgres server
       become: true
       ansible.builtin.lineinfile:
         path: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
-        line: "host    all             all             {{ ansible_default_ipv4.address }}/32       md5"
+        line: "host    all             all             {{ pg_hba_fqdn }}       md5"
       delegate_to: "{{ postgres_host }}"
       notify: Reload remote postgres
-
-- name: Create postgres user
-  ansible.builtin.import_tasks: create_user.yml
-  when: postgres_setup_enabled | bool
-
-- name: Create postgres database
-  ansible.builtin.import_tasks: create_db.yml
-  when: postgres_setup_enabled | bool
-
-- name: Backup postgres database
-  ansible.builtin.import_tasks: backup_db.yml
-  when: postgres_backup_enabled | bool
