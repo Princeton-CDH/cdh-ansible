@@ -12,7 +12,7 @@ application_dbuser_password: changethis
 application_dbuser_role_attr_flags: ""
 # apt settings
 postgres_apt_key_url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
-postgres_apt_repository: 'deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main {{ postgres_version }}'
+postgres_apt_repository_url: "https://apt.postgresql.org/pub/repos/apt"
 # task settings
 deploy_user: conan
 deploy_user_venv: "/home/{{ deploy_user }}/venv"
@@ -20,3 +20,4 @@ db_backup_path: "/home/{{ deploy_user }}/last_{{ application_db_name }}.sql"
 # feature flags
 postgres_setup_enabled: true
 postgres_backup_enabled: true
+
