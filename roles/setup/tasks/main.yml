@@ -11,9 +11,9 @@
   ansible.builtin.import_tasks: nfs.yml
   when: nfs_enabled
 
-  #- name: Setup - configure TigerData NFS mount point
-  # ansible.builtin.import_tasks: tigerdata_nfs.yml
-  # when: tigerdata_enabled
+- name: Setup - configure TigerData NFS mount point
+  ansible.builtin.import_tasks: tigerdata_nfs.yml
+  when: tigerdata_enabled
 
 - name: Setup - install and configure rclone
   ansible.builtin.import_tasks: rclone.yml
