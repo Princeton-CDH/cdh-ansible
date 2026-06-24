@@ -1,10 +1,40 @@
 ---
 # roles/supervisor
-- name: Supervisor - Ensure Supervisor is installed via pip.
+
+- name: Supervisor - ensure Python venv dependencies are installed.
+  ansible.builtin.apt:
+    name:
+      - python3-pip
+      - python3-venv
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+
+- name: Supervisor - ensure Supervisor is installed in a virtualenv.
   ansible.builtin.pip:
     name: supervisor
     state: present
     version: "{{ supervisor_version | default(omit) }}"
+    virtualenv: "{{ supervisor_venv_path }}"
+    virtualenv_command: "{{ ansible_python_interpreter | default('/usr/bin/python3') }} -m venv"
+  become: true
+
+- name: Supervisor - ensure supervisord command is available.
+  ansible.builtin.file:
+    src: "{{ supervisor_venv_path }}/bin/supervisord"
+    dest: "{{ supervisor_bin_path }}"
+    state: link
+    force: true
+  become: true
+
+- name: Supervisor - ensure supervisorctl command is available.
+  ansible.builtin.file:
+    src: "{{ supervisor_venv_path }}/bin/supervisorctl"
+    dest: "{{ supervisorctl_bin_path }}"
+    state: link
+    force: true
+  become: true
 
 - name: Supervisor - ensure log dir exists.
   ansible.builtin.file:
@@ -52,16 +82,20 @@
   when: item.state | default('present') == 'absent'
   notify: restart supervisor
 
+- name: Supervisor - ensure started and enabled.
+  ansible.builtin.service:
+    name: supervisord
+    state: "{{ 'started' if supervisor_started else 'stopped' }}"
+    enabled: "{{ supervisor_enabled }}"
+
 - name: Supervisor - update to read new program configs
   community.general.supervisorctl:
     name: all
     state: present
     username: "{{ supervisor_user }}"
     password: "{{ supervisor_password }}"
-  when: supervisor_programs | length > 0
+    supervisorctl_path: "{{ supervisorctl_bin_path }}"
+  when:
+    - supervisor_started
+    - supervisor_programs | length > 0
 
-- name: Supervisor - ensure started and enabled.
-  ansible.builtin.service:
-    name: supervisord
-    state: "{{ 'started' if supervisor_started else 'stopped' }}"
-    enabled: "{{ supervisor_enabled }}"

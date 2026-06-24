@@ -32,7 +32,10 @@ python_venv_path_prefix: "app/"
 # symlink for web application
 symlink: "{{ app_name }}"
 # use python 3.11; kraken doesn't yet support 3.12
-python_version: "3.11"
+python_version_by_distribution_release:
+  jammy: "3.11"
+  noble: "3.12"
+python_version: "{{ python_version_by_distribution_release[ansible_distribution_release | lower] }}"
 # nodejs version
 node_version: "18"
 # install local customizations as an extra package
