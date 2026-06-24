@@ -2,5 +2,6 @@
 ---
 # vars file for roles/supervisor
 #
+supervisor_venv_path: /opt/supervisor
 supervisor_bin_path: /usr/local/bin/supervisord
 supervisorctl_bin_path: /usr/local/bin/supervisorctl
