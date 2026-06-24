@@ -67,6 +67,22 @@
       delegate_to: "{{ postgres_host }}"
       notify: Reload remote postgres
 
+- name: PostgreSQL - set client address for pg_hba
+  ansible.builtin.set_fact:
+    pg_hba_client_address: "{{ ansible_default_ipv4.address }}/32"
+
+- name: PostgreSQL - ensure app host can access postgres server
+  become: true
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
+    line: "host    all             all             {{ pg_hba_client_address }}       md5"
+    state: present
+  delegate_to: "{{ postgres_host }}"
+  notify: Reload remote postgres
+
+- name: PostgreSQL - reload postgres before creating database resources
+  ansible.builtin.meta: flush_handlers
+
 - name: Create postgres user
   ansible.builtin.import_tasks: create_user.yml
   when: postgres_setup_enabled | bool
