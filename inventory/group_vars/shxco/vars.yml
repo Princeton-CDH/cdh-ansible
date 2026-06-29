@@ -18,6 +18,9 @@ python_version: 3.12
 # nodejs version
 node_version: "18"
 
+# skip webpack stats check
+webpack_stats_check_enabled: false
+
 # Override clone root to use deploy user home instead of root
 clone_root: "/home/{{ deploy_user }}/repos"
 # use the same install root path on both staging and production
