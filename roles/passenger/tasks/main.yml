@@ -83,6 +83,17 @@
         filename: passenger
         update_cache: false
 
+    - name: Phusion | Prefer Phusion Passenger packages
+      ansible.builtin.copy:
+        dest: /etc/apt/preferences.d/phusion-passenger
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          Package: passenger libnginx-mod-http-passenger
+          Pin: origin "oss-binaries.phusionpassenger.com"
+          Pin-Priority: 1001
+
     - name: Passenger | Clean apt cache
       ansible.builtin.command: apt-get clean
       changed_when: false
@@ -110,13 +121,24 @@
       when: cache_update.rc != 0
 
     # Nginx and passenger installation.
-    - name: Install Nginx and Passenger.
+    - name: Install Nginx.
       tags:
         - setup
         - never
       become: true
       ansible.builtin.apt:
-        name: "{{ nginx_passenger_packages }}"
+        name: nginx-extras
+        state: present
+
+    - name: Install Passenger and Nginx Passenger module from Phusion.
+      tags:
+        - setup
+        - never
+      become: true
+      ansible.builtin.apt:
+        name:
+          - passenger
+          - libnginx-mod-http-passenger
         state: present
 
     # Nginx and passenger configuration.

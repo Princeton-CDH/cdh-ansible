@@ -1,3 +1,15 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # defaults file for roles/setup
+# rclone install defaults
+rclone_version: "1.68.2"
+rclone_download_url: "https://downloads.rclone.org/v{{ rclone_version }}/rclone-v{{ rclone_version }}-linux-amd64.zip"
+rclone_download_dest: "/tmp/rclone-v{{ rclone_version }}-linux-amd64.zip"
+rclone_extract_path: "/tmp/rclone-v{{ rclone_version }}-linux-amd64"
+rclone_user: "conan"
+
+# rclone config defaults
+rclone_user_dir: "/home/{{ rclone_user }}"
+rclone_config_dir: "{{ rclone_user_dir }}/.config/rclone"
+rclone_config_file: "{{ rclone_config_dir }}/rclone.conf"
+rclone_gdrive_credentials_file: "{{ rclone_config_dir }}/pul-gcdc-02ad5e9d8029.json"

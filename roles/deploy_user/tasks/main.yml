@@ -21,6 +21,14 @@
         uid: "{{ deploy_user_uid }}"
         group: "{{ deploy_user }}"   # primary group
 
+    - name: Deploy_user - ensure deploy user home directory ownership
+      ansible.builtin.file:
+        path: "/home/{{ deploy_user }}"
+        state: directory
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        mode: "0755"
+
     - name: Deploy_user - create bash profile
       ansible.builtin.template:
         src: "bash_profile.j2"

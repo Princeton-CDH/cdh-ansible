@@ -20,3 +20,4 @@ db_backup_path: "/home/{{ deploy_user }}/last_{{ application_db_name }}.sql"
 # feature flags
 postgres_setup_enabled: true
 postgres_backup_enabled: true
+

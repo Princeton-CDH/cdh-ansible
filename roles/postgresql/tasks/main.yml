@@ -44,16 +44,30 @@
         update_cache: true
       when: postgres_apt_repo.changed
 
-    - name: Install postgres client libraries
+    - name: Install Python postgres support packages
+      become: true
+      ansible.builtin.apt:
+       name:
+         - python3-dev
+         - python3-psycopg2
+       state: present
+       update_cache: true
+       cache_valid_time: 3600
+
+    - name: Install PostgreSQL client libraries from PGDG
       become: true
       ansible.builtin.apt:
         name:
+          - libpq5
           - libpq-dev
-          - python3-dev
-          - python3-psycopg2
           - "postgresql-client-{{ postgres_version }}"
-        state: present
+        state: latest
         update_cache: true
+        default_release: "{{ ansible_distribution_release }}-pgdg"
+
+    - name: set fqdn for use in pg_hba
+      ansible.builtin.set_fact:
+        "pg_hba_fqdn={{ ansible_facts['fqdn'] }}"
 
     - name: set fqdn for use in pg_hba
       ansible.builtin.set_fact:
@@ -94,3 +108,4 @@
 - name: Backup postgres database
   ansible.builtin.import_tasks: backup_db.yml
   when: postgres_backup_enabled | bool
+
