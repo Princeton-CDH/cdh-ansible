@@ -11,5 +11,6 @@ This site is generated from the Markdown files under `docs/` in the [cdh-ansible
 README
 deployment-guide
 applications/index
+roles/index
 inventory.generated
 ```

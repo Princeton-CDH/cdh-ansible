@@ -15,6 +15,10 @@ docs/_build/
 # Sphinx-generated pages (see docs/_ext/inventory_docs.py)
 docs/inventory.generated.md
 
+# antsibull-docs shim + generated role RST (see docs/_ext/role_docs.py)
+docs/_antsibull/
+docs/roles/*_role.rst
+
 # ignore roles installed from ansible galaxy
 roles/geerlingguy.supervisor
 .ansible/roles

@@ -23,8 +23,14 @@ extensions = [
     # pages that use the .sphinx-datatable class).
     "sphinxcontrib.jquery",
     "sphinx_datatables",
+    # Ansible-specific RST roles/directives (``ansible-option-*``, ``O(...)``
+    # cross-references, etc.) used by antsibull-docs generated pages.
+    "sphinx_antsibull_ext",
     # Local extension: generates docs/inventory.generated.md from inventory/.
     "inventory_docs",
+    # Local extension: shims selected roles into a collection layout and
+    # runs antsibull-docs to generate per-role RST.
+    "role_docs",
 ]
 
 # DataTables options applied to every ``.sphinx-datatable`` table on the site.
@@ -34,6 +40,15 @@ datatables_options = {
     "info": False,         # hide "Showing X of Y" footer
     "order": [],           # respect the source order until the user sorts
 }
+
+# antsibull-docs default option-table CSS is light-only. ``default-autodark``
+# ships both light and dark palettes and swaps between them via
+# ``@media (prefers-color-scheme: dark)``. Furo's manual theme toggle uses
+# ``data-theme`` attributes and is not covered here — visitors who flip the
+# toggle against their OS preference will see the wrong palette. Acceptable
+# trade-off for a small doc site; revisit with a custom CSS override if
+# multiple readers hit it.
+antsibull_ext_color_scheme = "default-autodark"
 
 # Treat Markdown as the primary source format.
 source_suffix = {
@@ -59,6 +74,9 @@ myst_fence_as_directive = ["mermaid"]
 exclude_patterns = [
     "_build",
     "_ext",
+    # antsibull-docs shim tree + intermediate RST (see role_docs.py).
+    # The published role RST files live under docs/roles/ and are picked up.
+    "_antsibull",
     "Thumbs.db",
     ".DS_Store",
 ]
