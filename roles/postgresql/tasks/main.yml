@@ -69,6 +69,10 @@
       ansible.builtin.set_fact:
         "pg_hba_fqdn={{ ansible_facts['fqdn'] }}"
 
+    - name: set fqdn for use in pg_hba
+      ansible.builtin.set_fact:
+        "pg_hba_fqdn={{ ansible_facts['fqdn'] }}"
+
     - name: Ensure access to postgres server
       become: true
       ansible.builtin.lineinfile:
