@@ -1,4 +1,4 @@
-# Documentation for CDH ansible playbooks and project infrastructure
+# Access to PUL VMs
 
 ## Application-specific documentation
 

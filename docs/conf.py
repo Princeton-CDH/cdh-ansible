@@ -26,7 +26,7 @@ extensions = [
     # Ansible-specific RST roles/directives (``ansible-option-*``, ``O(...)``
     # cross-references, etc.) used by antsibull-docs generated pages.
     "sphinx_antsibull_ext",
-    # Local extension: generates docs/inventory.generated.md from inventory/.
+    # Local extension: generates docs/inventory.md from inventory/.
     "inventory_docs",
     # Local extension: shims selected roles into a collection layout and
     # runs antsibull-docs to generate per-role RST.

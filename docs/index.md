@@ -8,10 +8,10 @@ This site is generated from the Markdown files under `docs/` in the [cdh-ansible
 :maxdepth: 2
 :caption: Contents
 
-README
 deployment-guide
 applications/index
 roles/index
 adr/index
-inventory.generated
+inventory
+README
 ```

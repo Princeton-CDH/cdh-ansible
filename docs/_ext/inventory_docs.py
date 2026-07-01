@@ -1,9 +1,9 @@
 """Sphinx extension: generate an inventory reference page from ``inventory/``.
 
 Parses ``inventory/all_hosts`` as INI at build time and writes
-``docs/inventory.generated.md``, which contains a single sortable/filterable
-table (via ``sphinx-datatables``) with one row per application and columns
-for staging vs production hosts.
+``docs/inventory.md``, which contains a single sortable/filterable table
+(via ``sphinx-datatables``) with one row per application and columns for
+staging vs production hosts.
 
 Design notes:
 
@@ -158,7 +158,7 @@ def _generate(app: Sphinx) -> None:
         )
         return
 
-    out = Path(app.srcdir) / "inventory.generated.md"
+    out = Path(app.srcdir) / "inventory.md"
     out.write_text(_render(groups), encoding="utf-8")
     logger.info("inventory_docs: wrote %s", out.relative_to(repo_root))
 
