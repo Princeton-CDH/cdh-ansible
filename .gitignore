@@ -12,6 +12,9 @@
 # Sphinx build output
 docs/_build/
 
+# Sphinx-generated pages (see docs/_ext/inventory_docs.py)
+docs/inventory.generated.md
+
 # ignore roles installed from ansible galaxy
 roles/geerlingguy.supervisor
 .ansible/roles

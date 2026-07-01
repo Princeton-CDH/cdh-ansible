@@ -3,6 +3,12 @@
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
+# Make local extensions in docs/_ext/ importable.
+sys.path.insert(0, str(Path(__file__).parent / "_ext"))
+
 # -- Project information -----------------------------------------------------
 project = "CDH Ansible"
 author = "Princeton CDH"
@@ -13,6 +19,8 @@ extensions = [
     "myst_parser",
     "sphinx_copybutton",
     "sphinxcontrib.mermaid",
+    # Local extension: generates docs/inventory.generated.md from inventory/.
+    "inventory_docs",
 ]
 
 # Treat Markdown as the primary source format.
@@ -38,6 +46,7 @@ myst_fence_as_directive = ["mermaid"]
 # Files/dirs to exclude from the doc build.
 exclude_patterns = [
     "_build",
+    "_ext",
     "Thumbs.db",
     ".DS_Store",
 ]
