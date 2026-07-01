@@ -1,0 +1,123 @@
+---
+# Formal argument specification for the deploy_user role.
+#
+# Ansible validates role invocations against this spec at runtime (starting
+# with ansible-core 2.11). It is also the source for generated documentation.
+#
+# Variables that this role owns (with defaults in defaults/main.yml) are
+# listed first; ambient variables set by callers or sibling roles are marked
+# ``required: false`` and described so readers can trace where they come from.
+argument_specs:
+  main:
+    short_description: >-
+      Create and configure the CDH deployment user (default ``conan``).
+    description:
+      - >-
+        Provisions a dedicated system user for automated deployments, ensures
+        matching UID/GID for cross-node consistency, generates and installs
+        SSH keys, hardens ``sshd_config`` to allow only the deploy user, and
+        drops a ``.profile`` that activates the app's Python virtualenv on
+        interactive login.
+      - >-
+        The role depends on ``build_dependencies`` (see ``meta/main.yml``).
+        Setup tasks are tagged ``setup,never`` and are skipped unless the
+        playbook is invoked with ``--tags=all,setup``.
+    author:
+      - Center for Digital Humanities @ Princeton
+    options:
+      # ---------------------------------------------------------------------
+      # Role-owned variables (defined in defaults/main.yml)
+      # ---------------------------------------------------------------------
+      deploy_user:
+        type: str
+        default: conan
+        description: Name of the deployment user and its primary group.
+      deploy_user_uid:
+        type: int
+        required: true
+        description:
+          - >-
+            Numeric UID for the deployment user; also used as the GID for the
+            matching primary group so file ownership is consistent across
+            nodes (important for ``rsync`` between application and Solr
+            servers). Must be set per host; no default is provided.
+      deploy_user_shell:
+        type: str
+        default: /bin/bash
+        description: Login shell for the deployment user.
+      webapp_group:
+        type: str
+        default: www-data
+        description: >-
+          Existing webserver group on the target system. The deployment
+          user is added as a supplementary member so it can write to shared
+          web-server-owned files (logs, media, etc.).
+      single_app:
+        type: bool
+        default: true
+        description: >-
+          When ``true``, the generated ``.profile`` includes an ``activate``
+          alias that ``cd``s into the current deploy and sources its Python
+          virtualenv. When ``false``, no auto-activation is set up and
+          ``alias_apps`` is consulted to build per-app shortcuts instead.
+      alias_apps:
+        type: dict
+        default: {}
+        description:
+          - >-
+            Mapping of ``{alias_name: install_path}`` used only when
+            ``single_app`` is ``false``. For each entry the role adds a
+            shell alias that ``cd``s into ``<install_path>/current`` and
+            sources the app's virtualenv. On interactive login the profile
+            prints the list of configured aliases.
+      python_venv_path_prefix:
+        type: str
+        default: ""
+        description: >-
+          Optional path fragment prepended to ``env/bin/activate`` when
+          building shell aliases. Use when the virtualenv is not a direct
+          sibling of the current deploy directory.
+
+      # ---------------------------------------------------------------------
+      # Ambient variables (set by callers / sibling roles)
+      # ---------------------------------------------------------------------
+      # These are not owned by deploy_user but are referenced by
+      # templates/bash_profile.j2. They are listed here so consumers of this
+      # spec can see the role's full input surface.
+      runtime_env:
+        type: str
+        required: false
+        description:
+          - >-
+            Deployment environment name (e.g. ``staging``, ``production``).
+            Exported as ``DJANGO_ENV`` in the deploy user's ``.profile`` for
+            django-split-settings-based apps. Typically set via
+            ``-e runtime_env=<env>`` on the playbook command line; see
+            ``README.md`` for defaults per environment.
+      install_root:
+        type: str
+        required: false
+        description: >-
+          Filesystem root under which the app is installed. When defined
+          together with ``single_app: true``, the generated ``activate``
+          alias uses it to locate the current deploy. Normally set by the
+          ``deploy`` / ``configure`` roles.
+      current_deploy:
+        type: str
+        required: false
+        description: >-
+          Path to the currently-active deploy directory. Referenced by the
+          ``activate`` alias in the deploy user's ``.profile``. Set by the
+          ``deploy`` role.
+      app_name:
+        type: str
+        required: false
+        description: >-
+          Application identifier used as a comment in the generated
+          ``.profile`` header. Purely cosmetic; safe to omit.
+      deploy_env_vars:
+        type: dict
+        required: false
+        description: >-
+          Optional mapping of extra environment variables to export from the
+          deploy user's ``.profile``. Each key becomes an ``export`` line.
