@@ -77,6 +77,9 @@ exclude_patterns = [
     # antsibull-docs shim tree + intermediate RST (see role_docs.py).
     # The published role RST files live under docs/roles/ and are picked up.
     "_antsibull",
+    # ADR template is a copy source, not a decision record; hide it from
+    # the built site while keeping it visible on GitHub.
+    "adr/template.md",
     "Thumbs.db",
     ".DS_Store",
 ]

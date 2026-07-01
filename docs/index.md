@@ -12,5 +12,6 @@ README
 deployment-guide
 applications/index
 roles/index
+adr/index
 inventory.generated
 ```
