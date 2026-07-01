@@ -19,9 +19,21 @@ extensions = [
     "myst_parser",
     "sphinx_copybutton",
     "sphinxcontrib.mermaid",
+    # sphinx-datatables requires sphinxcontrib.jquery (jQuery is loaded on
+    # pages that use the .sphinx-datatable class).
+    "sphinxcontrib.jquery",
+    "sphinx_datatables",
     # Local extension: generates docs/inventory.generated.md from inventory/.
     "inventory_docs",
 ]
+
+# DataTables options applied to every ``.sphinx-datatable`` table on the site.
+# Reference: https://datatables.net/reference/option
+datatables_options = {
+    "paging": False,       # inventory is small; show everything
+    "info": False,         # hide "Showing X of Y" footer
+    "order": [],           # respect the source order until the user sorts
+}
 
 # Treat Markdown as the primary source format.
 source_suffix = {

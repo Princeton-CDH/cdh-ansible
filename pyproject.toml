@@ -25,6 +25,8 @@ docs = [
     "furo>=2024.8.6",
     "sphinx-copybutton>=0.5",
     "sphinxcontrib-mermaid>=1.0",
+    "sphinx-datatables>=1",
+    "sphinxcontrib-jquery>=4",
 ]
 
 [tool.uv]

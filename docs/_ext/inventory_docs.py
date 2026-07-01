@@ -1,204 +1,172 @@
 """Sphinx extension: generate an inventory reference page from ``inventory/``.
 
-On ``builder-inited`` we shell out to ``ansible-inventory`` (which lives in
-the same environment Sphinx is running in) and render a Markdown page listing
-applications, environments, and hostnames.
-
-The generated file is written to ``docs/inventory.generated.md`` and marked
-``:orphan:`` so it does not need to appear in any toctree. This keeps the page
-build-checked but unlinked from the site nav until the team decides whether to
-publish hostnames publicly.
+Parses ``inventory/all_hosts`` as INI at build time and writes
+``docs/inventory.generated.md``, which contains a single sortable/filterable
+table (via ``sphinx-datatables``) with one row per application and columns
+for staging vs production hosts.
 
 Design notes:
 
-- No variable values are emitted. Only group structure and hostnames — the
-  same information that is already in ``inventory/all_hosts``.
-- ``ansible-inventory`` is invoked with ``ANSIBLE_VAULT_IDENTITY_LIST`` cleared
-  so the build does not attempt to decrypt vault variables. Structure and
-  hostnames do not require decryption.
-- We use ``--list --yaml`` for structured data and ``--graph`` for a raw tree
-  view; both are appended to the page.
+- We parse the inventory file directly rather than shelling out to
+  ``ansible-inventory``. The file is a static INI-ish document; ``configparser``
+  handles it in ~50 lines and avoids any need to worry about vault decryption
+  or Ansible being importable at doc-build time.
+- Only group/host membership is emitted. No variable values are read.
+- The generated page is linked from ``index.md``'s toctree; the extension
+  overwrites it on every build.
+- The table is rendered with the ``csv-table`` directive and given the
+  ``sphinx-datatable`` CSS class so ``sphinx-datatables`` upgrades it to a
+  sortable/searchable table in the HTML output.
 """
 
 from __future__ import annotations
 
-import os
-import subprocess
+import configparser
 from pathlib import Path
 from typing import Any
 
-import yaml
 from sphinx.application import Sphinx
 from sphinx.util import logging
 
 logger = logging.getLogger(__name__)
 
-# Groups that are pure organizational containers, not applications.
-# Excluded from the "Applications" table but still appear in the full graph.
-_META_GROUPS = {"all", "ungrouped", "staging", "production", "prod", "dev"}
+# Purely organizational groups; not applications. Excluded from the app list.
+_ENV_GROUPS = {"staging", "production", "prod", "dev"}
 
 
-def _run_ansible_inventory(repo_root: Path, args: list[str]) -> str:
-    """Invoke ``ansible-inventory`` from the repo root without vault access."""
-    env = os.environ.copy()
-    # Prevent any attempt to load the vault password script during build.
-    env.pop("ANSIBLE_VAULT_IDENTITY_LIST", None)
-    result = subprocess.run(
-        ["ansible-inventory", *args],
-        cwd=repo_root,
-        env=env,
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    return result.stdout
+def _parse_inventory(path: Path) -> dict[str, set[str]]:
+    """Return ``{group_name: set(hostnames)}`` with children fully expanded.
 
+    Handles the two INI section styles used in ``inventory/all_hosts``:
 
-class _VaultTolerantLoader(yaml.SafeLoader):
-    """SafeLoader that treats unknown YAML tags (e.g. ``!vault``) as plain text.
-
-    ``ansible-inventory --list --yaml`` emits ``!vault`` tagged scalars for
-    encrypted values. We do not need their contents — this loader lets us
-    parse the structure without importing Ansible's vault machinery.
+    - ``[group]`` — one host per line
+    - ``[group:children]`` — one child *group* per line
     """
+    parser = configparser.ConfigParser(allow_no_value=True, delimiters=("=",))
+    # Preserve case; Ansible group names are case-sensitive by convention.
+    parser.optionxform = str  # type: ignore[assignment]
+    parser.read(path, encoding="utf-8")
+
+    direct_hosts: dict[str, set[str]] = {}
+    children: dict[str, set[str]] = {}
+
+    for section in parser.sections():
+        if section.endswith(":children"):
+            group = section[: -len(":children")]
+            children.setdefault(group, set()).update(parser.options(section))
+        else:
+            direct_hosts.setdefault(section, set()).update(parser.options(section))
+
+    # Recursively expand children into a flat hosts-per-group map.
+    resolved: dict[str, set[str]] = {}
+
+    def _resolve(group: str, seen: set[str]) -> set[str]:
+        if group in resolved:
+            return resolved[group]
+        if group in seen:  # defensive: cycle guard
+            return set()
+        seen = seen | {group}
+        hosts = set(direct_hosts.get(group, ()))
+        for child in children.get(group, ()):
+            hosts |= _resolve(child, seen)
+        resolved[group] = hosts
+        return hosts
+
+    for group in set(direct_hosts) | set(children):
+        _resolve(group, set())
+    return resolved
 
 
-def _ignore_unknown_tag(loader: yaml.Loader, tag_suffix: str, node: yaml.Node) -> str:
-    return "<encrypted>"
-
-
-_VaultTolerantLoader.add_multi_constructor("!", _ignore_unknown_tag)
-
-
-def _load_inventory(repo_root: Path) -> dict[str, Any]:
-    """Return the parsed ``--list --yaml`` inventory as a dict."""
-    raw = _run_ansible_inventory(repo_root, ["--list", "--yaml"])
-    data = yaml.load(raw, Loader=_VaultTolerantLoader)  # noqa: S506 - safe: custom loader
-    if not isinstance(data, dict):
-        raise RuntimeError("ansible-inventory returned unexpected shape")
-    return data
-
-
-def _walk_groups(inventory: dict[str, Any]) -> dict[str, dict[str, Any]]:
-    """Flatten the nested inventory dict into ``{group_name: merged_node}``.
-
-    ``ansible-inventory --list --yaml`` repeats group definitions wherever
-    they appear in the hierarchy — e.g. ``cdhweb_staging`` shows up both
-    under ``cdhweb`` (with hosts) and under ``staging`` (as an empty
-    reference). We merge hosts and children across all occurrences so the
-    lookup returns the full picture.
-    """
-    flat: dict[str, dict[str, Any]] = {}
-
-    def _visit(name: str, node: dict[str, Any] | None) -> None:
-        if not isinstance(node, dict):
-            return
-        merged = flat.setdefault(name, {"hosts": {}, "children": {}})
-        for host_name, host_vars in (node.get("hosts") or {}).items():
-            merged["hosts"].setdefault(host_name, host_vars)
-        for child_name, child_node in (node.get("children") or {}).items():
-            merged["children"].setdefault(child_name, True)
-            _visit(child_name, child_node)
-
-    for name, node in (inventory.get("all") or {}).get("children", {}).items():
-        _visit(name, node)
-    return flat
-
-
-def _app_groups(groups: dict[str, dict[str, Any]]) -> list[str]:
+def _app_groups(groups: dict[str, set[str]]) -> list[str]:
     """Return application group names, sorted.
 
-    Heuristic: a group is an "application" if it has ``children`` that look
-    like ``<name>_staging`` / ``<name>_production``. This matches the
-    convention documented in ``AGENTS.md``.
+    An app is any group with either an ``<name>_staging`` or
+    ``<name>_production`` counterpart — matching the AGENTS.md convention.
+    Groups ending in ``_staging``/``_production`` themselves and the
+    top-level environment containers are excluded.
     """
     apps: list[str] = []
-    for name, node in groups.items():
-        if name in _META_GROUPS:
+    for name in groups:
+        if name in _ENV_GROUPS:
             continue
-        children = node.get("children") or {}
-        if any(
-            c == f"{name}_staging" or c == f"{name}_production" for c in children
-        ):
+        if name.endswith("_staging") or name.endswith("_production"):
+            continue
+        if f"{name}_staging" in groups or f"{name}_production" in groups:
             apps.append(name)
     return sorted(apps)
 
 
-def _hosts_in(groups: dict[str, dict[str, Any]], group: str) -> list[str]:
-    """Return the direct + descendant hosts of ``group``, deduplicated."""
-    node = groups.get(group)
-    if not node:
-        return []
-    # ``hosts`` in --list --yaml is a mapping {hostname: {vars...}}
-    hosts: set[str] = set((node.get("hosts") or {}).keys())
-    for child in (node.get("children") or {}):
-        hosts.update(_hosts_in(groups, child))
-    return sorted(hosts)
+def _format_hosts(hosts: set[str]) -> str:
+    """Render a set of hostnames as monospaced, line-separated cell content."""
+    if not hosts:
+        return "—"
+    # ``<br>`` inside a csv-table cell renders as a line break in HTML output.
+    return "<br>".join(f"``{h}``" for h in sorted(hosts))
 
 
-def _render(inventory: dict[str, Any], graph: str) -> str:
-    groups = _walk_groups(inventory)
+def _csv_escape(value: str) -> str:
+    """Quote a cell for the csv-table directive.
+
+    csv-table uses standard CSV rules: cells containing commas or quotes must
+    be double-quoted, and embedded quotes are doubled.
+    """
+    if "," in value or '"' in value:
+        return '"' + value.replace('"', '""') + '"'
+    return value
+
+
+def _render(groups: dict[str, set[str]]) -> str:
     lines: list[str] = [
-        "---",
-        "orphan: true",
-        "---",
-        "",
         "# Inventory Reference",
         "",
-        "_This page is generated from `inventory/` at documentation build time._ "
-        "It shows only host and group structure; no variable values are included.",
+        "_Generated from `inventory/all_hosts` at documentation build time._ "
+        "Only host and group structure is included — no variable values.",
         "",
-        "## Applications",
+        "Click a column header to sort; use the search box in the top-right "
+        "of the table to filter by application or hostname.",
         "",
-        "| Application | Staging Hosts | Production Hosts |",
-        "| --- | --- | --- |",
+        "```{csv-table}",
+        ":header: Application, Staging hosts, Production hosts",
+        ":class: sphinx-datatable",
+        ":widths: 20, 40, 40",
+        "",
     ]
 
     for app in _app_groups(groups):
-        staging = _hosts_in(groups, f"{app}_staging")
-        production = _hosts_in(groups, f"{app}_production")
-        lines.append(
-            "| `{app}` | {s} | {p} |".format(
-                app=app,
-                s="<br>".join(f"`{h}`" for h in staging) or "—",
-                p="<br>".join(f"`{h}`" for h in production) or "—",
-            )
-        )
+        row = [
+            f"``{app}``",
+            _format_hosts(groups.get(f"{app}_staging", set())),
+            _format_hosts(groups.get(f"{app}_production", set())),
+        ]
+        lines.append(", ".join(_csv_escape(cell) for cell in row))
 
-    lines += [
-        "",
-        "## Full group graph",
-        "",
-        "```",
-        graph.rstrip(),
-        "```",
-        "",
-    ]
+    lines += ["```", ""]
     return "\n".join(lines)
 
 
 def _generate(app: Sphinx) -> None:
     repo_root = Path(app.srcdir).parent  # docs/ -> repo root
+    inventory_file = repo_root / "inventory" / "all_hosts"
     try:
-        inventory = _load_inventory(repo_root)
-        graph = _run_ansible_inventory(repo_root, ["--graph"])
-    except (subprocess.CalledProcessError, FileNotFoundError, RuntimeError) as exc:
+        groups = _parse_inventory(inventory_file)
+    except (OSError, configparser.Error) as exc:
         logger.warning(
-            "inventory_docs: could not generate inventory page (%s); "
+            "inventory_docs: could not parse %s (%s); "
             "the inventory reference page will be missing from this build.",
+            inventory_file,
             exc,
         )
         return
 
     out = Path(app.srcdir) / "inventory.generated.md"
-    out.write_text(_render(inventory, graph), encoding="utf-8")
+    out.write_text(_render(groups), encoding="utf-8")
     logger.info("inventory_docs: wrote %s", out.relative_to(repo_root))
 
 
 def setup(app: Sphinx) -> dict[str, Any]:
     app.connect("builder-inited", lambda a: _generate(a))
     return {
-        "version": "0.1",
+        "version": "0.4",
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }
