@@ -1,0 +1,81 @@
+---
+- name: Prepare
+  hosts: all
+  become: true
+  gather_facts: false
+  vars:
+    fixture_path: /opt/fixture
+  tasks:
+    - name: Prepare | Create build user
+      ansible.builtin.user:
+        name: deploy
+        shell: /bin/bash
+        create_home: true
+
+    - name: Prepare | Create fixture directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: deploy
+        group: deploy
+        mode: "0755"
+      loop:
+        - "{{ fixture_path }}"
+        - "{{ fixture_path }}/src"
+        - "{{ fixture_path }}/sitemedia"
+
+    - name: Prepare | Write fixture package.json
+      ansible.builtin.copy:
+        dest: "{{ fixture_path }}/package.json"
+        owner: deploy
+        group: deploy
+        mode: "0644"
+        content: |
+          {
+            "name": "molecule-webpack-fixture",
+            "version": "1.0.0",
+            "private": true,
+            "scripts": {
+              "build:qa": "webpack --mode development",
+              "build:prod": "webpack --mode production"
+            },
+            "dependencies": {
+              "webpack": "^5.90.0",
+              "webpack-cli": "^5.1.0",
+              "webpack-bundle-tracker": "^3.1.0"
+            }
+          }
+
+    - name: Prepare | Write fixture entry point
+      ansible.builtin.copy:
+        dest: "{{ fixture_path }}/src/index.js"
+        owner: deploy
+        group: deploy
+        mode: "0644"
+        content: |
+          console.log("molecule fixture");
+
+    - name: Prepare | Write fixture webpack config
+      ansible.builtin.copy:
+        dest: "{{ fixture_path }}/webpack.config.js"
+        owner: deploy
+        group: deploy
+        mode: "0644"
+        content: |
+          const path = require("path");
+          const BundleTracker = require("webpack-bundle-tracker");
+
+          module.exports = {
+            entry: "./src/index.js",
+            output: {
+              path: path.resolve(__dirname, "sitemedia", "bundles"),
+              filename: "main-[contenthash].js",
+              publicPath: "/static/bundles/",
+            },
+            plugins: [
+              new BundleTracker({
+                path: path.resolve(__dirname, "sitemedia"),
+                filename: "webpack-stats.json",
+              }),
+            ],
+          };

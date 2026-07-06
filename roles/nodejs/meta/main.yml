@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  role_name: nodejs
+  company: CDH University Library
+  description: Nodejs Role
+  author: cdh
+
+  license: MIT
+
+  min_ansible_version: 2.2
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+dependencies: []
+  # uncomment the line below and remove the `[]` above in your role
+  # - role: "<role I depend on>"

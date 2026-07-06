@@ -1,0 +1,21 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  vars:
+    nodejs_version: "22.4.0"
+    nodejs_npm_enabled: true
+    nodejs_webpack_enabled: true
+    nodejs_npm_install_path: /opt/fixture
+    nodejs_npm_install_mode: dev
+    nodejs_build_user: conan
+    runtime_env: staging
+  pre_tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 600
+  tasks:
+    - name: Include nodejs
+      ansible.builtin.include_role:
+        name: nodejs
