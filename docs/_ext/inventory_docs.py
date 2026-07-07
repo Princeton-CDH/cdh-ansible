@@ -10,6 +10,7 @@ from __future__ import annotations
 import configparser
 import csv
 import io
+from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
@@ -27,12 +28,16 @@ def _parse_inventory(path: Path) -> dict[str, set[str]]:
     parser.read(path, encoding="utf-8")
 
     direct_hosts: dict[str, set[str]] = {}
-    children: dict[str, set[str]] = {}
+    children: dict[str, set[str]] = defaultdict(set)
 
     for section in parser.sections():
+        # [foo:children] indicates an ansible host group
         if section.endswith(":children"):
+            # the name of the group is the section label before :children
             group = section[: -len(":children")]
-            children.setdefault(group, set()).update(parser.options(section))
+            # add all entries to the set for this group
+            children[group].update(parser.options(section))
+        # otherwise, section is an ansible host group with hostnames
         else:
             direct_hosts.setdefault(section, set()).update(parser.options(section))
 
@@ -56,6 +61,8 @@ def _parse_inventory(path: Path) -> dict[str, set[str]]:
 
 
 def _app_groups(groups: dict[str, set[str]]) -> list[str]:
+    # identify application host groups, based on the presence
+    # of names that have _staging and _production subgroups
     apps: list[str] = []
     for name in groups:
         if name in _ENV_GROUPS:
@@ -81,20 +88,19 @@ def _generate(app: Sphinx) -> None:
         )
         groups = {}
 
-    out = Path(app.srcdir) / "_inventory.csv"
-    buf = io.StringIO()
-    writer = csv.writer(buf)
-    writer.writerow(["Application", "Staging hosts", "Production hosts"])
-    for app_name in _app_groups(groups):
-        staging = groups.get(f"{app_name}_staging", set())
-        production = groups.get(f"{app_name}_production", set())
-        writer.writerow([
-            f"``{app_name}``",
-            "<br>".join(f"``{h}``" for h in sorted(staging)) if staging else "—",
-            "<br>".join(f"``{h}``" for h in sorted(production)) if production else "—",
-        ])
-    out.write_text(buf.getvalue(), encoding="utf-8")
-    logger.info("inventory_docs: wrote %s", out.relative_to(repo_root))
+    inventory_csv = Path(app.srcdir) / "_inventory.csv"
+    with inventory_csv.open("w") as inventory_csv_filehandle:
+        writer = csv.writer(inventory_csv_filehandle)
+        writer.writerow(["Application", "Staging hosts", "Production hosts"])
+        for app_name in _app_groups(groups):
+            staging = groups.get(f"{app_name}_staging", set())
+            production = groups.get(f"{app_name}_production", set())
+            writer.writerow([
+                app_name,
+                "<br>".join(f"``{h}``" for h in sorted(staging)) if staging else "—",
+                "<br>".join(f"``{h}``" for h in sorted(production)) if production else "—",
+            ])
+    logger.info("inventory_docs: wrote %s", inventory_csv.relative_to(repo_root))
 
 
 def setup(app: Sphinx) -> dict[str, Any]:
