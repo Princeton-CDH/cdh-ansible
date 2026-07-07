@@ -43,13 +43,20 @@ def _parse_inventory(path: Path) -> dict[str, set[str]]:
 
     resolved: dict[str, set[str]] = {}
 
+    # Recurse through ansible gorup inheritance and flatten it.
+    # Nested for closure over `direct_hosts`, `children`, and `resolved`
+    # from the enclosing scope, avoiding the need to pass them as arguments.
     def _resolve(group: str, seen: set[str]) -> set[str]:
+        # Memoization: skip if already resolved
         if group in resolved:
             return resolved[group]
+        # Cycle guard: prevent infinite recursion from circular :children refs
         if group in seen:
             return set()
         seen = seen | {group}
+        # Start with hosts listed directly under [group]
         hosts = set(direct_hosts.get(group, ()))
+        # Recurse into child groups and union their hosts
         for child in children.get(group, ()):
             hosts |= _resolve(child, seen)
         resolved[group] = hosts
