@@ -43,7 +43,7 @@ def _parse_inventory(path: Path) -> dict[str, set[str]]:
 
     resolved: dict[str, set[str]] = {}
 
-    # Recurse through ansible gorup inheritance and flatten it.
+    # Recurse through ansible group inheritance and flatten it.
     # Nested for closure over `direct_hosts`, `children`, and `resolved`
     # from the enclosing scope, avoiding the need to pass them as arguments.
     def _resolve(group: str, seen: set[str]) -> set[str]:
@@ -65,6 +65,28 @@ def _parse_inventory(path: Path) -> dict[str, set[str]]:
     for group in set(direct_hosts) | set(children):
         _resolve(group, set())
     return resolved
+
+
+def _stray_groups(
+    groups: dict[str, set[str]], apps: list[str]
+) -> dict[str, set[str]]:
+    """Return groups with hosts that are not part of any app pair."""
+    app_env_groups = set()
+    for app in apps:
+        app_env_groups.add(f"{app}_staging")
+        app_env_groups.add(f"{app}_production")
+
+    stray = {}
+    for name, hosts in groups.items():
+        if name in _ENV_GROUPS:
+            continue
+        if name in apps:
+            continue
+        if name in app_env_groups:
+            continue
+        if hosts:
+            stray[name] = hosts
+    return stray
 
 
 def _app_groups(groups: dict[str, set[str]]) -> list[str]:
@@ -95,11 +117,13 @@ def _generate(app: Sphinx) -> None:
         )
         groups = {}
 
+    apps = _app_groups(groups)
+
     inventory_csv = Path(app.srcdir) / "_inventory.csv"
     with inventory_csv.open("w") as inventory_csv_filehandle:
         writer = csv.writer(inventory_csv_filehandle)
         writer.writerow(["Application", "Staging hosts", "Production hosts"])
-        for app_name in _app_groups(groups):
+        for app_name in apps:
             staging = groups.get(f"{app_name}_staging", set())
             production = groups.get(f"{app_name}_production", set())
             writer.writerow([
@@ -108,6 +132,18 @@ def _generate(app: Sphinx) -> None:
                 "<br>".join(f"``{h}``" for h in sorted(production)) if production else "—",
             ])
     logger.info("inventory_docs: wrote %s", inventory_csv.relative_to(repo_root))
+
+    stray_csv = Path(app.srcdir) / "_stray_hosts.csv"
+    with stray_csv.open("w") as stray_csv_filehandle:
+        writer = csv.writer(stray_csv_filehandle)
+        writer.writerow(["Group", "Hosts"])
+        for group_name in sorted(_stray_groups(groups, apps)):
+            hosts = groups[group_name]
+            writer.writerow([
+                group_name,
+                "<br>".join(f"``{h}``" for h in sorted(hosts)),
+            ])
+    logger.info("inventory_docs: wrote %s", stray_csv.relative_to(repo_root))
 
 
 def setup(app: Sphinx) -> dict[str, Any]:
