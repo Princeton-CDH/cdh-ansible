@@ -1,27 +1,15 @@
-"""Sphinx extension: generate an inventory reference page from ``inventory/``.
+"""Sphinx extension: generate inventory CSV from ``inventory/``.
 
 Parses ``inventory/all_hosts`` as INI at build time and writes
-``docs/inventory.md``, which contains a single sortable/filterable table
-(via ``sphinx-datatables``) with one row per application and columns for
-staging vs production hosts.
-
-Design notes:
-
-- We parse the inventory file directly rather than shelling out to
-  ``ansible-inventory``. The file is a static INI-ish document; ``configparser``
-  handles it in ~50 lines and avoids any need to worry about vault decryption
-  or Ansible being importable at doc-build time.
-- Only group/host membership is emitted. No variable values are read.
-- The generated page is linked from ``index.md``'s toctree; the extension
-  overwrites it on every build.
-- The table is rendered with the ``csv-table`` directive and given the
-  ``sphinx-datatable`` CSS class so ``sphinx-datatables`` upgrades it to a
-  sortable/searchable table in the HTML output.
+``docs/_inventory.csv``, which is consumed by the static
+``docs/inventory.md`` via the ``csv-table`` directive's ``:file:`` option.
 """
 
 from __future__ import annotations
 
 import configparser
+import csv
+import io
 from pathlib import Path
 from typing import Any
 
@@ -30,21 +18,12 @@ from sphinx.util import logging
 
 logger = logging.getLogger(__name__)
 
-# Purely organizational groups; not applications. Excluded from the app list.
 _ENV_GROUPS = {"staging", "production", "prod", "dev"}
 
 
 def _parse_inventory(path: Path) -> dict[str, set[str]]:
-    """Return ``{group_name: set(hostnames)}`` with children fully expanded.
-
-    Handles the two INI section styles used in ``inventory/all_hosts``:
-
-    - ``[group]`` — one host per line
-    - ``[group:children]`` — one child *group* per line
-    """
     parser = configparser.ConfigParser(allow_no_value=True, delimiters=("=",))
-    # Preserve case; Ansible group names are case-sensitive by convention.
-    parser.optionxform = str  # type: ignore[assignment]
+    parser.optionxform = str
     parser.read(path, encoding="utf-8")
 
     direct_hosts: dict[str, set[str]] = {}
@@ -57,13 +36,12 @@ def _parse_inventory(path: Path) -> dict[str, set[str]]:
         else:
             direct_hosts.setdefault(section, set()).update(parser.options(section))
 
-    # Recursively expand children into a flat hosts-per-group map.
     resolved: dict[str, set[str]] = {}
 
     def _resolve(group: str, seen: set[str]) -> set[str]:
         if group in resolved:
             return resolved[group]
-        if group in seen:  # defensive: cycle guard
+        if group in seen:
             return set()
         seen = seen | {group}
         hosts = set(direct_hosts.get(group, ()))
@@ -78,13 +56,6 @@ def _parse_inventory(path: Path) -> dict[str, set[str]]:
 
 
 def _app_groups(groups: dict[str, set[str]]) -> list[str]:
-    """Return application group names, sorted.
-
-    An app is any group with either an ``<name>_staging`` or
-    ``<name>_production`` counterpart — matching the AGENTS.md convention.
-    Groups ending in ``_staging``/``_production`` themselves and the
-    top-level environment containers are excluded.
-    """
     apps: list[str] = []
     for name in groups:
         if name in _ENV_GROUPS:
@@ -96,77 +67,40 @@ def _app_groups(groups: dict[str, set[str]]) -> list[str]:
     return sorted(apps)
 
 
-def _format_hosts(hosts: set[str]) -> str:
-    """Render a set of hostnames as monospaced, line-separated cell content."""
-    if not hosts:
-        return "—"
-    # ``<br>`` inside a csv-table cell renders as a line break in HTML output.
-    return "<br>".join(f"``{h}``" for h in sorted(hosts))
-
-
-def _csv_escape(value: str) -> str:
-    """Quote a cell for the csv-table directive.
-
-    csv-table uses standard CSV rules: cells containing commas or quotes must
-    be double-quoted, and embedded quotes are doubled.
-    """
-    if "," in value or '"' in value:
-        return '"' + value.replace('"', '""') + '"'
-    return value
-
-
-def _render(groups: dict[str, set[str]]) -> str:
-    lines: list[str] = [
-        "# Inventory Reference",
-        "",
-        "_Generated from `inventory/all_hosts` at documentation build time._ "
-        "Only host and group structure is included — no variable values.",
-        "",
-        "Click a column header to sort; use the search box in the top-right "
-        "of the table to filter by application or hostname.",
-        "",
-        "```{csv-table}",
-        ":header: Application, Staging hosts, Production hosts",
-        ":class: sphinx-datatable",
-        ":widths: 20, 40, 40",
-        "",
-    ]
-
-    for app in _app_groups(groups):
-        row = [
-            f"``{app}``",
-            _format_hosts(groups.get(f"{app}_staging", set())),
-            _format_hosts(groups.get(f"{app}_production", set())),
-        ]
-        lines.append(", ".join(_csv_escape(cell) for cell in row))
-
-    lines += ["```", ""]
-    return "\n".join(lines)
-
-
 def _generate(app: Sphinx) -> None:
-    repo_root = Path(app.srcdir).parent  # docs/ -> repo root
+    repo_root = Path(app.srcdir).parent
     inventory_file = repo_root / "inventory" / "all_hosts"
     try:
         groups = _parse_inventory(inventory_file)
     except (OSError, configparser.Error) as exc:
         logger.warning(
             "inventory_docs: could not parse %s (%s); "
-            "the inventory reference page will be missing from this build.",
+            "generating empty inventory CSV.",
             inventory_file,
             exc,
         )
-        return
+        groups = {}
 
-    out = Path(app.srcdir) / "inventory.md"
-    out.write_text(_render(groups), encoding="utf-8")
+    out = Path(app.srcdir) / "_inventory.csv"
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["Application", "Staging hosts", "Production hosts"])
+    for app_name in _app_groups(groups):
+        staging = groups.get(f"{app_name}_staging", set())
+        production = groups.get(f"{app_name}_production", set())
+        writer.writerow([
+            f"``{app_name}``",
+            "<br>".join(f"``{h}``" for h in sorted(staging)) if staging else "—",
+            "<br>".join(f"``{h}``" for h in sorted(production)) if production else "—",
+        ])
+    out.write_text(buf.getvalue(), encoding="utf-8")
     logger.info("inventory_docs: wrote %s", out.relative_to(repo_root))
 
 
 def setup(app: Sphinx) -> dict[str, Any]:
     app.connect("builder-inited", lambda a: _generate(a))
     return {
-        "version": "0.4",
+        "version": "0.5",
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }

@@ -12,8 +12,8 @@
 # Sphinx build output
 docs/_build/
 
-# Sphinx-generated pages (see docs/_ext/inventory_docs.py)
-docs/inventory.md
+# Generated inventory CSV (see docs/_ext/inventory_docs.py)
+docs/_inventory.csv
 
 # antsibull-docs shim + generated role RST (see docs/_ext/role_docs.py)
 docs/_antsibull/
