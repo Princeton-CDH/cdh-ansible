@@ -47,7 +47,7 @@ The simplest way to deploy a CDH application is to use the Ansible Tower web int
 
 ## Method 2: Command-Line Deployment
 
-Before you can use the command-line deployment method, you need to have a local copy of the `cdh-ansible` repository on your computer, and then follow [README](../README.md) to set up your local environment before running the deployment.
+Before you can use the command-line deployment method, you need to have a local copy of the `cdh-ansible` repository on your computer, and then follow the [project README](https://github.com/Princeton-CDH/cdh-ansible/blob/main/README.md) to set up your local environment before running the deployment.
 
 ### Deploy to the Staging Environment
 

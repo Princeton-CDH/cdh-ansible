@@ -1,0 +1,136 @@
+---
+# Formal argument specification for the deploy_user role.
+#
+# Ansible validates role invocations against this spec at runtime (starting
+# with ansible-core 2.11). It is also the source for generated documentation.
+#
+# Descriptions use Ansible markup rather than RST/Markdown so they render
+# correctly both in ``ansible-doc`` output and in the antsibull-docs
+# generated HTML:
+#
+#   O(option_name)   -- reference to another option on this or a sibling role
+#   V(literal)       -- a literal value (rendered like inline code)
+#   C(code)          -- a code fragment or command (also rendered inline)
+#   E(ENV_VAR)       -- an environment variable name
+#
+# Variables that this role owns (with defaults in defaults/main.yml) are
+# listed first; ambient variables set by callers or sibling roles are marked
+# ``required: false`` and described so readers can trace where they come from.
+argument_specs:
+  main:
+    # NOTE: antsibull normally builds the page title from
+    # ``{fqcn} role -- {short_description}``; ``docs/_ext/role_docs.py``
+    # rewrites that title down to just the role name, so this field is
+    # free to be an informative one-liner (it still shows up in
+    # ``ansible-doc`` output).
+    short_description: Create and configure the CDH deployment user (default V(conan)).
+    description:
+      - >-
+        Provisions a dedicated system user for automated deployments, ensures
+        matching UID/GID for cross-node consistency, generates and installs
+        SSH keys, hardens C(sshd_config) to allow only the deploy user, and
+        drops a C(.profile) that activates the app's Python virtualenv on
+        interactive login.
+      - >-
+        The role depends on the C(build_dependencies) role (see
+        C(meta/main.yml)). Setup tasks are tagged V(setup,never) and are
+        skipped unless the playbook is invoked with C(--tags=all,setup).
+    author:
+      - Center for Digital Humanities @ Princeton
+    options:
+      # ---------------------------------------------------------------------
+      # Role-owned variables (defined in defaults/main.yml)
+      # ---------------------------------------------------------------------
+      deploy_user:
+        type: str
+        default: conan
+        description: Name of the deployment user and its primary group.
+      deploy_user_uid:
+        type: int
+        required: true
+        description:
+          - >-
+            Numeric UID for the deployment user; also used as the GID for the
+            matching primary group so file ownership is consistent across
+            nodes (important for C(rsync) between application and Solr
+            servers). Must be set per host; no default is provided.
+      deploy_user_shell:
+        type: str
+        default: /bin/bash
+        description: Login shell for the deployment user.
+      webapp_group:
+        type: str
+        default: www-data
+        description: >-
+          Existing webserver group on the target system. The deployment
+          user is added as a supplementary member so it can write to shared
+          web-server-owned files (logs, media, etc.).
+      single_app:
+        type: bool
+        default: true
+        description: >-
+          When V(true), the generated C(.profile) includes an C(activate)
+          alias that C(cd)s into the current deploy and sources its Python
+          virtualenv. When V(false), no auto-activation is set up and
+          O(alias_apps) is consulted to build per-app shortcuts instead.
+      alias_apps:
+        type: dict
+        default: {}
+        description:
+          - >-
+            Mapping of C({alias_name: install_path}) used only when
+            O(single_app) is V(false). For each entry the role adds a shell
+            alias that C(cd)s into C({install_path}/current) and sources the
+            app's virtualenv. On interactive login the profile prints the
+            list of configured aliases.
+      python_venv_path_prefix:
+        type: str
+        default: ""
+        description: >-
+          Optional path fragment prepended to C(env/bin/activate) when
+          building shell aliases. Use when the virtualenv is not a direct
+          sibling of the current deploy directory.
+
+      # ---------------------------------------------------------------------
+      # Ambient variables (set by callers / sibling roles)
+      # ---------------------------------------------------------------------
+      # These are not owned by deploy_user but are referenced by
+      # templates/bash_profile.j2. They are listed here so consumers of this
+      # spec can see the role's full input surface.
+      runtime_env:
+        type: str
+        required: false
+        description:
+          - >-
+            Deployment environment name (e.g. V(staging), V(production)).
+            Exported as E(DJANGO_ENV) in the deploy user's C(.profile) for
+            django-split-settings-based apps. Typically set via
+            C(-e runtime_env=<env>) on the playbook command line; see
+            C(README.md) for defaults per environment.
+      install_root:
+        type: str
+        required: false
+        description: >-
+          Filesystem root under which the app is installed. When defined
+          together with O(single_app=true), the generated C(activate)
+          alias uses it to locate the current deploy. Normally set by the
+          C(deploy) / C(configure) roles.
+      current_deploy:
+        type: str
+        required: false
+        description: >-
+          Path to the currently-active deploy directory. Referenced by the
+          C(activate) alias in the deploy user's C(.profile). Set by the
+          C(deploy) role.
+      app_name:
+        type: str
+        required: false
+        description: >-
+          Application identifier used as a comment in the generated
+          C(.profile) header. Purely cosmetic; safe to omit.
+      deploy_env_vars:
+        type: dict
+        required: false
+        description: >-
+          Optional mapping of extra environment variables to export from the
+          deploy user's C(.profile). Each key becomes an C(export) line.

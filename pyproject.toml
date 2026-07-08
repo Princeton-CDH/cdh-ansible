@@ -18,5 +18,19 @@ dependencies = [
     "wheel",
 ]
 
+[project.optional-dependencies]
+docs = [
+    "sphinx>=7",
+    "myst-parser[linkify]>=3",
+    "furo>=2024.8.6",
+    "sphinx-copybutton>=0.5",
+    "sphinxcontrib-mermaid>=1.0",
+    "sphinx-datatables>=1",
+    "sphinxcontrib-jquery>=4",
+    # antsibull-docs generates RST from ``meta/argument_specs.yml`` for
+    # local roles surfaced through a shim collection at build time.
+    "antsibull-docs>=2",
+]
+
 [tool.uv]
 package = false

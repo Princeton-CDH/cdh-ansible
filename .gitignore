@@ -9,6 +9,17 @@
 # Ansible files
 *.retry
 
+# Sphinx build output
+docs/_build/
+
+# Generated inventory CSVs (see docs/_ext/inventory_docs.py)
+docs/_inventory.csv
+docs/_stray_hosts.csv
+
+# antsibull-docs shim + generated role RST (see docs/_ext/role_docs.py)
+docs/_antsibull/
+docs/roles/*_role.rst
+
 # ignore roles installed from ansible galaxy
 roles/geerlingguy.supervisor
 .ansible/roles

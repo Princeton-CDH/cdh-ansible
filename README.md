@@ -15,23 +15,20 @@ The overall structure of this repository is as follows:
     - `vars.yml`- unencrypted all variables
     - `vault.yml` - `ansible vault` encrypted variables
 - `architecture-decisions` - list of significant architectural decisions, as markdown files
+- `docs` - documentation about cdh-ansible and specific applications; view as markdown or build with sphinx
 
 ## Usage instructions
 
 ### Python environment & dependencies (recommended: uv + pyproject.toml)
 
-This repository uses `pyproject.toml` + `uv` for Python dependency management.
-UV will need to be [installed](https://docs.astral.sh/uv/) 
+This repository uses `uv` for Python dependency management. ([Install uv](https://docs.astral.sh/uv/) if you don't already have it.)  Dependencies are defined in `pyproject.toml` and locked in `uv.lock`.
 
-- See `.python-version` for the recommended version of Python.
-- Create/activate a virtual environment (any tool is fine), then install dependencies:
+- The `.python-version`  file is set to the recommended version of Python (uv will use this automatically).
+- Create/activate a virtual environment (use uv if you have it, but any tool is fine), then install dependencies:
 
 ```sh
 uv sync
 ```
-
-> Note: `requirements.txt` is no longer used. Dependencies are defined in `pyproject.toml` and locked in `uv.lock`.
-
 This will install the locked dependencies from uv.lock (and update the environment if pyproject.toml changes).
 
 If you create a local virtualenv in this directory, `.venv/` is the default used by our Devbox setup (if you use Devbox).
@@ -255,3 +252,23 @@ devbox run pre-commit   # run all pre-commit hooks
 > Notes:
 - The virtualenv is created at `.venv`/ (not `env/venv`), and is used automatically inside the Devbox shell.
 - You can still use the manual setup instructions below if you prefer not to use Devbox.
+
+
+## Documentation
+
+The `docs/` folder includes markdown documentation, but has also been configured to be built with [Sphinx](https://www.sphinx-doc.org/).
+
+The main folder is for common documentation; the `applications/` folder is for application-specific information about the architecture, deploy process, or any other details worth noting.
+
+To build sphinx docs locally:
+```sh
+uv run sphinx-build -b html docs/ docs/_build
+```
+
+You can browse as static html starting with `docs/_build/html/index.html`.
+
+The sphinx documentation site includes two custom sphinx extensions in `docs/_ext`:
+- `inventory_docs.py` - parses host inventory in `inventory/all_hosts` to generate CSVs for tabular display
+- `role_docs.py` - creates a shim collection so cdh-ansible roles can be documented with antsibull-docs; only includes roles with `meta/argument_specs.yml`
+
+Documentation is automatically built and published on GitHub Pages when updates are pushed to the default branch.
