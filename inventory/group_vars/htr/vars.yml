@@ -43,6 +43,7 @@ node_version: "18"
 # not the htr2hpc package. To deploy a specific htr2hpc branch or tag, use:
 #   -e htr2hpc_gitref=adroit
 htr2hpc_gitref: main
+hpc_hostname: "adroit.princeton.edu"
 python_extra_packages:
   - git+https://github.com/Princeton-CDH/htr2hpc.git@{{ htr2hpc_gitref }}#egg=htr2hpc
 
