@@ -175,7 +175,7 @@ SOLR_CONNECTIONS = {
 # Extra app-specific configuration
 {% block extra_config %}
 # custom config for htr2hpc
-HPC_HOSTNAME = "adroit.princeton.edu"
+HPC_HOSTNAME = "{{ hpc_hostname }}"
 # copied in place by escriptorium_setup role
 HPC_SSH_KEYFILE = "/home/{{ deploy_user }}/.ssh/htr2hpc_id_ed25519"
 
