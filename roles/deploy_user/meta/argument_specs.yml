@@ -65,24 +65,6 @@ argument_specs:
           Existing webserver group on the target system. The deployment
           user is added as a supplementary member so it can write to shared
           web-server-owned files (logs, media, etc.).
-      single_app:
-        type: bool
-        default: true
-        description: >-
-          When V(true), the generated C(.profile) includes an C(activate)
-          alias that C(cd)s into the current deploy and sources its Python
-          virtualenv. When V(false), no auto-activation is set up and
-          O(alias_apps) is consulted to build per-app shortcuts instead.
-      alias_apps:
-        type: dict
-        default: {}
-        description:
-          - >-
-            Mapping of C({alias_name: install_path}) used only when
-            O(single_app) is V(false). For each entry the role adds a shell
-            alias that C(cd)s into C({install_path}/current) and sources the
-            app's virtualenv. On interactive login the profile prints the
-            list of configured aliases.
       python_venv_path_prefix:
         type: str
         default: ""
@@ -111,10 +93,9 @@ argument_specs:
         type: str
         required: false
         description: >-
-          Filesystem root under which the app is installed. When defined
-          together with O(single_app=true), the generated C(activate)
-          alias uses it to locate the current deploy. Normally set by the
-          C(deploy) / C(configure) roles.
+          Filesystem root under which the app is installed. When defined,
+          the generated C(activate) alias uses it to locate the current
+          deploy. Normally set by the C(deploy) / C(configure) roles.
       current_deploy:
         type: str
         required: false

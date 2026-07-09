@@ -1,7 +1,7 @@
 # bash profile for {{ deploy_user }} {% if app_name is defined %} / {{ app_name }} {% endif %}
 # NOTE: this file is {{ ansible_managed }}
 
-{% if single_app and install_root is defined %}
+{% if install_root is defined %}
 # alias to change directory to current deployed version
 # and activate python virtualenv
 alias activate="[ -d "{{ current_deploy }}" ] && cd {{ current_deploy }} && source {{ python_venv_path_prefix }}env/bin/activate"
@@ -11,19 +11,6 @@ if [[ $- == *i* ]]
 then
     activate
 fi
-{% else  %}
-{# for multi-app vms, create multiple aliases when configured; no activation by default #}
-{% if alias_apps %}
-{% for name, path in alias_apps.items() %}
-alias {{ name }}="[ -d "{{ path }}/current" ] && cd {{ path }}/current && source {{ python_venv_path_prefix }}env/bin/activate"
-{% endfor %}
-{# notify/remind on login #}
-# notify / remind available aliases for interactive sessions only
-if [[ $- == *i* ]]
-then
-   echo "Available project aliases: {{ alias_apps.keys()|join(', ') }}"
-fi
-{% endif  %}
 {% endif %}
 
 # define django environment for split settings
