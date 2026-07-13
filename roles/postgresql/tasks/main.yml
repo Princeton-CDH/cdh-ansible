@@ -2,6 +2,22 @@
 - name: Setup Postgres Client and Configuration
   when: postgres_setup_enabled | bool
   block:
+    - name: Remove legacy PGDG apt sources (pre-signed-by cleanup)
+      become: true
+      # Older setups added extra pgdg source files pointing at a different keyring
+      # (postgresql-archive-keyring.gpg): apt_postgresql_org_pub_repos_apt.list is
+      # what the old apt_repository task auto-named, and pgdg.list came from the
+      # PGDG script. Both conflict with the role-managed pgdg.sources below
+      # (Signed-By: .../pgdg/apt.postgresql.org.asc), making apt fail with
+      # "Conflicting values set for option Signed-By". Remove them so only
+      # pgdg.sources remains.
+      ansible.builtin.file:
+        path: "/etc/apt/sources.list.d/{{ item }}"
+        state: absent
+      loop:
+        - apt_postgresql_org_pub_repos_apt.list
+        - pgdg.list
+
     - name: Make sure CA certificates and curl are available
       become: true
       ansible.builtin.apt:

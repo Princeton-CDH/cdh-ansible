@@ -20,11 +20,13 @@
     - name: Solr_collection - sync project Solr configset files
       become: true
       become_user: "{{ deploy_user }}"
-      # Use -i (itemized changes) to detect if anything actually moved
+      # Use -i (itemized changes) to detect if anything actually moved.
+      # UserKnownHostsFile=/dev/null: don't fail when an app server's host key
+      # changes after a rebuild.
       ansible.builtin.command:
         cmd: >
           /usr/bin/rsync -ai --checksum {{ inventory_hostname }}:{{ install_root }}/current/solr_conf/
-          /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -e "ssh -o StrictHostKeyChecking=no"
+          /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
       delegate_to: "{{ solr_server }}"
       register: rsync_out
       changed_when: "rsync_out.stdout != ''"
