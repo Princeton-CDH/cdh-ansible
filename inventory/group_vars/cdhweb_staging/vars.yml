@@ -20,3 +20,8 @@ passenger_server_name: "{{ application_url }}"
 # observability
 beyla_enabled: true
 beyla_service_name: cdh-web
+# nodejs
+nodejs_version: "v22.4.0"
+nodejs_npm_enabled: true
+nodejs_webpack_enabled: true
+nodejs_webpack_stats_check: false
