@@ -109,19 +109,7 @@ cdh-test-legacy-htr2.lib.princeton.edu
 htr_production
 htr_staging
 
-# simrisk must be configured in ssh config with bastion proxy command
-[simrisk_cloud]
-gcp_simrisk
-
-[geotaste_cloud]
-gcp_geotaste
-
 ### PUL solr servers
-
-[solr_staging]
-lib-solr-staging4d.princeton.edu
-[solr_production]
-lib-solr-prod7.princeton.edu
 
 [solr9_staging]
 lib-solr-staging2.princeton.edu
@@ -130,9 +118,7 @@ lib-solr-staging2.princeton.edu
 lib-solr-prod1.princeton.edu
 
 [solr:children]
-solr_staging
 solr9_staging
-solr_production
 solr9_production
 
 ### environment-based stanzas to create shared groups
@@ -153,8 +139,6 @@ shxco_staging
 derrida_crawl_staging
 derrida_archive_staging
 prosody_staging
-simrisk_cloud
-geotaste_cloud
 prodigy_staging
 htr_staging
 
