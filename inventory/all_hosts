@@ -102,8 +102,6 @@ cdh-htr2.lib.princeton.edu
 [htr_staging]
 cdh-test-htr1.lib.princeton.edu
 cdh-test-htr2.lib.princeton.edu
-cdh-test-legacy-htr1.lib.princeton.edu
-cdh-test-legacy-htr2.lib.princeton.edu
 
 [htr:children]
 htr_production
