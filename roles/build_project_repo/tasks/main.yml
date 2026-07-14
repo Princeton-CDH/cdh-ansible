@@ -47,7 +47,6 @@
         owner: "{{ deploy_user }}"
         group: "{{ deploy_user }}"
         mode: '0755'
-        recurse: yes
       tags: [setup]
 
     - name: Mark deploy path as safe for git
