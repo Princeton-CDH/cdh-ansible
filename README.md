@@ -106,34 +106,6 @@ To revert to previous deploy run call the `revert_deploy` playbook with a `host_
 uv run ansible-playbook -e host_group=shxco_staging playbooks/revert_deploy.yml
 ```
 
-## Vault sensitive variables
-
-Configurations that are sensitive, such as passwords or API keys, should be
-stored in a vault variable file (i.e., `inventory/group_vars/*/vault.yml`) and the **value** of the variable should be encrypted (but not the entire file). For compatibility with Ansible Tower, which loads group variables into inventory, we [encrypt individual variables](https://docs.ansible.com/ansible/latest/vault_guide/vault_encrypting_content.html#encrypting-individual-variables-with-ansible-vault) rather than the entire vault.yml file.
-
-To encrypt a single variable, you can use `ansible-vault`:
-
-```sh
-uv run ansible-vault encrypt_string <password_source> '<string_to_encrypt>' --name '<string_name_of_variable>'
-```
-
-To work with multiple encrypted variables, use the local `vault_vars.py` helper script.
-
-- If all variables in a vault file are unencrypted, use `encrypt` mode to encrypt them
-- To view the values of your vaulted variables, use the `decrypt` mode (does not replace content or preserve content)
-- To check that all variable values in a vault file are encrypted use `check`
-
-Example usage:
-
-```sh
-uv run bin/vault_vars.py encrypt inventory/group_vars/all/vault.yml
-uv run bin/vault_vars.py decrypt inventory/group_vars/all/vault.yml
-uv run bin/vault_vars.py check inventory/group_vars/all/vault.yml
-```
-
-The check mode of this script is used as a pre-commit hook to prevent sensitive
-configurations from being checked into version control in plain text.
-
 ### Vault password
 
 Ansible vault passwords are stored in shared LastPass vault and loaded
