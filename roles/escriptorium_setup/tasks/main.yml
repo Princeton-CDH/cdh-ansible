@@ -78,12 +78,14 @@
     - name: uninstall htr2hpc python package
       ansible.builtin.pip:
         virtualenv: "{{ django_venv_path }}"
+        virtualenv_command: "python{{ python_version }} -m venv"
         name: htr2hpc
         state: absent
     # reinstall with whatever version is in settings
     - name: install currently configured htr2hpc python package
       ansible.builtin.pip:
         virtualenv: "{{ django_venv_path }}"
+        virtualenv_command: "python{{ python_version }} -m venv"
         name: "{{ python_extra_packages }}"
         extra_args: "{{ python_extra_packages_pip_extra_args }}"
       notify:
