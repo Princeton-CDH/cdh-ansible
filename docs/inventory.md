@@ -1,4 +1,4 @@
-# Inventory Reference
+# Host Inventory 
 
 _Generated from `inventory/all_hosts` at documentation build time._ Only host and group structure is included — no variable values.
 

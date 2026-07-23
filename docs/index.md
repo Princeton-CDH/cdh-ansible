@@ -13,5 +13,6 @@ applications/index
 roles/index
 adr/index
 inventory
+variables
 README
 ```
