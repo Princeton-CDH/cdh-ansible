@@ -18,6 +18,25 @@
       environment should build assets.
   when: nodejs_webpack_build_command | length == 0
 
+- name: Nodejs | webpack | Verify build user exists
+  ansible.builtin.command:
+    argv:
+      - getent
+      - passwd
+      - "{{ nodejs_build_user }}"
+  register: nodejs_webpack_build_user_check
+  changed_when: false
+  failed_when: false
+  become: true
+
+- name: Nodejs | webpack | Fail if build user is missing
+  ansible.builtin.fail:
+    msg: >-
+      nodejs_build_user={{ nodejs_build_user }} does not exist.
+      Create the user before including the nodejs role, or set
+      nodejs_build_user to the application deploy user.
+  when: nodejs_webpack_build_user_check.rc != 0
+
 - name: Nodejs | webpack | Build static assets
   become: true
   become_user: "{{ nodejs_build_user }}"

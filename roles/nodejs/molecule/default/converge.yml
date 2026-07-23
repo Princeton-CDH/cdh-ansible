@@ -8,7 +8,7 @@
     nodejs_webpack_enabled: true
     nodejs_npm_install_path: /opt/fixture
     nodejs_npm_install_mode: dev
-    nodejs_build_user: conan
+    nodejs_build_user: deploy
     runtime_env: staging
   pre_tasks:
     - name: Update apt cache
