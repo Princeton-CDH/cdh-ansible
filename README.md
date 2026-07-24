@@ -245,6 +245,8 @@ Then you can build the documentation (enable warnings but keep going):
 uv run sphinx-build -b html -W --keep-going docs/ docs/_build
 ```
 
+For those who use [just](https://github.com/casey/just), a `.justfile` is provided for convenience (`just docs` or `just clean-docs`).
+
 Browse the resulting static html files starting with the main index as your entry point `docs/_build/html/index.html`. On a Mac, you can view the results in a browser by running: `open docs/_build/html/index.html`
 
 The sphinx documentation site includes two custom sphinx extensions in `docs/_ext`:
