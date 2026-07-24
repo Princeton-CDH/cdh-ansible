@@ -120,7 +120,12 @@ argument_specs:
         description: Run a Webpack build step after npm install.
       nodejs_webpack_build_commands:
         type: dict
-        default: {}
+        default:
+          {
+            staging: "build:qa",
+            production: "build:prod",
+            preproduction: "build:prod",
+          }
         description: >-
           Mapping of C(runtime_env) name to the npm script invoked by
           Webpack. Extend per-app in C(group_vars). Defaults map
