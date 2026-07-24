@@ -88,3 +88,8 @@ passenger_extra_config: |
 
 # datadog app/service name
 datadog_app_name: cdh_web
+# nodejs
+nodejs_version: "v22.4.0"
+nodejs_npm_enabled: true
+nodejs_webpack_enabled: true
+nodejs_webpack_stats_check: false
