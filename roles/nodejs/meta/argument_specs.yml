@@ -1,0 +1,195 @@
+---
+# Formal argument specification for the nodejs role.
+#
+# Ansible validates role invocations against this spec at runtime (starting
+# with ansible-core 2.11). It is also the source for generated documentation.
+#
+# Descriptions use Ansible markup rather than RST/Markdown so they render
+# correctly both in ``ansible-doc`` output and in the antsibull-docs
+# generated HTML:
+#
+#   O(option_name)   -- reference to another option on this or a sibling role
+#   V(literal)       -- a literal value (rendered like inline code)
+#   C(code)          -- a code fragment or command (also rendered inline)
+#   E(ENV_VAR)       -- an environment variable name
+argument_specs:
+  main:
+    short_description: Install and configure Node.js, npm, and optional Yarn/Webpack builds.
+    description:
+      - >-
+        Installs a pinned Node.js release from a prebuilt tarball served by
+        the PUL mirror, optionally enables Corepack-managed Yarn, runs npm
+        dependency installs, and executes Webpack builds with configurable
+        per-environment scripts.
+      - >-
+        The distro-packaged C(nodejs) is removed by default to avoid PATH
+        shadowing (see O(nodejs_remove_apt_node)).
+    author:
+      - Center for Digital Humanities @ Princeton
+    options:
+      # ---------------------------------------------------------------------
+      # Role-owned variables (defined in defaults/main.yml)
+      # ---------------------------------------------------------------------
+      nodejs_version:
+        type: str
+        default: "22.4.0"
+        description: >-
+          Node.js release to install. Accepts both C("22.4.0") and
+          C("v22.4.0") formats. Falls back to O(desired_nodejs_version)
+          when set (legacy group_vars migration path).
+      desired_nodejs_version:
+        type: str
+        required: false
+        description: >-
+          Legacy variable name that O(nodejs_version) falls back to. Set
+          this during migration; prefer O(nodejs_version) for new work.
+      nodejs_install_method:
+        type: str
+        default: prebuilt
+        description: >-
+          Installation method. Currently only V(prebuilt) (download a
+          tarball from the PUL mirror) is supported.
+      nodejs_release_base_url:
+        type: str
+        default: "https://pulmirror.princeton.edu/mirror/nodejs"
+        description: >-
+          Base URL for the Node.js tarball mirror. Override only when
+          using a local or alternative mirror.
+      nodejs_prefix_root:
+        type: str
+        default: /usr/local
+        description: >-
+          Installation prefix. Node.js binaries are placed under
+          C({{ nodejs_prefix_root }}/bin).
+      nodejs_download_timeout:
+        type: int
+        default: 600
+        description: Timeout in seconds for the Node.js tarball download.
+      nodejs_download_retries:
+        type: int
+        default: 6
+        description: Number of retries for the Node.js tarball download.
+      nodejs_download_delay:
+        type: int
+        default: 10
+        description: Delay in seconds between download retries.
+      nodejs_remove_apt_node:
+        type: bool
+        default: true
+        description: >-
+          When V(true), remove the distro-packaged C(nodejs) apt package
+          before installing the prebuilt release to prevent PATH conflicts.
+      nodejs_yarn_enabled:
+        type: bool
+        default: false
+        description: >-
+          Enable Corepack-managed Yarn (Berry). Classic Yarn via apt is not
+          supported by this role.
+      nodejs_yarn_version:
+        type: str
+        default: "4.15.0"
+        description: Yarn release version to activate via Corepack.
+      nodejs_npm_enabled:
+        type: bool
+        default: false
+        description: >-
+          Run an npm dependency install step (used by the C(build_npm)
+          workflow).
+      nodejs_npm_install_path:
+        type: str
+        default: ""
+        description: >-
+          Target directory for C(npm install). Falls back to
+          O(npm_install_path) then O(deploy).
+      nodejs_npm_install_mode:
+        type: str
+        default: production
+        description: >-
+          npm install strategy. V(production) runs C(npm install
+          --production), V(ci) runs C(npm ci), V(dev) runs C(npm install)
+          including devDependencies.
+      nodejs_build_user:
+        type: str
+        default: ""
+        description: >-
+          Unix user that owns the npm/webpack build steps. Falls back to
+          O(deploy_user), then O(django_user), then V(root).
+      nodejs_webpack_enabled:
+        type: bool
+        default: false
+        description: Run a Webpack build step after npm install.
+      nodejs_webpack_build_commands:
+        type: dict
+        default: {}
+        description: >-
+          Mapping of C(runtime_env) name to the npm script invoked by
+          Webpack. Extend per-app in C(group_vars). Defaults map
+          V(staging) to C(build:qa) and V(production)/V(preproduction) to
+          C(build:prod).
+      nodejs_webpack_stats_check:
+        type: bool
+        default: true
+        description: >-
+          When V(true), verify that C(webpack-stats.json) exists after the
+          build. Set to V(false) if the app does not use
+          C(webpack-bundle-tracker).
+      nodejs_webpack_stats_file:
+        type: str
+        default: ""
+        description: >-
+          Explicit path to C(webpack-stats.json). When empty, the role uses
+          O(nodejs_webpack_stats_default).
+      nodejs_webpack_stats_default:
+        type: str
+        default: ""
+        description: >-
+          Computed default path for C(webpack-stats.json), typically
+          C({{ nodejs_npm_install_path }}/sitemedia/webpack-stats.json).
+      nodejs_webpack_debug:
+        type: bool
+        default: false
+        description: >-
+          Enable verbose Webpack build output for troubleshooting.
+
+      # ---------------------------------------------------------------------
+      # Ambient variables (set by callers / sibling roles)
+      # ---------------------------------------------------------------------
+      npm_install_path:
+        type: str
+        required: false
+        description: >-
+          Alternate name for O(nodejs_npm_install_path) used by legacy
+          group_vars. O(nodejs_npm_install_path) falls back to this when
+          not set directly.
+      deploy:
+        type: str
+        required: false
+        description: >-
+          Deploy directory path set by the C(deploy) role. Used as the
+          ultimate fallback for O(nodejs_npm_install_path).
+      deploy_user:
+        type: str
+        required: false
+        description: >-
+          Deployment user name set by the C(deploy_user) role. Used as
+          the first fallback for O(nodejs_build_user).
+      django_user:
+        type: str
+        required: false
+        description: >-
+          Legacy application user name. Used as the second fallback for
+          O(nodejs_build_user) when O(deploy_user) is not set.
+      webpack_build_qa:
+        type: str
+        required: false
+        description: >-
+          Legacy override for the V(staging) entry in
+          O(nodejs_webpack_build_commands). Prefer setting
+          O(nodejs_webpack_build_commands) directly.
+      webpack_build_prod:
+        type: str
+        required: false
+        description: >-
+          Legacy override for the V(production) and V(preproduction)
+          entries in O(nodejs_webpack_build_commands). Prefer setting
+          O(nodejs_webpack_build_commands) directly.
