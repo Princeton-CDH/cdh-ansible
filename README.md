@@ -239,10 +239,10 @@ To build docs locally, make sure you have necessary the python dependencies. You
 uv sync --extra docs
 ```
 
-Then you can build the documentation:
+Then you can build the documentation (enable warnings but keep going):
 
 ```sh
-uv run sphinx-build -b html docs/ docs/_build
+uv run sphinx-build -b html -W --keep-going docs/ docs/_build
 ```
 
 Browse the resulting static html files starting with the main index as your entry point `docs/_build/html/index.html`. On a Mac, you can view the results in a browser by running: `open docs/_build/html/index.html`
