@@ -25,11 +25,6 @@ symlink: cdhweb
 deploy_user: "conan"
 # wsgi path
 wsgi_path: "{{ django_app }}/wsgi.py"
-# nodejs
-nodejs_version: "v22.4.0"
-nodejs_npm_enabled: true
-nodejs_webpack_enabled: true
-nodejs_webpack_stats_check: false
 
 # django database backend
 db_backend: "postgresql"
@@ -43,11 +38,17 @@ application_dbuser_password: "{{ vault_db_password }}"
 application_db_name: "{{ db_name }}"
 application_db_host: "{{ postgres_host }}"
 
+# nodejs
+nodejs_version: "v22.4.0"
+nodejs_npm_enabled: true
+nodejs_webpack_enabled: true
+nodejs_webpack_stats_check: false
 # customize build commmands for springload webpack config
-webpack_build_qa: "build"
-webpack_build_prod: "build"
+nodejs_webpack_build_commands:
+  staging: "build"
+  production: "build"
 # webpack is in devDependencies, so don't do a production install
-npm_install_mode: "dev"
+nodejs_npm_install_mode: "ci"
 
 # configure app-specific local settings
 django_local_settings_template: "cdhweb_settings.py.j2"
