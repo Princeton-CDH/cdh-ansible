@@ -6,7 +6,7 @@
   connection: ssh
   remote_user: pulsys
   vars:
-    app_name: cdh_solr   # referenced in deploy user bash profile
+    app_name: cdh_solr # referenced in deploy user bash profile
   roles:
     - deploy_user
 
@@ -17,23 +17,20 @@
   become: true
   roles:
     - role: pulibrary.princeton_ansible.otel_collector
-      when: runtime_env == "staging"
     - role: pulibrary.princeton_ansible.beyla
-      when: runtime_env == "staging"
     - create_deployment
     - deploy_user
     - build_dependencies
     - build_project_repo
     - postgresql
     - passenger
-    - build_npm
-    - run_webpack   # dependency for collectstatic
+    - nodejs # dependency for django collectstatic
     - configure_logging # logging directory must exist before running django commands
     - django
     - solr_collection
     - finalize_deploy
-    - configure_crontab  # used in production but not always in staging
+    - configure_crontab # used in production but not always in staging
     - close_deployment
   tasks:
-    - ansible.builtin.include_role:   # timezone needed for twitter bot cron/at jobs
+    - ansible.builtin.include_role: # timezone needed for twitter bot cron/at jobs
         name: pulibrary.princeton_ansible.timezone
