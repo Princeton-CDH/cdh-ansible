@@ -19,6 +19,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# NOTE: if this changes, also update requirements.txt for netfliy preview build
 docs = [
     "sphinx>=7",
     "myst-parser[linkify]>=3",
