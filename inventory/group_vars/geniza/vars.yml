@@ -146,8 +146,6 @@ crontab:
     minute: "*/30" # run every thirty minutes for now (footnote export takes ~10 min)
     job: "env DJANGO_ENV=staging bin/cron-wrapper {{ passenger_app_root }}/env/bin/python{{ python_version }} {{ passenger_app_root }}/manage.py export_metadata -ws -v 0 >> {{ logging_dir }}/sync_metadata_export.log 2>&1"
     state: present
-# datadog
-datadog_app_name: cdh_geniza
 
 # npm_for staging
 npm_install_mode: "dev"
