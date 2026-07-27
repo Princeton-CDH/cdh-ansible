@@ -80,11 +80,6 @@ tigerdata_enabled: true
 # media nfs path
 media_root: /mnt/nfs/cdh/prosody/media/
 
-# app-specific system dependencies - no longer needed
-#app_dependencies:
-# common datadog configuration set in all vars
-datadog_app_name: cdh_prosody
-
 # configure scripts to run as cron jobs
 crontab: []
 # currently production only
