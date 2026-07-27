@@ -38,7 +38,7 @@ flowchart TD
 
 ## Deploying via Ansible Tower
 
-The recommended way to deploy CDH Web is through the [Ansible Tower web interface](https://ansible-tower.princeton.edu/#/home). No command-line access or local setup is required.
+The recommended way to deploy CDH Web is through the [Ansible Tower web interface](https://ansible-tower.princeton.edu/#/home). No command-line access or local setup is required. The steps below are based on the [Deployment Guide](../deployment-guide.md), which also covers command-line deployment if needed.
 
 **⚠️ Note:** We don't deploy to production on Friday afternoons.
 
@@ -64,8 +64,6 @@ On the **Survey** page, change the branch field from the default (`develop` or `
 
 Examples of valid values: `release/3.15`, `feature/my-branch`, `v4.2.1`
 
-For more details on Tower deployment steps and command-line deployment, see the [Deployment Guide](../deployment-guide.md).
-
 ## Related playbooks
 
 - `cdhweb` — deploys the CDH Web application to staging or production.
@@ -77,7 +75,6 @@ For more details on Tower deployment steps and command-line deployment, see the 
 Load balancer proxy configuration is managed in [PUL princeton_ansible](https://github.com/pulibrary/princeton_ansible):
 
 - [production config](https://github.com/pulibrary/princeton_ansible/blob/main/roles/nginxplus/files/conf/http/cdh_prod_web.conf)
-- [staging config](https://github.com/pulibrary/princeton_ansible/blob/main/roles/nginxplus/files/conf/http/cdh_test_web.conf)
 
 Media files are stored on NFS at `/mnt/nfs/cdh/cdhweb/media/` and are shared between both VMs in each environment. They are **not** replaced or modified during a normal deployment.
 
