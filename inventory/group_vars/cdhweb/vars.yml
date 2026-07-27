@@ -86,5 +86,3 @@ passenger_extra_config: |
   rewrite "^/media/uploads/(.*/)?([^/]+\.(jpg|jpeg|gif|png))$" "https://{{ passenger_server_name }}/media/original_images/$2" permanent;
   rewrite "^/grants/(.*)$" "https://{{ passenger_server_name }}/engage/grants/$1" permanent;
 
-# datadog app/service name
-datadog_app_name: cdh_web

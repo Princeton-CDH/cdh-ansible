@@ -81,9 +81,6 @@ app_dependencies:
   - at # for 100 years twitter bot scheduled tweets
   - libmysqlclient-dev # for mysql installation during the migration
 
-# datadog app/service name
-datadog_app_name: cdh_shxco
-
 # data export rclone remote name and foldir id for use in dataset export playbook
 rclone_dataexport_remote: "shxco_dataexports_drive"
 # automated data exports folder in S&co shared drive under data exports
