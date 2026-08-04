@@ -36,6 +36,9 @@ provisioner:
   playbooks:
     create: create.yml
     destroy: destroy.yml
+  config_options:
+    defaults:
+      roles_path: ../../..
   log: true
 verifier:
   name: ansible

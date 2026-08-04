@@ -64,7 +64,7 @@
       environment:
         PATH: "{{ nodejs_npm_install_path }}/node_modules/.bin:/usr/local/bin:/usr/bin:/bin"
       register: nodejs_webpack_result
-      changed_when: true
+      changed_when: false
 
     - name: Nodejs | webpack | Show build output
       ansible.builtin.debug:
