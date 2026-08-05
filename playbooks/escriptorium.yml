@@ -16,8 +16,7 @@
     - build_project_repo
     - postgresql
     - passenger
-    - build_npm   # install npm dependencies
-    - run_webpack # compile npm dependencies
+    - nodejs # install npm dependencies and compile assets
     - configure_logging # logging directory must exist before running django commands
     - django
     - escriptorium_setup
