@@ -1,0 +1,131 @@
+---
+
+- name: Nodejs | Normalize version and select architecture
+  ansible.builtin.set_fact:
+    nodejs_version_v: >-
+      {{ (nodejs_version is match('^v'))
+         | ternary(nodejs_version, 'v' ~ nodejs_version) }}
+    nodejs_arch: >-
+      {{ (ansible_architecture in ['x86_64', 'amd64'])
+         | ternary('x64', 'arm64') }}
+
+- name: Nodejs | Compute install paths
+  ansible.builtin.set_fact:
+    nodejs_dir: "{{ nodejs_prefix_root }}/node-{{ nodejs_version_v }}-linux-{{ nodejs_arch }}"
+    nodejs_tarball: "/usr/local/src/node-{{ nodejs_version_v }}-linux-{{ nodejs_arch }}.tar.xz"
+
+- name: Nodejs | Check currently installed node version
+  ansible.builtin.command:
+    cmd: /usr/local/bin/node --version
+  register: nodejs_current
+  changed_when: false
+  failed_when: false
+
+- name: Nodejs | Determine whether install/update is needed
+  ansible.builtin.set_fact:
+    nodejs_needs_install: >-
+      {{ (nodejs_current.rc != 0)
+         or ((nodejs_current.stdout | trim) != nodejs_version_v) }}
+
+- name: Nodejs | Install archive tooling
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+      - tar
+      - xz-utils
+    state: present
+    update_cache: true
+  become: true
+
+- name: Nodejs | Remove distro-packaged node
+  ansible.builtin.apt:
+    name: nodejs
+    state: absent
+  become: true
+  when: nodejs_remove_apt_node | bool
+
+- name: Nodejs | Install Node (prebuilt)
+  when:
+    - nodejs_needs_install
+    - nodejs_install_method == 'prebuilt'
+  block:
+    - name: Nodejs | Download prebuilt tarball
+      ansible.builtin.get_url:
+        url: "{{ nodejs_release_base_url }}/{{ nodejs_version_v }}/node-{{ nodejs_version_v }}-linux-{{ nodejs_arch }}.tar.xz"
+        dest: "{{ nodejs_tarball }}"
+        mode: "0644"
+        tmp_dest: /tmp
+        timeout: "{{ nodejs_download_timeout }}"
+      become: true
+      register: nodejs_download
+      retries: "{{ nodejs_download_retries }}"
+      delay: "{{ nodejs_download_delay }}"
+      until: nodejs_download is succeeded
+
+    - name: Nodejs | Unpack prebuilt tarball
+      ansible.builtin.unarchive:
+        src: "{{ nodejs_tarball }}"
+        dest: "{{ nodejs_prefix_root }}"
+        remote_src: true
+        creates: "{{ nodejs_dir }}"
+      become: true
+
+- name: Nodejs | Link node, npm, npx, corepack into /usr/local/bin
+  ansible.builtin.file:
+    src: "{{ nodejs_dir }}/bin/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    owner: root
+    group: root
+    state: link
+    force: true
+  become: true
+  loop:
+    - node
+    - npm
+    - npx
+    - corepack
+
+- name: Nodejs | Verify node version
+  ansible.builtin.command:
+    cmd: /usr/local/bin/node --version
+  register: nodejs_version_check
+  changed_when: false
+  failed_when: (nodejs_version_check.stdout | trim) != nodejs_version_v
+
+- name: Nodejs | Yarn Berry via corepack
+  when: nodejs_yarn_enabled | bool
+  block:
+    - name: Nodejs | Check for existing yarn shim
+      ansible.builtin.stat:
+        path: /usr/local/bin/yarn
+      register: nodejs_yarn_shim
+
+    - name: Nodejs | Enable corepack shims
+      ansible.builtin.command:
+        cmd: /usr/local/bin/corepack enable --install-directory /usr/local/bin
+      environment:
+        PATH: "/usr/local/bin:/usr/bin:/bin"
+      become: true
+      changed_when: not nodejs_yarn_shim.stat.exists
+
+    - name: Nodejs | Check installed yarn version
+      ansible.builtin.command:
+        cmd: /usr/local/bin/yarn --version
+      environment:
+        PATH: "/usr/local/bin:/usr/bin:/bin"
+        COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+      register: nodejs_yarn_current
+      changed_when: false
+      failed_when: false
+
+    - name: Nodejs | Activate pinned yarn version
+      ansible.builtin.command:
+        cmd: "/usr/local/bin/corepack prepare yarn@{{ nodejs_yarn_version }} --activate"
+      environment:
+        PATH: "/usr/local/bin:/usr/bin:/bin"
+        COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+      become: true
+      when: >-
+        nodejs_yarn_current.rc != 0
+        or (nodejs_yarn_current.stdout | trim) != nodejs_yarn_version

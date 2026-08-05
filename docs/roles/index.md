@@ -12,4 +12,5 @@ Only roles that opt in by providing an `argument_specs.yml` appear here.
 :maxdepth: 1
 
 deploy_user_role
+nodejs_role
 ```

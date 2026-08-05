@@ -8,23 +8,17 @@
   become: true
   roles:
     - role: pulibrary.princeton_ansible.otel_collector
-      when: runtime_env | default('staging') == "staging"
-
     - role: pulibrary.princeton_ansible.beyla
-      when: runtime_env | default('staging') == "staging"
 
-    - role: pulibrary.princeton_ansible.otel_collector
-      when: runtime_env | default('staging') == "staging"
     - create_deployment
     - deploy_user
     - build_dependencies
     - build_project_repo
     - postgresql
     - passenger
-    - build_npm
     - configure_logging
     - django
     - opencv_from_source
-    - run_webpack   # requires font files from django task
+    - nodejs
     - finalize_deploy
     - close_deployment

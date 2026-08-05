@@ -1,0 +1,150 @@
+---
+
+- name: Nodejs | webpack | Resolve build command and stats path
+  ansible.builtin.set_fact:
+    nodejs_webpack_build_command: >-
+      {{ nodejs_webpack_build_commands[runtime_env] | default('') }}
+    nodejs_webpack_stats_path: >-
+      {{ nodejs_webpack_stats_file
+         | default('', true)
+         | ternary(nodejs_webpack_stats_file, nodejs_webpack_stats_default) }}
+
+- name: Nodejs | webpack | Fail if runtime_env has no build command
+  ansible.builtin.fail:
+    msg: >-
+      No webpack build command mapped for runtime_env={{ runtime_env | default('undefined') }}.
+      Known environments: {{ nodejs_webpack_build_commands.keys() | list | join(', ') }}.
+      Extend nodejs_webpack_build_commands in group_vars if this
+      environment should build assets.
+  when: nodejs_webpack_build_command | length == 0
+
+- name: Nodejs | webpack | Verify build user exists
+  ansible.builtin.command:
+    argv:
+      - getent
+      - passwd
+      - "{{ nodejs_build_user }}"
+  register: nodejs_webpack_build_user_check
+  changed_when: false
+  failed_when: false
+  become: true
+
+- name: Nodejs | webpack | Fail if build user is missing
+  ansible.builtin.fail:
+    msg: >-
+      nodejs_build_user={{ nodejs_build_user }} does not exist.
+      Create the user before including the nodejs role, or set
+      nodejs_build_user to the application deploy user.
+  when: nodejs_webpack_build_user_check.rc != 0
+
+- name: Nodejs | webpack | Build static assets
+  become: true
+  become_user: "{{ nodejs_build_user }}"
+  block:
+    - name: Nodejs | webpack | Preflight webpack shim exists
+      ansible.builtin.stat:
+        path: "{{ nodejs_npm_install_path }}/node_modules/.bin/webpack"
+      register: nodejs_webpack_shim
+
+    - name: Nodejs | webpack | Fail early if prerequisites missing
+      ansible.builtin.fail:
+        msg: >-
+          node_modules/.bin/webpack not found in {{ nodejs_npm_install_path }}.
+          Ensure the npm install step (tasks/npm.yml) ran against this
+          same nodejs_npm_install_path.
+      when: not (nodejs_webpack_shim.stat.exists | default(false))
+
+    - name: Nodejs | webpack | Run webpack build
+      ansible.builtin.command:
+        argv:
+          - npm
+          - run
+          - "{{ nodejs_webpack_build_command }}"
+        chdir: "{{ nodejs_npm_install_path }}"
+      environment:
+        PATH: "{{ nodejs_npm_install_path }}/node_modules/.bin:/usr/local/bin:/usr/bin:/bin"
+      register: nodejs_webpack_result
+      changed_when: false
+
+    - name: Nodejs | webpack | Show build output
+      ansible.builtin.debug:
+        msg: |
+          command: npm run {{ nodejs_webpack_build_command }}
+          cwd: {{ nodejs_npm_install_path }}
+          stdout:
+          {{ nodejs_webpack_result.stdout | default('') }}
+          stderr:
+          {{ nodejs_webpack_result.stderr | default('') }}
+      when: nodejs_webpack_debug | bool
+
+    - name: Nodejs | webpack | Check stats file
+      ansible.builtin.stat:
+        path: "{{ nodejs_webpack_stats_path }}"
+      register: nodejs_webpack_stats
+      when: nodejs_webpack_stats_check | bool
+
+    - name: Nodejs | webpack | Fail if stats file missing or empty
+      ansible.builtin.fail:
+        msg: >-
+          Missing or empty webpack stats file: {{ nodejs_webpack_stats_path }}.
+          The webpack build succeeded but did not produce the stats file
+          expected by Django. Either set nodejs_webpack_stats_file to the
+          path your webpack config actually writes, or set
+          nodejs_webpack_stats_check: false if this application does not
+          use webpack-bundle-tracker. (cdh-ansible#344)
+      when:
+        - nodejs_webpack_stats_check | bool
+        - >-
+          not (nodejs_webpack_stats.stat.exists | default(false))
+          or (nodejs_webpack_stats.stat.size | default(0) | int == 0)
+
+    - name: Nodejs | webpack | Validate stats file is JSON
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - "import json, sys; json.load(open(sys.argv[1])); print('ok')"
+          - "{{ nodejs_webpack_stats_path }}"
+      changed_when: false
+      when: nodejs_webpack_stats_check | bool
+
+  rescue:
+    - name: Nodejs | webpack | Find candidate stats files
+      ansible.builtin.find:
+        paths: "{{ nodejs_npm_install_path }}"
+        patterns:
+          - "*webpack*stats*.json"
+          - "*stats*.json"
+        recurse: true
+        file_type: file
+      register: nodejs_webpack_stats_candidates
+      failed_when: false
+
+    - name: Nodejs | webpack | Show failure diagnostics
+      ansible.builtin.debug:
+        msg: |
+          failed task: {{ ansible_failed_task.name | default('unknown') }}
+          failed message: {{ ansible_failed_result.msg | default('') }}
+
+          npm command: npm run {{ nodejs_webpack_build_command | default('unknown') }}
+          expected stats file: {{ nodejs_webpack_stats_path | default('unset') }}
+
+          npm stdout:
+          {{ nodejs_webpack_result.stdout | default('') }}
+
+          npm stderr:
+          {{ nodejs_webpack_result.stderr | default('') }}
+
+          candidate stats files found on disk:
+          {{ nodejs_webpack_stats_candidates.files
+             | default([])
+             | map(attribute='path')
+             | list }}
+
+          If a candidate above is the real stats file, set
+          nodejs_webpack_stats_file to that path in group_vars.
+      failed_when: false
+
+    - name: Nodejs | webpack | Fail
+      ansible.builtin.fail:
+        msg: "nodejs webpack task failed. See diagnostics above."

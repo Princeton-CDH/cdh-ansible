@@ -1,0 +1,56 @@
+#SPDX-License-Identifier: MIT-0
+# defaults file for roles/nodejs
+---
+# borrowed from https://github.com/pulibrary/princeton_ansible/tree/main/roles/nodejs
+# Accepts "22.4.0" or "v22.4.0". Falls back to the legacy
+# variable name so existing group_vars keep working during
+# migration; remove the fallback once group_vars are renamed.
+nodejs_version: "{{ desired_nodejs_version | default('22.4.0') }}"
+
+nodejs_install_method: prebuilt
+
+nodejs_release_base_url: "https://pulmirror.princeton.edu/mirror/nodejs"
+nodejs_prefix_root: /usr/local
+
+nodejs_download_timeout: 600
+nodejs_download_retries: 6
+nodejs_download_delay: 10
+
+# Remove distro-packaged node to avoid PATH shadowing
+nodejs_remove_apt_node: true
+
+# Yarn (Berry via corepack). Classic-via-apt is not supported
+# in this role; hosts still on Yarn Classic should stay on the
+# legacy role until migrated.
+nodejs_yarn_enabled: false
+nodejs_yarn_version: "4.15.0"
+
+# npm dependency install from build_npm
+nodejs_npm_enabled: false
+nodejs_npm_install_path: "{{ npm_install_path | default(deploy | default('')) }}"
+# production -> npm install --production
+# ci         -> npm ci (requires package-lock.json)
+# dev        -> npm install (includes devDependencies)
+nodejs_npm_install_mode: "{{ npm_install_mode | default('production') }}"
+nodejs_build_user: "{{ deploy_user | default(django_user | default('root')) }}"
+
+# Webpack build from roles/run_webpack)
+nodejs_webpack_enabled: false
+
+# Map runtime_env -> npm script. Extend per-app in group_vars.
+# Legacy webpack_build_qa / webpack_build_prod are honored.
+nodejs_webpack_build_commands:
+  staging: "{{ webpack_build_qa | default('build:qa') }}"
+  production: "{{ webpack_build_prod | default('build:prod') }}"
+  preproduction: "{{ webpack_build_prod | default('build:prod') }}"
+
+# --- webpack-stats contract (resolves Princeton-CDH/cdh-ansible#344) ---
+# Mode 1 (default): stats expected at the conventional path below.
+# Mode 2: app writes stats elsewhere -> set nodejs_webpack_stats_file.
+# Mode 3: app does not use webpack-bundle-tracker at all
+#         -> set nodejs_webpack_stats_check: false.
+nodejs_webpack_stats_check: true
+nodejs_webpack_stats_file: ""
+nodejs_webpack_stats_default: "{{ nodejs_npm_install_path }}/sitemedia/webpack-stats.json"
+
+nodejs_webpack_debug: false

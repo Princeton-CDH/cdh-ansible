@@ -1,0 +1,47 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  gather_facts: false
+  vars:
+    desired_version: "v22.4.0"
+    stats_file: /opt/fixture/sitemedia/webpack-stats.json
+  tasks:
+    - name: Verify | node version
+      ansible.builtin.command: /usr/local/bin/node --version
+      register: verify_node
+      changed_when: false
+
+    - name: Verify | binaries are symlinks
+      ansible.builtin.stat:
+        path: "/usr/local/bin/{{ item }}"
+      register: verify_bins
+      loop: [node, npm, npx, corepack]
+
+    - name: Verify | stats file
+      ansible.builtin.stat:
+        path: "{{ stats_file }}"
+      register: verify_stats
+
+    - name: Verify | stats file parses and reports done
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - >-
+            import json, sys;
+            d = json.load(open(sys.argv[1]));
+            assert d.get("status") == "done", d.get("status");
+            assert d.get("chunks"), "no chunks recorded";
+            print("ok")
+          - "{{ stats_file }}"
+      changed_when: false
+
+    - name: Verify | assertions
+      ansible.builtin.assert:
+        that:
+          - verify_node.stdout | trim == desired_version
+          - verify_bins.results | map(attribute='stat.islnk') | list | min
+          - verify_stats.stat.exists
+          - verify_stats.stat.size | int > 0
+        fail_msg: "nodejs role verification failed"

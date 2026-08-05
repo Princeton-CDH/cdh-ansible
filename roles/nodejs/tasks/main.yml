@@ -1,0 +1,28 @@
+---
+# roles/nodejs
+#
+# Runtime install always runs. Build steps are opt-in via flags,
+# or callable directly with tasks_from: npm.yml / webpack.yml.
+
+- name: Nodejs | Install Node runtime
+  ansible.builtin.include_tasks:
+    file: install.yml
+  tags:
+    - nodejs
+    - nodejs_install
+
+- name: Nodejs | Install application javascript dependencies
+  ansible.builtin.include_tasks:
+    file: npm.yml
+  when: nodejs_npm_enabled | bool
+  tags:
+    - nodejs
+    - nodejs_npm
+
+- name: Nodejs | Build static assets with webpack
+  ansible.builtin.include_tasks:
+    file: webpack.yml
+  when: nodejs_webpack_enabled | bool
+  tags:
+    - nodejs
+    - nodejs_webpack

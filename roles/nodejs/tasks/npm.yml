@@ -1,0 +1,51 @@
+---
+
+- name: Nodejs | npm | Fail if install path is unset
+  ansible.builtin.fail:
+    msg: >-
+      nodejs_npm_install_path is empty. Set it (or the legacy
+      npm_install_path / deploy variables) before including npm.yml.
+  when: nodejs_npm_install_path | length == 0
+
+- name: Nodejs | npm | Verify package.json exists
+  ansible.builtin.stat:
+    path: "{{ nodejs_npm_install_path }}/package.json"
+  register: nodejs_pkgjson
+  become: true
+
+- name: Nodejs | npm | Fail if package.json is missing
+  ansible.builtin.fail:
+    msg: >-
+      package.json not found at {{ nodejs_npm_install_path }};
+      check nodejs_npm_install_path.
+  when: not (nodejs_pkgjson.stat.exists | default(false))
+
+- name: Nodejs | npm | Verify build user exists
+  ansible.builtin.command:
+    argv:
+      - getent
+      - passwd
+      - "{{ nodejs_build_user }}"
+  register: nodejs_npm_build_user_check
+  changed_when: false
+  failed_when: false
+  become: true
+
+- name: Nodejs | npm | Fail if build user is missing
+  ansible.builtin.fail:
+    msg: >-
+      nodejs_build_user={{ nodejs_build_user }} does not exist.
+      Create the user before including the nodejs role, or set
+      nodejs_build_user to the application deploy user.
+  when: nodejs_npm_build_user_check.rc != 0
+
+- name: Nodejs | npm | Install javascript dependencies
+  community.general.npm:
+    path: "{{ nodejs_npm_install_path }}"
+    production: "{{ nodejs_npm_install_mode == 'production' }}"
+    ci: "{{ nodejs_npm_install_mode == 'ci' }}"
+    executable: /usr/local/bin/npm
+  become: true
+  become_user: "{{ nodejs_build_user }}"
+  environment:
+    PATH: "/usr/local/bin:/usr/bin:/bin"

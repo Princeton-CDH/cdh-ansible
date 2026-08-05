@@ -21,14 +21,15 @@ The overall structure of this repository is as follows:
 
 ### Python environment & dependencies (recommended: uv + pyproject.toml)
 
-This repository uses `uv` for Python dependency management. ([Install uv](https://docs.astral.sh/uv/) if you don't already have it.)  Dependencies are defined in `pyproject.toml` and locked in `uv.lock`.
+This repository uses `uv` for Python dependency management. ([Install uv](https://docs.astral.sh/uv/) if you don't already have it.) Dependencies are defined in `pyproject.toml` and locked in `uv.lock`.
 
-- The `.python-version`  file is set to the recommended version of Python (uv will use this automatically).
+- The `.python-version` file is set to the recommended version of Python (uv will use this automatically).
 - Create/activate a virtual environment (use uv if you have it, but any tool is fine), then install dependencies:
 
 ```sh
 uv sync
 ```
+
 This will install the locked dependencies from uv.lock (and update the environment if pyproject.toml changes).
 
 If you create a local virtualenv in this directory, `.venv/` is the default used by our Devbox setup (if you use Devbox).
@@ -190,23 +191,23 @@ Note that you will not be able to run setup tasks or decrypt setup vault secrets
 
 This repo supports [Devbox](https://www.jetify.com/devbox/) as an alternative to managing Python/uv and related tooling locally.
 
-1) Install Devbox
+1. Install Devbox
 
-  Follow Devbox [install instructions](https://www.jetify.com/docs/devbox/installing-devbox) for your OS.
+Follow Devbox [install instructions](https://www.jetify.com/docs/devbox/installing-devbox) for your OS.
 
-2) Enter the Devbox shell
+2. Enter the Devbox shell
 
-  ```sh
-  devbox shell
-  ```
+```sh
+devbox shell
+```
 
-  On first run, this will:
+On first run, this will:
 
 - create a local `.venv` (via `uv venv`) if it does not exist
 
 - install Python dependencies from `pyproject.toml` / `uv.lock` (`uv sync`)
 
-3) Install Ansible Galaxy dependencies
+3. Install Ansible Galaxy dependencies
 
 ```sh
 uv run ansible-galaxy install -r requirements.yml
@@ -222,9 +223,9 @@ devbox run pre-commit   # run all pre-commit hooks
 ```
 
 > Notes:
+
 - The virtualenv is created at `.venv`/ (not `env/venv`), and is used automatically inside the Devbox shell.
 - You can still use the manual setup instructions below if you prefer not to use Devbox.
-
 
 ## Documentation
 
@@ -232,15 +233,29 @@ The `docs/` folder includes markdown documentation, but has also been configured
 
 The main folder is for common documentation; the `applications/` folder is for application-specific information about the architecture, deploy process, or any other details worth noting.
 
-To build sphinx docs locally:
+To build docs locally, make sure you have necessary the python dependencies. You can do this in advance with `uv sync` or include the extra option in in the `uv run` command (`uv run --extra docs ...`):
+
 ```sh
-uv run sphinx-build -b html docs/ docs/_build
+uv sync --extra docs
 ```
 
-You can browse as static html starting with `docs/_build/html/index.html`.
+Then you can build the documentation (enable warnings but keep going):
+
+```sh
+uv run sphinx-build -b html -W --keep-going docs/ docs/_build
+```
+
+For those who use [just](https://github.com/casey/just), a `.justfile` is provided for convenience (`just docs` or `just clean-docs`).
+
+Browse the resulting static html files starting with the main index as your entry point `docs/_build/html/index.html`. On a Mac, you can view the results in a browser by running: `open docs/_build/html/index.html`
 
 The sphinx documentation site includes two custom sphinx extensions in `docs/_ext`:
+
 - `inventory_docs.py` - parses host inventory in `inventory/all_hosts` to generate CSVs for tabular display
 - `role_docs.py` - creates a shim collection so cdh-ansible roles can be documented with antsibull-docs; only includes roles with `meta/argument_specs.yml`
 
-Documentation is automatically built and published on GitHub Pages when updates are pushed to the default branch.
+Documentation is automatically built and published on GitHub Pages when updates are pushed to the default branch (`main`).
+
+A documentation preview is automatically built and published for PRs to `main` with netlify.
+
+When new role `argument_specs.yml` files are picked up, they should automatically appear and be added to the role index table of contents. The changed role index file can be checked in.
