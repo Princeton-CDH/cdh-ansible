@@ -38,7 +38,7 @@ provisioner:
     destroy: destroy.yml
   config_options:
     defaults:
-      roles_path: ../../..
+      roles_path: ${MOLECULE_PROJECT_DIRECTORY}/..:~/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles
   log: true
 verifier:
   name: ansible
