@@ -15,11 +15,11 @@ symlink: mep
 wsgi_path: "{{ django_app }}/wsgi.py"
 # use python 3.12
 python_version: 3.12
-# nodejs version
-node_version: "18"
-
-# skip webpack stats check
-webpack_stats_check_enabled: false
+# nodejs
+nodejs_version: "v22.4.0"
+nodejs_npm_enabled: true
+nodejs_webpack_enabled: true
+nodejs_webpack_stats_check: false # skip webpack stats check
 
 # Override clone root to use deploy user home instead of root
 clone_root: "/home/{{ deploy_user }}/repos"
