@@ -17,6 +17,33 @@
     # because we don't want to make it any easier than necessary
     # to ssh into other users accounts
 
+    - name: Remove files that the ESC-2026 patch will create (patch is not idempotent for new files)
+      ansible.builtin.file:
+        path: "{{ deploy }}/{{ item }}"
+        state: absent
+      loop:
+        - app/apps/imports/fetch.py
+        - app/apps/imports/tests/test_fetch.py
+
+    - name: Copy ESC-2026 security patch to remote
+      ansible.builtin.copy:
+        src: files/ESC-2026-princeton.patch
+        dest: /tmp/ESC-2026-princeton.patch
+        mode: "0600"
+
+    - name: Apply ESC-2026 security patch
+      ansible.builtin.patch:
+        src: /tmp/ESC-2026-princeton.patch
+        remote_src: true
+        basedir: "{{ deploy }}"
+        strip: 1
+        state: present
+
+    - name: Remove ESC-2026 security patch from remote
+      ansible.builtin.file:
+        path: /tmp/ESC-2026-princeton.patch
+        state: absent
+
     - name: Rename default segtrain task
       ansible.builtin.replace:
         path: "{{ django_app_path }}/apps/core/tasks.py"

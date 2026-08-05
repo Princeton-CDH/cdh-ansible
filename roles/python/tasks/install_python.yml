@@ -14,6 +14,16 @@
   ansible.builtin.apt_repository:
     repo: ppa:deadsnakes/ppa
 
+- name: Pin python packages to deadsnakes to avoid rc/alpha versions from distro mirror
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/apt/preferences.d/deadsnakes-python
+    content: |
+      Package: python{{ python_version }} python{{ python_version }}-* libpython{{ python_version }}*
+      Pin: release o=LP-PPA-deadsnakes
+      Pin-Priority: 900
+    mode: "0644"
+
 - name: Install python and core libraries
   become: true
   ansible.builtin.apt:
