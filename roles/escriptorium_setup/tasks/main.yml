@@ -17,6 +17,40 @@
     # because we don't want to make it any easier than necessary
     # to ssh into other users accounts
 
+    # ESC-2026 security patch: applies authorization and input validation fixes
+    # to the API, WebSocket consumers, and import pipeline. This is a temporary
+    # workaround until the upstream eScriptorium repository merges these fixes
+    # and we upgrade to that release. Once we upgrade past the patched version,
+    # remove this block along with the patch file in files/ESC-2026-princeton.patch.
+    - name: Apply ESC-2026 security patch
+      block:
+        - name: Remove files that the ESC-2026 patch will create (patch is not idempotent for new files)
+          ansible.builtin.file:
+            path: "{{ deploy }}/{{ item }}"
+            state: absent
+          loop:
+            - app/apps/imports/fetch.py
+            - app/apps/imports/tests/test_fetch.py
+
+        - name: Copy ESC-2026 security patch to remote
+          ansible.builtin.copy:
+            src: files/ESC-2026-princeton.patch
+            dest: /tmp/ESC-2026-princeton.patch
+            mode: "0600"
+
+        - name: Apply ESC-2026 security patch
+          ansible.builtin.patch:
+            src: /tmp/ESC-2026-princeton.patch
+            remote_src: true
+            basedir: "{{ deploy }}"
+            strip: 1
+            state: present
+
+        - name: Remove ESC-2026 security patch from remote
+          ansible.builtin.file:
+            path: /tmp/ESC-2026-princeton.patch
+            state: absent
+
     - name: Rename default segtrain task
       ansible.builtin.replace:
         path: "{{ django_app_path }}/apps/core/tasks.py"
@@ -78,14 +112,14 @@
     - name: uninstall htr2hpc python package
       ansible.builtin.pip:
         virtualenv: "{{ django_venv_path }}"
-        virtualenv_command: "python{{ python_version }} -m venv"
+        virtualenv_command: "python{{ python_version }} -m venv --prompt \"{{ python_venv_prompt }}\""
         name: htr2hpc
         state: absent
     # reinstall with whatever version is in settings
     - name: install currently configured htr2hpc python package
       ansible.builtin.pip:
         virtualenv: "{{ django_venv_path }}"
-        virtualenv_command: "python{{ python_version }} -m venv"
+        virtualenv_command: "python{{ python_version }} -m venv --prompt \"{{ python_venv_prompt }}\""
         name: "{{ python_extra_packages }}"
         extra_args: "{{ python_extra_packages_pip_extra_args }}"
       notify:
