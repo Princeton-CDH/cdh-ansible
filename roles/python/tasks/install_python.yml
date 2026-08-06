@@ -15,6 +15,11 @@
     repo: ppa:deadsnakes/ppa
 
 - name: Pin python packages to deadsnakes to avoid rc/alpha versions from distro mirror
+  # The Princeton math mirror has a higher apt priority than deadsnakes, causing
+  # pre-release builds (e.g. 3.11.0rc1) to be installed instead of the formal
+  # release. 3.11.0rc1 lacks sys.get_int_max_str_digits, which torch/kraken
+  # import unconditionally, causing a startup crash. This pin ensures deadsnakes
+  # always wins. Can be removed if the Princeton mirror is fixed or removed.
   become: true
   ansible.builtin.copy:
     dest: /etc/apt/preferences.d/deadsnakes-python

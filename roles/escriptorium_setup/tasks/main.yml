@@ -17,6 +17,12 @@
     # because we don't want to make it any easier than necessary
     # to ssh into other users accounts
 
+    # ESC-2026 security patch: applies authorization and input validation fixes
+    # to the API, WebSocket consumers, and import pipeline. This is a temporary
+    # workaround until the upstream eScriptorium repository merges these fixes
+    # and we upgrade to that release. Once we upgrade past the patched version,
+    # these four tasks (remove, copy, apply, remove) should be deleted along
+    # with the patch file in files/ESC-2026-princeton.patch.
     - name: Remove files that the ESC-2026 patch will create (patch is not idempotent for new files)
       ansible.builtin.file:
         path: "{{ deploy }}/{{ item }}"
