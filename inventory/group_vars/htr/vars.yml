@@ -36,8 +36,10 @@ python_version_by_distribution_release:
   jammy: "3.11"
   noble: "3.12"
 python_version: "{{ python_version_by_distribution_release[ansible_distribution_release | lower] }}"
-# nodejs version
-node_version: "18"
+# nodejs
+nodejs_version: "v18.20.8"
+nodejs_npm_enabled: true
+nodejs_webpack_enabled: true
 # install local customizations as an extra package
 # Note: the standard `-e ref=GITREF` override controls the eScriptorium gitref only,
 # not the htr2hpc package. To deploy a specific htr2hpc branch or tag, use:
@@ -86,14 +88,16 @@ python_venv_prompt: "escriptorium"
 # default requirements file is directly under the app; escriptorium has it nested
 python_requirements_file: "{{ django_app_path }}/requirements.txt"
 # npm package.json file is in subdirectory "front"
-npm_install_path: "{{ python_app_path }}/front"
+nodejs_npm_install_path: "{{ python_app_path }}/front"
 # dev dependencies required to run the build
-npm_install_mode: "development"
+nodejs_npm_install_mode: "development"
 # escriptorium webpack build commands (npm scripts defined in front/package.json)
-webpack_build_qa: "production"
-webpack_build_prod: "production"
+nodejs_webpack_build_commands:
+  staging: "production"
+  production: "production"
+  preproduction: "production"
 # escriptorium does not generate webpack-stats.json, skip that check
-webpack_stats_check_enabled: false
+nodejs_webpack_stats_check: false
 
 # ubuntu packages to be installed
 # - from list of third party tools in escriptorium full install instructions
