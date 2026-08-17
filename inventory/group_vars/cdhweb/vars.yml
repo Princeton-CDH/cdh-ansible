@@ -38,6 +38,9 @@ application_dbuser_password: "{{ vault_db_password }}"
 application_db_name: "{{ db_name }}"
 application_db_host: "{{ postgres_host }}"
 
+# observability
+running_on_server: true
+
 # nodejs
 nodejs_version: "v22.4.0"
 nodejs_npm_enabled: true
