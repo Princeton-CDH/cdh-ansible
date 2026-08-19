@@ -4,8 +4,9 @@ This role installs and configures Nginx with Phusion Passenger, specifically opt
 
 ## Requirements
 
-* **OS**: Debian/Ubuntu based systems (due to `apt` module usage).
+* **OS**: Ubuntu 22.04 (jammy) or 24.04 (noble). The role fails early on other releases, because the Phusion repository only publishes module builds compiled against a supported release's nginx.
 * **Root Access**: The role requires `become: true` for installation tasks.
+* Package installation is tagged `setup` and `never`, so it only runs when the playbook is invoked with `--tags=all,setup`.
 
 ## Role Variables
 
@@ -50,10 +51,11 @@ Available variables are listed below, along with default values (see `defaults/m
 |----------|---------|-------------|
 | `passenger_nginx_site_template` | `passenger.conf.j2` | The Jinja2 template used for the site config. |
 | `passenger_extra_config` | `''` | Raw Nginx config string appended to the server block. |
+| `passenger_apt_release` | host's Ubuntu release | Suite requested from the Phusion apt repository (`jammy`, `noble`). |
 
 ## Dependencies
 
-This role relies on OS-specific variables (loaded via `include_vars`) to define `nginx_passenger_packages`. Ensure your `vars/` directory contains the appropriate package lists for Ubuntu (e.g., `nginx-extras`, `passenger`, `libnginx-mod-http-passenger`).
+None beyond a supported Ubuntu release. Known-good package versions are kept in `vars/jammy.yml` and `vars/noble.yml`, and the correct file is loaded from the host's release automatically.
 
 ## Features
 
@@ -64,6 +66,23 @@ The role automatically handles the Phusion Passenger GPG keys:
 * Installs the **Legacy Key** (SHA1) for backward compatibility.
 * Installs the **2025 Future-Proof Key** (SHA256) for newer repositories.
 * Converts keys to the modern GPG keyring format (`/usr/local/share/keyrings`) and installs them into `/etc/apt/trusted.gpg.d/`.
+
+### Package versions
+
+Known-good versions are recorded per Ubuntu release in `vars/jammy.yml` and `vars/noble.yml`. Passenger 6.1.6 is used on both because its Nginx module depends on plain `nginx-common`, so it installs against whichever revision of Nginx the archive currently offers.
+
+That matters because Phusion publishes several module builds per Passenger release, and newer ones depend on one *exact* Nginx revision. For example on noble, `6.2.0-1~noble1` requires `nginx-common 1.24.0-2ubuntu7.15` while `6.2.0-1~noble1build1` requires `7.16`. Installing "the newest" therefore fails with `you have held broken packages` on any host whose archive or mirror has not published that exact Nginx revision.
+
+Before installing, the role checks what apt can actually install and:
+
+* uses the recorded Passenger version when it is available (the normal case);
+* falls back to the newest build that is installable against the available Nginx, printing a message asking that `vars/<release>.yml` be updated;
+* pins Nginx only when the chosen module requires an exact revision, or when the recorded revision is still available; otherwise Nginx tracks the archive so it keeps receiving security updates.
+
+Two apt behaviors worth knowing before changing this code:
+
+* Installation runs through `apt-get`, not the `apt` module. The module constructs its own apt policy without apt's defaults, so requesting any version other than the repository's newest fails with `no available installation candidate`. Since versions here are pinned deliberately, the module is unusable.
+* The Phusion pin in `/etc/apt/preferences.d/phusion-passenger` uses priority 999, not 1001, and an unquoted origin. At 1001 it ties with apt's own version pin and the newest package wins; quoted origins never match at all.
 
 ### Monitoring
 
