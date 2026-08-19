@@ -172,6 +172,21 @@ SOLR_CONNECTIONS = {
 {% endif %}
 {% endblock %}
 
+# Override MIDDLEWARE to remove AccountExpiryMiddleware.
+# We use CAS-managed accounts; expiry is handled via pucas + cron, not middleware.
+MIDDLEWARE = [
+    'django_prometheus.middleware.PrometheusBeforeMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_prometheus.middleware.PrometheusAfterMiddleware',
+]
+
 # Extra app-specific configuration
 {% block extra_config %}
 # custom config for htr2hpc

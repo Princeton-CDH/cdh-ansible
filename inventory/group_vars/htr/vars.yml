@@ -14,7 +14,7 @@ app_name: escriptorium
 
 # Git repository (on gitlab instead of github, so need to specify the full repo url)
 repo_url: https://gitlab.com/scripta/escriptorium.git
-gitref: dev-0.14.2
+gitref: v1.0.1
 
 # repo variable is still needed for checkout file structure
 repo: scripta/escriptorium
