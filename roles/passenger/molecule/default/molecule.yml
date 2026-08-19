@@ -15,10 +15,24 @@ lint: |
   set -e
   yamllint .
   ansible-lint
+# test both Ubuntu releases in use on CDH servers; the passenger module build
+# that can be installed differs between them
 platforms:
-  - name: instance
+  - name: jammy
     image: "ghcr.io/pulibrary/vm-builds/ubuntu-22.04"
-    command: "" # image above already has the /sbin/init
+    command: ""  # image above already has the /sbin/init
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+  - name: noble
+    image: "ghcr.io/pulibrary/vm-builds/ubuntu-24.04"
+    command: ""  # image above already has the /sbin/init
     tmpfs:
       - /run
       - /run/lock
@@ -30,6 +44,10 @@ platforms:
     pre_build_image: true
 provisioner:
   name: ansible
+  # package installation is tagged setup+never so it is skipped during
+  # deploys; request it explicitly so the scenario actually installs nginx
+  options:
+    tags: all,setup
   config_options:
     defaults:
       remote_tmp: /tmp

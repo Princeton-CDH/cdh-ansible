@@ -1,0 +1,68 @@
+---
+# Resolve nginx / Passenger versions before installing; see
+# files/resolve_passenger_versions.sh for why this cannot be a fixed list.
+
+- name: Passenger | Resolve installable nginx and Passenger versions
+  ansible.builtin.script:
+    cmd: >-
+      resolve_passenger_versions.sh
+      '{{ passenger_version | default("", true) }}'
+      '{{ nginx_version | default("", true) }}'
+  args:
+    executable: /bin/bash
+  changed_when: false
+  failed_when: false
+  register: passenger_version_lookup
+
+- name: Passenger | Fail if no compatible Passenger packages are available
+  ansible.builtin.assert:
+    that:
+      - passenger_version_lookup.rc == 0
+      - passenger_version_lookup.stdout | trim | length > 0
+    fail_msg: >-
+      Could not resolve installable nginx and Passenger versions on
+      {{ ansible_distribution }} {{ ansible_distribution_release }}.
+      Check that the Phusion repository for {{ passenger_apt_release }} is
+      reachable and that the apt cache is current.
+      Details: {{ passenger_version_lookup.stderr | default('none') | trim }}
+
+- name: Passenger | Record resolved versions
+  ansible.builtin.set_fact:
+    passenger_resolved: "{{ passenger_version_lookup.stdout | trim | from_json }}"
+
+- name: Passenger | Warn when the recorded Passenger version is unavailable
+  ansible.builtin.debug:
+    msg: >-
+      Passenger {{ passenger_version | default('(unset)') }} from
+      vars/{{ ansible_distribution_release }}.yml is not installable against the
+      available nginx ({{ passenger_resolved.nginx_candidate }});
+      falling back to {{ passenger_resolved.passenger }}. Update
+      vars/{{ ansible_distribution_release }}.yml once this is verified.
+  when: not passenger_resolved.pinned
+
+- name: Passenger | Build the nginx and Passenger package transaction
+  ansible.builtin.set_fact:
+    passenger_package_specs: >-
+      {{
+        (
+          nginx_package_names
+          | map(
+              'regex_replace',
+              '$',
+              ('=' ~ passenger_resolved.nginx)
+              if passenger_resolved.nginx | length > 0
+              else ''
+            )
+          | list
+        )
+        + ['libnginx-mod-http-passenger=' ~ passenger_resolved.module]
+        + (
+            ['passenger=' ~ passenger_resolved.passenger]
+            if passenger_resolved.passenger | length > 0
+            else ['passenger']
+          )
+      }}
+
+- name: Passenger | Display the resolved package transaction
+  ansible.builtin.debug:
+    var: passenger_package_specs

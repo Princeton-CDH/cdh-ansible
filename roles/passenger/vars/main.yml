@@ -1,5 +1,25 @@
 ---
 __nginx_user: "www-data"
-nginx_passenger_packages:
+
+# Ubuntu releases this role knows how to install nginx + passenger on.
+# Each supported release needs a matching vars/<release>.yml file.
+passenger_supported_releases:
+  - jammy
+  - noble
+
+# Phusion apt signing keys. Phusion re-signed its repositories with a SHA-256
+# key in 2025; the legacy key still signs older suites, so install both.
+# trusted_name preserves the file names already deployed to existing servers.
+passenger_apt_keys:
+  - name: phusion_passenger_legacy
+    url: https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt
+    trusted_name: phusion
+  # https://blog.phusion.nl/important-new-signing-key-for-passenger/
+  - name: phusion_passenger_2025
+    url: https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key-2025.txt
+    trusted_name: phusion_new
+
+# nginx packages installed alongside the passenger module
+nginx_package_names:
   - nginx-core
-  - libnginx-mod-http-passenger
+  - nginx-common
