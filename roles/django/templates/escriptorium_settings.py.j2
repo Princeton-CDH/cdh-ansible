@@ -39,6 +39,7 @@ CELERY_TASK_ROUTES = {
     'htr2hpc.tasks.segtrain': {'queue': 'gpu'},
     'htr2hpc.tasks.hpc_user_setup': {'queue': 'gpu'},
 }
+
 {% endblock %}
 {% block db_config %}
 DATABASES = {

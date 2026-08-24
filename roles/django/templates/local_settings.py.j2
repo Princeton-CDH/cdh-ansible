@@ -62,10 +62,10 @@ PUCAS_LDAP.update({
 })
 {% endblock %}
 
+{% block email_config %}
 # Email configuration (error messages, admin notifications)
 # https://docs.djangoproject.com/en/dev/howto/error-reporting/
 # https://docs.wagtail.io/en/latest/reference/settings.html#email-notifications
-{% block email_config %}
 ADMINS = [("CDH Dev Team", "cdhdevteam@princeton.edu")]
 SERVER_EMAIL = "cdhdevteam@princeton.edu"
 {% if runtime_env == "production" or runtime_env == "preproduction"%}
@@ -93,9 +93,9 @@ CSP_REPORT_URI = "{{ django_csp_enforce_uri }}"
 {% endif %}
 {% endblock %}
 
+{% block logging_config %}
 # Logging configuration
 # https://docs.djangoproject.com/en/dev/topics/logging/
-{% block logging_config %}
 # Solution following https://stackoverflow.com/a/9541647
 # Sends a logging email even when DEBUG is on
 LOGGING = {
@@ -138,9 +138,9 @@ LOGGING = {
 }
 {% endblock %}
 
+{% block solr_config %}
 # Solr configuration (search index)
 # https://github.com/Princeton-CDH/parasolr
-{% block solr_config %}
 {% if solr_collection is defined %}
 SOLR_CONNECTIONS = {
     'default': {
