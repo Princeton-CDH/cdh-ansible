@@ -1,4 +1,4 @@
-{% block head %}{% endblock %}
+{% block imports %}{% endblock %}
 # Cryptographic key for signing secrets. Keep the production key hidden!
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = "{{ django_secret_key }}"
@@ -18,7 +18,6 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # template and stylesheet are present.
 SHOW_TEST_WARNING = {{ django_test_warning }}
 
-{% block celery_task_routes %}{% endblock %}
 {% if media_root is defined %}
 # Configure media root path
 MEDIA_ROOT = '{{ media_root }}'

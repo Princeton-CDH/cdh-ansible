@@ -1,5 +1,5 @@
 {% extends 'local_settings.py.j2' %}
-{% block head %}
+{% block imports %}
 from django.utils.translation import gettext_lazy as _
 
 from escriptorium.settings import *
@@ -23,22 +23,6 @@ LANGUAGES = [
 # }
 
 CSRF_TRUSTED_ORIGINS = ["https://*.princeton.edu", "http://localhost:8000"]
-
-{% endblock %}
-{% block celery_task_routes %}
-# Celery task routing — directs each task type to the appropriate worker queue
-CELERY_TASK_ROUTES = {
-    'core.tasks.recalculate_masks': {'queue': 'live'},
-    'core.tasks.generate_part_thumbnails': {'queue': 'low-priority'},
-    'core.tasks.train': {'queue': 'gpu'},
-    'core.tasks.segtrain': {'queue': 'gpu'},
-    'core.tasks.align': {'queue': 'jvm'},
-    'imports.tasks.*': {'queue': 'low-priority'},
-    'users.tasks.async_email': {'queue': 'low-priority'},
-    'htr2hpc.tasks.train': {'queue': 'gpu'},
-    'htr2hpc.tasks.segtrain': {'queue': 'gpu'},
-    'htr2hpc.tasks.hpc_user_setup': {'queue': 'gpu'},
-}
 
 {% endblock %}
 {% block db_config %}
@@ -115,6 +99,20 @@ LOGGING = {
 }
 {% endblock %}
 {% block extra_config %}
+# Celery task routing — directs each task type to the appropriate worker queue
+CELERY_TASK_ROUTES = {
+    'core.tasks.recalculate_masks': {'queue': 'live'},
+    'core.tasks.generate_part_thumbnails': {'queue': 'low-priority'},
+    'core.tasks.train': {'queue': 'gpu'},
+    'core.tasks.segtrain': {'queue': 'gpu'},
+    'core.tasks.align': {'queue': 'jvm'},
+    'imports.tasks.*': {'queue': 'low-priority'},
+    'users.tasks.async_email': {'queue': 'low-priority'},
+    'htr2hpc.tasks.train': {'queue': 'gpu'},
+    'htr2hpc.tasks.segtrain': {'queue': 'gpu'},
+    'htr2hpc.tasks.hpc_user_setup': {'queue': 'gpu'},
+}
+
 # custom config for htr2hpc
 HPC_HOSTNAME = "{{ hpc_hostname }}"
 # copied in place by escriptorium_setup role
