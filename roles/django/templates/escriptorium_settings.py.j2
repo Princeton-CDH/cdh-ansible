@@ -1,3 +1,5 @@
+{% extends 'local_settings.py.j2' %}
+{% block imports %}
 from django.utils.translation import gettext_lazy as _
 
 from escriptorium.settings import *
@@ -20,50 +22,9 @@ LANGUAGES = [
 #     }
 # }
 
-# Cryptographic key for signing secrets. Keep the production key hidden!
-# https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
-SECRET_KEY = "{{ django_secret_key }}"
-
-# Display detailed error messages. Turn off in production!
-# https://docs.djangoproject.com/en/dev/ref/settings/#debug
-DEBUG = {{ django_debug }}
-
-# Valid hostnames this site can serve.
-# https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = [{% for host in django_allowed_hosts %}"{{ host }}", {% endfor %}]
-
 CSRF_TRUSTED_ORIGINS = ["https://*.princeton.edu", "http://localhost:8000"]
 
-# Use x-forwarded-proto header to tell if request from nginx was https or not
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# Show a small "this is a test site" banner for QA sites, if corresponding
-# template and stylesheet are present.
-SHOW_TEST_WARNING = {{ django_test_warning }}
-
-# Celery task routing — directs each task type to the appropriate worker queue
-{% block celery_task_routes %}
-CELERY_TASK_ROUTES = {
-    'core.tasks.recalculate_masks': {'queue': 'live'},
-    'core.tasks.generate_part_thumbnails': {'queue': 'low-priority'},
-    'core.tasks.train': {'queue': 'gpu'},
-    'core.tasks.segtrain': {'queue': 'gpu'},
-    'core.tasks.align': {'queue': 'jvm'},
-    'imports.tasks.*': {'queue': 'low-priority'},
-    'users.tasks.async_email': {'queue': 'low-priority'},
-    'htr2hpc.tasks.train': {'queue': 'gpu'},
-    'htr2hpc.tasks.segtrain': {'queue': 'gpu'},
-    'htr2hpc.tasks.hpc_user_setup': {'queue': 'gpu'},
-}
 {% endblock %}
-
-{% if media_root is defined %}
-# Configure media root path
-MEDIA_ROOT = '{{ media_root }}'
-{% endif %}
-
-# Database configuration
-# https://docs.djangoproject.com/en/dev/ref/databases/
 {% block db_config %}
 DATABASES = {
     "default": {
@@ -75,28 +36,9 @@ DATABASES = {
     },
 }
 {% endblock %}
-
-# Princeton CAS configuration (authentication, user account creation)
-# https://github.com/Princeton-CDH/django-pucas
-{% block cas_config %}
-CAS_SERVER_URL = "https://fed.princeton.edu/cas/"
-CAS_VERSION = "3"
-PUCAS_LDAP.update({
-    "SERVERS": [
-        "ldap2.princeton.edu",
-        "ldap3.princeton.edu",
-        "ldap4.princeton.edu",
-        "ldap5.princeton.edu"
-    ],
-     "SEARCH_BASE": "o=Princeton University,c=US",
-     "SEARCH_FILTER": "(uid=%(user)s)",
-})
-{% endblock %}
-
+{% block email_config %}
 # Email configuration (error messages, admin notifications)
 # https://docs.djangoproject.com/en/dev/howto/error-reporting/
-# https://docs.wagtail.io/en/latest/reference/settings.html#email-notifications
-{% block email_config %}
 ADMINS = [("CDH Dev Team", "cdhdevteam@princeton.edu")]
 SERVER_EMAIL = "cdhdevteam@princeton.edu"
 # eScriptorium uses a non-standard from email configuration; use same for now
@@ -107,10 +49,9 @@ EMAIL_SUBJECT_PREFIX = "{{ django_email_subject }}"
 EMAIL_USE_TLS = False
 #EMAIL_PORT = 587  # use default 25
 {% endblock %}
-
+{% block logging_config %}
 # Logging configuration
 # https://docs.djangoproject.com/en/dev/topics/logging/
-{% block logging_config %}
 # Solution following https://stackoverflow.com/a/9541647
 # Sends a logging email even when DEBUG is on
 LOGGING = {
@@ -157,23 +98,21 @@ LOGGING = {
     }
 }
 {% endblock %}
-
-# Solr configuration (search index)
-# https://github.com/Princeton-CDH/parasolr
-{% block solr_config %}
-{% if solr_collection is defined %}
-SOLR_CONNECTIONS = {
-    'default': {
-        'URL': '{{ solr_url }}',
-        'COLLECTION': '{{ solr_collection }}',
-        'CONFIGSET': '{{ solr_configset }}'
-    }
-}
-{% endif %}
-{% endblock %}
-
-# Extra app-specific configuration
 {% block extra_config %}
+# Celery task routing — directs each task type to the appropriate worker queue
+CELERY_TASK_ROUTES = {
+    'core.tasks.recalculate_masks': {'queue': 'live'},
+    'core.tasks.generate_part_thumbnails': {'queue': 'low-priority'},
+    'core.tasks.train': {'queue': 'gpu'},
+    'core.tasks.segtrain': {'queue': 'gpu'},
+    'core.tasks.align': {'queue': 'jvm'},
+    'imports.tasks.*': {'queue': 'low-priority'},
+    'users.tasks.async_email': {'queue': 'low-priority'},
+    'htr2hpc.tasks.train': {'queue': 'gpu'},
+    'htr2hpc.tasks.segtrain': {'queue': 'gpu'},
+    'htr2hpc.tasks.hpc_user_setup': {'queue': 'gpu'},
+}
+
 # custom config for htr2hpc
 HPC_HOSTNAME = "{{ hpc_hostname }}"
 # copied in place by escriptorium_setup role
