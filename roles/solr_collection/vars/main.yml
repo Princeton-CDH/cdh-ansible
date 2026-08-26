@@ -1,3 +1,4 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # vars file for roles/solr_collection
+__solr_conf_src: "{{ install_root }}/current/solr_conf/"

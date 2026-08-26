@@ -62,6 +62,24 @@
         ssh_key_bits: 2048
         ssh_key_file: .ssh/id_rsa
 
+    # Installing a private key does not refresh the matching .pub file, so the
+    # stored public key can describe an older, unrelated key pair. Anything
+    # that authorizes this host elsewhere (for example the Solr configset
+    # rsync) would then trust a key this host cannot actually use.
+    - name: Deploy_user - derive public key from the deploy user private key
+      ansible.builtin.command:
+        cmd: "/usr/bin/ssh-keygen -y -f /home/{{ deploy_user }}/.ssh/id_rsa"
+      register: deploy_user_derived_pubkey
+      changed_when: false
+
+    - name: Deploy_user - store the derived public key
+      ansible.builtin.copy:
+        content: "{{ deploy_user_derived_pubkey.stdout | trim }}\n"
+        dest: "/home/{{ deploy_user }}/.ssh/id_rsa.pub"
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        mode: "0644"
+
     - name: Deploy_user - add control machine public key to authorized_keys
       ansible.posix.authorized_key:
         user: "{{ deploy_user }}"
@@ -75,6 +93,47 @@
         regexp: '^#AuthorizedKeysFile(.*?)$'
         line: 'AuthorizedKeysFile\1'
 
+    # Both allow-list edits below use backrefs, so they only ever extend an
+    # existing directive and never lock anyone out by creating one. On VMs built
+    # from 2025 onward the login allow-list lives in an sshd_config.d drop-in
+    # and the main config has no AllowUsers line at all, so editing only the
+    # main config silently does nothing and the deploy user keeps getting
+    # "Permission denied (publickey,password)" despite a valid authorized key.
+    - name: Deploy_user - find SSH allow-list drop-in files
+      ansible.builtin.find:
+        paths: /etc/ssh/sshd_config.d
+        patterns: "*.conf"
+        contains: '^Allow(Users|Groups)'
+      register: deploy_user_sshd_dropins
+
+    - name: Deploy_user - allow deploy user in drop-in user allow-list
+      ansible.builtin.lineinfile:
+        path: "{{ item.path }}"
+        state: present
+        backrefs: true
+        regexp: '^AllowUsers(.*?)( ?)({{ deploy_user }})?$'
+        line: 'AllowUsers\1 {{ deploy_user }}'
+      loop: "{{ deploy_user_sshd_dropins.files }}"
+      loop_control:
+        label: "{{ item.path }}"
+      notify:
+        - Restart ssh
+
+    # An AllowGroups directive restricts logins independently of AllowUsers,
+    # so the deploy user's primary group has to be listed as well.
+    - name: Deploy_user - allow deploy group in drop-in group allow-list
+      ansible.builtin.lineinfile:
+        path: "{{ item.path }}"
+        state: present
+        backrefs: true
+        regexp: '^AllowGroups(.*?)( ?)({{ deploy_user }})?$'
+        line: 'AllowGroups\1 {{ deploy_user }}'
+      loop: "{{ deploy_user_sshd_dropins.files }}"
+      loop_control:
+        label: "{{ item.path }}"
+      notify:
+        - Restart ssh
+
     - name: Deploy_user - allow deploy user to SSH
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
@@ -82,6 +141,16 @@
         backrefs: true
         regexp: '^AllowUsers(.*?)( ?)({{ deploy_user }})?$'
         line: 'AllowUsers\1 {{ deploy_user }}'
+      notify:
+        - Restart ssh
+
+    - name: Deploy_user - allow deploy group to SSH
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        backrefs: true
+        regexp: '^AllowGroups(.*?)( ?)({{ deploy_user }})?$'
+        line: 'AllowGroups\1 {{ deploy_user }}'
       notify:
         - Restart ssh
 
