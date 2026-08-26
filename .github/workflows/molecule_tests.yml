@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        role: [build_dependencies, build_project_repo, build_npm, deploy_user, finalize_deploy, nodejs, opencv_from_source, postgresql, prodigy_setup]
+        role: [build_dependencies, build_project_repo, build_npm, deploy_user, finalize_deploy, nodejs, opencv_from_source, passenger, postgresql, prodigy_setup]
     steps:
       - uses: actions/checkout@v4
 

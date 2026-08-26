@@ -16,6 +16,10 @@ nginx_remove_default_vhost: true
 passenger_extra_config: ''
 passenger_enabled: 'on'
 
+# suite to use for the Phusion apt repository; matches the host's Ubuntu
+# release (jammy, noble) unless overridden
+passenger_apt_release: "{{ ansible_distribution_release }}"
+
 # duplicated from other role defaults; should these be defined elsewhere?
 media_root: "/var/www/media/"
 font_path: "/var/www/fonts/"

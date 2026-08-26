@@ -4,85 +4,60 @@
   become: true
   block:
     # Variable setup.
-    - name: Include OS-specific variables.
-      ansible.builtin.include_vars: "main.yml"
+    - name: Passenger | Check that this Ubuntu release is supported
+      ansible.builtin.assert:
+        that:
+          - ansible_distribution == "Ubuntu"
+          - ansible_distribution_release in passenger_supported_releases
+        fail_msg: >-
+          The passenger role supports Ubuntu
+          {{ passenger_supported_releases | join(', ') }}; this host reports
+          {{ ansible_distribution }} {{ ansible_distribution_release }}.
+
+    - name: Passenger | Load release-specific package versions
+      ansible.builtin.include_vars: "{{ ansible_distribution_release }}.yml"
 
     - name: Define nginx_user.
       ansible.builtin.set_fact:
         nginx_user: "{{ __nginx_user }}"
       when: nginx_user is not defined
 
+    - name: Phusion | Ensure apt https and gpg support are installed
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - gnupg
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
     - name: Phusion | Ensure keyring directory exists
-      become: true
       ansible.builtin.file:
         path: /usr/local/share/keyrings
         state: directory
         owner: root
         group: root
         mode: "0755"
-    # Legacy auto-software-signing key (still used to sign the jammy repo)
-    # https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt
-    - name: Phusion | Download legacy auto signing key (SHA1)
-      ansible.builtin.get_url:
-        url: https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt
-        dest: /usr/local/share/keyrings/phusion_passenger_legacy.asc
-        mode: "0644"
-      register: phusion_passenger_legacy_key
 
-    - name: Phusion | Convert legacy key to GPG keyring
-      become: true
-      ansible.builtin.command: >
-        gpg --batch --yes --dearmor
-        -o /usr/local/share/keyrings/phusion_passenger_legacy.gpg
-        /usr/local/share/keyrings/phusion_passenger_legacy.asc
-      when: phusion_passenger_legacy_key.changed
-
-    - name: Phusion | Install legacy key into apt trusted.gpg.d
-      become: true
-      ansible.builtin.copy:
-        src: /usr/local/share/keyrings/phusion_passenger_legacy.gpg
-        dest: /etc/apt/trusted.gpg.d/phusion.gpg
-        owner: root
-        group: root
-        mode: "0644"
-        remote_src: true
-      when: phusion_passenger_legacy_key.changed
-
-        # phusion new future proof key
-    # https://blog.phusion.nl/important-new-signing-key-for-passenger/
-    # https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key-2025.txt
-    - name: Phusion | use new sha-256 apt key
-      ansible.builtin.get_url:
-        url: https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key-2025.txt
-        dest: /usr/local/share/keyrings/phusion_passenger_2025.asc
-        mode: "0644"
-      register: phusion_passenger_key
-
-    - name: Phusion Passenger | Convert key to GPG keyring
-      ansible.builtin.command:
-        cmd: >
-          gpg --batch --yes --dearmor
-          -o /usr/local/share/keyrings/phusion_passenger_2025.gpg
-          /usr/local/share/keyrings/phusion_passenger_2025.asc
-      when: phusion_passenger_key.changed
-
-    - name: Phusion Passenger | Install key into apt trusted.gpg.d
-      ansible.builtin.copy:
-        src: /usr/local/share/keyrings/phusion_passenger_2025.gpg
-        dest: /etc/apt/trusted.gpg.d/phusion_new.gpg
-        owner: root
-        group: root
-        mode: "0644"
-        remote_src: true
-      when: phusion_passenger_key.changed
+    - name: Phusion | Install apt signing keys
+      ansible.builtin.include_tasks: apt_key.yml
+      loop: "{{ passenger_apt_keys }}"
+      loop_control:
+        loop_var: passenger_key
+        label: "{{ passenger_key.name }}"
 
     - name: Phusion | Add Phusion apt repo.
       ansible.builtin.apt_repository:
-        repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
+        repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ passenger_apt_release }} main'
         state: present
         filename: passenger
         update_cache: false
 
+    # Priority must stay below 1001: the apt module pins a specifically
+    # requested version at 1001, and an equal origin pin lets the newest
+    # package in the repo win the tie, which makes exact-version installs fail
+    # with "no available installation candidate". Pin values must also be
+    # unquoted; apt treats the quotes as part of the origin name.
     - name: Phusion | Prefer Phusion Passenger packages
       ansible.builtin.copy:
         dest: /etc/apt/preferences.d/phusion-passenger
@@ -91,61 +66,44 @@
         mode: "0644"
         content: |
           Package: passenger libnginx-mod-http-passenger
-          Pin: origin "oss-binaries.phusionpassenger.com"
-          Pin-Priority: 1001
+          Pin: origin oss-binaries.phusionpassenger.com
+          Pin-Priority: 999
 
-    - name: Passenger | Clean apt cache
-      ansible.builtin.command: apt-get clean
-      changed_when: false
-
+    # Refresh through the apt module so the version lookups below and the
+    # install task read the package lists that were just downloaded.
     - name: Passenger | Update apt cache after adding repository
-      ansible.builtin.command: apt-get update
-      register: cache_update
+      ansible.builtin.apt:
+        update_cache: true
+      register: passenger_cache_update
       retries: 3
       delay: 5
-      until: cache_update.rc == 0
-      changed_when: false
-      failed_when: false
-
-    - name: Passenger | Display cache update errors
-      ansible.builtin.debug:
-        msg: |
-          Return code: {{ cache_update.rc }}
-          STDOUT: {{ cache_update.stdout }}
-          STDERR: {{ cache_update.stderr }}
-      when: cache_update.rc != 0
-
-    - name: Passenger | Fail if cache update failed
-      ansible.builtin.fail:
-        msg: "apt-get update failed. See debug output above."
-      when: cache_update.rc != 0
+      until: passenger_cache_update is success
 
     # Nginx and passenger installation.
     - name: Install Passenger and Nginx Passenger module from Phusion.
       tags:
         - setup
         - never
-      become: true
-      ansible.builtin.apt:
-        name:
-          - nginx-core
-          - libnginx-mod-http-passenger
-          - passenger
-        state: present
+      block:
+        - name: Passenger | Resolve compatible package versions
+          ansible.builtin.include_tasks: resolve_versions.yml
+
+        - name: Passenger | Install nginx and the matching Passenger module
+          ansible.builtin.include_tasks: install_packages.yml
 
     # Nginx and passenger configuration.
     - name: Copy Nginx configuration into place.
       ansible.builtin.template:
         src: nginx.conf.j2
         dest: /etc/nginx/nginx.conf
-        mode: 0644
+        mode: "0644"
       notify: Restart nginx
 
     - name: Configure passenger virtual host.
       ansible.builtin.template:
         src: "{{ passenger_nginx_site_template }}"
         dest: /etc/nginx/sites-available/{{ passenger_site_config_name }}.conf
-        mode: 0644
+        mode: "0644"
       when: passenger_site_config_name != ""
       notify:
         - Restart nginx
@@ -161,7 +119,6 @@
       ansible.builtin.file:
         path: /etc/nginx/sites-enabled/default
         state: absent
-        mode: 0644
       when: nginx_remove_default_vhost
       notify:
         - Restart nginx

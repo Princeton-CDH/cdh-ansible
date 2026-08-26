@@ -1,0 +1,40 @@
+---
+# Install a single Phusion apt signing key, identified by passenger_key.
+
+- name: "Phusion | Download apt signing key ({{ passenger_key.name }})"
+  ansible.builtin.get_url:
+    url: "{{ passenger_key.url }}"
+    dest: "/usr/local/share/keyrings/{{ passenger_key.name }}.asc"
+    owner: root
+    group: root
+    mode: "0644"
+  register: passenger_key_download
+
+- name: "Phusion | Check for GPG keyring ({{ passenger_key.name }})"
+  ansible.builtin.stat:
+    path: "/usr/local/share/keyrings/{{ passenger_key.name }}.gpg"
+  register: passenger_key_keyring
+
+# Regenerate when the armored key changed or the keyring is missing, so a
+# deleted keyring is restored instead of silently staying absent.
+- name: "Phusion | Convert key to GPG keyring ({{ passenger_key.name }})"
+  ansible.builtin.command:
+    argv:
+      - /usr/bin/gpg
+      - --batch
+      - --yes
+      - --dearmor
+      - --output
+      - "/usr/local/share/keyrings/{{ passenger_key.name }}.gpg"
+      - "/usr/local/share/keyrings/{{ passenger_key.name }}.asc"
+  when: passenger_key_download.changed or not passenger_key_keyring.stat.exists
+  changed_when: true
+
+- name: "Phusion | Install key into apt trusted.gpg.d ({{ passenger_key.name }})"
+  ansible.builtin.copy:
+    src: "/usr/local/share/keyrings/{{ passenger_key.name }}.gpg"
+    dest: "/etc/apt/trusted.gpg.d/{{ passenger_key.trusted_name }}.gpg"
+    owner: root
+    group: root
+    mode: "0644"
+    remote_src: true

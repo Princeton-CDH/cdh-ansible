@@ -1,5 +1,9 @@
 ---
 # variables for molecule
 passenger_startup_file: 'test_wsgi.py'
+# jammy and noble only ship python3; the default /usr/bin/python does not exist
+passenger_python: /usr/bin/python3
 running_on_server: false
 app_name: 'molecule_test'
+# normally supplied by inventory; the vhost template requires it
+runtime_env: 'staging'

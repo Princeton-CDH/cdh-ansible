@@ -1,0 +1,85 @@
+---
+# Install the resolved nginx + Passenger set.
+#
+# This deliberately shells out to apt-get rather than using the apt module.
+# The apt module builds its own apt policy without loading apt's defaults, so
+# requesting any version that is not the newest one in the repository fails
+# with "no available installation candidate" even when that version is
+# perfectly installable. Passenger releases are pinned on purpose here, so the
+# module cannot be used.
+
+- name: Passenger | Collect installed package versions
+  ansible.builtin.package_facts:
+    manager: auto
+
+- name: Passenger | Assume no package changes are needed
+  ansible.builtin.set_fact:
+    passenger_install_required: false
+
+- name: Passenger | Check whether any package needs to change
+  ansible.builtin.set_fact:
+    passenger_install_required: true
+  vars:
+    package_name: "{{ item.split('=', 1)[0] }}"
+    package_version: "{{ item.split('=', 1)[1] if '=' in item else '' }}"
+    installed_versions: >-
+      {{
+        ansible_facts.packages.get(package_name, [])
+        | map(attribute='version')
+        | list
+      }}
+  when: >-
+    package_name not in ansible_facts.packages
+    or (package_version | length > 0 and package_version not in installed_versions)
+  loop: "{{ passenger_package_specs }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: Passenger | Run the nginx and Passenger package transaction
+  when: passenger_install_required
+  notify: Restart nginx
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  ansible.builtin.command:
+    argv: >-
+      {{
+        [
+          '/usr/bin/apt-get',
+          '--yes',
+          '--allow-downgrades',
+          '--allow-change-held-packages',
+          '-o', 'Dpkg::Options::=--force-confdef',
+          '-o', 'Dpkg::Options::=--force-confold',
+          'install'
+        ]
+        + passenger_package_specs
+      }}
+  changed_when: true
+
+- name: Passenger | Refresh package facts after installation
+  ansible.builtin.package_facts:
+    manager: auto
+  when: passenger_install_required
+
+- name: Passenger | Verify the installed nginx and Passenger versions
+  ansible.builtin.assert:
+    that:
+      - package_name in ansible_facts.packages
+      - package_version | length == 0 or package_version in installed_versions
+    fail_msg: >-
+      {{ package_name }} is not in the expected state.
+      Installed: {{ installed_versions | join(', ') | default('none', true) }}.
+      Expected: {{ package_version | default('repository candidate', true) }}.
+    quiet: true
+  vars:
+    package_name: "{{ item.split('=', 1)[0] }}"
+    package_version: "{{ item.split('=', 1)[1] if '=' in item else '' }}"
+    installed_versions: >-
+      {{
+        ansible_facts.packages.get(package_name, [])
+        | map(attribute='version')
+        | list
+      }}
+  loop: "{{ passenger_package_specs }}"
+  loop_control:
+    label: "{{ item }}"

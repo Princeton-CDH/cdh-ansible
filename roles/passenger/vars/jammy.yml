@@ -1,0 +1,10 @@
+---
+# Known-good nginx and Passenger versions for Ubuntu 22.04 (jammy).
+#
+# Passenger 6.1.6 is preferred because its nginx module declares a plain
+# ``nginx-common`` dependency rather than pinning one exact nginx revision,
+# so it installs cleanly no matter which 1.18.0 revision the archive is on.
+# Newer Phusion builds (6.1.7 and later) require an exact nginx revision and
+# break whenever the Ubuntu archive has not caught up.
+nginx_version: "1.18.0-6ubuntu14.18"
+passenger_version: "1:6.1.6-1~jammy1"
