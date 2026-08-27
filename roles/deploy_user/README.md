@@ -16,7 +16,9 @@ This role manages the creation and configuration of a dedicated deployment user 
 
   - Configures `authorized_keys` with the control machine's public key.
 
-- **Hardened SSH Access**: Modifies `sshd_config` to explicitly allow the deploy user and ensures `AuthorizedKeysFile` is correctly configured.
+  - Keeps the stored `id_rsa.pub` in sync with the private key actually in use, so other hosts can authorize this host reliably.
+
+- **Hardened SSH Access**: Extends the SSH login allow-list to include the deploy user, both in `/etc/ssh/sshd_config` and in any `/etc/ssh/sshd_config.d/*.conf` drop-in that defines one, and ensures `AuthorizedKeysFile` is correctly configured.
 
 - **Developer Experience**:
 
@@ -41,7 +43,7 @@ This role ensures that the deployment user is ready for cross-server tasks (such
 
 ### Security Note
 
-The role modifies `/etc/ssh/sshd_config` to use `AllowUsers`. If you have existing users that require SSH access, ensure they are accounted for in your global variables, or they may be locked out.
+The role only extends an `AllowUsers` or `AllowGroups` directive that already exists; it never creates one, so it cannot lock anyone out of a host that has no allow-list. VMs built from 2025 onward keep the allow-list in a drop-in under `/etc/ssh/sshd_config.d/` rather than in the main config, and OpenSSH applies every `AllowUsers`/`AllowGroups` line across all of those files. If you have existing users that require SSH access, ensure they are accounted for, or they may be locked out.
 
 ## Example Playbook
 

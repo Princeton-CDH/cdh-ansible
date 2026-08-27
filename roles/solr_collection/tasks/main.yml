@@ -13,23 +13,123 @@
   run_once: true
   tags: [setup]
 
+- name: Solr_collection - trust the Solr server's deploy user on the app server
+  tags: [setup, solr_configset]
+  become: true
+  block:
+    - name: Solr_collection - ensure the Solr server deploy user has an SSH key
+      ansible.builtin.user:
+        name: "{{ deploy_user }}"
+        generate_ssh_key: true
+        ssh_key_bits: 4096
+        ssh_key_file: .ssh/id_rsa
+      delegate_to: "{{ solr_server }}"
+      run_once: true
+
+    # Derive the public key from the private key instead of reading the stored
+    # .pub file: when a private key is installed from the repository the stored
+    # .pub can be left over from an earlier, unrelated key pair.
+    - name: Solr_collection - derive the Solr server deploy user public key
+      ansible.builtin.command:
+        cmd: "/usr/bin/ssh-keygen -y -f /home/{{ deploy_user }}/.ssh/id_rsa"
+      delegate_to: "{{ solr_server }}"
+      run_once: true
+      register: solr_deploy_pubkey
+      changed_when: false
+
+    # The configset sync runs rsync on the Solr server pulling from the app
+    # server, so the Solr server's own key has to be authorized here. Relying
+    # on the shared key in roles/deploy_user/files is not enough: a rebuilt
+    # Solr host keeps whatever key it generated for itself.
+    - name: Solr_collection - authorize the Solr server key for the deploy user
+      ansible.posix.authorized_key:
+        user: "{{ deploy_user }}"
+        key: >-
+          {{ solr_deploy_pubkey.stdout | trim }}
+          {{ deploy_user }}@{{ solr_server }}
+        state: present
+
 - name: Solr_collection - update and configure Solr configset
   run_once: true
   tags: [solr_configset]
   block:
+    - name: Solr_collection - check SSH from Solr server to app server
+      ansible.builtin.wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 22
+        timeout: "{{ solr_sync_connect_timeout }}"
+        msg: >-
+          The Solr server {{ solr_server }} cannot open an SSH connection to
+          {{ inventory_hostname }}:22, so the configset sync would hang.
+          Check name resolution and any firewall rules between the two hosts.
+      delegate_to: "{{ solr_server }}"
+
+    - name: Solr_collection - check key-based SSH login used by the sync
+      ansible.builtin.command:
+        cmd: >
+          ssh -o BatchMode=yes
+          -o ConnectTimeout={{ solr_sync_connect_timeout }}
+          -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+          {{ deploy_user }}@{{ inventory_hostname }} true
+      become: true
+      become_user: "{{ deploy_user }}"
+      delegate_to: "{{ solr_server }}"
+      register: solr_ssh_check
+      changed_when: false
+      failed_when: false
+      timeout: "{{ solr_sync_connect_timeout | int * 2 }}"
+
+    - name: Solr_collection - read the app server's SSH login allow-list
+      ansible.builtin.shell:
+        cmd: >-
+          set -o pipefail &&
+          /usr/sbin/sshd -T | grep -E '^allow(users|groups)' || true
+        executable: /bin/bash
+      become: true
+      register: solr_app_sshd_allow
+      changed_when: false
+      failed_when: false
+      when: solr_ssh_check.rc != 0
+
+    - name: Solr_collection - explain a failed key-based SSH login
+      ansible.builtin.fail:
+        msg: >-
+          {{ deploy_user }}@{{ solr_server }} cannot log in to
+          {{ deploy_user }}@{{ inventory_hostname }} with a key, so the
+          configset sync cannot run.
+          SSH reported: {{ solr_ssh_check.stderr | trim }}
+          The effective SSH login allow-list on {{ inventory_hostname }} is:
+          {{ solr_app_sshd_allow.stdout | default('') | trim
+          | default('(none set)', true) }}.
+          If {{ deploy_user }} is missing from that allow-list, sshd rejects the
+          login regardless of authorized_keys; the allow-list may be set in
+          /etc/ssh/sshd_config or in a drop-in under
+          /etc/ssh/sshd_config.d, and every AllowUsers/AllowGroups line across
+          those files applies. Otherwise re-run with "--tags=all,setup" to
+          authorize the Solr server's key.
+      when: solr_ssh_check.rc != 0
+
     - name: Solr_collection - sync project Solr configset files
       become: true
       become_user: "{{ deploy_user }}"
       # Use -i (itemized changes) to detect if anything actually moved.
       # UserKnownHostsFile=/dev/null: don't fail when an app server's host key
-      # changes after a rebuild.
+      # changes after a rebuild. BatchMode plus the connect and I/O
+      # timeouts keep a broken key or a silently dropped connection from
+      # blocking the deploy indefinitely.
       ansible.builtin.command:
         cmd: >
-          /usr/bin/rsync -ai --checksum {{ inventory_hostname }}:{{ install_root }}/current/solr_conf/
-          /solr/cdh_solr/cdh_{{ app_name }}_solr_conf -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+          /usr/bin/rsync -ai --checksum
+          --timeout={{ solr_sync_io_timeout }}
+          {{ deploy_user }}@{{ inventory_hostname }}:{{ __solr_conf_src }}
+          /solr/cdh_solr/cdh_{{ app_name }}_solr_conf
+          -e "ssh -o BatchMode=yes
+          -o ConnectTimeout={{ solr_sync_connect_timeout }}
+          -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
       delegate_to: "{{ solr_server }}"
       register: rsync_out
       changed_when: "rsync_out.stdout != ''"
+      timeout: "{{ solr_sync_task_timeout | int }}"
 
     - name: Solr_collection - get a list of current Solr collections
       ansible.builtin.uri:
