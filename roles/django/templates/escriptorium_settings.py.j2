@@ -117,6 +117,9 @@ CELERY_TASK_ROUTES = {
 HPC_HOSTNAME = "{{ hpc_hostname }}"
 # copied in place by escriptorium_setup role
 HPC_SSH_KEYFILE = "/home/{{ deploy_user }}/.ssh/htr2hpc_id_ed25519"
+# git ref used to install htr2hpc (branch or tag); ensures HPC runs the same
+# code as the web server regardless of whether this is a release or dev deploy
+HTR2HPC_GITREF = "{{ htr2hpc_gitref }}"
 
 
 {% endblock %}
