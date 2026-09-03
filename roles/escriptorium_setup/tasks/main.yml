@@ -102,10 +102,11 @@
   block:
     - name: Get htr2hpc commit hash from pip direct_url metadata
       become_user: "{{ python_user }}"
-      ansible.builtin.command: >
-        {{ django_venv_path }}/bin/python -c "import importlib.metadata, json;
-        d = importlib.metadata.distribution('htr2hpc');
-        print(json.loads(d.read_text('direct_url.json'))['vcs_info']['commit_id'])"
+      ansible.builtin.command:
+        argv:
+          - "{{ django_venv_path }}/bin/python"
+          - "-c"
+          - "import importlib.metadata, json; d = importlib.metadata.distribution('htr2hpc'); print(json.loads(d.read_text('direct_url.json'))['vcs_info']['commit_id'])"
       register: _htr2hpc_commit_id
       changed_when: false
 
