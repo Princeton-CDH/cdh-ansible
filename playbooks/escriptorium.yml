@@ -3,22 +3,6 @@
 # to run in production, pass '-e runtime_env=production'
 - name: Deploy eScriptorium web application and task runners
   hosts: htr_{{ runtime_env | default('staging') }}
-  pre_tasks:
-    - name: Resolve htr2hpc git ref to exact commit hash (staging only)
-      delegate_to: localhost
-      run_once: true
-      when: runtime_env | default('staging') == 'staging'
-      ansible.builtin.command: >
-        git ls-remote https://github.com/Princeton-CDH/htr2hpc.git {{ htr2hpc_gitref }}
-      register: _htr2hpc_ls_remote
-      changed_when: false
-
-    - name: Set htr2hpc_deploy_ref to resolved commit hash (staging only)
-      ansible.builtin.set_fact:
-        htr2hpc_deploy_ref: "{{ hostvars['localhost']['_htr2hpc_ls_remote'].stdout_lines[-1].split('\t')[0] }}"
-      when:
-        - runtime_env | default('staging') == 'staging'
-        - hostvars['localhost']['_htr2hpc_ls_remote'].stdout_lines | length > 0
   connection: ssh
   remote_user: pulsys
   become: true

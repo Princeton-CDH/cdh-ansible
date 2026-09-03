@@ -47,7 +47,7 @@ nodejs_webpack_enabled: true
 htr2hpc_gitref: main
 hpc_hostname: "adroit.princeton.edu"
 python_extra_packages:
-  - git+https://github.com/Princeton-CDH/htr2hpc.git@{{ htr2hpc_deploy_ref | default(htr2hpc_gitref) }}#egg=htr2hpc
+  - git+https://github.com/Princeton-CDH/htr2hpc.git@{{ htr2hpc_gitref }}#egg=htr2hpc
 
 # pul deploy user
 deploy_user: "conan"

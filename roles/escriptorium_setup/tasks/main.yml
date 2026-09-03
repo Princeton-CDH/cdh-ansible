@@ -93,3 +93,34 @@
         - Restart celery
         - Restart django_channels
 
+- name: Set HTR2HPC_GITREF from installed package metadata (staging only)
+  become: true
+  when: runtime_env | default('staging') == 'staging'
+  tags:
+    - reinstall-htr2hpc
+    - app_config
+  block:
+    - name: Get htr2hpc commit hash from pip direct_url metadata
+      become_user: "{{ python_user }}"
+      ansible.builtin.command: >
+        {{ django_venv_path }}/bin/python -c "import importlib.metadata, json;
+        d = importlib.metadata.distribution('htr2hpc');
+        print(json.loads(d.read_text('direct_url.json'))['vcs_info']['commit_id'])"
+      register: _htr2hpc_commit_id
+      changed_when: false
+
+    - name: Set htr2hpc_deploy_ref from pip metadata
+      ansible.builtin.set_fact:
+        htr2hpc_deploy_ref: "{{ _htr2hpc_commit_id.stdout.strip() }}"
+
+    - name: Update local settings with htr2hpc commit hash
+      become_user: "{{ django_user }}"
+      ansible.builtin.template:
+        src: "{{ django_local_settings_template }}"
+        dest: "{{ django_local_settings_dest }}"
+        owner: "{{ django_user }}"
+        mode: "0644"
+      notify:
+        - Restart celery
+        - Restart django_channels
+
