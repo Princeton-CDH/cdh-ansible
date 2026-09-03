@@ -117,6 +117,11 @@ CELERY_TASK_ROUTES = {
 HPC_HOSTNAME = "{{ hpc_hostname }}"
 # copied in place by escriptorium_setup role
 HPC_SSH_KEYFILE = "/home/{{ deploy_user }}/.ssh/htr2hpc_id_ed25519"
+{% if htr2hpc_deploy_ref is defined %}
+# Exact commit hash resolved from htr2hpc_gitref at deploy time (staging only).
+# Production leaves this unset so htr2hpc/settings.py default (the release tag) applies.
+HTR2HPC_GITREF = "{{ htr2hpc_deploy_ref }}"
+{% endif %}
 
 
 {% endblock %}
