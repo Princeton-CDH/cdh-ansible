@@ -117,7 +117,7 @@
     - name: Update local settings with htr2hpc commit hash
       become_user: "{{ django_user }}"
       ansible.builtin.template:
-        src: "{{ django_local_settings_template }}"
+        src: "{{ role_path }}/../django/templates/{{ django_local_settings_template }}"
         dest: "{{ django_local_settings_dest }}"
         owner: "{{ django_user }}"
         mode: "0644"
