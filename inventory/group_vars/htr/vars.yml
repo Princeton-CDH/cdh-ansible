@@ -48,6 +48,9 @@ htr2hpc_gitref: main
 hpc_hostname: "adroit.princeton.edu"
 python_extra_packages:
   - git+https://github.com/Princeton-CDH/htr2hpc.git@{{ htr2hpc_gitref }}#egg=htr2hpc
+# use --upgrade so pip reinstalls htr2hpc when the git SHA changes even if the
+# version string is the same (e.g. 0.8.dev0 -> 0.8.dev0 across commits)
+python_extra_packages_pip_extra_args: "--upgrade"
 
 # pul deploy user
 deploy_user: "conan"
