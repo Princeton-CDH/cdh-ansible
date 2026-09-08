@@ -62,5 +62,6 @@
   ansible.builtin.pip:
     virtualenv: "{{ python_venv_path }}"
     name: "{{ python_extra_packages }}"
+    state: "{{ python_extra_packages_pip_state | default('present') }}"
     extra_args: "{{ python_extra_packages_pip_extra_args }}"
   when: python_extra_packages is defined
