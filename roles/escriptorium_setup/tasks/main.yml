@@ -93,9 +93,8 @@
         - Restart celery
         - Restart django_channels
 
-- name: Set HTR2HPC_GITREF from installed package metadata (staging only)
+- name: Set HTR2HPC_GITREF from installed package metadata
   become: true
-  when: runtime_env | default('staging') == 'staging'
   tags:
     - reinstall-htr2hpc
     - app_config
