@@ -110,9 +110,17 @@
       register: _htr2hpc_commit_id
       changed_when: false
 
+    - name: Debug htr2hpc commit hash output
+      ansible.builtin.debug:
+        msg: "htr2hpc commit_id stdout='{{ _htr2hpc_commit_id.stdout }}' rc={{ _htr2hpc_commit_id.rc }}"
+
     - name: Set htr2hpc_deploy_ref from pip metadata
       ansible.builtin.set_fact:
         htr2hpc_deploy_ref: "{{ _htr2hpc_commit_id.stdout.strip() }}"
+
+    - name: Debug htr2hpc_deploy_ref after set_fact
+      ansible.builtin.debug:
+        msg: "htr2hpc_deploy_ref='{{ htr2hpc_deploy_ref | default('UNDEFINED') }}'"
 
     - name: Update local settings with htr2hpc commit hash
       become_user: "{{ django_user }}"
