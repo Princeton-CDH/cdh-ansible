@@ -93,6 +93,13 @@
         - Restart celery
         - Restart django_channels
 
+- name: Debug group_names for HTR2HPC_GITREF block
+  ansible.builtin.debug:
+    msg: "group_names={{ group_names }}, condition={{ 'htr_staging' in group_names }}"
+  tags:
+    - app_config
+    - reinstall-htr2hpc
+
 - name: Set HTR2HPC_GITREF from installed package metadata (staging only)
   become: true
   when: "'htr_staging' in group_names"
