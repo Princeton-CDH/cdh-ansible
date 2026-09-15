@@ -117,6 +117,9 @@ CELERY_TASK_ROUTES = {
 HPC_HOSTNAME = "{{ hpc_hostname }}"
 # copied in place by escriptorium_setup role
 HPC_SSH_KEYFILE = "/home/{{ deploy_user }}/.ssh/htr2hpc_id_ed25519"
+# git ref used to install htr2hpc in the Adroit conda env at training time;
+# staging uses "develop", production uses "main" (set in group_vars)
+HTR2HPC_GITREF = "{{ htr2hpc_gitref }}"
 
 
 {% endblock %}
