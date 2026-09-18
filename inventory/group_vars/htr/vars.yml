@@ -48,11 +48,13 @@ htr2hpc_gitref: main
 hpc_hostname: "adroit.princeton.edu"
 python_extra_packages:
   - git+https://github.com/Princeton-CDH/htr2hpc.git@{{ htr2hpc_gitref }}#egg=htr2hpc
-# use --force-reinstall so pip always reinstalls htr2hpc on every deploy,
-# regardless of version string. --upgrade is insufficient because pip compares
-# version strings (not commit SHAs), so two different commits at the same
-# version (e.g. 0.8.dev0) would not trigger a reinstall with --upgrade.
-python_extra_packages_pip_extra_args: "--force-reinstall"
+# use --force-reinstall --no-deps so pip always reinstalls htr2hpc on every
+# deploy regardless of version string, without reinstalling dependencies.
+# --upgrade is insufficient because pip compares version strings (not commit
+# SHAs), so two different commits at the same version (e.g. 0.8.dev0) would
+# not trigger a reinstall. --no-deps avoids re-downloading large dependencies
+# (torch, kraken, etc.) that are already correctly installed in the venv.
+python_extra_packages_pip_extra_args: "--force-reinstall --no-deps"
 
 # pul deploy user
 deploy_user: "conan"
