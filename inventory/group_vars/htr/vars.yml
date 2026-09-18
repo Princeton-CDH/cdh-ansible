@@ -51,6 +51,8 @@ python_extra_packages:
 # --force-reinstall: pip compares version strings, not commit SHAs, so --upgrade
 # skips reinstall when two commits share the same version (e.g. 0.8.dev0).
 # --no-deps: avoids reinstalling large dependencies already in the venv (torch, etc.)
+# Note: if a new dependency is added to htr2hpc, it will need to be installed
+# separately since --no-deps prevents pip from pulling it in automatically.
 python_extra_packages_pip_extra_args: "--force-reinstall --no-deps"
 
 # pul deploy user
