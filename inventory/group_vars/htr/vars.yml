@@ -48,9 +48,11 @@ htr2hpc_gitref: main
 hpc_hostname: "adroit.princeton.edu"
 python_extra_packages:
   - git+https://github.com/Princeton-CDH/htr2hpc.git@{{ htr2hpc_gitref }}#egg=htr2hpc
-# use --upgrade so pip reinstalls htr2hpc when the git SHA changes even if the
-# version string is the same (e.g. 0.8.dev0 -> 0.8.dev0 across commits)
-python_extra_packages_pip_extra_args: "--upgrade"
+# use --force-reinstall so pip always reinstalls htr2hpc on every deploy,
+# regardless of version string. --upgrade is insufficient because pip compares
+# version strings (not commit SHAs), so two different commits at the same
+# version (e.g. 0.8.dev0) would not trigger a reinstall with --upgrade.
+python_extra_packages_pip_extra_args: "--force-reinstall"
 
 # pul deploy user
 deploy_user: "conan"
