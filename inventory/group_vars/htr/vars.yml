@@ -31,7 +31,6 @@ python_venv_path_prefix: "app/"
 
 # symlink for web application
 symlink: "{{ app_name }}"
-# use python 3.11; kraken doesn't yet support 3.12
 python_version_by_distribution_release:
   jammy: "3.11"
   noble: "3.12"
@@ -234,3 +233,15 @@ supervisor_programs:
       user={{ deploy_user }}
       killasgroup=true
       stopasgroup=true
+
+# Both hosts in each environment share the same NFS media directory, so
+# scheduled jobs only need to run on one of them. Production deploys to two
+# hosts; staging overrides this to cdh-test-htr1.
+cronjob_host: "cdh-htr1.lib.princeton.edu"
+
+# configure scripts to run as cron jobs
+crontab:
+  - name: "{{ app_name }} cleanup exports"
+    special_time: daily
+    job: "DJANGO_SETTINGS_MODULE=escriptorium.local_settings bin/cron-wrapper {{ django_app_path }}/env/bin/python{{ python_version }} {{ django_app_path }}/manage.py cleanup_exports >> {{ logging_dir }}/cleanup_exports.log 2>&1"
+    state: present

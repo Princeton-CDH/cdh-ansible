@@ -15,6 +15,9 @@ application_dbuser_name: "cdh_test_htr"
 # staging deploys htr2hpc from develop; production uses main (set in group_vars/htr)
 htr2hpc_gitref: develop
 
+# override to run cron jobs on the staging server
+cronjob_host: "cdh-test-htr1.lib.princeton.edu"
+
 # observability
 beyla_enabled: true
 beyla_service_name: htr
