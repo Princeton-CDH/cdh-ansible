@@ -31,10 +31,7 @@ python_venv_path_prefix: "app/"
 
 # symlink for web application
 symlink: "{{ app_name }}"
-python_version_by_distribution_release:
-  jammy: "3.11"
-  noble: "3.12"
-python_version: "{{ python_version_by_distribution_release[ansible_distribution_release | lower] }}"
+python_version: "3.12"
 # nodejs
 nodejs_version: "v18.20.8"
 nodejs_npm_enabled: true
