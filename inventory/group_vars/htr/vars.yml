@@ -238,10 +238,10 @@ cronjob_host: "cdh-htr1.lib.princeton.edu"
 
 # configure scripts to run as cron jobs
 crontab:
-  # runs at 6am, matching the window when the rest of the infrastructure
-  # maintenance jobs run
+  # runs at 3am, ahead of the 6-8:30am infrastructure maintenance window so
+  # the job isn't interrupted if maintenance runs long
   - name: "{{ app_name }} cleanup exports"
     minute: 0
-    hour: 6
+    hour: 3
     job: "DJANGO_SETTINGS_MODULE=escriptorium.local_settings bin/cron-wrapper {{ django_app_path }}/env/bin/python{{ python_version }} {{ django_app_path }}/manage.py cleanup_exports >> {{ logging_dir }}/cleanup_exports.log 2>&1"
     state: present
