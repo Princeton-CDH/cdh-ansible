@@ -53,7 +53,35 @@ otel_default_resource_attributes:
   service.version: "{{ runtime_env }}"
   environment: "{{ runtime_env }}"
 
-otel_receivers:
+# operators for the filelog/nginx-access receiver
+otel_nginx_access_text_operators:
+  - type: regex_parser
+    regex: '^(?P<remote_addr>[^\s]+) \((?P<remote_user>[^)]*)\) - - \[(?P<time_local>[^\]]+)\] "(?P<method>\S+) (?P<path>\S+) (?P<protocol>[^"]+)" (?P<status>\d+) (?P<body_bytes_sent>\d+) "(?P<http_referer>[^"]*)" "(?P<http_user_agent>[^"]*)"'
+    parse_from: body
+  - type: time_parser
+    parse_from: attributes.time_local
+    layout_type: strptime
+    layout: '%d/%b/%Y:%H:%M:%S %z'
+
+otel_nginx_access_json_operators:
+  - type: json_parser
+    parse_from: body
+    # pass through any plain-text lines written before the switch to JSON
+    on_error: send
+    timestamp:
+      parse_from: attributes.time_local
+      layout_type: strptime
+      layout: '%d/%b/%Y:%H:%M:%S %z'
+
+otel_nginx_access_tag_operators:
+  - type: add
+    field: attributes.log_type
+    value: "{{ beyla_service_name }}_access"
+  - type: add
+    field: attributes.service_name
+    value: "{{ beyla_service_name }}_access"
+
+otel_base_receivers:
   otlp:
     protocols:
       grpc:
@@ -64,20 +92,8 @@ otel_receivers:
   filelog/nginx-access:
     include: ["/var/log/nginx/access.log*"]
     start_at: end
-    operators:
-      - type: regex_parser
-        regex: '^(?P<remote_addr>[^\s]+) \((?P<remote_user>[^)]*)\) - - \[(?P<time_local>[^\]]+)\] "(?P<method>\S+) (?P<path>\S+) (?P<protocol>[^"]+)" (?P<status>\d+) (?P<body_bytes_sent>\d+) "(?P<http_referer>[^"]*)" "(?P<http_user_agent>[^"]*)"'
-        parse_from: body
-      - type: time_parser
-        parse_from: attributes.time_local
-        layout_type: strptime
-        layout: '%d/%b/%Y:%H:%M:%S %z'
-      - type: add
-        field: attributes.log_type
-        value: "{{ beyla_service_name }}_access"
-      - type: add
-        field: attributes.service_name
-        value: "{{ beyla_service_name }}_access"
+    # parse JSON or plain-text lines to match the app's nginx_access_log_format
+    operators: "{{ (otel_nginx_access_json_operators if (nginx_access_log_format | default('custom')) == 'json' else otel_nginx_access_text_operators) + otel_nginx_access_tag_operators }}"
 
   filelog/nginx-error:
     include: ["/var/log/nginx/error.log*"]
@@ -99,6 +115,10 @@ otel_receivers:
       load: {}
       memory: {}
       network: {}
+
+# app-specific log receivers (e.g. JSON app logs) are defined in the app's
+# group_vars as otel_app_log_receivers and added to the logs pipeline
+otel_receivers: "{{ otel_base_receivers | combine(otel_app_log_receivers | default({})) }}"
 
 otel_processors:
   batch:
@@ -135,9 +155,7 @@ otel_exporters:
 
 otel_service_pipelines:
   logs:
-    receivers:
-      - filelog/nginx-access
-      - filelog/nginx-error
+    receivers: "{{ ['filelog/nginx-access', 'filelog/nginx-error'] + (otel_app_log_receivers | default({}) | list) }}"
     processors:
       - resource
       - batch

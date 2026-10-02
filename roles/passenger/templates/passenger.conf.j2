@@ -21,7 +21,7 @@ server {
   real_ip_header X-Real-IP;
   large_client_header_buffers 4 16k;
 
-  access_log /var/log/nginx/access.log custom;
+  access_log /var/log/nginx/access.log {{ nginx_access_log_format }};
 
   # increase upload size from nginx default of 1MB
   client_max_body_size {{ nginx_max_body_size }};
