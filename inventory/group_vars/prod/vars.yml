@@ -24,7 +24,7 @@ otel_default_resource_attributes:
   service.version: "{{ runtime_env }}"
   environment: "{{ runtime_env }}"
 
-otel_receivers:
+otel_base_receivers:
   otlp:
     protocols:
       grpc:
@@ -71,6 +71,10 @@ otel_receivers:
       memory: {}
       network: {}
 
+# app-specific log receivers (e.g. JSON app logs) are defined in the app's
+# group_vars as otel_app_log_receivers and added to the logs pipeline
+otel_receivers: "{{ otel_base_receivers | combine(otel_app_log_receivers | default({})) }}"
+
 otel_processors:
   batch:
     send_batch_max_size: 1024
@@ -106,9 +110,7 @@ otel_exporters:
 
 otel_service_pipelines:
   logs:
-    receivers:
-      - filelog/nginx-access
-      - filelog/nginx-error
+    receivers: "{{ ['filelog/nginx-access', 'filelog/nginx-error'] + (otel_app_log_receivers | default({}) | list) }}"
     processors:
       - resource
       - batch
