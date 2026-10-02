@@ -16,3 +16,7 @@ deploy_contexts: []
     # - 'codecov/project'
     # - 'codecov/patch'
 
+
+# observability
+beyla_enabled: true
+beyla_service_name: cdh-web

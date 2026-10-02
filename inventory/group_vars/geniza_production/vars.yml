@@ -20,3 +20,7 @@ solr_server: "{{ groups['solr9_production'][0] }}"
 show_warning_banner: false
 #warning_banner_heading: "Update in Progress"
 #warning_banner_message: "Transcriptions are being migrated and may not be accessible until complete"
+
+# observability
+beyla_enabled: true
+beyla_service_name: geniza
