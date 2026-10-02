@@ -97,6 +97,38 @@ CSP_REPORT_URI = "{{ django_csp_enforce_uri }}"
 # https://docs.djangoproject.com/en/dev/topics/logging/
 # Solution following https://stackoverflow.com/a/9541647
 # Sends a logging email even when DEBUG is on
+{% if django_log_format == "json" %}
+import json as _json
+import logging as _logging
+from datetime import datetime as _datetime, timezone as _timezone
+
+
+class JsonFormatter(_logging.Formatter):
+    """Format each record as one line of JSON for the otel filelog receiver."""
+
+    def format(self, record):
+        entry = {
+            "timestamp": _datetime.fromtimestamp(
+                record.created, tz=_timezone.utc
+            ).isoformat(),
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+            "module": record.module,
+            "lineno": record.lineno,
+            "process": record.process,
+        }
+        # django.request records carry the response status code
+        if hasattr(record, "status_code"):
+            entry["status_code"] = record.status_code
+        if record.exc_info:
+            entry["exc_info"] = self.formatException(record.exc_info)
+        if record.stack_info:
+            entry["stack_info"] = self.formatStack(record.stack_info)
+        return _json.dumps(entry, default=str)
+
+
+{% endif %}
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -105,6 +137,11 @@ LOGGING = {
             'format': '[%(asctime)s] %(levelname)s:%(name)s::%(message)s',
             'datefmt': '%d/%b/%Y %H:%M:%S',
         },
+{% if django_log_format == "json" %}
+        'json': {
+            '()': JsonFormatter,
+        },
+{% endif %}
     },
     'handlers': {
         'mail_admins': {
@@ -118,7 +155,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.handlers.WatchedFileHandler',
             'filename': '{{ django_logging_path }}',
-            'formatter': 'basic',
+            'formatter': '{{ "json" if django_log_format == "json" else "basic" }}',
         }
     },
     'loggers': {
