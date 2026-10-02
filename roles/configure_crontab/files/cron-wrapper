@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# load bashrc for environment variables
-source ~/.bashrc
+# load shell configuration files if present, but don't error if they are not
+[ -f ~/.bashrc ] && source ~/.bashrc
+[ -f ~/.profile ] && source ~/.profile
 
 # output date & time for logging
 date
