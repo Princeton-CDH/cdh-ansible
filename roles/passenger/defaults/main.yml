@@ -13,6 +13,8 @@ nginx_worker_processes: "{{ ansible_processor_vcpus | default(ansible_processor_
 nginx_worker_connections: "768"
 nginx_keepalive_timeout: "65"
 nginx_remove_default_vhost: true
+# access log format defined in nginx.conf: "custom" (plain text) or "json"
+nginx_access_log_format: custom
 passenger_extra_config: ''
 passenger_enabled: 'on'
 

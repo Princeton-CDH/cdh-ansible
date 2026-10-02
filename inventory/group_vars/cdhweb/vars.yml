@@ -41,6 +41,9 @@ application_db_host: "{{ postgres_host }}"
 # observability
 running_on_server: true
 
+# write nginx access logs as JSON for the otel collector
+nginx_access_log_format: json
+
 # write django logs as JSON and ship them with the otel collector
 django_log_format: json
 otel_app_log_receivers:
