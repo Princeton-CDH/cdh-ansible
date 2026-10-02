@@ -3,6 +3,9 @@
 # This file stores variables shared by all production deploys
 ###
 
+# all production deploys target real servers (not molecule containers)
+running_on_server: true
+
 # observability defaults
 beyla_enabled: false
 beyla_service_name: "{{ inventory_hostname }}"
