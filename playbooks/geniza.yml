@@ -18,8 +18,12 @@
   roles:
     - role: pulibrary.princeton_ansible.otel_collector
       when: runtime_env | default('staging') == "staging"
+      tags:
+        - otel
     - role: pulibrary.princeton_ansible.beyla
       when: runtime_env | default('staging') == "staging"
+      tags:
+        - otel
     - create_deployment
     - deploy_user
     - build_dependencies
