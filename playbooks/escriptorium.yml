@@ -8,9 +8,11 @@
   become: true
   roles:
     - role: pulibrary.princeton_ansible.otel_collector
-      when: runtime_env == "staging"
+      tags:
+        - otel
     - role: pulibrary.princeton_ansible.beyla
-      when: runtime_env == "staging"
+      tags:
+        - otel
     - deploy_user
     - build_dependencies
     - build_project_repo

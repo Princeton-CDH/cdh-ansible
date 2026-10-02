@@ -8,7 +8,11 @@
   become: true
   roles:
     - role: pulibrary.princeton_ansible.otel_collector
+      tags:
+        - otel
     - role: pulibrary.princeton_ansible.beyla
+      tags:
+        - otel
 
     - create_deployment
     - deploy_user

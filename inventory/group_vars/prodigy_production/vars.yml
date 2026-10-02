@@ -1,0 +1,5 @@
+---
+
+# observability
+beyla_enabled: true
+beyla_service_name: prodigy
