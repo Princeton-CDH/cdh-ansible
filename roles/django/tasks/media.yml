@@ -13,7 +13,8 @@
         # owner: "{{ media_user }}"
         # group: "{{ media_group }}"
         mode: "u=rwX,g=rwX,o=rX"
-        recurse: true
+        # don't recursively update permissions on nfs mount (too slow, unnecessary)
+        recurse: "{{ 'nfs' not in media_root }}"
 
     - name: Make sure media root is owned by configured user and group
       become: true
