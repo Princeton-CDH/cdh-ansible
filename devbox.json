@@ -9,7 +9,7 @@
     "rsync@3.5.0",
     "bash@latest",
 
-    "podman@latest",
+    "podman@5.8.6",
     "podman-compose@0.1.8",
     "docker-client@29.7.2"
   ],
