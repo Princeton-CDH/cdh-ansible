@@ -24,13 +24,6 @@
     {
       "matchManagers": ["pep621"],
       "rangeStrategy": "bump"
-    },
-    {
-      "description": "Only propose ansible-core releases the pinned ansible package can install (ansible 12.x requires ansible-core 2.19.x); raise this when bumping ansible's major version",
-      "matchManagers": ["pep621"],
-      "matchPackageNames": ["ansible-core"],
-      "ignoreUnstable": true,
-      "allowedVersions": "<2.20"
     }
   ]
 }
