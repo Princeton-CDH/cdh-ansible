@@ -9,7 +9,7 @@ jobs:
       matrix:
         role: [build_dependencies, build_project_repo, build_npm, deploy_user, finalize_deploy, nodejs, opencv_from_source, passenger, postgresql, prodigy_setup]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
