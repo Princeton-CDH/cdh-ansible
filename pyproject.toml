@@ -6,7 +6,7 @@ dependencies = [
     "ansible==12.2.0",
     "ansible-builder==3.0.1",
     "ansible-compat>=25.1.0",
-    "ansible-lint>=25.1.0",
+    "ansible-lint>=26.9.0",
     "molecule==6.0.3",
     "molecule-plugins[docker]==23.5.0",
     "passlib",
