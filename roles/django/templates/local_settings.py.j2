@@ -92,11 +92,7 @@ CSP_REPORT_URI = "{{ django_csp_enforce_uri }}"
 {% endif %}
 {% endblock %}
 
-{% block logging_config %}
-# Logging configuration
-# https://docs.djangoproject.com/en/dev/topics/logging/
-# Solution following https://stackoverflow.com/a/9541647
-# Sends a logging email even when DEBUG is on
+{# defined outside logging_config so templates that override that block can use it #}
 {% if django_log_format == "json" %}
 import json as _json
 import logging as _logging
@@ -129,6 +125,11 @@ class JsonFormatter(_logging.Formatter):
 
 
 {% endif %}
+{% block logging_config %}
+# Logging configuration
+# https://docs.djangoproject.com/en/dev/topics/logging/
+# Solution following https://stackoverflow.com/a/9541647
+# Sends a logging email even when DEBUG is on
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

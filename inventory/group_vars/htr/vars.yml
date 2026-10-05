@@ -68,6 +68,8 @@ passenger_python: "{{ passenger_app_root }}/env/bin/python"
 passenger_static_path: "{{ passenger_app_root }}/static/"
 
 passenger_nginx_site_template: "escriptorium_nginx.conf.j2"
+# write nginx access logs as JSON for the otel collector
+nginx_access_log_format: json
 # disable upload file size limits
 nginx_max_body_size: 0
 
@@ -77,6 +79,33 @@ technical_contact: cdhdevteam@princeton.edu
 django_local_settings_dest: "{{ django_app_path }}/escriptorium/local_settings.py"
 # app-specific local settings
 django_local_settings_template: "escriptorium_settings.py.j2"
+
+# write django logs as JSON and ship them with the otel collector
+django_log_format: json
+otel_app_log_receivers:
+  filelog/escriptorium-django:
+    include: ["{{ django_logging_path }}"]
+    start_at: end
+    operators:
+      - type: json_parser
+        parse_from: body
+        # pass through any plain-text lines written before the switch to JSON
+        on_error: send
+        timestamp:
+          parse_from: attributes.timestamp
+          layout_type: gotime
+          layout: '2006-01-02T15:04:05.999999Z07:00'
+        severity:
+          parse_from: attributes.level
+          mapping:
+            warn: WARNING
+            fatal: CRITICAL
+      - type: add
+        field: attributes.log_type
+        value: "{{ beyla_service_name }}_django"
+      - type: add
+        field: attributes.service_name
+        value: "{{ beyla_service_name }}"
 
 deploy_env_vars:
   DJANGO_SETTINGS_MODULE: escriptorium.local_settings
