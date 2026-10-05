@@ -24,6 +24,12 @@
     {
       "matchManagers": ["pep621"],
       "rangeStrategy": "bump"
+    },
+    {
+      "description": "molecule-plugins 23.7+ requires molecule 25; lift this when molecule is upgraded",
+      "matchManagers": ["pep621"],
+      "matchPackageNames": ["molecule-plugins"],
+      "allowedVersions": "<23.7.0"
     }
   ]
 }
