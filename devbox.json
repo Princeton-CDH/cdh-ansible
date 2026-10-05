@@ -2,16 +2,16 @@
   "name": "cdh-ansible",
   "packages": [
     "python@3.12",
-    "uv@latest",
-    "git@latest",
-    "gnumake@latest",
+    "uv@0.12.5",
+    "git@2.55.0",
+    "gnumake@4.4.1",
     "openssh@latest",
-    "rsync@latest",
+    "rsync@3.5.0",
     "bash@latest",
 
     "podman@latest",
-    "podman-compose@latest",
-    "docker-client@latest"
+    "podman-compose@0.1.8",
+    "docker-client@20.10.26"
   ],
   "shell": {
     "init_hook": [
