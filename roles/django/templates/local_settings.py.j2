@@ -114,9 +114,11 @@ class JsonFormatter(_logging.Formatter):
             "lineno": record.lineno,
             "process": record.process,
         }
-        # django.request records carry the response status code
-        if hasattr(record, "status_code"):
-            entry["status_code"] = record.status_code
+        # django.request records carry the response status code; celery
+        # task records may carry the task id and name
+        for attr in ("status_code", "task_id", "task_name"):
+            if hasattr(record, attr):
+                entry[attr] = getattr(record, attr)
         if record.exc_info:
             entry["exc_info"] = self.formatException(record.exc_info)
         if record.stack_info:

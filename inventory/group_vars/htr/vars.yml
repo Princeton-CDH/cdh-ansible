@@ -106,6 +106,34 @@ otel_app_log_receivers:
       - type: add
         field: attributes.service_name
         value: "{{ beyla_service_name }}"
+  # daphne and celery worker output captured by supervisor
+  filelog/escriptorium-supervisor:
+    include: ["/var/log/supervisor/*-out.log"]
+    start_at: end
+    operators:
+      # program name from the log file name, e.g. celery-gpu-out.log
+      - type: regex_parser
+        parse_from: attributes["log.file.name"]
+        regex: '^(?P<program>.+)-out\.log$'
+      - type: json_parser
+        parse_from: body
+        # celery's startup banner and other plain-text output are sent as-is
+        on_error: send_quiet
+        timestamp:
+          parse_from: attributes.timestamp
+          layout_type: gotime
+          layout: '2006-01-02T15:04:05.999999Z07:00'
+        severity:
+          parse_from: attributes.level
+          mapping:
+            warn: WARNING
+            fatal: CRITICAL
+      - type: add
+        field: attributes.log_type
+        value: "{{ beyla_service_name }}_supervisor"
+      - type: add
+        field: attributes.service_name
+        value: "{{ beyla_service_name }}"
 
 deploy_env_vars:
   DJANGO_SETTINGS_MODULE: escriptorium.local_settings
@@ -172,7 +200,7 @@ supervisor_programs:
     state: present
     configuration: |
       directory={{ django_app_path }}
-      environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings"
+      environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings",DJANGO_LOG_STDOUT_JSON="1"
       autostart=true
       autorestart=true
       startretries=1
@@ -197,7 +225,7 @@ supervisor_programs:
     state: present
     configuration: |
       directory={{ django_app_path }}
-      environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings"
+      environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings",DJANGO_LOG_STDOUT_JSON="1"
       autostart=true
       autorestart=true
       startretries=1
@@ -214,7 +242,7 @@ supervisor_programs:
     state: present
     configuration: |
       directory={{ django_app_path }}
-      environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings"
+      environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings",DJANGO_LOG_STDOUT_JSON="1"
       autostart=true
       autorestart=true
       startretries=1
@@ -231,7 +259,7 @@ supervisor_programs:
     state: present
     configuration: |
       directory={{ django_app_path }}
-      environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings"
+      environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings",DJANGO_LOG_STDOUT_JSON="1"
       autostart=true
       autorestart=true
       startretries=1
@@ -248,7 +276,7 @@ supervisor_programs:
     state: present
     configuration: |
       directory={{ django_app_path }}
-      environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings"
+      environment=DJANGO_SETTINGS_MODULE="escriptorium.local_settings",DJANGO_LOG_STDOUT_JSON="1"
       autostart=true
       autorestart=true
       startretries=1
