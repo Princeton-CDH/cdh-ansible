@@ -16,6 +16,12 @@
       "enabled": false
     },
     {
+      "description": "Keep .python-version and devbox Python on the supported 3.12 series",
+      "matchManagers": ["pyenv", "devbox"],
+      "matchPackageNames": ["python"],
+      "allowedVersions": "<3.13"
+    },
+    {
       "matchManagers": ["pep621"],
       "rangeStrategy": "bump"
     },
