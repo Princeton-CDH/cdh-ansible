@@ -11,7 +11,7 @@
 
     "podman@latest",
     "podman-compose@0.1.8",
-    "docker-client@20.10.26"
+    "docker-client@29.7.2"
   ],
   "shell": {
     "init_hook": [
