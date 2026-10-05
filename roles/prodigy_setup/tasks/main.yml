@@ -112,6 +112,15 @@
     group: "{{ deploy_user }}"
   become: true
 
+- name: Install wrapper that runs Prodigy with JSON log output
+  ansible.builtin.copy:
+    src: "json_log_run.py"
+    dest: "{{ install_root }}/json_log_run.py"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: "0644"
+  become: true
+
 - name: Create Prodigy config file
   ansible.builtin.copy:
     dest: "{{ install_root }}/prodigy.json"
