@@ -102,6 +102,50 @@ LOGGING = {
         },
     }
 }
+{% if django_log_format == "json" %}
+
+# Processes run by supervisor (daphne, celery workers) set
+# DJANGO_LOG_STDOUT_JSON so their console output, which supervisor writes to
+# /var/log/supervisor/<program>-out.log, is JSON for the otel collector.
+# Passenger does not set it, so the nginx error log is unchanged.
+import os as _os
+
+
+class TaskJsonFormatter(JsonFormatter):
+    """Add the running celery task's id and name, as celery's TaskFormatter does."""
+
+    def format(self, record):
+        from celery import current_task
+
+        if current_task and current_task.request.id:
+            record.task_id = current_task.request.id
+            record.task_name = current_task.name
+        return super().format(record)
+
+
+if _os.environ.get("DJANGO_LOG_STDOUT_JSON"):
+    LOGGING['formatters']['json_task'] = {'()': TaskJsonFormatter}
+    LOGGING['handlers']['stdout_json'] = {
+        'level': 'INFO',
+        'class': 'logging.StreamHandler',
+        # the original stdout; celery redirects sys.stdout to a logger
+        'stream': 'ext://sys.__stdout__',
+        'formatter': 'json_task',
+    }
+    LOGGING['root'] = {
+        'handlers': ['stdout_json'],
+        'level': 'INFO',
+    }
+    # celery adds its own plain-text handler to celery.task (the parent of
+    # get_task_logger loggers) unless the logger already has one
+    LOGGING['loggers']['celery.task'] = {
+        'handlers': ['stdout_json'],
+        'level': 'INFO',
+        'propagate': False,
+    }
+    # keep celery from replacing the root logger's handlers with its own
+    CELERY_WORKER_HIJACK_ROOT_LOGGER = False
+{% endif %}
 {% endblock %}
 {% block extra_config %}
 # Celery task routing — directs each task type to the appropriate worker queue
