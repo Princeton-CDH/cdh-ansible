@@ -447,8 +447,8 @@ docs = [
 requires-dist = [
     { name = "ansible", specifier = "==14.4.0" },
     { name = "ansible-builder", specifier = "==3.1.1" },
-    { name = "ansible-compat", specifier = ">=25.12.1" },
-    { name = "ansible-lint", specifier = ">=25.12.2" },
+    { name = "ansible-compat", specifier = ">=26.9.0" },
+    { name = "ansible-lint", specifier = ">=26.9.0" },
     { name = "antsibull-docs", marker = "extra == 'docs'", specifier = ">=2.27.0" },
     { name = "furo", marker = "extra == 'docs'", specifier = ">=2025.12.19" },
     { name = "molecule", specifier = "==6.0.3" },
