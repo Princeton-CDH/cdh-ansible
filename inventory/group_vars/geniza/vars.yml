@@ -51,6 +51,36 @@ passenger_server_name: "geniza.princeton.edu"
 passenger_startup_file: "{{ app_name }}/wsgi.py"
 passenger_python: "{{ passenger_app_root }}/env/bin/python"
 
+# write nginx access logs as JSON for the otel collector
+nginx_access_log_format: json
+
+# write django logs as JSON and ship them with the otel collector
+django_log_format: json
+otel_app_log_receivers:
+  filelog/geniza-django:
+    include: ["{{ django_logging_path }}"]
+    start_at: end
+    operators:
+      - type: json_parser
+        parse_from: body
+        # pass through any plain-text lines written before the switch to JSON
+        on_error: send
+        timestamp:
+          parse_from: attributes.timestamp
+          layout_type: gotime
+          layout: '2006-01-02T15:04:05.999999Z07:00'
+        severity:
+          parse_from: attributes.level
+          mapping:
+            warn: WARNING
+            fatal: CRITICAL
+      - type: add
+        field: attributes.log_type
+        value: "{{ beyla_service_name }}_django"
+      - type: add
+        field: attributes.service_name
+        value: "{{ beyla_service_name }}"
+
 # base dir where data files are kept
 data_path: "/srv/www/geniza/data"
 
