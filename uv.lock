@@ -142,7 +142,7 @@ wheels = [
 
 [[package]]
 name = "ansible-compat"
-version = "25.8.1"
+version = "26.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ansible-core" },
@@ -151,9 +151,9 @@ dependencies = [
     { name = "pyyaml" },
     { name = "subprocess-tee" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ea/96/d5bcbd652dbcbf8611b32457d67b10e41e5e596e34460c25511ccfa6fbf1/ansible_compat-25.8.1.tar.gz", hash = "sha256:f29ab81264b3f04fb94ac2d7f68fe73efc2eb3cbe4ecf00f9b4742e77c41756f", size = 90142, upload-time = "2025-08-14T15:59:57.215Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/4c/bf/75ac51c0377ffe4863900a1ad4b2726c7cb664dd5da5c33c2c6b4fc3040a/ansible_compat-26.9.0.tar.gz", hash = "sha256:e101649196e4fffc810c3f9f4f185107cc1e5be0ef26d38ad9c4abfa22b0b183", size = 256824, upload-time = "2026-09-22T09:37:17.218Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/32/29/c73b6d6d5ecdaf51ee4210e6fbf95de0a24b87f2b5df83155ac0c753513e/ansible_compat-25.8.1-py3-none-any.whl", hash = "sha256:5bb843838414b75efff24dae5ff5b332cd503a596143d471980243cec4b46c9c", size = 27523, upload-time = "2025-08-14T15:59:55.866Z" },
+    { url = "https://files.pythonhosted.org/packages/1f/ad/19b4698bcf4af5e730e1b002eac0a4174ca4088c5178348783735132d041/ansible_compat-26.9.0-py3-none-any.whl", hash = "sha256:6756ba0adee1a07d609ede35483fc563b9838df25ec70e57378ae8b564f185cf", size = 28980, upload-time = "2026-09-22T09:37:15.86Z" },
 ]
 
 [[package]]
@@ -445,7 +445,7 @@ docs = [
 requires-dist = [
     { name = "ansible", specifier = "==12.2.0" },
     { name = "ansible-builder", specifier = "==3.0.1" },
-    { name = "ansible-compat", specifier = ">=25.1.0" },
+    { name = "ansible-compat", specifier = ">=26.9.0" },
     { name = "ansible-lint", specifier = ">=25.1.0" },
     { name = "antsibull-docs", marker = "extra == 'docs'", specifier = ">=2" },
     { name = "furo", marker = "extra == 'docs'", specifier = ">=2024.8.6" },
