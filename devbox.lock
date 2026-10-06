@@ -417,11 +417,69 @@
         }
       }
     },
-    "podman-compose@0.1.8": {
-      "last_modified": "2021-12-03T17:41:48Z",
-      "resolved": "github:NixOS/nixpkgs/2df15ba83d0510a56f2583fd3481723835acb5a1#podman-compose",
+    "podman-compose@1.6.0": {
+      "last_modified": "2026-10-04T16:11:07Z",
+      "resolved": "github:NixOS/nixpkgs/9013764fcc0ea99fa16cf7aa7decf8a5c3889dd2#podman-compose",
       "source": "devbox-search",
-      "version": "0.1.8"
+      "version": "1.6.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/jzbfvnj0bq7d2pn7ql6cblcf5nkvbbxx-podman-compose-1.6.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/k19rpsxynxwdcdmd2vxxfcqx1dk09ql6-podman-compose-1.6.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/jzbfvnj0bq7d2pn7ql6cblcf5nkvbbxx-podman-compose-1.6.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/qd3gw119b1dfd0prj5h7bby7l0i2gca0-podman-compose-1.6.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/zgvxwambc85ibkyv700y9c8fn7qwirns-podman-compose-1.6.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/qd3gw119b1dfd0prj5h7bby7l0i2gca0-podman-compose-1.6.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/dhqpvsaxldjv72bgk7w6qy6v8b680gn7-podman-compose-1.6.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/q4pcvvakp645zirw5qxjngbb2dxsk3yz-podman-compose-1.6.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/dhqpvsaxldjv72bgk7w6qy6v8b680gn7-podman-compose-1.6.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/7fiblbph4ws1zq705449w42ap1wbxmd3-podman-compose-1.6.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/izgal4gg2xnhn4slp878ipdp5ljpz2y5-podman-compose-1.6.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/7fiblbph4ws1zq705449w42ap1wbxmd3-podman-compose-1.6.0"
+        }
+      }
     },
     "podman@5.8.6": {
       "last_modified": "2026-09-21T12:38:47Z",
