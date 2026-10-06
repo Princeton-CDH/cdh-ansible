@@ -46,12 +46,20 @@
         loop_var: passenger_key
         label: "{{ passenger_key.name }}"
 
+    # Replaced by passenger.sources below; keeping both duplicates the source.
+    - name: Phusion | Remove legacy Phusion apt source
+      ansible.builtin.file:
+        path: /etc/apt/sources.list.d/passenger.list
+        state: absent
+
     - name: Phusion | Add Phusion apt repo.
-      ansible.builtin.apt_repository:
-        repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ passenger_apt_release }} main'
+      ansible.builtin.deb822_repository:
+        name: passenger
+        types: deb
+        uris: https://oss-binaries.phusionpassenger.com/apt/passenger
+        suites: "{{ passenger_apt_release }}"
+        components: main
         state: present
-        filename: passenger
-        update_cache: false
 
     # Priority must stay below 1001: the apt module pins a specifically
     # requested version at 1001, and an equal origin pin lets the newest
