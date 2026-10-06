@@ -2,6 +2,8 @@
 # main config
 python_user: "{{ ansible_user }}"
 python_version: "3.6"
+# deadsnakes PPA signing key (fingerprint F23C5A6CF475977595C89F51BA6932366A755776)
+python_deadsnakes_key_url: "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xF23C5A6CF475977595C89F51BA6932366A755776"
 python_app_path: /usr/src/app
 python_venv_path: "{{ python_app_path }}/env"
 python_requirements_file: "{{ python_app_path }}/requirements.txt"
