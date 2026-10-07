@@ -6,6 +6,10 @@
   connection: ssh
   remote_user: pulsys
   roles:
+    - role: pulibrary.princeton_ansible.common
+      become: true
+      tags:
+        - common
     - create_deployment
     - deploy_user
     - build_project_repo
