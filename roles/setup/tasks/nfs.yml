@@ -27,7 +27,7 @@
     path: "/mnt/nfs/cdh"
     state: mounted
     fstype: nfs
-    opts: rw,sync,hard
+    opts: rw,sync,hard,nofail,x-systemd.automount
   become: true
   tags: [setup, nfs, never]
 
