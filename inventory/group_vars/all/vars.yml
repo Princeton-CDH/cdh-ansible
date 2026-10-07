@@ -140,3 +140,8 @@ tigerdata_cdh_group: "cdh"
 tigerdata_cdh_gid: 30369
 tigerdata_mount_dir: /mnt/tigerdata/cdh
 
+
+## pulibrary.princeton_ansible.common role
+# the common role gates hostname, mirror, and dua tasks on this
+# (defined in princeton_ansible group_vars, not in the role defaults)
+running_on_server: true
