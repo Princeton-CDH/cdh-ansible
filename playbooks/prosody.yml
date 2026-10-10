@@ -17,6 +17,9 @@
   remote_user: pulsys
   become: true
   roles:
+    - role: pulibrary.princeton_ansible.common
+      tags:
+        - common
     - create_deployment
     - deploy_user
     - build_dependencies
