@@ -1,4 +1,26 @@
 
+{% if nginx_access_log_format | default('main') == 'json' %}
+# structured access log for the otel collector; same fields as the json
+# format in the passenger role's nginx.conf, plus upstream_response_time
+log_format json escape=json '{'
+  '"remote_addr":"$remote_addr",'
+  '"http_x_real_ip":"$http_x_real_ip",'
+  '"remote_user":"$remote_user",'
+  '"time_local":"$time_local",'
+  '"host":"$host",'
+  '"method":"$request_method",'
+  '"path":"$request_uri",'
+  '"protocol":"$server_protocol",'
+  '"status":"$status",'
+  '"body_bytes_sent":"$body_bytes_sent",'
+  '"request_time":"$request_time",'
+  '"upstream_response_time":"$upstream_response_time",'
+  '"request_id":"$request_id",'
+  '"http_referer":"$http_referer",'
+  '"http_user_agent":"$http_user_agent"'
+'}';
+
+{% endif %}
 # Prodigy runs on port 8080
 upstream prodigy {
     server localhost:8080;
@@ -8,6 +30,10 @@ server {
         listen 80;
 
         server_name prodigy;
+{% if nginx_access_log_format | default('main') == 'json' %}
+
+        access_log /var/log/nginx/access.log json;
+{% endif %}
 
         root /var/www/html;
         ## index index.html;
