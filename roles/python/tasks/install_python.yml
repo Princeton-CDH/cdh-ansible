@@ -9,10 +9,27 @@
 # We include the generic python3-setuptools because it's required to create the
 # virtual environment; later we can update pip and setuptools inside it.
 
+- name: Remove legacy deadsnakes apt sources
+  become: true
+  # apt_repository (ppa_*) and add-apt-repository (*-ubuntu-*) wrote one-line
+  # .list files without Signed-By; leaving them next to the deb822 source below
+  # makes apt fail with "Conflicting values set for option Signed-By".
+  ansible.builtin.file:
+    path: "/etc/apt/sources.list.d/{{ item }}"
+    state: absent
+  loop:
+    - "ppa_deadsnakes_ppa_{{ ansible_distribution_release }}.list"
+    - "deadsnakes-ubuntu-ppa-{{ ansible_distribution_release }}.list"
+
 - name: Add python apt repository
   become: true
-  ansible.builtin.apt_repository:
-    repo: ppa:deadsnakes/ppa
+  ansible.builtin.deb822_repository:
+    name: deadsnakes
+    types: deb
+    uris: https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu
+    suites: "{{ ansible_distribution_release }}"
+    components: main
+    signed_by: "{{ python_deadsnakes_key_url }}"
 
 - name: Pin python packages to deadsnakes to avoid rc/alpha versions from distro mirror
   # The Princeton math mirror has a higher apt priority than deadsnakes, causing
