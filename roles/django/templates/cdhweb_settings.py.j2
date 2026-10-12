@@ -14,6 +14,9 @@ STATIC_URL = "/static/"
 # Allow SVG
 FILEBROWSER_ESCAPED_EXTENSIONS = []
 
+# Disable wagtail opencv feature detection until it is fixed
+WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = False
+
 # managers for broken email 404s
 MANAGERS = [('CDH Dev Team', 'cdhdevteam@princeton.edu'),]
 # ignore php, asp, aspx, jsp, jspa, with or without trailing slash
