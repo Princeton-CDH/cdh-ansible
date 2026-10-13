@@ -59,6 +59,13 @@
         uris: https://oss-binaries.phusionpassenger.com/apt/passenger
         suites: "{{ passenger_apt_release }}"
         components: main
+        # Restrict the repo to the Phusion keyrings so apt does not warn about
+        # a missing Signed-By and fall back to every key in trusted.gpg.d.
+        signed_by: >-
+          {{ passenger_apt_keys | map(attribute='name')
+             | map('regex_replace', '^(.*)$',
+                   '/usr/local/share/keyrings/\1.gpg')
+             | join(',') }}
         state: present
 
     # Priority must stay below 1001: the apt module pins a specifically

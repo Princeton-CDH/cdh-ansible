@@ -22,6 +22,31 @@
         that:
           - not pkg_status.changed
 
+    - name: Read the Phusion apt source
+      ansible.builtin.slurp:
+        src: /etc/apt/sources.list.d/passenger.sources
+      register: passenger_sources
+
+    - name: Assert that the Phusion apt source is restricted to its keyrings
+      ansible.builtin.assert:
+        that:
+          - passenger_signed_by in (passenger_sources.content | b64decode)
+      vars:
+        passenger_signed_by: >-
+          Signed-By:
+          /usr/local/share/keyrings/phusion_passenger_legacy.gpg,/usr/local/share/keyrings/phusion_passenger_2025.gpg
+
+    # The apt module hides apt's notices, so run apt-get to capture them.
+    - name: Run apt-get update
+      ansible.builtin.command: apt-get update  # noqa: command-instead-of-module
+      register: apt_update
+      changed_when: false
+
+    - name: Assert that apt does not report a missing Signed-By
+      ansible.builtin.assert:
+        that:
+          - "'Missing Signed-By' not in apt_update.stdout + apt_update.stderr"
+
     - name: Stat application sites-available nginx config file
       ansible.builtin.stat:
         path: "/etc/nginx/sites-available/{{ app_name }}.conf"
