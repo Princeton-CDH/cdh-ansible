@@ -1,0 +1,9 @@
+---
+# Base config merged into every molecule scenario in this repository.
+#
+# molecule 26 no longer adds the role's parent directory to the roles path,
+# so converge playbooks that include_role by name cannot find the role.
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_ROLES_PATH: "${MOLECULE_PROJECT_DIRECTORY}/.."
