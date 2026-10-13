@@ -22,11 +22,13 @@
         nginx_user: "{{ __nginx_user }}"
       when: nginx_user is not defined
 
+    # python3-debian is required by deb822_repository.
     - name: Phusion | Ensure apt https and gpg support are installed
       ansible.builtin.apt:
         name:
           - ca-certificates
           - gnupg
+          - python3-debian
         state: present
         update_cache: true
         cache_valid_time: 3600
