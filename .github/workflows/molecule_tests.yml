@@ -6,6 +6,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      # report every role instead of cancelling the rest on the first failure
+      fail-fast: false
       matrix:
         role: [build_dependencies, build_project_repo, build_npm, deploy_user, finalize_deploy, nodejs, opencv_from_source, passenger, postgresql, prodigy_setup]
     steps:
@@ -24,12 +26,11 @@ jobs:
           ssh-keygen -f roles/deploy_user/files/id_rsa -N ""
 
       - name: Molecule test (debug)
-        id: mol
         run: |
           set -euxo pipefail
           cd roles/${{ matrix.role }}
           # run all scenarios with --all flag to test both default and cleanup_disabled scenarios
-          uv run molecule --debug -vvv test --all || echo "rc=$?" >> $GITHUB_OUTPUT
+          uv run molecule --debug -vvv test --all
 
       - name: Upload Molecule logs
         if: always()
