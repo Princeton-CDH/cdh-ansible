@@ -9,6 +9,14 @@
 # We include the generic python3-setuptools because it's required to create the
 # virtual environment; later we can update pip and setuptools inside it.
 
+- name: Install python3-debian for deb822_repository
+  become: true
+  ansible.builtin.apt:
+    name: python3-debian
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
 - name: Remove legacy deadsnakes apt sources
   become: true
   # apt_repository (ppa_*) and add-apt-repository (*-ubuntu-*) wrote one-line
