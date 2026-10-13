@@ -8,7 +8,7 @@ dependencies = [
     "ansible-compat>=26.10.0",
     "ansible-lint>=26.10.0",
     "molecule==26.10.0",
-    "molecule-plugins[docker]==23.6.0",
+    "molecule-plugins[docker]==26.10.12",
     "passlib",
     "yamllint",
     "pre-commit",
