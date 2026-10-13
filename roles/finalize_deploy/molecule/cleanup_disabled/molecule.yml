@@ -26,6 +26,17 @@ provisioner:
         deploy_keep_count: 3                # This value doesn't matter since cleanup is disabled
         auto_cleanup_deploys: false         # DISABLE cleanup functionality
         deploy_user: root                   # Run as root in test container to simplify test setup (avoids user creation complexity)
+        # Created by prepare; all of them should remain after converge.
+        # Shared here because facts set in prepare do not reach verify.
+        fake_deployments:
+          - "2.1.0-old1"
+          - "2.2.0-old2"
+          - "2.3.0-old3"
+          - "3.0.0-keep1"
+          - "3.1.0-keep2"
+          - "3.2.0-keep3"
+          - "4.0.0-previous"
+          - "4.1.0-current"
 
 # Use ansible verifier for verification tests
 verifier:

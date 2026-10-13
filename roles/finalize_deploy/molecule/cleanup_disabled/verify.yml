@@ -13,9 +13,9 @@
     - name: "Check that NO cleanup occurred - all deployments should remain"
       ansible.builtin.assert:
         that:
-          - remaining.files | length == expected_deployment_count | int
+          - remaining.files | length == fake_deployments | length
         success_msg: "Test passed! No cleanup occurred, all {{ remaining.files | length }} deployments remain"
-        fail_msg: "Test failed! Expected {{ expected_deployment_count }} deployments, but found {{ remaining.files | length }}. Cleanup should not have run!"
+        fail_msg: "Test failed! Expected {{ fake_deployments | length }} deployments, but found {{ remaining.files | length }}. Cleanup should not have run!"
 
     - name: "Verify symlinks still work"
       ansible.builtin.stat:
