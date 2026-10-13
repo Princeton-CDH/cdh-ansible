@@ -22,6 +22,14 @@
         nginx_user: "{{ __nginx_user }}"
       when: nginx_user is not defined
 
+    # Replaced by passenger.sources below. Remove it before any apt task:
+    # next to passenger.sources it can make apt fail with "Conflicting values
+    # set for option Signed-By".
+    - name: Phusion | Remove legacy Phusion apt source
+      ansible.builtin.file:
+        path: /etc/apt/sources.list.d/passenger.list
+        state: absent
+
     # python3-debian is required by deb822_repository.
     - name: Phusion | Ensure apt https and gpg support are installed
       ansible.builtin.apt:
@@ -47,12 +55,6 @@
       loop_control:
         loop_var: passenger_key
         label: "{{ passenger_key.name }}"
-
-    # Replaced by passenger.sources below; keeping both duplicates the source.
-    - name: Phusion | Remove legacy Phusion apt source
-      ansible.builtin.file:
-        path: /etc/apt/sources.list.d/passenger.list
-        state: absent
 
     - name: Phusion | Add Phusion apt repo.
       ansible.builtin.deb822_repository:
