@@ -4,17 +4,7 @@
   gather_facts: true
   vars:
     test_dir: "/tmp/ansible_cleanup_test"
-    
-    # These deployments should all remain after the test
-    fake_deployments:
-      - "2.1.0-old1"
-      - "2.2.0-old2" 
-      - "2.3.0-old3"
-      - "3.0.0-keep1"
-      - "3.1.0-keep2"
-      - "3.2.0-keep3"
-      - "4.0.0-previous"
-      - "4.1.0-current"
+    # fake_deployments comes from host_vars in molecule.yml so verify sees it
 
   tasks:
     - name: "Create test directory"
@@ -43,4 +33,3 @@
     - name: "Set test variables for converge"
       ansible.builtin.set_fact:
         install_root: "{{ test_dir }}"
-        expected_deployment_count: "{{ fake_deployments | length }}"
