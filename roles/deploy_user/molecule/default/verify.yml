@@ -5,9 +5,11 @@
 
   gather_facts: false
   tasks:
+    # Check mode: a missing user is reported as changed instead of created.
     - name: Get deploy user info
       ansible.builtin.user:
         name: conan
+      check_mode: true
       register: user_info
 
     - name: User account should be set up correctly
@@ -15,7 +17,7 @@
         that:
           - user_info.name == "conan"
           - user_info.home == "/home/conan"
-          - user_info.changed == true
+          - not user_info.changed
 
     - name: Get deploy group info
       ansible.builtin.group:
