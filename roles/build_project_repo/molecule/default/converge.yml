@@ -5,7 +5,8 @@
     deploy_user: conan
     app_name: "derrida"
     repo: "derridas-margins-archive"
-    python_app: "derrida" 
+    # derridas-margins-archive no longer ships an importable derrida package,
+    # so skip python version detection and use the default version below
     repo_url: "https://github.com/Princeton-CDH/derridas-margins-archive.git"
     gitref: "staging"
     # Mock the short_hash since repo_info won't exist until the task runs
@@ -46,3 +47,18 @@
     - name: "Include build_project_repo"
       ansible.builtin.include_role:
         name: build_project_repo
+
+    # Reproduce a redeploy of an already-deployed commit whose checkout
+    # belongs to a UID with no account (as after deploy_user_uid changed).
+    # Skipped during idempotence, since it deliberately makes changes.
+    - name: Simulate a redeploy over a checkout owned by a removed UID
+      tags: [molecule-idempotence-notest]
+      block:
+        - name: Hand the deploy checkout to an orphaned UID
+          ansible.builtin.command:
+            cmd: "chown -R 4242:4242 {{ deploy }}"
+          changed_when: true
+
+        - name: Redeploy the same commit
+          ansible.builtin.include_role:
+            name: build_project_repo

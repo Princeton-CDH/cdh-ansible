@@ -8,7 +8,7 @@ jobs:
     # These roles' molecule tests were failing while CI ignored molecule's
     # exit code. They still run and report, but do not fail the workflow.
     # Remove a role from this list once its tests pass.
-    continue-on-error: ${{ contains(fromJSON('["build_dependencies", "build_npm", "build_project_repo", "opencv_from_source", "postgresql", "prodigy_setup"]'), matrix.role) }}
+    continue-on-error: ${{ contains(fromJSON('["build_dependencies", "build_npm", "opencv_from_source", "postgresql", "prodigy_setup"]'), matrix.role) }}
     strategy:
       # report every role instead of cancelling the rest on the first failure
       fail-fast: false

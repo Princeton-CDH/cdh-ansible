@@ -43,6 +43,18 @@
           - deploy_stat.stat.gr_name == deploy_user
           - deploy_stat.stat.mode == '0755'
 
+    - name: Find deploy directory files without a valid owner
+      become: true
+      ansible.builtin.command:
+        cmd: "find {{ deploy_dir_find.files[0].path }} -nouser -o -nogroup"
+      register: orphaned_files
+      changed_when: false
+
+    - name: Assert the redeploy re-owned the orphaned checkout
+      ansible.builtin.assert:
+        that:
+          - orphaned_files.stdout_lines | length == 0
+
     - name: Verify shallow checkout config
       become: true
       become_user: "{{ deploy_user }}"
