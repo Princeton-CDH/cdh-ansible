@@ -51,7 +51,9 @@ The following sequence illustrates how the role moves code from GitHub to your p
 
     4. **Versioning**: Runs `python_app_version.yml` to set `python_app_version`.
 
-    5. **Shallow Checkout**: Performs a `git checkout` from the local clone into the final versioned `deploy` directory.
+    5. **Ownership Repair**: If `deploy` already exists (a redeploy of the same commit), re-owns any files whose UID or GID no longer has an account, so `git fetch` can write to `.git`. Files owned by other real users (such as www-data) are left alone.
+
+    6. **Shallow Checkout**: Performs a `git checkout` from the local clone into the final versioned `deploy` directory.
 
 ## Testing with Molecule
 

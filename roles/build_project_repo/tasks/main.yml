@@ -49,6 +49,22 @@
         mode: '0755'
       tags: [setup]
 
+    # Redeploying an already-deployed commit reuses its checkout, and git fetch
+    # fails with "cannot open .git/FETCH_HEAD: Permission denied" if any of it
+    # belongs to a UID that no longer exists (e.g. after deploy_user_uid
+    # changed). Only orphaned files are re-owned: some groups deploy straight
+    # into install_root, which also holds directories owned by www-data.
+    - name: Re-own files in the deploy directory left by a removed UID
+      become: true
+      ansible.builtin.shell:
+        cmd: >-
+          test ! -e {{ deploy | quote }} ||
+          find {{ deploy | quote }} -xdev \( -nouser -o -nogroup \)
+          -print -exec chown -h {{ deploy_user }}:{{ deploy_user }} {} +
+      register: build_project_repo_orphaned_files
+      changed_when: build_project_repo_orphaned_files.stdout | length > 0
+      tags: [always]
+
     - name: Mark deploy path as safe for git
       become: true
       become_user: "{{ deploy_user }}"
