@@ -35,6 +35,7 @@
     - name: Install test dependencies
       ansible.builtin.apt:
         name:
+          - curl
           - nginx
         state: present
 
