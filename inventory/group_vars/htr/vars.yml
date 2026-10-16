@@ -181,6 +181,10 @@ application_dbuser_name: "cdh_htr"
 application_dbuser_password: "{{ vault_db_password }}"
 application_db_host: "{{ postgres_host }}"
 
+# disable db_backup by default — slow and unnecessary for routine deploys;
+# run explicitly with -t db_backup before data-destructive operations
+postgres_backup_enabled: false
+
 # media root owner
 media_user: "{{ deploy_user }}"
 # media files on NFS, shared between VMs
