@@ -3,12 +3,66 @@
   hosts: all
   vars:
     running_on_server: false
+    # in production these come from the app's group_vars (e.g. geniza);
+    # the role installs npm dependencies for the app checked out at deploy
+    deploy_user: conan
+    deploy: /srv/www/molecule_app
   become: true
   pre_tasks:
     - name: Update cache
       ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 600
+
+    - name: Ensure deploy user exists
+      ansible.builtin.user:
+        name: "{{ deploy_user }}"
+
+    - name: Create test app directory
+      ansible.builtin.file:
+        path: "{{ deploy }}"
+        state: directory
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        mode: "0755"
+
+    # community.general.npm reports changed on every run when package.json has
+    # no dependencies, so give the app one local (offline) dependency
+    - name: Create local dependency directory
+      ansible.builtin.file:
+        path: "{{ deploy }}/local-dep"
+        state: directory
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        mode: "0755"
+
+    - name: Add local dependency package.json
+      ansible.builtin.copy:
+        dest: "{{ deploy }}/local-dep/package.json"
+        content: |
+          {
+            "name": "local-dep",
+            "version": "1.0.0"
+          }
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        mode: "0644"
+
+    - name: Add app package.json
+      ansible.builtin.copy:
+        dest: "{{ deploy }}/package.json"
+        content: |
+          {
+            "name": "molecule-app",
+            "version": "1.0.0",
+            "private": true,
+            "dependencies": {
+              "local-dep": "file:./local-dep"
+            }
+          }
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        mode: "0644"
   tasks:
     - name: "Include build_npm"
       ansible.builtin.include_role:
