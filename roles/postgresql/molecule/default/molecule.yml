@@ -20,6 +20,21 @@ lint: |
   yamllint .
   ansible-lint
 platforms:
+  # the role runs on the app host and delegates pg_hba changes to the db host
+  - name: postgres
+    image: "ghcr.io/pulibrary/vm-builds/ubuntu-22.04"
+    command: ""
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+    networks:
+      - name: molecule_postgresql
   - name: instance
     image: "ghcr.io/pulibrary/vm-builds/ubuntu-22.04"
     command: "" # image above already has the /sbin/init
@@ -32,6 +47,8 @@ platforms:
     cgroupns_mode: host
     privileged: true
     pre_build_image: true
+    networks:
+      - name: molecule_postgresql
 provisioner:
   name: ansible
   playbooks:
@@ -42,6 +59,7 @@ provisioner:
     group_vars:
       all:
         postgres_host: postgres
+        postgres_admin_user: postgres
   config_options:
     defaults:
       remote_tmp: /tmp

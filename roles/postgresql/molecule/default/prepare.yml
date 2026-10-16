@@ -2,21 +2,61 @@
 - name: Prepare Postgres Database Server
   hosts: postgres
   become: true
+  vars_files:
+    - ../../defaults/main.yml
   tasks:
+    # the role manages /etc/postgresql/{{ postgres_version }}, so install that
+    # version from PGDG rather than jammy's default postgresql (14)
+    - name: Install packages needed to add the PGDG repository
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - curl
+        state: present
+        update_cache: true
+
+    - name: Ensure PostgreSQL apt key directory exists
+      ansible.builtin.file:
+        path: /usr/share/postgresql-common/pgdg
+        state: directory
+        mode: "0755"
+
+    - name: Install PostgreSQL apt repository key
+      ansible.builtin.get_url:
+        url: "{{ postgres_apt_key_url }}"
+        dest: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+        mode: "0644"
+
+    - name: Configure PostgreSQL apt repository
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/pgdg.sources
+        mode: "0644"
+        content: |
+          Types: deb
+          URIs: {{ postgres_apt_repository_url }}
+          Suites: {{ ansible_facts['distribution_release'] }}-pgdg
+          Components: main
+          Signed-By: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+
     - name: Install Postgresql and Python on DB host
       ansible.builtin.apt:
         name:
-          - postgresql
-          - postgresql-contrib
+          - "postgresql-{{ postgres_version }}"
           - python3-psycopg2
           - sudo
         state: present
         update_cache: true
 
-    - name: Start postgresql service
+    - name: Listen on all addresses so the app host can connect
+      ansible.builtin.lineinfile:
+        path: "/etc/postgresql/{{ postgres_version }}/main/postgresql.conf"
+        regexp: "^#?listen_addresses"
+        line: "listen_addresses = '*'"
+
+    - name: Restart postgresql service
       ansible.builtin.service:
         name: postgresql
-        state: started
+        state: restarted
         enabled: true
 
     - name: Set postgres user password for testing
@@ -28,6 +68,13 @@
   hosts: instance
   become: true
   tasks:
+    # the image lacks iproute2, which ansible needs for ansible_default_ipv4
+    - name: Install iproute2 for network facts
+      ansible.builtin.apt:
+        name: iproute2
+        state: present
+        update_cache: true
+
     - name: Ensure deploy user exists
       ansible.builtin.user:
         name: conan
