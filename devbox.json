@@ -9,9 +9,9 @@
     "rsync@3.5.0",
     "bash@latest",
 
-    "podman@5.8.8",
+    "podman@5.8.9",
     "podman-compose@1.6.0",
-    "docker-client@29.8.1"
+    "docker-client@29.8.2"
   ],
   "shell": {
     "init_hook": [
