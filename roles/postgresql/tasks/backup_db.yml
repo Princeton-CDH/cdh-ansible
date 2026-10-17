@@ -15,6 +15,8 @@
         mode: "0755"
 
     - name: Dump postgres database to backup path
+      # a fresh dump on every run is the point; skip it in molecule's idempotence check
+      tags: molecule-idempotence-notest
       become: true
       become_user: "{{ deploy_user }}"
       community.postgresql.postgresql_db:
