@@ -3,6 +3,9 @@
   hosts: all
   gather_facts: false
   become: true
+  # verify runs as a separate play, so the role's defaults aren't loaded otherwise
+  vars_files:
+    - ../../defaults/main.yml
 
   vars:
     # Try to reuse whichever var name your role uses; fall back to python3.
@@ -29,7 +32,7 @@
       }}
 
     # Only assert version if you set one.
-    verify_expected_version: "{{ opencv_version | default(omit) }}"
+    verify_expected_version: "{{ opencv_version | default('') }}"
 
   tasks:
     - name: Verify | python3-opencv apt package absent (if expected)
@@ -74,7 +77,7 @@
     - name: Verify | Assert expected OpenCV version (if configured)
       ansible.builtin.assert:
         that:
-          - verify_expected_version is not defined
+          - verify_expected_version | length == 0
             or ('CV2_VERSION=' ~ verify_expected_version) in cv2_check.stdout
         fail_msg: >-
           OpenCV version mismatch.
