@@ -17,6 +17,13 @@
         ansible_async_dir: "{{ lookup('env', 'HOME') }}/.ansible_async/"
       when: (lookup('env', 'HOME') | default('') | length) > 0
 
+    # a user-defined network so containers can resolve each other by name
+    - name: Create network(s)
+      community.docker.docker_network:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ molecule_yml.platforms | selectattr('networks', 'defined') | map(attribute='networks') | flatten | map(attribute='name') | unique }}"
+
     - name: Create container(s)
       community.docker.docker_container:
         name: "{{ item.name }}"
@@ -29,6 +36,8 @@
         volumes: "{{ item.volumes | default(omit) }}"
         # Only pass command if it’s non-empty; otherwise use image CMD (/sbin/init in your image)
         command: "{{ (item.command | default('') | length > 0) | ternary(item.command, omit) }}"
+        hostname: "{{ item.name }}"
+        networks: "{{ item.networks | default(omit) }}"
         log_driver: json-file
       loop: "{{ molecule_yml.platforms }}"
 
