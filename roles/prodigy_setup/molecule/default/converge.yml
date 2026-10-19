@@ -35,6 +35,7 @@
     - name: Install test dependencies
       ansible.builtin.apt:
         name:
+          - curl
           - nginx
         state: present
 
@@ -75,3 +76,11 @@
     - name: Include prodigy_setup
       ansible.builtin.include_role:
         name: prodigy_setup
+
+  # in production the pulibrary.princeton_ansible.nginx role provides this
+  # handler; prodigy_setup notifies it after installing the site config
+  handlers:
+    - name: Restart Nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
