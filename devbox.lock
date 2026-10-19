@@ -2,126 +2,99 @@
   "lockfile_version": "1",
   "packages": {
     "bash@latest": {
-      "last_modified": "2026-01-14T12:51:35Z",
-      "resolved": "github:NixOS/nixpkgs/13868c071cc73a5e9f610c47d7bb08e5da64fdd5#bash",
+      "last_modified": "2026-10-16T02:15:57Z",
+      "resolved": "github:NixOS/nixpkgs/f20cd90e28fe0403873f473b29e42662cd86e8c4#bash",
       "source": "devbox-search",
-      "version": "5.3p3",
+      "version": "5.3p15",
       "systems": {
         "aarch64-darwin": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/pbimwi0b1n39vvv2m0b6j1yybl3nllin-bash-interactive-5.3p3",
+              "path": "/nix/store/s2vi23sgwpjv4qvnyfknv7l041m8vm94-bash-interactive-5.3p15",
               "default": true
             },
             {
               "name": "man",
-              "path": "/nix/store/p8wcfarcvyrvmrw99py1k3jx38445940-bash-interactive-5.3p3-man",
+              "path": "/nix/store/kakn9yyj2h86hqalm14wvfnxwaivs650-bash-interactive-5.3p15-man",
               "default": true
             },
             {
               "name": "dev",
-              "path": "/nix/store/jrqfsfm7j7xhcwyq9mp2z7fal33rq19s-bash-interactive-5.3p3-dev"
+              "path": "/nix/store/sjzhqc66j881n9lyg3m15aqiykad4h5k-bash-interactive-5.3p15-dev"
             },
             {
               "name": "doc",
-              "path": "/nix/store/iwky2lbgwjl9biw3x56sm3r94r46wimh-bash-interactive-5.3p3-doc"
+              "path": "/nix/store/a30rxgk909b7cizgv4q7m443znlj2643-bash-interactive-5.3p15-doc"
             },
             {
               "name": "info",
-              "path": "/nix/store/vvbpz1vw4wk7qqack0al5zh7p9a1y570-bash-interactive-5.3p3-info"
+              "path": "/nix/store/fps3rzxgdqqkcq80i5y1c9b89glrw9rk-bash-interactive-5.3p15-info"
             }
           ],
-          "store_path": "/nix/store/pbimwi0b1n39vvv2m0b6j1yybl3nllin-bash-interactive-5.3p3"
+          "store_path": "/nix/store/s2vi23sgwpjv4qvnyfknv7l041m8vm94-bash-interactive-5.3p15"
         },
         "aarch64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/rlgii39vy2cp7y4rgxz6l0bl7115nk7a-bash-interactive-5.3p3",
+              "path": "/nix/store/wgxz9zr5a70v52nkqinbarf56f1c5jsi-bash-interactive-5.3p15",
               "default": true
             },
             {
               "name": "man",
-              "path": "/nix/store/xaxbpf5l9incla45nsb4rghzidawq8md-bash-interactive-5.3p3-man",
+              "path": "/nix/store/fabgday1m9ahl9pxx2dvmn22mxcc5ik2-bash-interactive-5.3p15-man",
               "default": true
             },
             {
               "name": "debug",
-              "path": "/nix/store/29rl3mf7xs80aiqhsm29sl8a05wsii7v-bash-interactive-5.3p3-debug"
+              "path": "/nix/store/ibzrdbzm31azyk9jv2sqk1wz90svp64c-bash-interactive-5.3p15-debug"
             },
             {
               "name": "dev",
-              "path": "/nix/store/dd9f5c5zzk81i0vzqlvzmzxbk235d7n6-bash-interactive-5.3p3-dev"
+              "path": "/nix/store/2ssiw3jmlpf03cdrlf4df2qwpxska7xn-bash-interactive-5.3p15-dev"
             },
             {
               "name": "doc",
-              "path": "/nix/store/in9060ldca4miyq7qjzisrjvxzaiz0hm-bash-interactive-5.3p3-doc"
+              "path": "/nix/store/zmirimd60fc2bdh1nlghi044k7y1qnfn-bash-interactive-5.3p15-doc"
             },
             {
               "name": "info",
-              "path": "/nix/store/9i4cp6z5w0hhsbcfv8igis3ha1b41mfd-bash-interactive-5.3p3-info"
+              "path": "/nix/store/p15v5l88lvcgl4i71w1bz0vkw6gy6wgx-bash-interactive-5.3p15-info"
             }
           ],
-          "store_path": "/nix/store/rlgii39vy2cp7y4rgxz6l0bl7115nk7a-bash-interactive-5.3p3"
-        },
-        "x86_64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/i7cq9xch3mnsfgjifgmr1ybggv9njn0f-bash-interactive-5.3p3",
-              "default": true
-            },
-            {
-              "name": "man",
-              "path": "/nix/store/1wq1717krwjj8k0dy632sjbiv61asa0m-bash-interactive-5.3p3-man",
-              "default": true
-            },
-            {
-              "name": "dev",
-              "path": "/nix/store/97ysds9pbfyl2nf09m2na3jxvh7q58qi-bash-interactive-5.3p3-dev"
-            },
-            {
-              "name": "doc",
-              "path": "/nix/store/dj18n4g27q7qz9v075xf3iisx4wl38r5-bash-interactive-5.3p3-doc"
-            },
-            {
-              "name": "info",
-              "path": "/nix/store/2yqwn1r5663qqyf48qg12p9w2f8rwvnk-bash-interactive-5.3p3-info"
-            }
-          ],
-          "store_path": "/nix/store/i7cq9xch3mnsfgjifgmr1ybggv9njn0f-bash-interactive-5.3p3"
+          "store_path": "/nix/store/wgxz9zr5a70v52nkqinbarf56f1c5jsi-bash-interactive-5.3p15"
         },
         "x86_64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/hkbylipx1iiawqdcjv858p501wv81bpm-bash-interactive-5.3p3",
+              "path": "/nix/store/1mv3qz005gkbalxfghk4y3s8ayv4d2dl-bash-interactive-5.3p15",
               "default": true
             },
             {
               "name": "man",
-              "path": "/nix/store/v26p9gyxsic1d2428hq39b9kqy206r05-bash-interactive-5.3p3-man",
+              "path": "/nix/store/7dnkkayima0chah3sm21nsp86zfgi6h9-bash-interactive-5.3p15-man",
               "default": true
             },
             {
               "name": "debug",
-              "path": "/nix/store/d836xvvrawwc0dmdrfas6v25ibqmn5cb-bash-interactive-5.3p3-debug"
+              "path": "/nix/store/bxzrhigb7ji4712aa8id9kyak5q0q7z9-bash-interactive-5.3p15-debug"
             },
             {
               "name": "dev",
-              "path": "/nix/store/9xglrdgxlfd1rgy4ldij7lxcgbjz17fx-bash-interactive-5.3p3-dev"
+              "path": "/nix/store/rxgngn06ihrwh52bfi4vmm0i2ds69wsj-bash-interactive-5.3p15-dev"
             },
             {
               "name": "doc",
-              "path": "/nix/store/66b5nfg85cc55jvppncp5pa1941sxs8h-bash-interactive-5.3p3-doc"
+              "path": "/nix/store/lz3qj37l1h44jy1vn91f32hf5ghrabab-bash-interactive-5.3p15-doc"
             },
             {
               "name": "info",
-              "path": "/nix/store/s35gwfmpi4g4x3x5wciw3g21mmy946am-bash-interactive-5.3p3-info"
+              "path": "/nix/store/3k8qpmnj7smafs2frihw0299gcivixh7-bash-interactive-5.3p15-info"
             }
           ],
-          "store_path": "/nix/store/hkbylipx1iiawqdcjv858p501wv81bpm-bash-interactive-5.3p3"
+          "store_path": "/nix/store/1mv3qz005gkbalxfghk4y3s8ayv4d2dl-bash-interactive-5.3p15"
         }
       }
     },
@@ -222,8 +195,8 @@
       }
     },
     "github:NixOS/nixpkgs/nixpkgs-unstable": {
-      "last_modified": "2026-01-11T16:44:50Z",
-      "resolved": "github:NixOS/nixpkgs/4d113fe1f7bb454435a5cabae6cd283e64191bb7?lastModified=1768149890"
+      "last_modified": "2026-10-16T02:15:57Z",
+      "resolved": "github:NixOS/nixpkgs/f20cd90e28fe0403873f473b29e42662cd86e8c4?lastModified=1792116957&narHash=sha256-EjZqHKObBfIOeHZnMRVV87HB3pPq%2FWBkmRJWyFxmZu8%3D"
     },
     "gnumake@4.4.1": {
       "last_modified": "2026-10-04T16:11:07Z",
@@ -334,86 +307,67 @@
       }
     },
     "openssh@latest": {
-      "last_modified": "2025-12-31T03:27:36Z",
-      "resolved": "github:NixOS/nixpkgs/f665af0cdb70ed27e1bd8f9fdfecaf451260fc55#openssh",
+      "last_modified": "2026-10-16T02:15:57Z",
+      "resolved": "github:NixOS/nixpkgs/f20cd90e28fe0403873f473b29e42662cd86e8c4#openssh",
       "source": "devbox-search",
-      "version": "10.2p1",
+      "version": "10.5p1",
       "systems": {
         "aarch64-darwin": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/65lckylin1y0yasx8fa6ifynj5bcbh2q-openssh-10.2p1",
+              "path": "/nix/store/px5jbwil56h2q4l7452bj242vdv20919-openssh-10.5p1",
               "default": true
             },
             {
               "name": "man",
-              "path": "/nix/store/8mp3kyc3rlwi1aqwn79ps9fz0p09gdcn-openssh-10.2p1-man",
+              "path": "/nix/store/lg4k7g6dl77zn1q9g26cx8xs82v00ngp-openssh-10.5p1-man",
               "default": true
             },
             {
               "name": "dev",
-              "path": "/nix/store/9mbrhyigjb2aq0nhf66r8hh4g0s37f0k-openssh-10.2p1-dev"
+              "path": "/nix/store/n2j50kpzlbj1z8hmb1ypdi803fvv22cv-openssh-10.5p1-dev"
             }
           ],
-          "store_path": "/nix/store/65lckylin1y0yasx8fa6ifynj5bcbh2q-openssh-10.2p1"
+          "store_path": "/nix/store/px5jbwil56h2q4l7452bj242vdv20919-openssh-10.5p1"
         },
         "aarch64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/sfvjixdkylgqhk0zx2v3znwir8rp278m-openssh-10.2p1",
+              "path": "/nix/store/zy1lhgd93ix3f6c784hrpk0fbs4ralnz-openssh-10.5p1",
               "default": true
             },
             {
               "name": "man",
-              "path": "/nix/store/7x77z882l1zdz6820fhv3phy25vsmkxw-openssh-10.2p1-man",
+              "path": "/nix/store/z6123waqj9njgix4fpfi6i7wvdyjlfr4-openssh-10.5p1-man",
               "default": true
             },
             {
               "name": "dev",
-              "path": "/nix/store/a1g712k7d1sg77fdqmdwqvszfqnia7wq-openssh-10.2p1-dev"
+              "path": "/nix/store/bgksjpxj7in65235m9zjpi6qbbwr21nj-openssh-10.5p1-dev"
             }
           ],
-          "store_path": "/nix/store/sfvjixdkylgqhk0zx2v3znwir8rp278m-openssh-10.2p1"
-        },
-        "x86_64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/8cic6g4xla5w9mk0b93vwf2h7i32rkbm-openssh-10.2p1",
-              "default": true
-            },
-            {
-              "name": "man",
-              "path": "/nix/store/613swdxmnkq3qw5pgk3qsd84d447cn1s-openssh-10.2p1-man",
-              "default": true
-            },
-            {
-              "name": "dev",
-              "path": "/nix/store/1xn0xgdz4kf4jrjyvjwh6ph1dmjrpy3a-openssh-10.2p1-dev"
-            }
-          ],
-          "store_path": "/nix/store/8cic6g4xla5w9mk0b93vwf2h7i32rkbm-openssh-10.2p1"
+          "store_path": "/nix/store/zy1lhgd93ix3f6c784hrpk0fbs4ralnz-openssh-10.5p1"
         },
         "x86_64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/wf1b666cp6ahn165bjidlxidnpkrkswx-openssh-10.2p1",
+              "path": "/nix/store/f6zqjss3b3r20hgvqqkzihjjn7fz214n-openssh-10.5p1",
               "default": true
             },
             {
               "name": "man",
-              "path": "/nix/store/fszk2p20vaw9yib7zfc5vxfmcdyhwag4-openssh-10.2p1-man",
+              "path": "/nix/store/s4x1932j310qyybmhzg188jw84fp1f9s-openssh-10.5p1-man",
               "default": true
             },
             {
               "name": "dev",
-              "path": "/nix/store/r0ddi8vysis4rdlqjkv9jp68b8d41i4k-openssh-10.2p1-dev"
+              "path": "/nix/store/l7r9y9fgvzjx5najilc3n6wlgpdniaf9-openssh-10.5p1-dev"
             }
           ],
-          "store_path": "/nix/store/wf1b666cp6ahn165bjidlxidnpkrkswx-openssh-10.2p1"
+          "store_path": "/nix/store/f6zqjss3b3r20hgvqqkzihjjn7fz214n-openssh-10.5p1"
         }
       }
     },
@@ -535,59 +489,49 @@
       }
     },
     "python@3.12": {
-      "last_modified": "2025-12-31T03:27:36Z",
+      "last_modified": "2026-10-16T02:15:57Z",
       "plugin_version": "0.0.5",
-      "resolved": "github:NixOS/nixpkgs/f665af0cdb70ed27e1bd8f9fdfecaf451260fc55#python312",
+      "resolved": "github:NixOS/nixpkgs/f20cd90e28fe0403873f473b29e42662cd86e8c4#python312",
       "source": "devbox-search",
-      "version": "3.12.12",
+      "version": "3.12.15",
       "systems": {
         "aarch64-darwin": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/bzy1s8kfnz8hsc96ji7pwn0377wwsgw5-python3-3.12.12",
+              "path": "/nix/store/wki0ba66wcjwx0yxn36bgr08jgcn9bdj-python3-3.12.15",
               "default": true
             }
           ],
-          "store_path": "/nix/store/bzy1s8kfnz8hsc96ji7pwn0377wwsgw5-python3-3.12.12"
+          "store_path": "/nix/store/wki0ba66wcjwx0yxn36bgr08jgcn9bdj-python3-3.12.15"
         },
         "aarch64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/wh5w9bgdwkfwamk5vs9pq36ncqj1rhwq-python3-3.12.12",
+              "path": "/nix/store/pan3ykbb4wj84c6lhy2zb27pifyd48af-python3-3.12.15",
               "default": true
             },
             {
               "name": "debug",
-              "path": "/nix/store/nqi4qn3skyrn8pbfzszcc622ms7arbcp-python3-3.12.12-debug"
+              "path": "/nix/store/q5h1455f2swvmwpqkiswrl946fgs2h24-python3-3.12.15-debug"
             }
           ],
-          "store_path": "/nix/store/wh5w9bgdwkfwamk5vs9pq36ncqj1rhwq-python3-3.12.12"
-        },
-        "x86_64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/izh5ff9bjyz5sr7siaypz3333rfzifz0-python3-3.12.12",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/izh5ff9bjyz5sr7siaypz3333rfzifz0-python3-3.12.12"
+          "store_path": "/nix/store/pan3ykbb4wj84c6lhy2zb27pifyd48af-python3-3.12.15"
         },
         "x86_64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/iizfzmqjdfvbyx82gqw92glb5zl6m4my-python3-3.12.12",
+              "path": "/nix/store/v7wvwm1bpm6kzlqgw33m98arm7sw40ln-python3-3.12.15",
               "default": true
             },
             {
               "name": "debug",
-              "path": "/nix/store/czxfvqyngv5zg2l2ylcgbby5r51w7z2w-python3-3.12.12-debug"
+              "path": "/nix/store/8965kbzqdvqmjy5zs4lxvy09g1qy9szm-python3-3.12.15-debug"
             }
           ],
-          "store_path": "/nix/store/iizfzmqjdfvbyx82gqw92glb5zl6m4my-python3-3.12.12"
+          "store_path": "/nix/store/v7wvwm1bpm6kzlqgw33m98arm7sw40ln-python3-3.12.15"
         }
       }
     },
