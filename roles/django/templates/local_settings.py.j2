@@ -58,6 +58,9 @@ PUCAS_LDAP.update({
     ],
     "SEARCH_BASE": "o=Princeton University,c=US",
     "SEARCH_FILTER": "(uid=%(user)s)",
+    # Princeton LDAP no longer supports anonymous bind; use service account credentials
+    "BIND_DN": "uid={{ ldap_bind_uid }},o=Princeton University,c=US",
+    "BIND_PASSWORD": "{{ ldap_bind_password }}",
 })
 {% endblock %}
 
