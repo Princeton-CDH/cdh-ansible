@@ -1,4 +1,11 @@
 {% extends 'local_settings.py.j2' %}
+{% block cas_config %}
+{{ super() }}
+PUCAS_LDAP.update({
+    "BIND_DN": "uid=cdhdevteam,o=Princeton University,c=US",
+    "BIND_PASSWORD": "{{ ldap_bind_password }}",
+})
+{% endblock %}
 {% block imports %}
 from django.utils.translation import gettext_lazy as _
 
