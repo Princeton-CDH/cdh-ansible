@@ -10,7 +10,9 @@
         update_cache: true
         cache_valid_time: 600
   tasks:
-    # Change this when copying to another role
-    - name: "Include build_dependencies"
-      ansible.builtin.include_role:
+    # the role's tasks are tagged [setup, never] so playbooks only run them
+    # with --tags setup; "always" on the import makes them run here as well
+    - name: "Import build_dependencies"
+      ansible.builtin.import_role:
         name: build_dependencies
+      tags: always
