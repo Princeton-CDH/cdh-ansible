@@ -2,7 +2,7 @@
   "name": "cdh-ansible",
   "packages": [
     "python@3.12",
-    "uv@0.13.1",
+    "uv@0.13.4",
     "git@2.56.0",
     "gnumake@4.4.1",
     "openssh@latest",
