@@ -27,6 +27,12 @@
       "enabled": false
     },
     {
+      "description": "Sphinx 9.2 requires Python >=3.13; hold it back while the project is on 3.12",
+      "matchManagers": ["pep621"],
+      "matchPackageNames": ["sphinx"],
+      "allowedVersions": "<9.2"
+    },
+    {
       "matchManagers": ["pep621"],
       "rangeStrategy": "bump"
     }
