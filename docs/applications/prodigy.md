@@ -74,7 +74,7 @@ Since the playbook uses the NGINX role from PUL's [`princeton_ansible`](https://
 
 Before running a playbook, the Ansible Galaxy dependencies must be installed.
 ```
-uv run ansible-galaxy install -r requirements.yml
+uv run ansible-galaxy install -r collections/requirements.yml
 ```
 
 Then the playbook can be run as normal.
