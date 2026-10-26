@@ -35,7 +35,7 @@ This will install the locked dependencies from uv.lock (and update the environme
 If you create a local virtualenv in this directory, `.venv/` is the default used by our Devbox setup (if you use Devbox).
 
 - Install required Ansible galaxy collections and roles:
-  - `ansible-galaxy install -r requirements.yml`
+  - `ansible-galaxy install -r collections/requirements.yml`
 
 - The CDH Ansible vault keys are stored in LastPass. You need to be added to the appropriate LastPass share and install [lastpass-cli](https://github.com/lastpass/lastpass-cli). There are two command-line scripts in the `bin/` directory to call `lpass` to retrieve the vault keys, and the default configuration is set in `ansible.cfg`. See below for more details on the vault setup.
 - A GitHub [personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) for any playbook that uses the `create_deployment` and `close_deployment` tasks. You can set this as an environment variable as `ANSIBLE_GITHUB_TOKEN` or pass it on the command line as `-e github_token=`. If not specified, a fallback token will be used, which will deploy as the `princetoncdh` user. When running ansible locally, we recommend setting a personal GitHub token.
@@ -210,7 +210,7 @@ On first run, this will:
 3. Install Ansible Galaxy dependencies
 
 ```sh
-uv run ansible-galaxy install -r requirements.yml
+uv run ansible-galaxy install -r collections/requirements.yml
 ```
 
 Common commands (from inside `devbox shell`):
