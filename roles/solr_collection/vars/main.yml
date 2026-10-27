@@ -1,4 +1,7 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # vars file for roles/solr_collection
-__solr_conf_src: "{{ install_root }}/current/solr_conf/"
+# sync from the release being deployed: this role runs before finalize_deploy
+# moves the "current" symlink, so current/ still holds the previous release
+# (or nothing at all on a freshly built host)
+__solr_conf_src: "{{ deploy }}/solr_conf/"
