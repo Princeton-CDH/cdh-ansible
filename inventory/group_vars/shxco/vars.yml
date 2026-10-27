@@ -14,7 +14,7 @@ symlink: mep
 # wsgi file relative to deploy location
 wsgi_path: "{{ django_app }}/wsgi.py"
 # use python 3.12
-python_version: 3.12
+python_version: "3.12"
 # observability
 running_on_server: true
 
