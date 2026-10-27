@@ -32,6 +32,7 @@ galaxy_info:
     - name: Ubuntu
       versions:
         - "22.04"
+        - "24.04"
 
   galaxy_tags: []
     # List tags for your role here, one per line. A tag is a keyword that describes

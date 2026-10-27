@@ -6,10 +6,22 @@ scenario:
 driver:
   name: docker
 
-# Define the test environment
+# Define the test environment: both Ubuntu releases in use on CDH servers
 platforms:
-  - name: instance
+  - name: jammy
     image: quay.io/pulibrary/jammy-ansible:latest
+    pre_build_image: true
+  - name: noble
+    image: "ghcr.io/pulibrary/vm-builds/ubuntu-24.04"
+    command: ""  # image above already has the /sbin/init
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
     pre_build_image: true
 
 # Configure how ansible runs our tests
@@ -20,8 +32,8 @@ provisioner:
       host_key_checking: false
       roles_path: "$MOLECULE_PROJECT_DIRECTORY/.."
   inventory:
-    host_vars:
-      instance:
+    group_vars:
+      all:
         install_root: "/tmp/ansible_cleanup_test"  # Test directory for deployments
         deploy_keep_count: 3                # Keep 3 recent deployments
         auto_cleanup_deploys: true          # Enable cleanup functionality

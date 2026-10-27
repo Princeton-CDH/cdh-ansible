@@ -13,6 +13,7 @@ galaxy_info:
     - name: Ubuntu
       versions:
         - "22.04"
+        - "24.04"
   galaxy_tags: []
 dependencies: []
   # uncomment the line below and remove the `[]` above in your role
