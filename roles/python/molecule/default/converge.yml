@@ -3,7 +3,8 @@
 
 - name: Converge
   hosts: all
-  gather_facts: false
+  # the role picks the apt suite from the Ubuntu release fact
+  gather_facts: true
   vars_files: ../../defaults/main.yml
 
   tasks:
@@ -11,5 +12,5 @@
       ansible.builtin.include_role:
         name: python
       vars:
-        python_version: "3.8"
+        python_version: "3.12"
         python_user: python

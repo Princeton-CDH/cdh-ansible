@@ -13,7 +13,7 @@ jobs:
       # report every role instead of cancelling the rest on the first failure
       fail-fast: false
       matrix:
-        role: [build_dependencies, build_project_repo, build_npm, deploy_user, finalize_deploy, nodejs, opencv_from_source, passenger, postgresql, prodigy_setup]
+        role: [build_dependencies, build_project_repo, build_npm, deploy_user, finalize_deploy, nodejs, opencv_from_source, passenger, postgresql, prodigy_setup, python]
     steps:
       - uses: actions/checkout@v7
 

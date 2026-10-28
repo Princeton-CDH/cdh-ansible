@@ -12,9 +12,9 @@
       register: _python_version
       changed_when: true
 
-    - name: Python version should be 3.8
+    - name: Python version should be 3.12
       ansible.builtin.assert:
-        that: _python_version.stdout.startswith("Python 3.8")
+        that: _python_version.stdout.startswith("Python 3.12")
 
     - name: Check installed packages in virtual environment
       ansible.builtin.pip:
@@ -24,6 +24,6 @@
       register: _installed_pkgs
       changed_when: true
 
-    - name: Django should be v3.1 in virtual environment
+    - name: Django should be v4.2 in virtual environment
       ansible.builtin.assert:
-        that: "'Django==3.1' in _installed_pkgs.stdout_lines"
+        that: "'Django==4.2' in _installed_pkgs.stdout_lines"
