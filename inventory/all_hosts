@@ -54,9 +54,6 @@ cdh-geniza2.princeton.edu
 geniza_staging
 geniza_production
 
-[derrida_crawl_staging]
-cdh-test-derrida-crawl1.princeton.edu
-
 [derrida_archive_staging]
 cdh-test-derrida1.princeton.edu
 cdh-test-derrida2.princeton.edu
@@ -134,7 +131,6 @@ prodigy_production
 cdhweb_staging
 geniza_staging
 shxco_staging
-derrida_crawl_staging
 derrida_archive_staging
 prosody_staging
 prodigy_staging
