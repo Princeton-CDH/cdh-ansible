@@ -18,8 +18,6 @@
 # See https://docs.ansible.com/ansible/2.5/user_guide/intro_inventory.html#how-variables-are-merged
 ######
 
-# temporarily keep old site on web1-2 distinct from new version
-# remove this and go down to only 2 vms after the migration is done
 [cdhweb_production]
 cdh-web1.princeton.edu
 cdh-web2.princeton.edu
