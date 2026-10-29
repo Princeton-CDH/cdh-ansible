@@ -16,6 +16,14 @@
 # (i.e. staging and prosody), any overlapping variables are resolved with the
 # group last in alphabetical order 'winning':
 # See https://docs.ansible.com/ansible/2.5/user_guide/intro_inventory.html#how-variables-are-merged
+#
+# Keep this file alphabetized so hosts are easy to find, add and remove:
+#   - project stanzas sorted by project name, each ordered _production,
+#     _staging, then :children
+#   - hosts within a group, and members of [prod:children] and
+#     [staging:children], sorted alphabetically
+# Group order in this file does not affect variable precedence (see above),
+# so sorting is always safe.
 ######
 
 [cdhweb_production]
