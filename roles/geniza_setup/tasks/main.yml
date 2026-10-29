@@ -44,6 +44,15 @@
        HostName github.com
        IdentityFile ~/.ssh/github_id_rsa
 
+- name: Trust GitHub's ssh host keys
+  become: true
+  become_user: "{{ deploy_user }}"
+  ansible.builtin.known_hosts:
+    path: "/home/{{ deploy_user }}/.ssh/known_hosts"
+    name: github.com
+    key: "{{ item }}"
+  loop: "{{ geniza_setup_github_host_keys }}"
+
 - name: Ensure gitconfig is present on the server.
   copy:
     src: "files/gitconfig"
@@ -58,3 +67,18 @@
     dest: "{{ data_path }}"
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
+
+# after a rebuild, restore the export timestamp saved by geniza_backup_state.yml
+# so the next export picks up changes made since the last one on the old server;
+# never overwrites a timestamp already on the server
+- name: Restore last metadata export timestamp
+  ansible.builtin.copy:
+    src: "{{ geniza_setup_state_backup_dir }}/{{ geniza_setup_export_lastrun_file | basename }}"
+    dest: "{{ geniza_setup_export_lastrun_file }}"
+    force: false
+    mode: "0644"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+  when:
+    - inventory_hostname == cronjob_host
+    - (geniza_setup_state_backup_dir ~ '/' ~ (geniza_setup_export_lastrun_file | basename)) is exists
