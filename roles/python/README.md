@@ -23,5 +23,5 @@ Example Playbook
 ```yml
     - hosts: myapp
       roles:
-         - { role: python, python_version: "3.8", python_user: "conan" }
+         - { role: python, python_version: "3.12", python_user: "conan" }
 ```

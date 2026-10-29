@@ -71,8 +71,8 @@ django_allowed_hosts:
 # use vaulted secret key for django settings
 django_secret_key: "{{ secret_key }}"
 
-# some apps are on older versions, but set a reasonable default
-python_version: "python3.11"
+# python 3.12 is the system python on Ubuntu 24.04 (noble)
+python_version: "3.12"
 # set python virtualenv prompt based on application & version (used by python role only)
 python_venv_prompt: "{{ app_name }}-{{ version }}-{{ short_hash }}"
 

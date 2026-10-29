@@ -31,6 +31,15 @@
     update_cache: true
     cache_valid_time: 3600
 
+# Only use deadsnakes when the requested version is not the release's own
+# python3 (e.g. 3.12 on noble comes from the Ubuntu archive). The facts describe
+# /usr/bin/python3, which ansible.cfg sets as the interpreter.
+- name: Check whether the requested python is the system python
+  ansible.builtin.set_fact:
+    python_use_deadsnakes: >-
+      {{ python_version is version(ansible_facts['python']['version']['major'] ~ '.'
+      ~ ansible_facts['python']['version']['minor'], '!=') }}
+
 - name: Add python apt repository
   become: true
   ansible.builtin.deb822_repository:
@@ -40,8 +49,24 @@
     suites: "{{ ansible_distribution_release }}"
     components: main
     signed_by: "{{ python_deadsnakes_key_url }}"
+  when: python_use_deadsnakes | bool
+
+- name: Remove python apt repository when the system python is used
+  become: true
+  ansible.builtin.deb822_repository:
+    name: deadsnakes
+    state: absent
+  when: not python_use_deadsnakes | bool
+
+- name: Remove deadsnakes pin when the system python is used
+  become: true
+  ansible.builtin.file:
+    path: /etc/apt/preferences.d/deadsnakes-python
+    state: absent
+  when: not python_use_deadsnakes | bool
 
 - name: Pin python packages to deadsnakes to avoid rc/alpha versions from distro mirror
+  when: python_use_deadsnakes | bool
   # The Princeton math mirror has a higher apt priority than deadsnakes, causing
   # pre-release builds (e.g. 3.11.0rc1) to be installed instead of the formal
   # release. 3.11.0rc1 lacks sys.get_int_max_str_digits, which torch/kraken
