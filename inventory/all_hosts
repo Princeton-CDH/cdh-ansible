@@ -18,77 +18,43 @@
 # See https://docs.ansible.com/ansible/2.5/user_guide/intro_inventory.html#how-variables-are-merged
 ######
 
-[cdhweb_staging]
-cdh-test-web1.princeton.edu
-cdh-test-web2.princeton.edu
-
 # temporarily keep old site on web1-2 distinct from new version
 # remove this and go down to only 2 vms after the migration is done
 [cdhweb_production]
 cdh-web1.princeton.edu
 cdh-web2.princeton.edu
 
+[cdhweb_staging]
+cdh-test-web1.princeton.edu
+cdh-test-web2.princeton.edu
+
 [cdhweb:children]
-cdhweb_staging
 cdhweb_production
-
-[shxco_staging]
-cdh-test-shxco1.princeton.edu
-cdh-test-shxco2.princeton.edu
-[shxco_production]
-cdh-shxco1.princeton.edu
-cdh-shxco2.princeton.edu
-
-[shxco:children]
-shxco_staging
-shxco_production
-
-[geniza_staging]
-cdh-test-geniza1.princeton.edu
-cdh-test-geniza2.princeton.edu
-[geniza_production]
-cdh-geniza1.princeton.edu
-cdh-geniza2.princeton.edu
-
-[geniza:children]
-geniza_staging
-geniza_production
-
-[derrida_archive_staging]
-cdh-test-derrida1.princeton.edu
-cdh-test-derrida2.princeton.edu
+cdhweb_staging
 
 [derrida_archive_production]
 cdh-derrida1.princeton.edu
 cdh-derrida2.princeton.edu
 
+[derrida_archive_staging]
+cdh-test-derrida1.princeton.edu
+cdh-test-derrida2.princeton.edu
+
 [derrida_archive:children]
-derrida_archive_staging
 derrida_archive_production
+derrida_archive_staging
 
-[prosody_staging]
-cdh-test-prosody1.princeton.edu
-cdh-test-prosody2.princeton.edu
+[geniza_production]
+cdh-geniza1.princeton.edu
+cdh-geniza2.princeton.edu
 
-[prosody_production]
-cdh-prosody1.princeton.edu
-cdh-prosody2.princeton.edu
+[geniza_staging]
+cdh-test-geniza1.princeton.edu
+cdh-test-geniza2.princeton.edu
 
-[prosody:children]
-prosody_staging
-prosody_production
-
-[prodigy_staging]
-cdh-test-prodigy1.princeton.edu
-cdh-test-prodigy2.princeton.edu
-
-[prodigy_production]
-cdh-prodigy1.princeton.edu
-cdh-prodigy2.princeton.edu
-
-[prodigy:children]
-prodigy_staging
-prodigy_production
+[geniza:children]
+geniza_production
+geniza_staging
 
 # escriptorium installation
 [htr_production]
@@ -104,37 +70,87 @@ cdh-test-htr2.lib.princeton.edu
 htr_production
 htr_staging
 
-### PUL solr servers
+[madad_production]
+cdh-madad1.lib.princeton.edu
+cdh-madad2.lib.princeton.edu
 
-[solr9_staging]
-lib-solr-staging2.princeton.edu
+[madad_staging]
+cdh-test-madad1.lib.princeton.edu
+cdh-test-madad2.lib.princeton.edu
+
+[madad:children]
+madad_production
+madad_staging
+
+[prodigy_production]
+cdh-prodigy1.princeton.edu
+cdh-prodigy2.princeton.edu
+
+[prodigy_staging]
+cdh-test-prodigy1.princeton.edu
+cdh-test-prodigy2.princeton.edu
+
+[prodigy:children]
+prodigy_production
+prodigy_staging
+
+[prosody_production]
+cdh-prosody1.princeton.edu
+cdh-prosody2.princeton.edu
+
+[prosody_staging]
+cdh-test-prosody1.princeton.edu
+cdh-test-prosody2.princeton.edu
+
+[prosody:children]
+prosody_production
+prosody_staging
+
+[shxco_production]
+cdh-shxco1.princeton.edu
+cdh-shxco2.princeton.edu
+
+[shxco_staging]
+cdh-test-shxco1.princeton.edu
+cdh-test-shxco2.princeton.edu
+
+[shxco:children]
+shxco_production
+shxco_staging
+
+### PUL solr servers
 
 [solr9_production]
 lib-solr-prod1.princeton.edu
 
+[solr9_staging]
+lib-solr-staging2.princeton.edu
+
 [solr:children]
-solr9_staging
 solr9_production
+solr9_staging
 
 ### environment-based stanzas to create shared groups
 
 [prod:children]
 cdhweb_production
+derrida_archive_production
 geniza_production
 htr_production
-shxco_production
-prosody_production
-derrida_archive_production
+madad_production
 prodigy_production
+prosody_production
+shxco_production
 
 [staging:children]
 cdhweb_staging
-geniza_staging
-shxco_staging
 derrida_archive_staging
-prosody_staging
-prodigy_staging
+geniza_staging
 htr_staging
+madad_staging
+prodigy_staging
+prosody_staging
+shxco_staging
 
 [dev]
 localhost
