@@ -1,0 +1,21 @@
+---
+# Save state that the geniza data exports need before a server is rebuilt.
+# Run against the old server before it is replaced:
+#   ansible-playbook playbooks/geniza_backup_state.yml [-e runtime_env=production]
+# geniza.yml restores it (geniza_setup role) the first time it runs on the
+# rebuilt server, before the export cron jobs are installed.
+- name: Back up geniza export state
+  hosts: geniza_{{ runtime_env | default('staging') }}
+  connection: ssh
+  remote_user: pulsys
+  become: true
+  tasks:
+    - name: Load geniza_setup defaults
+      ansible.builtin.include_vars: ../roles/geniza_setup/defaults/main.yml
+
+    - name: Fetch last metadata export timestamp
+      ansible.builtin.fetch:
+        src: "{{ geniza_setup_export_lastrun_file }}"
+        dest: "{{ geniza_setup_state_backup_dir }}/"
+        flat: true
+      when: inventory_hostname == cronjob_host
