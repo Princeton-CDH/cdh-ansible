@@ -7,15 +7,15 @@
     - name: Passenger | Check that this Ubuntu release is supported
       ansible.builtin.assert:
         that:
-          - ansible_distribution == "Ubuntu"
-          - ansible_distribution_release in passenger_supported_releases
+          - ansible_facts['distribution'] == "Ubuntu"
+          - ansible_facts['distribution_release'] in passenger_supported_releases
         fail_msg: >-
           The passenger role supports Ubuntu
           {{ passenger_supported_releases | join(', ') }}; this host reports
-          {{ ansible_distribution }} {{ ansible_distribution_release }}.
+          {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_release'] }}.
 
     - name: Passenger | Load release-specific package versions
-      ansible.builtin.include_vars: "{{ ansible_distribution_release }}.yml"
+      ansible.builtin.include_vars: "{{ ansible_facts['distribution_release'] }}.yml"
 
     - name: Define nginx_user.
       ansible.builtin.set_fact:

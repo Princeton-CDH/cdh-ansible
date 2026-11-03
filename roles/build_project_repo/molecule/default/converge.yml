@@ -20,7 +20,7 @@
     - name: Update apt cache
       ansible.builtin.apt:
         update_cache: true
-      when: ansible_os_family == "Debian"
+      when: ansible_facts['os_family'] == "Debian"
 
     - name: Create deploy user
       ansible.builtin.user:
