@@ -9,9 +9,17 @@
     - ../../defaults/test.yml
 
   tasks:
+    # use the deploy user's uid/gid so deploy_user does not collide with it
+    - name: Create a testing group
+      ansible.builtin.group:
+        name: "{{ django_user }}"
+        gid: "{{ deploy_user_uid }}"
+
     - name: Create a testing user
       ansible.builtin.user:
         name: "{{ django_user }}"
+        uid: "{{ deploy_user_uid }}"
+        group: "{{ django_user }}"
 
     # we can't run the split_marc script, so create empty data
     # dir so that task won't be run
