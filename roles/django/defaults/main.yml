@@ -14,7 +14,7 @@ django_secret_key: changeme
 django_debug: false
 django_allowed_hosts:
   - localhost
-  - "{{ ansible_hostname }}"
+  - "{{ ansible_facts['hostname'] }}"
 django_test_warning: false
 django_local_settings_dest: "{{ django_app_path }}/{{ django_app }}/local_settings.py"
 
