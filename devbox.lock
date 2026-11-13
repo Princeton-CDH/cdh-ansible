@@ -98,41 +98,41 @@
         }
       }
     },
-    "docker-client@29.9.2": {
-      "last_modified": "2026-11-06T15:06:19Z",
-      "resolved": "github:NixOS/nixpkgs/4fe25e12eb9f4c744966dd3de5a05246cf098601#docker-client",
+    "docker-client@29.9.3": {
+      "last_modified": "2026-11-12T14:50:34Z",
+      "resolved": "github:NixOS/nixpkgs/2074cc672349f14240fb7ea90d509e0b643e9dd4#docker-client",
       "source": "devbox-search",
-      "version": "29.9.2",
+      "version": "29.9.3",
       "systems": {
         "aarch64-darwin": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/qsacg7i2qr91x8kggss2i5s0j7jg66fl-docker-29.9.2",
+              "path": "/nix/store/v9yfrfarhjcahwpknbnnx27chmv05v50-docker-29.9.3",
               "default": true
             }
           ],
-          "store_path": "/nix/store/qsacg7i2qr91x8kggss2i5s0j7jg66fl-docker-29.9.2"
+          "store_path": "/nix/store/v9yfrfarhjcahwpknbnnx27chmv05v50-docker-29.9.3"
         },
         "aarch64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/rdmqdjymd5q952p9887q6lqpv7mp4a0h-docker-29.9.2",
+              "path": "/nix/store/4nx87vg8cfypwk84n28xbdd8bimg095n-docker-29.9.3",
               "default": true
             }
           ],
-          "store_path": "/nix/store/rdmqdjymd5q952p9887q6lqpv7mp4a0h-docker-29.9.2"
+          "store_path": "/nix/store/4nx87vg8cfypwk84n28xbdd8bimg095n-docker-29.9.3"
         },
         "x86_64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/lwdlqqz8byqp1vpblkjpbcdywnqgba90-docker-29.9.2",
+              "path": "/nix/store/20asb5zyq0yrg44ik6vn9apmbl98z5ya-docker-29.9.3",
               "default": true
             }
           ],
-          "store_path": "/nix/store/lwdlqqz8byqp1vpblkjpbcdywnqgba90-docker-29.9.2"
+          "store_path": "/nix/store/20asb5zyq0yrg44ik6vn9apmbl98z5ya-docker-29.9.3"
         }
       }
     },
