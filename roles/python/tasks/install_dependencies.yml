@@ -3,54 +3,46 @@
 # Uses pyproject.toml by default; installs from a requirements.txt file
 # if present and pyproject.toml is absent.
 
-- name: Create python virtual environment with uv
+- name: Create python virtual environment and install dependencies with uv
   become: true
   become_user: "{{ python_user }}"
-  ansible.builtin.command:
-    # can we rely on .python-version ?
-    # for backwards compatibilty, create at the configured venv path
-    cmd: "uv venv --prompt {{ python_venv_prompt }} {{ python_venv_path }}"
-    chdir: "{{ python_app_path }}"
+  environment:
+    # run all uv commands in application directory
+    UV_WORKING_DIR: "{{ python_app_path }}"
+  block:
+    - name: Create python virtual environment with uv
+      ansible.builtin.command:
+        # can we rely on .python-version file in the projects ?
+        # for compatibilty, create at the configured venv path
+        cmd: "uv venv --prompt {{ python_venv_prompt }} {{ python_venv_path }} --no-progress --allow-existing"
 
-- name: Check for pyproject.toml file
-  become: true
-  become_user: "{{ python_user }}"
-  ansible.builtin.stat:
-    path: "{{ pyproject_toml_file }}"
-  register: _pyproject_file
+    - name: Check for pyproject.toml file
+      ansible.builtin.stat:
+        path: "{{ pyproject_toml_file }}"
+      register: _pyproject_file
 
-- name: Check for requirements.txt file # currently only ppa-django
-  become: true
-  become_user: "{{ python_user }}"
-  ansible.builtin.stat:
-    path: "{{ python_requirements_file }}"
-  register: _requirements_file
+    - name: Check for requirements.txt file # currently only ppa-django
+      ansible.builtin.stat:
+        path: "{{ python_requirements_file }}"
+      register: _requirements_file
 
-- name: Install python dependencies from pyproject
-  when:
-    - _pyproject_file.stat.exists
-  become: true
-  become_user: "{{ python_user }}"
-  ansible.builtin.command:
-    # optional groups config TBD
-    cmd: "uv sync --no-dev"
-    chdir: "{{ python_app_path }}"
+    - name: Install python dependencies from pyproject
+      when:
+        - _pyproject_file.stat.exists
+      ansible.builtin.command:
+        # optional groups config TBD
+        cmd: "uv sync --no-dev"
 
-- name: Install python dependencies from requirements.txt
-  when: _requirements_file.stat.exists
-  become: true
-  become_user: "{{ python_user }}"
-  ansible.builtin.command:
-    cmd: "uv pip install -r requirements.txt"
-    chdir: "{{ python_app_path }}"
-    extra_args: "{{ pip_install_extra_args }}" # currently htr only
+    - name: Install python dependencies from requirements.txt
+      when: _requirements_file.stat.exists
+      ansible.builtin.command:
+        cmd: "uv pip install -r requirements.txt"
+        chdir: "{{ python_app_path }}"
+        extra_args: "{{ pip_install_extra_args }}" # currently htr only
 
-- name: Install additional python requirements
-  become: true
-  become_user: "{{ python_user }}"
-  tags:
-    - python-extra-deps
-  ansible.builtin.command:
-    cmd: "uv pip install {{ python_extra_packages }} {{ python_extra_packages_pip_extra_args }}"
-    chdir: "{{ python_app_path }}"
-  when: python_extra_packages is defined # currently prodyigy/htr only
+    - name: Install additional python requirements
+      tags:
+        - python-extra-deps
+      ansible.builtin.command:
+        cmd: "uv pip install {{ python_extra_packages }} {{ python_extra_packages_pip_extra_args }}"
+      when: python_extra_packages is defined # currently prodigy/htr only
