@@ -67,37 +67,10 @@
         replace: "\\1 help_text='' \\2"
 
 
-- name: Reinstall htr2hpc code
-  become: true
-  become_user: "{{ python_user }}"
-  tags:
-    - reinstall-htr2hpc
-    - never  # don't run by default
-  block:
-    # remove the current version
-    - name: uninstall htr2hpc python package
-      ansible.builtin.pip:
-        virtualenv: "{{ django_venv_path }}"
-        virtualenv_command: "python{{ python_version }} -m venv --prompt \"{{ python_venv_prompt }}\""
-        name: htr2hpc
-        state: absent
-    # reinstall with whatever version is in settings
-    - name: install currently configured htr2hpc python package
-      ansible.builtin.pip:
-        virtualenv: "{{ django_venv_path }}"
-        virtualenv_command: "python{{ python_version }} -m venv --prompt \"{{ python_venv_prompt }}\""
-        name: "{{ python_extra_packages }}"
-        extra_args: "{{ python_extra_packages_pip_extra_args }}"
-      notify:
-        - Restart nginx
-        - Restart celery
-        - Restart django_channels
-
 - name: Set HTR2HPC_GITREF from installed package metadata (staging only)
   become: true
   when: runtime_env | default('staging') == 'staging'
   tags:
-    - reinstall-htr2hpc
     - app_config
   block:
     - name: Get htr2hpc commit hash from pip direct_url metadata
