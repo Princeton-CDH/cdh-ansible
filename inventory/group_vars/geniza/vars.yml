@@ -1,8 +1,7 @@
 ###
-# Variables for Geniza that apply across all deploy groups (production and staging)
+# Variables for Geniza that apply to all environments (production and staging)
 ###
 ---
-# Paths are picky and spaces for any YAML multiline syntax causes issues
 # GitHub repository
 repo: "Princeton-CDH/geniza"
 # application name
@@ -21,7 +20,7 @@ python_version: "3.12"
 node_version: "22"
 
 # Override clone root to use deploy user home instead of root
-clone_root: "/home/{{ deploy_user }}/repos"
+# clone_root: "/home/{{ deploy_user }}/repos"    # default behavior
 # for Geniza, we use the same path on both staging and production
 install_root: "/srv/www/{{ app_name }}"
 # geniza local settings have a slightly different path
@@ -34,7 +33,7 @@ django_local_settings_template: "geniza_settings.py.j2"
 media_root: /mnt/nfs/cdh/geniza/media/
 
 # pul deploy user
-deploy_user: "conan"
+# deploy_user: "conan"  # default
 
 # django database backend
 db_backend: "postgresql"
@@ -47,7 +46,7 @@ application_db_host: "{{ postgres_host }}"
 
 # set defaults for princeton; override for other environments
 passenger_app_root: "/var/www/{{ app_name }}"
-passenger_server_name: "geniza.princeton.edu"
+passenger_server_name: "{{ application_url }}"
 passenger_startup_file: "{{ app_name }}/wsgi.py"
 passenger_python: "{{ passenger_app_root }}/env/bin/python"
 
@@ -68,7 +67,7 @@ otel_app_log_receivers:
         timestamp:
           parse_from: attributes.timestamp
           layout_type: gotime
-          layout: '2006-01-02T15:04:05.999999Z07:00'
+          layout: "2006-01-02T15:04:05.999999Z07:00"
         severity:
           parse_from: attributes.level
           mapping:
@@ -99,9 +98,6 @@ replication_source_host: geniza_production
 
 # keep the warning banner off by default
 show_warning_banner: false
-
-# variable needed to determine if cdh vaulted variables can be loaded
-geniza_deploy_only: "{{ lookup('ansible.builtin.env', 'GENIZA_DEPLOY_ONLY')| default(false) }}"
 
 # Redirect old links from PGPv3
 # specify server name to ensure https instead of http

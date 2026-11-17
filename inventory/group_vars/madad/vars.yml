@@ -17,6 +17,9 @@ wsgi_path: "{{ django_app }}/wsgi.py"
 # use python 3.12
 python_version: "3.12"
 
+# disable NFS mounts for now (VMs don't have access; may not be needed in this phase)
+nfs_enabled: false
+
 # Override clone root to use deploy user home instead of root
 # clone_root: "/home/{{ deploy_user }}/repos" # default
 # for Geniza, we use the same path on both staging and production

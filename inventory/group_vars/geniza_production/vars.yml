@@ -2,14 +2,12 @@
 # email prefix for admin emails
 email_prefix: "[Geniza] "
 
-# passenger settings
-passenger_server_name: "geniza.princeton.edu"
+application_url: "geniza.princeton.edu"
 
 # data repository for annotation/transcription backups
 annotation_backup_gitrepo: "git@github.com:princetongenizalab/pgp-text.git"
 # git repository of metadata backup/export
 metadata_backup_gitrepo: "git@github.com:princetongenizalab/pgp-metadata.git"
-
 
 # solr 9 production settings
 zk_host: "lib-zk4:2181,lib-zk5:2181,lib-zk6:2181"

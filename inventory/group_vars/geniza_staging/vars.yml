@@ -4,17 +4,10 @@ running_on_server: true
 # email prefix for admin emails
 email_prefix: "[Geniza STAGING] "
 
+# used by replicate playbook to update django sites and for passenger_server_name
 application_url: "test-geniza.cdh.princeton.edu"
 
-# passenger settings
-passenger_server_name: "{{ application_url }}"
-
-# solr settings
-# geniza is using solr 9, so must override default staging solr 8 config
-zk_host: "lib-zk-staging4:2181,lib-zk-staging5:2181,lib-zk-staging6:2181"
-solr_url: "http://lib-solr9-staging.princeton.edu:8983/solr/"
-solr_server: "{{ groups['solr9_staging'][0] }}"
-solr_version: 9
+# solr settings - solr 9 configured in staging vars
 
 # run cron jobs only on the first machine in the host group
 cronjob_host: "cdh-test-geniza1.princeton.edu"
