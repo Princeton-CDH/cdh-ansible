@@ -1,0 +1,40 @@
+---
+# NOTE: for now, madad relies on geniza solr configset
+# by default this playbook runs in the staging environment
+# to run in production, pass '-e runtime_env=production'
+# - name: create solr connection
+#   hosts: solr9_{{ runtime_env | default('staging') }}
+#   connection: ssh
+#   remote_user: pulsys
+#   vars:
+#     app_name: cdh_solr   # referenced in deploy user bash profile
+#   roles:
+#     - deploy_user
+
+- name: Deploy madad application
+  hosts: madad_{{ runtime_env | default('staging') }}
+  connection: ssh
+  remote_user: pulsys
+  become: true
+  roles:
+    - role: pulibrary.princeton_ansible.common
+      tags:
+        - common
+    - role: pulibrary.princeton_ansible.otel_collector
+      tags:
+        - otel
+    - role: pulibrary.princeton_ansible.beyla
+      tags:
+        - otel
+    # - create_deployment
+    - deploy_user
+    - build_dependencies
+    - build_project_repo
+    - postgresql
+    - passenger
+    # no npm/webpack yet
+    - configure_logging
+    - django
+    - solr_collection # ... this will probably fail
+    - finalize_deploy
+    # - close_deployment

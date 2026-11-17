@@ -1,0 +1,12 @@
+---
+# email prefix for admin emails
+email_prefix: "[Madad STAGING] "
+
+application_url: "test-madad.cdh.princeton.edu"
+
+# no develop yet...
+gitref: feature/proof-of-concept
+
+# observability - TBD
+# beyla_enabled: true
+# beyla_service_name: madad

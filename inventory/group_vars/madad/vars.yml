@@ -1,0 +1,75 @@
+###
+# Variables for Madad that apply to all environments (production and staging)
+###
+---
+# GitHub repository
+repo: "Princeton-CDH/madad"
+# application name
+app_name: madad
+# name of python application
+python_app: "{{ app_name }}"
+django_app: "{{ app_name }}"
+
+# symlink to current deploy in /var/www
+symlink: "{{ app_name }}"
+# wsgi file relative to apache location
+wsgi_path: "{{ django_app }}/wsgi.py"
+# use python 3.12
+python_version: "3.12"
+
+# Override clone root to use deploy user home instead of root
+# clone_root: "/home/{{ deploy_user }}/repos" # default
+# for Geniza, we use the same path on both staging and production
+# install_root: "/srv/www/{{ app_name }}"   # default
+
+# django database backend
+db_backend: "postgresql"
+# db_host: "{{ postgres_host }}"   # default
+# postgresql database info
+application_dbuser_name: "cdh_madad"
+application_dbuser_password: "{{ vault_db_password }}"
+application_db_name: "cdh_madad"
+# application_db_host: "{{ postgres_host }}"  # unused?
+
+# set defaults for princeton; override for other environments
+passenger_app_root: "/var/www/{{ app_name }}"
+passenger_server_name: "madad.princeton.edu"
+passenger_startup_file: "{{ app_name }}/wsgi.py"
+passenger_python: "{{ passenger_app_root }}/env/bin/python"
+
+# write nginx access logs as JSON for the otel collector
+nginx_access_log_format: json
+
+# write django logs as JSON and ship them with the otel collector
+django_log_format: json
+otel_app_log_receivers:
+  filelog/geniza-django:
+    include: ["{{ django_logging_path }}"]
+    start_at: end
+    operators:
+      - type: json_parser
+        parse_from: body
+        # pass through any plain-text lines written before the switch to JSON
+        on_error: send
+        timestamp:
+          parse_from: attributes.timestamp
+          layout_type: gotime
+          layout: "2006-01-02T15:04:05.999999Z07:00"
+        severity:
+          parse_from: attributes.level
+          mapping:
+            warn: WARNING
+            fatal: CRITICAL
+      - type: add
+        field: attributes.log_type
+        value: "{{ beyla_service_name }}_django"
+      - type: add
+        field: attributes.service_name
+        value: "{{ beyla_service_name }}"
+
+# source when replicating data/media (from host inventory file)
+# replication_source_host: madad_production   # not yet enabled
+
+# solr settings
+solr_collection: madad
+solr_configset: geniza # reuse existing geniza configset
