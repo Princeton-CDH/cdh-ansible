@@ -44,3 +44,24 @@ or to deploy a new release, run the playbook again.
   eScriptorium local settings as `HTR2HPC_GITREF`. Production leaves it unset, so
   htr2hpc uses its own release tag.
 - Celery, nginx, and Django Channels are restarted to pick up the new code.
+
+## Wagtail content management
+
+CDH's instance uses htr2hpc's optional Wagtail content management features.
+The `python_extra_packages` setting in `inventory/group_vars/htr/vars.yml`
+installs htr2hpc with the `all` optional dependency group (`htr2hpc[all]`),
+which includes Wagtail, so no extra step is needed to install it.
+
+## First deploy of a new instance
+
+After deploying a new instance for the first time, load the content fixture to
+pre-populate the Wagtail admin with the default page snippets (the homepage
+heading and the profile page HPC instructions):
+
+```sh
+manage.py loaddata cdh_snippets
+```
+
+For other initial setup after a new deployment, see
+[Configure Site domain](https://github.com/Princeton-CDH/htr2hpc/blob/main/README.md#configure-site-domain)
+in the htr2hpc README.
