@@ -5,32 +5,42 @@
 - eScriptorium software: https://gitlab.com/scripta/escriptorium
 - htr2hpc software: https://github.com/Princeton-CDH/htr2hpc
 
-## Related playbooks
+## Deploying
 
-- The eScriptorium application can be deployed to staging or production with
-  the `escriptorium` playbook. Staging is the default; pass `-e runtime_env=production`
-  for production.
-- To update only the htr2hpc package without a full redeploy, use the
-  `reinstall-htr2hpc` tag (see below).
+The eScriptorium application, including the htr2hpc package, is deployed to
+staging or production with the `escriptorium` playbook. Staging is the default;
+pass `-e runtime_env=production` for production.
+
+Two variables control what gets deployed:
+
+- `ref`: the eScriptorium git ref (tag or branch)
+- `htr2hpc_gitref`: the htr2hpc git ref (branch or release tag). Defaults to
+  `develop` on staging and `main` on production.
+
+Example staging deploy:
+
+```sh
+ansible-playbook playbooks/escriptorium.yml -e ref=v1.0.1 -e htr2hpc_gitref=develop --skip-tags db_backup
+```
+
+To deploy a new htr2hpc release to production, set `htr2hpc_gitref` to the
+release tag (release tags have no `v` prefix):
+
+```sh
+ansible-playbook playbooks/escriptorium.yml -e runtime_env=production -e htr2hpc_gitref=0.9.0
+```
 
 ## Updating htr2hpc
 
-The full deploy playbook does **not** reinstall the htr2hpc Python package by
-default — it only runs when eScriptorium itself is being redeployed. To update
-htr2hpc to a new branch or release or to ensure changes on an existing branch are installed, use the `reinstall-htr2hpc` tag:
+There is no separate step for updating htr2hpc: every run of the playbook
+reinstalls the htr2hpc package from `htr2hpc_gitref`, even if the version string
+has not changed (pip is run with `--force-reinstall --no-deps`, because pip
+compares version strings, not commit SHAs). To pick up new commits on a branch,
+or to deploy a new release, run the playbook again.
 
-```sh
-ansible-playbook playbooks/escriptorium.yml -t reinstall-htr2hpc
-```
-
-This tag uninstalls the current htr2hpc package and reinstalls the version
-specified by `htr2hpc_gitref` (defaults to `main` for production environment). To deploy a specific
-branch or tag, override the variable:
-
-```sh
-ansible-playbook playbooks/escriptorium.yml -t reinstall-htr2hpc -e htr2hpc_gitref=0.6.0
-```
-
-After reinstalling, the task restarts nginx, Celery, and Django Channels to
-pick up the new code. Use this tag whenever a new htr2hpc release has been
-published and needs to be deployed — it is not needed for other playbook changes.
+- `--no-deps` means new htr2hpc dependencies are **not** installed automatically;
+  add them to the playbook configuration before deploying a release that needs them.
+- On staging, the exact htr2hpc commit that was installed is written to the
+  eScriptorium local settings as `HTR2HPC_GITREF`. Production leaves it unset, so
+  htr2hpc uses its own release tag.
+- Celery, nginx, and Django Channels are restarted to pick up the new code.
