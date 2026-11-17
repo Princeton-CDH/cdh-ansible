@@ -8,7 +8,7 @@
         owner: "{{ deploy_user }}"
         group: "{{ deploy_user }}"
         state: directory
-        mode: '0755'
+        mode: "0755"
       loop:
         - "{{ install_root }}"
         - "{{ clone_root }}"
@@ -33,7 +33,8 @@
       tags: [always]
 
     - name: Determine version of python app being deployed
-      ansible.builtin.import_tasks: python_app_version.yml
+      # use include here instead of import so the debug message reporting version is not skipped
+      ansible.builtin.include_tasks: python_app_version.yml
       when:
         - python_app is defined
         - python_app_version is not defined
@@ -46,7 +47,7 @@
         state: directory
         owner: "{{ deploy_user }}"
         group: "{{ deploy_user }}"
-        mode: '0755'
+        mode: "0755"
       tags: [setup]
 
     # Redeploying an already-deployed commit reuses its checkout, and git fetch
