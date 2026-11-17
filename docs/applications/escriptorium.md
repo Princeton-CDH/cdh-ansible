@@ -20,7 +20,7 @@ Two variables control what gets deployed:
 Example staging deploy:
 
 ```sh
-ansible-playbook playbooks/escriptorium.yml -e ref=v1.0.1 -e htr2hpc_gitref=develop --skip-tags db_backup
+ansible-playbook playbooks/escriptorium.yml -e ref=v1.0.1 -e htr2hpc_gitref=develop
 ```
 
 To deploy a new htr2hpc release to production, set `htr2hpc_gitref` to the
