@@ -2,32 +2,45 @@
 - name: Determine python app version
   become: true
   become_user: "{{ deploy_user }}"
-  tags: [python]
+  tags: [python, python_app_version]
   block:
-    - name: Check if project has a _version.py file
+    - name: Check if project has a pyproject.toml file
       ansible.builtin.stat:
-        path: "{{ clone_root }}/{{ repo }}/_version.py"
-      register: python_version_file
+        path: "{{ clone_root }}/{{ repo }}/pyproject.toml"
+      register: pyproject_file
 
-    - name: Get the version via _version.py
+    - name: Try to get static version from pyproject.toml via uv
+      # report version without installing dependencies
       ansible.builtin.shell:
-        cmd: "python3 -c 'from _version import __version__; print(__version__)'"
+        cmd: "uv version --short --offline"
         chdir: "{{ clone_root }}/{{ repo }}"
-      register: python_app_version_vpy
-      when: python_version_file.stat.exists
+      register: py_app_version_uv
+      when: pyproject_file.stat.exists
       changed_when: false
+      # Dynamic versions use the legacy module-based lookup below.
+      # Other errors (including a missing uv executable) should fail the task.
+      failed_when:
+        - py_app_version_uv.rc != 0
+        - >-
+          'We cannot get or set dynamic project versions'
+          not in (py_app_version_uv.stderr | default(''))
+
+    # NOTE: dropped support for _version.py file (workaround for geotaste init imports)
 
     - name: Get the version via package import
       ansible.builtin.shell:
         cmd: "python3 -c 'import {{ python_app }}; print({{ python_app }}.__version__)'"
         chdir: "{{ clone_root }}/{{ repo }}"
-      register: python_app_version_pkg
-      when: not python_version_file.stat.exists
+      register: py_app_version_import
+      when: py_app_version_uv.rc | default(1) != 0
       changed_when: false
 
-    - name: Storing version number
+    - name: Store python app version number
       ansible.builtin.set_fact:
-        python_app_version: "{{ python_app_version_vpy.stdout if python_version_file.stat.exists else python_app_version_pkg.stdout }}"
+        python_app_version: >-
+          {{ py_app_version_uv.stdout
+             if py_app_version_uv.rc | default(1) == 0
+             else py_app_version_import.stdout }}
 
     - name: Report determined python app version
       ansible.builtin.debug:
