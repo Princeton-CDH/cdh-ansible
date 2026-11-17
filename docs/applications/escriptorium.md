@@ -45,6 +45,36 @@ or to deploy a new release, run the playbook again.
   htr2hpc uses its own release tag.
 - Celery, nginx, and Django Channels are restarted to pick up the new code.
 
+## Upgrading eScriptorium
+
+The eScriptorium version is set by `gitref` in `inventory/group_vars/htr/vars.yml`
+(`python_app_version` follows it). To upgrade:
+
+1. Set `gitref` to the new eScriptorium release tag.
+2. Check `python_version` and `nodejs_version` in the same file against the new
+   version's requirements. `python_version` should also match the version htr2hpc
+   is developed and tested with.
+3. Check the "Customize eScriptorium" tasks in `roles/escriptorium_setup/tasks/main.yml`.
+   They edit eScriptorium's source with regular expressions (the training task
+   renames and import in `apps/core/tasks.py`, the model accuracy fields in
+   `apps/api/serializers.py`, the nullable user email, and the legacy UI field on the
+   profile form). `ansible.builtin.replace` does not fail when its pattern no longer
+   matches, so look at each file in the new version, or check the result on a
+   deployed server, to make sure every change still applies.
+4. Check the `MIDDLEWARE` override in
+   `roles/django/templates/escriptorium_settings.py.j2` against the new version's
+   settings; it replaces the whole list, so new upstream middleware won't be picked up
+   automatically.
+5. Remove any temporary patches that the new version includes upstream. For example,
+   the ESC-2026 security patch was removed when upgrading to v1.0.1.
+6. Deploy to staging first (see [Deploying](#deploying)), then production. To try a
+   version without changing `gitref`, pass `-e ref=<tag>`.
+
+On the htr2hpc side, the tested eScriptorium version, the `base.html` template copy
+and the dependency versions also need updating; see
+[Upgrading eScriptorium](https://github.com/Princeton-CDH/htr2hpc/blob/develop/DEVELOPERNOTES.md#upgrading-escriptorium)
+in the htr2hpc developer notes.
+
 ## Wagtail content management
 
 CDH's instance uses htr2hpc's optional Wagtail content management features.
