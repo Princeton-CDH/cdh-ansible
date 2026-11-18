@@ -18,7 +18,8 @@
         # for compatibilty, create at the configured venv path
         # --allow-existing or --clear ?
         # disable --quiet if debug/verbose ?
-        cmd: "uv venv --prompt {{ python_venv_prompt }} --no-progress --clear --quiet"
+        # for compatibility with nginx, we need to use system-wide python3, which is installed based on python_version
+        cmd: "uv venv --python=/usr/bin/python3 --prompt {{ python_venv_prompt }} --no-progress --clear --quiet"
 
     - name: Check for pyproject.toml file
       ansible.builtin.stat:
