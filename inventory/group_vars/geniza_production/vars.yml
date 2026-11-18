@@ -10,11 +10,7 @@ annotation_backup_gitrepo: "git@github.com:princetongenizalab/pgp-text.git"
 # git repository of metadata backup/export
 metadata_backup_gitrepo: "git@github.com:princetongenizalab/pgp-metadata.git"
 
-
-# solr 9 production settings
-zk_host: "lib-zk4:2181,lib-zk5:2181,lib-zk6:2181"
-solr_url: "http://lib-solr9-prod.princeton.edu:8983/solr/"
-solr_server: "{{ groups['solr9_production'][0] }}"
+# solr settings - using default solr 9 config from prod vars
 
 # enable warning banner as needed for migrations; configured in geniza local settings
 show_warning_banner: false

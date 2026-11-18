@@ -7,14 +7,14 @@
 gitref: '{{ ref | default("develop", true) }}'
 runtime_env: "staging"
 
-# solr settings
-# using solr staging on jammy vm
-# - api access
-solr_url: "http://lib-solr8d-staging.princeton.edu:8983/solr/"
-solr_admin_url: '{{ solr_url }}admin/cores'
-zk_host: "lib-zk-staging1d:2181,lib-zk-staging2d:2181,lib-zk-staging3d:2181/solr8"
+# solr settings for Solr 9
+# - URL for API access
+solr_url: "http://lib-solr9-staging.princeton.edu:8983/solr/"
+solr_admin_url: "{{ solr_url }}admin/cores"
+zk_host: "lib-zk-staging4:2181,lib-zk-staging5:2181,lib-zk-staging6:2181"
 # - server name for deploy setup
-solr_server: "{{ groups['solr_staging'][0] }}"
+solr_server: "{{ groups['solr9_staging'][0] }}"
+solr_version: 9
 
 # allow any deploy contexts (no ci/coverage checks before deploying)
 deploy_contexts: []
@@ -61,7 +61,7 @@ otel_nginx_access_text_operators:
   - type: time_parser
     parse_from: attributes.time_local
     layout_type: strptime
-    layout: '%d/%b/%Y:%H:%M:%S %z'
+    layout: "%d/%b/%Y:%H:%M:%S %z"
 
 otel_nginx_access_json_operators:
   - type: json_parser
@@ -71,7 +71,7 @@ otel_nginx_access_json_operators:
     timestamp:
       parse_from: attributes.time_local
       layout_type: strptime
-      layout: '%d/%b/%Y:%H:%M:%S %z'
+      layout: "%d/%b/%Y:%H:%M:%S %z"
 
 otel_nginx_access_tag_operators:
   - type: add
