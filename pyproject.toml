@@ -1,7 +1,7 @@
 [project]
 name = "cdh-ansible"
 version = "0.0.1"
-requires-python = "==3.12.*"
+requires-python = ">=3.13"
 dependencies = [
     "ansible==15.0.0",
     "ansible-builder==3.2.0",
