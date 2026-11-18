@@ -9,12 +9,16 @@
   environment:
     # run all uv commands in application directory
     UV_WORKING_DIR: "{{ python_app_path }}"
+    # for backwars compatibilty, create and use virtualenv at the configured path
+    UV_PROJECT_ENVIRONMENT: "{{ python_venv_path }}"
   block:
     - name: Create python virtual environment with uv
       ansible.builtin.command:
         # can we rely on .python-version file in the projects ?
         # for compatibilty, create at the configured venv path
-        cmd: "uv venv --prompt {{ python_venv_prompt }} {{ python_venv_path }} --no-progress --allow-existing"
+        # --allow-existing or --clear ?
+        # disable --quiet if debug/verbose ?
+        cmd: "uv venv --prompt {{ python_venv_prompt }} --no-progress --clear --quiet"
 
     - name: Check for pyproject.toml file
       ansible.builtin.stat:

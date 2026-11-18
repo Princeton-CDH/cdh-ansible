@@ -3,6 +3,6 @@
 
 - name: Install python
   ansible.builtin.import_tasks: install_python.yml
-  tags: python-deps
-- name: Install dependencies
+- name: Install python dependencies
   ansible.builtin.import_tasks: install_dependencies.yml
+  tags: python-deps
