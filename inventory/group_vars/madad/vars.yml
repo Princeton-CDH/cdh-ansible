@@ -9,6 +9,10 @@ app_name: madad
 # name of python application
 python_app: "{{ app_name }}"
 django_app: "{{ app_name }}"
+# local settings have a slightly different path due to use of django-split-settings
+django_local_settings_dest: "{{ deploy }}/{{ django_app }}/settings/local_settings.py"
+# configure app-specific local settings
+django_local_settings_template: "madad_settings.py.j2"
 
 # symlink to current deploy in /var/www
 symlink: "{{ app_name }}"

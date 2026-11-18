@@ -5,7 +5,7 @@ email_prefix: "[Madad STAGING] "
 application_url: "test-madad.cdh.princeton.edu"
 
 # no develop yet...
-gitref: feature/proof-of-concept
+gitref: feature/split-settings
 
 # observability - TBD
 # beyla_enabled: true

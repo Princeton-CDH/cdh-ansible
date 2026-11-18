@@ -1,0 +1,11 @@
+{% extends "local_settings.py.j2" %}
+"""
+Django local settings for madad
+"""
+
+# omit CAS & email configurations
+{% block cas_config %}
+{% endblock %}
+
+{% block email_config %}
+{% endblock %}
