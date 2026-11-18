@@ -11,7 +11,7 @@
     group: "deploy"
   become: true
   run_once: true
-  tags: [setup]
+  tags: [setupm, solr_configset]
 
 - name: Solr_collection - trust the Solr server's deploy user on the app server
   tags: [setup, solr_configset]
@@ -48,6 +48,13 @@
           {{ solr_deploy_pubkey.stdout | trim }}
           {{ deploy_user }}@{{ solr_server }}
         state: present
+
+# needed for both configset (to reload config) and collection creation
+- name: Solr_collection - get a list of current Solr collections
+  run_once: true
+  ansible.builtin.uri:
+    url: "{{ solr_url }}admin/collections?action=LIST"
+  register: solr_collections_list
 
 - name: Solr_collection - update and configure Solr configset
   run_once: true
@@ -131,11 +138,6 @@
       changed_when: "rsync_out.stdout != ''"
       timeout: "{{ solr_sync_task_timeout | int }}"
 
-    - name: Solr_collection - get a list of current Solr collections
-      ansible.builtin.uri:
-        url: "{{ solr_url }}admin/collections?action=LIST"
-      register: solr_collections_list
-
     - name: Solr_collection - update configset in ZooKeeper
       ansible.builtin.command: >
         /opt/solr/bin/solr zk upconfig
@@ -145,7 +147,8 @@
       # Only upload if files changed or configset is missing from Solr
       when: rsync_out.changed or (solr_configset not in solr_collections_list.json.collections)
 
-    - name: Create Solr collection if it does not already exist
-      ansible.builtin.uri:
-        url: "{{ solr_url }}admin/collections?action=CREATE&name={{ solr_collection }}&collection.configName={{ solr_configset }}&numShards={{ num_shards }}&replicationFactor={{ replication_factor }}"
-      when: solr_collection not in solr_collections_list.json.collections
+- name: Create Solr collection if it does not already exist
+  run_once: true
+  ansible.builtin.uri:
+    url: "{{ solr_url }}admin/collections?action=CREATE&name={{ solr_collection }}&collection.configName={{ solr_configset }}&numShards={{ num_shards }}&replicationFactor={{ replication_factor }}"
+  when: solr_collection not in solr_collections_list.json.collections
