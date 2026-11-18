@@ -32,7 +32,7 @@ db_backend: "postgresql"
 application_dbuser_name: "cdh_madad"
 application_dbuser_password: "{{ vault_db_password }}"
 application_db_name: "cdh_madad"
-# application_db_host: "{{ postgres_host }}"  # unused?
+application_db_host: "{{ postgres_host }}" # move to all vars as a default?
 
 # set defaults for princeton; override for other environments
 passenger_app_root: "/var/www/{{ app_name }}"
