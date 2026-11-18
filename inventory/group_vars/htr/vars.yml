@@ -195,9 +195,9 @@ media_user: "{{ deploy_user }}"
 # media files on NFS, shared between VMs
 media_root: /mnt/nfs/cdh/htr/media/
 
-# enable both NFS and TigerData
+# enable NFS; TigerData is disabled until the htr VMs are ready to use it
 nfs_enabled: true
-tigerdata_enabled: true
+tigerdata_enabled: false
 
 # configure django channels and celery workers to run via supervisor
 supervisor_programs:
