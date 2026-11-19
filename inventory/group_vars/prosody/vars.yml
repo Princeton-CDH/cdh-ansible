@@ -67,7 +67,6 @@ django_local_settings_template: "prosody_settings.py.j2"
 # - solr settings
 solr_collection: cdh_ppa
 solr_configset: cdh_ppa
-solr_version: 9
 
 tigerdata_enabled: true
 
