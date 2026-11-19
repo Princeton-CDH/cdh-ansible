@@ -43,7 +43,7 @@ templates_dir: 'templates/'
 # standard variable for all repositories that use GitHub
 repo_url: 'https://www.github.com/{{ repo }}.git'
 # home directory (on remote)
-home: '{{ ansible_env.HOME }}'
+home: '{{ ansible_facts.env.HOME }}'
 # default to using main unless set otherwise; use default if ref is empty string
 gitref: '{{ ref | default("main", true) }}'
 # default install root
@@ -113,7 +113,7 @@ timezone: America/New_York
 
 
 ## replication playbook settings
-timestamp: "{{ ansible_date_time.date }}"
+timestamp: "{{ ansible_facts['date_time'].date }}"
 deploy_user: "conan"
 deploy_user_uid: 1002  # TigerData permissions are based on uid, so set explicitly
 dest_backup_dir : "/tmp/migrate/"

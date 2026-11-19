@@ -21,7 +21,7 @@
       - passenger_version_lookup.stdout | trim | length > 0
     fail_msg: >-
       Could not resolve installable nginx and Passenger versions on
-      {{ ansible_distribution }} {{ ansible_distribution_release }}.
+      {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_release'] }}.
       Check that the Phusion repository for {{ passenger_apt_release }} is
       reachable and that the apt cache is current.
       Details: {{ passenger_version_lookup.stderr | default('none') | trim }}
@@ -34,10 +34,10 @@
   ansible.builtin.debug:
     msg: >-
       Passenger {{ passenger_version | default('(unset)') }} from
-      vars/{{ ansible_distribution_release }}.yml is not installable against the
+      vars/{{ ansible_facts['distribution_release'] }}.yml is not installable against the
       available nginx ({{ passenger_resolved.nginx_candidate }});
       falling back to {{ passenger_resolved.passenger }}. Update
-      vars/{{ ansible_distribution_release }}.yml once this is verified.
+      vars/{{ ansible_facts['distribution_release'] }}.yml once this is verified.
   when: not passenger_resolved.pinned
 
 - name: Passenger | Build the nginx and Passenger package transaction

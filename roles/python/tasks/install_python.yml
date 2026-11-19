@@ -20,8 +20,8 @@
     path: "/etc/apt/sources.list.d/{{ item }}"
     state: absent
   loop:
-    - "ppa_deadsnakes_ppa_{{ ansible_distribution_release }}.list"
-    - "deadsnakes-ubuntu-ppa-{{ ansible_distribution_release }}.list"
+    - "ppa_deadsnakes_ppa_{{ ansible_facts['distribution_release'] }}.list"
+    - "deadsnakes-ubuntu-ppa-{{ ansible_facts['distribution_release'] }}.list"
 
 - name: Install python3-debian for deb822_repository
   become: true
@@ -40,15 +40,27 @@
       {{ python_version is version(ansible_facts['python']['version']['major'] ~ '.'
       ~ ansible_facts['python']['version']['minor'], '!=') }}
 
+# Fetch the key once instead of handing the URL to deb822_repository: the
+# module re-downloads a URL on every run, and keyserver.ubuntu.com does not
+# always return byte-identical output, which breaks idempotence.
+- name: Download deadsnakes signing key
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ python_deadsnakes_key_url }}"
+    dest: /etc/apt/keyrings/deadsnakes.asc
+    mode: "0644"
+    force: false
+  when: python_use_deadsnakes | bool
+
 - name: Add python apt repository
   become: true
   ansible.builtin.deb822_repository:
     name: deadsnakes
     types: deb
     uris: https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu
-    suites: "{{ ansible_distribution_release }}"
+    suites: "{{ ansible_facts['distribution_release'] }}"
     components: main
-    signed_by: "{{ python_deadsnakes_key_url }}"
+    signed_by: /etc/apt/keyrings/deadsnakes.asc
   when: python_use_deadsnakes | bool
 
 - name: Remove python apt repository when the system python is used
