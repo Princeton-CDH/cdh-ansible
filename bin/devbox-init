@@ -4,8 +4,5 @@ set -euo pipefail
 export UV_LINK_MODE=copy
 export UV_PROJECT_ENVIRONMENT=.venv
 
-if [ ! -d .venv ]; then
-  uv venv -p 3.13 .venv
-fi
-
+# uv sync creates .venv if needed, using the Python version in .python-version.
 uv sync
