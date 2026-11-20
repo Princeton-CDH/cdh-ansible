@@ -17,12 +17,15 @@
       register: py_app_version_uv
       when: pyproject_file.stat.exists
       changed_when: false
-      # Dynamic versions use the legacy module-based lookup below.
+      # Dynamic versions and tool-only pyproject.toml files use package import.
       # Other errors (including a missing uv executable) should fail the task.
       failed_when:
         - py_app_version_uv.rc != 0
         - >-
           'We cannot get or set dynamic project versions'
+          not in (py_app_version_uv.stderr | default(''))
+        - >-
+          'No `project` table found in:'
           not in (py_app_version_uv.stderr | default(''))
 
     # NOTE: dropped support for _version.py file (workaround for geotaste init imports)
