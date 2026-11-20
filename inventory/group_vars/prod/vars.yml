@@ -6,6 +6,14 @@
 # all production deploys target real servers (not molecule containers)
 running_on_server: true
 
+# solr 9 production settings
+# - URL for API access
+solr_url: "http://lib-solr9-prod.princeton.edu:8983/solr/"
+solr_admin_url: "{{ solr_url }}admin/cores"
+zk_host: "lib-zk4:2181,lib-zk5:2181,lib-zk6:2181"
+solr_server: "{{ groups['solr9_production'][0] }}"
+solr_version: 9
+
 # observability defaults
 beyla_enabled: false
 beyla_service_name: "{{ inventory_hostname }}"
@@ -32,7 +40,7 @@ otel_nginx_access_text_operators:
   - type: time_parser
     parse_from: attributes.time_local
     layout_type: strptime
-    layout: '%d/%b/%Y:%H:%M:%S %z'
+    layout: "%d/%b/%Y:%H:%M:%S %z"
 
 otel_nginx_access_json_operators:
   - type: json_parser
@@ -42,7 +50,7 @@ otel_nginx_access_json_operators:
     timestamp:
       parse_from: attributes.time_local
       layout_type: strptime
-      layout: '%d/%b/%Y:%H:%M:%S %z'
+      layout: "%d/%b/%Y:%H:%M:%S %z"
 
 otel_nginx_access_tag_operators:
   - type: add

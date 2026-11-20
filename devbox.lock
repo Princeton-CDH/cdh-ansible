@@ -488,50 +488,50 @@
         }
       }
     },
-    "python@3.12": {
-      "last_modified": "2026-11-13T07:26:56Z",
+    "python@3.13": {
+      "last_modified": "2026-11-16T14:48:49Z",
       "plugin_version": "0.0.5",
-      "resolved": "github:NixOS/nixpkgs/e126e9e73c335158ff8279ac14d5f4afec153716#python312",
+      "resolved": "github:NixOS/nixpkgs/e21fec321d73511849707a7585e4ea155ee4bf40#python313",
       "source": "devbox-search",
-      "version": "3.12.16",
+      "version": "3.13.18",
       "systems": {
         "aarch64-darwin": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/zwkn19l2icrh1wmxqndswzvwsw72c53s-python3-3.12.16",
+              "path": "/nix/store/h6hvazn2xcwak078z715jclval02d3dl-python3-3.13.18",
               "default": true
             }
           ],
-          "store_path": "/nix/store/zwkn19l2icrh1wmxqndswzvwsw72c53s-python3-3.12.16"
+          "store_path": "/nix/store/h6hvazn2xcwak078z715jclval02d3dl-python3-3.13.18"
         },
         "aarch64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/dlk0n509s69bd59h1w53ivkl8wxwn95g-python3-3.12.16",
+              "path": "/nix/store/f97h3nihw6i6wwwkxk2yd033bvmy7m3f-python3-3.13.18",
               "default": true
             },
             {
               "name": "debug",
-              "path": "/nix/store/qda98kyjqgrgn8nvqh7pywn193xpjvzh-python3-3.12.16-debug"
+              "path": "/nix/store/w5hyb18lh3yd6j206wz7n5aang88m4jh-python3-3.13.18-debug"
             }
           ],
-          "store_path": "/nix/store/dlk0n509s69bd59h1w53ivkl8wxwn95g-python3-3.12.16"
+          "store_path": "/nix/store/f97h3nihw6i6wwwkxk2yd033bvmy7m3f-python3-3.13.18"
         },
         "x86_64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/xf5jfhwj73m03sxxzqswzyv9xb8yjdl3-python3-3.12.16",
+              "path": "/nix/store/rm0rvb03awsc448vj2sifkynqjpz158x-python3-3.13.18",
               "default": true
             },
             {
               "name": "debug",
-              "path": "/nix/store/rhi726w9i6pv7iavg5g6qbj7zabcyr8v-python3-3.12.16-debug"
+              "path": "/nix/store/3crz79iss709wwk24iq5dr2hh5kmp5n7-python3-3.13.18-debug"
             }
           ],
-          "store_path": "/nix/store/xf5jfhwj73m03sxxzqswzyv9xb8yjdl3-python3-3.12.16"
+          "store_path": "/nix/store/rm0rvb03awsc448vj2sifkynqjpz158x-python3-3.13.18"
         }
       }
     },

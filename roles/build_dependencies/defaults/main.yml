@@ -19,3 +19,5 @@ common_dependencies:
  # - python-virtualenv
 # app-specific dependencies: override to install
 app_dependencies: []
+# set true in inventory; false for molecule and other non-server runs
+running_on_server: false

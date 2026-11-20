@@ -2,17 +2,13 @@
 # Production specific variables for ppa-django
 ###
 ---
-
-# solr 9 production settings
-zk_host: "lib-zk4:2181,lib-zk5:2181,lib-zk6:2181"
-solr_url: "http://lib-solr9-prod.princeton.edu:8983/solr/"
-solr_server: "{{ groups['solr9_production'][0] }}"
+# solr settings - using default solr 9 config from prod vars
 
 # override default deploy contexts to match current CI on GitHub Actions
 deploy_contexts:
-    - 'javascript unit tests'
-    - 'Python unit tests'
-    # - 'codecov/project'
+  - "javascript unit tests"
+  - "Python unit tests"
+  # - 'codecov/project'
 
 # run cron jobs on the first vm
 cronjob_host: "cdh-prosody1.princeton.edu"
@@ -24,7 +20,7 @@ crontab:
     # run at 2am on the first Saturday of every month
     minute: 0
     hour: 2
-    weekday: 6   # 0-6 for Sunday-Saturday
+    weekday: 6 # 0-6 for Sunday-Saturday
     day: "1-7"
     job: "bin/cron-wrapper {{ deploy }}/env/bin/python {{ deploy }}/manage.py index_pages -p 4 --gale >> {{ logging_dir }}/cron_reindex_gale_pages.log  2>&1"
     state: present
