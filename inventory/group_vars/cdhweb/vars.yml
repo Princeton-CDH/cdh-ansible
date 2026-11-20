@@ -18,7 +18,7 @@ python_app: "{{ app_name }}"
 django_app: "{{ app_name }}"
 
 # python version
-python_version: "3.11"
+python_version: "3.12"
 # symlink to current deploy in /var/www
 symlink: cdhweb
 # use PUL deploy user of conan
