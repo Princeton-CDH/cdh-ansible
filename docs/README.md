@@ -2,7 +2,6 @@
 
 ## Application-specific documentation
 
-- [Prodigy](applications/prodigy.md)
 - [Princeton Geniza Project](applications/geniza.md)
 
 ## Deployment and Infrastructure

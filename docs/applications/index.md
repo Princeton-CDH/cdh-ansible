@@ -7,6 +7,5 @@ Application-specific deployment and operational notes.
 
 cdhweb
 geniza
-prodigy
 escriptorium
 ```
