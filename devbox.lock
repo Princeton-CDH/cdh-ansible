@@ -99,8 +99,8 @@
       }
     },
     "docker-client@29.9.3": {
-      "last_modified": "2026-11-12T14:50:34Z",
-      "resolved": "github:NixOS/nixpkgs/2074cc672349f14240fb7ea90d509e0b643e9dd4#docker-client",
+      "last_modified": "2026-11-21T08:18:15Z",
+      "resolved": "github:NixOS/nixpkgs/93a9ed0a866099a230ed5146a5bb7d16fd5c9b14#docker-client",
       "source": "devbox-search",
       "version": "29.9.3",
       "systems": {
@@ -108,31 +108,31 @@
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/v9yfrfarhjcahwpknbnnx27chmv05v50-docker-29.9.3",
+              "path": "/nix/store/0x1w8p4vj67jxc960p0w93crayqsnzg4-docker-29.9.3",
               "default": true
             }
           ],
-          "store_path": "/nix/store/v9yfrfarhjcahwpknbnnx27chmv05v50-docker-29.9.3"
+          "store_path": "/nix/store/0x1w8p4vj67jxc960p0w93crayqsnzg4-docker-29.9.3"
         },
         "aarch64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/4nx87vg8cfypwk84n28xbdd8bimg095n-docker-29.9.3",
+              "path": "/nix/store/l5nq9pyam4a4fv2jhszn7c8vf6fjz25y-docker-29.9.3",
               "default": true
             }
           ],
-          "store_path": "/nix/store/4nx87vg8cfypwk84n28xbdd8bimg095n-docker-29.9.3"
+          "store_path": "/nix/store/l5nq9pyam4a4fv2jhszn7c8vf6fjz25y-docker-29.9.3"
         },
         "x86_64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/20asb5zyq0yrg44ik6vn9apmbl98z5ya-docker-29.9.3",
+              "path": "/nix/store/ndz91nkcrlh523f5kiyqv2c4vdb5j6hc-docker-29.9.3",
               "default": true
             }
           ],
-          "store_path": "/nix/store/20asb5zyq0yrg44ik6vn9apmbl98z5ya-docker-29.9.3"
+          "store_path": "/nix/store/ndz91nkcrlh523f5kiyqv2c4vdb5j6hc-docker-29.9.3"
         }
       }
     },
@@ -195,8 +195,8 @@
       }
     },
     "github:NixOS/nixpkgs/nixpkgs-unstable": {
-      "last_modified": "2026-11-14T08:26:23Z",
-      "resolved": "github:NixOS/nixpkgs/5d2b81a7a3be3e2f832879028e4d60abbf58e9a0?lastModified=1794644783&narHash=sha256-3GnIGIy15bMduoS9RnWqKTmsJLWThla42UFtm0S7%2Bus%3D"
+      "last_modified": "2026-11-21T08:18:15Z",
+      "resolved": "github:NixOS/nixpkgs/93a9ed0a866099a230ed5146a5bb7d16fd5c9b14?lastModified=1795249095&narHash=sha256-8JDgyVvWUZg5m9hNlL8Ge9aT647ng3Ukc8NPMiKNTPQ%3D"
     },
     "gnumake@4.4.1": {
       "last_modified": "2026-11-13T07:26:56Z",
