@@ -3,6 +3,7 @@
   become: true
   become_user: "{{ deploy_user }}"
   tags: [python, python_app_version]
+  run_once: true
   block:
     - name: Check if project has a pyproject.toml file
       ansible.builtin.stat:
