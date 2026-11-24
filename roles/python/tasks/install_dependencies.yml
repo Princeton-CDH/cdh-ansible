@@ -6,6 +6,7 @@
 - name: Create python virtual environment and install dependencies with uv
   become: true
   become_user: "{{ python_user }}"
+  tags: python-deps
   environment:
     # run all uv commands in application directory
     UV_WORKING_DIR: "{{ python_app_path }}"
@@ -47,16 +48,14 @@
       when:
         - _pyproject_file.stat.exists
       ansible.builtin.command:
-        # optional groups config TBD
-        cmd: "uv sync --no-dev"
-        extra_args: "{{ pip_install_extra_args }}" # currently htr only
+        # optional groups config TBD; extra args are currently htr only
+        cmd: "uv sync --no-dev {{ pip_install_extra_args }}"
 
     - name: Install python dependencies from requirements.txt
       when: _requirements_file.stat.exists
       ansible.builtin.command:
-        cmd: "uv pip install -r requirements.txt"
-        chdir: "{{ python_app_path }}"
-        extra_args: "{{ pip_install_extra_args }}" # currently htr only
+        # extra args are currently htr only
+        cmd: "uv pip install -r requirements.txt {{ pip_install_extra_args }}"
 
     - name: Install additional python requirements
       tags:
