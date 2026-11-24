@@ -26,7 +26,8 @@
         # with nginx, this needs to use the system-wide python3 which is installed based on configured python_version
         cmd: >-
           uv venv {{ python_venv_path | quote }} --python=/usr/bin/python3
-          --prompt {{ python_venv_prompt | quote }} --no-progress --clear
+          --prompt {{ python_venv_prompt | quote }} --no-progress
+        creates: "{{ python_venv_path }}/pyvenv.cfg"
 
     - name: Check for pyproject.toml file
       ansible.builtin.stat:
@@ -53,6 +54,10 @@
           uv pip install --python {{ python_venv_path | quote }}
           -r requirements.txt {{ pip_install_extra_args }}
         chdir: "{{ python_app_path }}"
+      register: _python_requirements_install
+      changed_when: >-
+        _python_requirements_install.stderr is search(
+        '(?m)^(Installed|Uninstalled) [0-9]+ packages?')
 
     - name: Install additional python requirements
       tags:
