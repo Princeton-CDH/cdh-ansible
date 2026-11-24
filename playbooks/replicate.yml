@@ -212,7 +212,7 @@
       # all current apps are single-site installs and use site id = 1
       - name: Update django site in destination db
         postgresql_query:
-          db: "{{ application_db_name }}"
+          login_db: "{{ application_db_name }}"
           login_host: '{{ postgres_host }}'
           login_user: '{{ application_dbuser_name }}'
           login_password: '{{ application_dbuser_password }}'
