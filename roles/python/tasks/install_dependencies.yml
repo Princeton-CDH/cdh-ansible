@@ -55,11 +55,12 @@
       when: _requirements_file.stat.exists
       ansible.builtin.command:
         # extra args are currently htr only
-        cmd: "uv pip install -r requirements.txt {{ pip_install_extra_args }}"
+        cmd: "uv pip install --python {{ python_venv_path }} -r requirements.txt {{ pip_install_extra_args }}"
+        chdir: "{{ python_app_path }}"
 
     - name: Install additional python requirements
       tags:
         - python-extra-deps
       ansible.builtin.command:
-        cmd: "uv pip install {{ python_extra_packages }} {{ python_extra_packages_pip_extra_args }}"
+        cmd: "uv pip install --python {{ python_venv_path }} {{ python_extra_packages }} {{ python_extra_packages_pip_extra_args }}"
       when: python_extra_packages is defined # currently prodigy/htr only
