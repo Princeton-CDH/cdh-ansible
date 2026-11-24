@@ -11,17 +11,51 @@
 - name: Install standalone uv for non-server runs
   become: true
   when: not running_on_server | bool
+  vars:
+    _uv_target: 'uv-{{ ansible_facts["architecture"] }}-unknown-linux-gnu'
+    _uv_archive: >-
+      /usr/local/src/{{ _uv_target }}-{{ uv_standalone_version }}.tar.gz
   block:
-    - name: Download uv installer
+    # Molecule prepare does not otherwise gather facts.
+    - name: Gather architecture for uv release selection
+      ansible.builtin.setup:
+        gather_subset: ["!all", "min"]
+        filter: ansible_architecture
+
+    - name: Check that the architecture has a verified uv release
+      ansible.builtin.assert:
+        that: ansible_facts["architecture"] in uv_standalone_checksums
+        fail_msg: >-
+          No verified uv release for {{ ansible_facts["architecture"] }}
+
+    - name: Install uv archive prerequisites
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - tar
+          - gzip
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Download verified uv release archive
       ansible.builtin.get_url:
-        url: https://astral.sh/uv/install.sh
-        dest: /usr/local/src/uv-install.sh
+        url: >-
+          https://github.com/astral-sh/uv/releases/download/{{
+          uv_standalone_version }}/{{ _uv_target }}.tar.gz
+        dest: "{{ _uv_archive }}"
+        checksum: >-
+          sha256:{{ uv_standalone_checksums[ansible_facts["architecture"]] }}
         mode: "0644"
 
-    - name: Install uv globally
-      ansible.builtin.command: sh /usr/local/src/uv-install.sh
-      args:
-        creates: /usr/local/bin/uv
-      environment:
-        UV_INSTALL_DIR: /usr/local/bin
-        UV_NO_MODIFY_PATH: "1"
+    - name: Extract uv binaries globally
+      ansible.builtin.unarchive:
+        src: "{{ _uv_archive }}"
+        dest: /usr/local/bin
+        remote_src: true
+        extra_opts: ["--strip-components=1"]
+        include:
+          - "{{ _uv_target }}/uv"
+          - "{{ _uv_target }}/uvx"
+        owner: root
+        group: root
