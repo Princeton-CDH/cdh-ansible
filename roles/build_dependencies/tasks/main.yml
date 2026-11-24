@@ -22,7 +22,5 @@
   tags: [setup, never]
 
 - name: Build dependencies - install uv
-  ansible.builtin.command: snap install --classic astral-uv
-  become: true
-  when: running_on_server
+  ansible.builtin.import_tasks: uv.yml
   tags: [setup, never, uv]

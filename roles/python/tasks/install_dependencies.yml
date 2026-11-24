@@ -3,6 +3,12 @@
 # Uses pyproject.toml by default; installs from a requirements.txt file
 # if present and pyproject.toml is absent.
 
+- name: Ensure uv is installed
+  ansible.builtin.import_role:
+    name: build_dependencies
+    tasks_from: uv
+  tags: [python-deps, uv]
+
 - name: Create python virtual environment and install dependencies with uv
   become: true
   become_user: "{{ python_user }}"
@@ -14,20 +20,6 @@
     # since this is not the uv default, it must be specified for every uv command that requires loading the environment
     UV_PROJECT_ENVIRONMENT: "{{ python_venv_path }}"
   block:
-    - name: Check that uv is installed
-      block:
-        - name: Check uv version
-          ansible.builtin.command:
-            cmd: uv --version
-          changed_when: false
-          check_mode: false
-      rescue:
-        - name: Explain how to install uv
-          ansible.builtin.fail:
-            msg: >-
-              uv is not available for {{ python_user }}. Run the playbook
-              with --tags uv to install uv, then retry.
-
     - name: Create python virtual environment with uv
       ansible.builtin.command:
         # NOTE: most projects specify python version in .python-version file, but for compatibility

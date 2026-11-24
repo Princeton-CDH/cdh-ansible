@@ -1,0 +1,27 @@
+---
+- name: Install uv with snap on servers
+  ansible.builtin.command: snap install --classic astral-uv
+  args:
+    creates: /snap/bin/uv
+  become: true
+  when: running_on_server | bool
+
+# Snap is unavailable in typical Molecule containers. Install globally so uv
+# is available to both the deployment user and the Python test user.
+- name: Install standalone uv for non-server runs
+  become: true
+  when: not running_on_server | bool
+  block:
+    - name: Download uv installer
+      ansible.builtin.get_url:
+        url: https://astral.sh/uv/install.sh
+        dest: /usr/local/src/uv-install.sh
+        mode: "0644"
+
+    - name: Install uv globally
+      ansible.builtin.command: sh /usr/local/src/uv-install.sh
+      args:
+        creates: /usr/local/bin/uv
+      environment:
+        UV_INSTALL_DIR: /usr/local/bin
+        UV_NO_MODIFY_PATH: "1"
