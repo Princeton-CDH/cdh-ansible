@@ -35,6 +35,7 @@
       ansible.builtin.command:
         # optional groups config TBD
         cmd: "uv sync --no-dev"
+        extra_args: "{{ pip_install_extra_args }}" # currently htr only
 
     - name: Install python dependencies from requirements.txt
       when: _requirements_file.stat.exists
