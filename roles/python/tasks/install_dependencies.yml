@@ -13,6 +13,12 @@
     # since this is not the uv default, it must be specified for every uv command that requires loading the environment
     UV_PROJECT_ENVIRONMENT: "{{ python_venv_path }}"
   block:
+    - name: Check that uv is installed
+      ansible.builtin.command:
+        cmd: uv --version
+      changed_when: false
+      check_mode: false
+
     - name: Create python virtual environment with uv
       ansible.builtin.command:
         # NOTE: most projects specify python version in .python-version file, but for compatibility
