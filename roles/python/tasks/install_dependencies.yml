@@ -14,10 +14,18 @@
     UV_PROJECT_ENVIRONMENT: "{{ python_venv_path }}"
   block:
     - name: Check that uv is installed
-      ansible.builtin.command:
-        cmd: uv --version
-      changed_when: false
-      check_mode: false
+      block:
+        - name: Check uv version
+          ansible.builtin.command:
+            cmd: uv --version
+          changed_when: false
+          check_mode: false
+      rescue:
+        - name: Explain how to install uv
+          ansible.builtin.fail:
+            msg: >-
+              uv is not available for {{ python_user }}. Run the playbook
+              with --tags uv to install uv, then retry.
 
     - name: Create python virtual environment with uv
       ansible.builtin.command:
