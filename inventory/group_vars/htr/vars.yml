@@ -43,13 +43,18 @@ nodejs_webpack_enabled: true
 htr2hpc_gitref: main
 hpc_hostname: "adroit.princeton.edu"
 python_extra_packages:
-  - git+https://github.com/Princeton-CDH/htr2hpc.git@{{ htr2hpc_gitref }}#egg=htr2hpc
+  - htr2hpc[all] @ git+https://github.com/Princeton-CDH/htr2hpc.git@{{ htr2hpc_gitref }}
 # --force-reinstall: pip compares version strings, not commit SHAs, so --upgrade
 # skips reinstall when two commits share the same version (e.g. 0.8.dev0).
 # --no-deps: avoids reinstalling large dependencies already in the venv (torch, etc.)
 # Note: if a new dependency is added to htr2hpc, it will need to be installed
 # separately since --no-deps prevents pip from pulling it in automatically.
-python_extra_packages_pip_extra_args: "--force-reinstall --no-deps"
+# --no-cache-dir: see pip_install_extra_args below.
+python_extra_packages_pip_extra_args: "--force-reinstall --no-deps --no-cache-dir"
+# Don't keep pip's download cache. Deploys reinstall packages anyway, so the cache
+# is rarely reused, and with torch and CUDA libraries it grew to ~9GB on staging
+# and filled cdh-test-htr1's disk.
+pip_install_extra_args: "--no-cache-dir"
 
 # pul deploy user
 deploy_user: "conan"
@@ -190,9 +195,9 @@ media_user: "{{ deploy_user }}"
 # media files on NFS, shared between VMs
 media_root: /mnt/nfs/cdh/htr/media/
 
-# enable both NFS and TigerData
+# enable NFS; TigerData is disabled until the htr VMs are ready to use it
 nfs_enabled: true
-tigerdata_enabled: true
+tigerdata_enabled: false
 
 # configure django channels and celery workers to run via supervisor
 supervisor_programs:

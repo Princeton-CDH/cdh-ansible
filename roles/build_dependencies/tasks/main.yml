@@ -20,3 +20,9 @@
     mode: "0644"
   become: true
   tags: [setup, never]
+
+- name: Build dependencies - install uv
+  ansible.builtin.command: snap install --classic astral-uv
+  become: true
+  when: running_on_server
+  tags: [setup, never, uv]

@@ -2,6 +2,10 @@
 # variables for molecule
 # app_name: molecule_test
 ansible_user: root
-django_user: ppa
+# set in group_vars/all for real hosts; required by the deploy_user dependency
+deploy_user_uid: 1002
+# on the servers django_user is the deploy user (group_vars/all)
+django_user: conan
+runtime_env: staging
 hathitrust_pairtree_path: /tmp/data/hathi
 marc_data_path: /tmp/data/marc
