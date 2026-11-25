@@ -4,7 +4,7 @@
   gather_facts: true
   vars:
     test_dir: "/tmp/ansible_cleanup_test"
-    deploy_user: "{{ ansible_user_id }}"
+    deploy_user: "{{ ansible_facts['user_id'] }}"
     
     # Create 8 fake deployment directories (oldest to newest)
     # Expected behavior with deploy_keep_count=3:

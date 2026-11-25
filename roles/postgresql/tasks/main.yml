@@ -49,7 +49,7 @@
         content: |
           Types: deb
           URIs: https://apt.postgresql.org/pub/repos/apt
-          Suites: {{ ansible_distribution_release }}-pgdg
+          Suites: {{ ansible_facts['distribution_release'] }}-pgdg
           Components: main
           Signed-By: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
       register: postgres_apt_repo
@@ -79,7 +79,7 @@
           - "postgresql-client-{{ postgres_version }}"
         state: latest
         update_cache: true
-        default_release: "{{ ansible_distribution_release }}-pgdg"
+        default_release: "{{ ansible_facts['distribution_release'] }}-pgdg"
 
     - name: set fqdn for use in pg_hba
       ansible.builtin.set_fact:
@@ -99,7 +99,7 @@
 
 - name: PostgreSQL - set client address for pg_hba
   ansible.builtin.set_fact:
-    pg_hba_client_address: "{{ ansible_default_ipv4.address }}/32"
+    pg_hba_client_address: "{{ ansible_facts['default_ipv4'].address }}/32"
 
 - name: PostgreSQL - ensure app host can access postgres server
   become: true

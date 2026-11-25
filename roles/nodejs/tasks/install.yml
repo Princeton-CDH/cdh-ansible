@@ -6,7 +6,7 @@
       {{ (nodejs_version is match('^v'))
          | ternary(nodejs_version, 'v' ~ nodejs_version) }}
     nodejs_arch: >-
-      {{ (ansible_architecture in ['x86_64', 'amd64'])
+      {{ (ansible_facts['architecture'] in ['x86_64', 'amd64'])
          | ternary('x64', 'arm64') }}
 
 - name: Nodejs | Compute install paths
