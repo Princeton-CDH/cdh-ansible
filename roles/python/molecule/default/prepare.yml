@@ -9,6 +9,11 @@
     - ../../defaults/test.yml
 
   tasks:
+    - name: Install uv for testing
+      ansible.builtin.import_role:
+        name: build_dependencies
+        tasks_from: uv
+
     - name: Create a testing user
       ansible.builtin.user:
         name: python

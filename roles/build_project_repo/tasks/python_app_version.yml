@@ -1,8 +1,15 @@
 ---
+- name: Ensure uv is installed for Python version detection
+  ansible.builtin.import_role:
+    name: build_dependencies
+    tasks_from: uv
+  tags: [python, python_app_version, uv]
+
 - name: Determine python app version
   become: true
   become_user: "{{ deploy_user }}"
   tags: [python, python_app_version]
+  run_once: true
   block:
     - name: Check if project has a pyproject.toml file
       ansible.builtin.stat:

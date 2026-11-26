@@ -1,66 +1,69 @@
 ---
-# Create a virtual environment and update pip/setuptools. If a requirements.txt
-# file is present, install its contents into the virtual environment.
+# Use uv to create a python virtual environment and install dependencies.
+# Uses pyproject.toml by default; installs from a requirements.txt file
+# if present and pyproject.toml is absent.
 
-- name: Upgrade pip/setuptools
+- name: Ensure uv is installed
+  ansible.builtin.import_role:
+    name: build_dependencies
+    tasks_from: uv
+  tags: [python-deps, uv]
+
+- name: Create python virtual environment and install dependencies with uv
   become: true
   become_user: "{{ python_user }}"
-  ansible.builtin.pip:
-    virtualenv: "{{ python_venv_path }}"
-    virtualenv_command: python{{ python_version }} -m venv --prompt "{{ python_venv_prompt }}"
-    name:
-      - pip
-      # - setuptools
-    state: latest
+  tags: python-deps
+  environment:
+    # run all uv commands in application directory
+    UV_WORKING_DIR: "{{ python_app_path }}"
+    # for backwards compatibilty, create and use virtualenv at the configured path;
+    # since this is not the uv default, it must be specified for every uv command that requires loading the environment
+    UV_PROJECT_ENVIRONMENT: "{{ python_venv_path }}"
+  block:
+    - name: Create python virtual environment with uv
+      ansible.builtin.command:
+        # NOTE: most projects specify python version in .python-version file, but for compatibility
+        # with nginx, this needs to use the system-wide python3 which is installed based on configured python_version
+        cmd: >-
+          uv venv {{ python_venv_path | quote }} --python=/usr/bin/python3
+          --prompt {{ python_venv_prompt | quote }} --no-progress
+        creates: "{{ python_venv_path }}/pyvenv.cfg"
 
-- name: Downgrade setuptools if 2to3 is required
-  ansible.builtin.pip:
-    name: "setuptools<58"
-    virtualenv: "{{ python_venv_path }}"
-  when:  requires_python2to3
+    - name: Check for pyproject.toml file
+      ansible.builtin.stat:
+        path: "{{ pyproject_toml_file }}"
+      register: _pyproject_file
 
-- name: Check for requirements.txt file
-  become: true
-  become_user: "{{ python_user }}"
-  ansible.builtin.stat:
-    path: "{{ python_requirements_file }}"
-  register: _requirements_file
+    - name: Check for requirements.txt file # currently only ppa-django
+      ansible.builtin.stat:
+        path: "{{ python_requirements_file }}"
+      register: _requirements_file
 
-- name: Install python dependencies from requirements.txt
-  when: _requirements_file.stat.exists
-  become: true
-  become_user: "{{ python_user }}"
-  ansible.builtin.pip:
-    virtualenv: "{{ python_venv_path }}"
-    requirements: "{{ python_requirements_file }}"
-    chdir: "{{ python_app_path }}"
-    extra_args: "{{ pip_install_extra_args }}"
+    - name: Install python dependencies from pyproject
+      when:
+        - _pyproject_file.stat.exists
+      ansible.builtin.command:
+        # optional groups config TBD; extra args are currently htr only
+        cmd: "uv sync --no-dev {{ pip_install_extra_args }}"
 
-- name: Check for pyproject.toml file
-  become: true
-  become_user: "{{ python_user }}"
-  ansible.builtin.stat:
-    path: "{{ pyproject_toml_file }}"
-  register: _pyproject_file
+    - name: Install python dependencies from requirements.txt
+      when: _requirements_file.stat.exists
+      ansible.builtin.command:
+        # extra args are currently htr only
+        cmd: >-
+          uv pip install --python {{ python_venv_path | quote }}
+          -r requirements.txt {{ pip_install_extra_args }}
+        chdir: "{{ python_app_path }}"
+      register: _python_requirements_install
+      changed_when: >-
+        _python_requirements_install.stderr is search(
+        '(?m)^(Installed|Uninstalled) [0-9]+ packages?')
 
-- name: Install python dependencies from pyproject
-  when:
-    - not _requirements_file.stat.exists
-    - _pyproject_file.stat.exists
-  become: true
-  become_user: "{{ python_user }}"
-  ansible.builtin.pip:
-    virtualenv: "{{ python_venv_path }}"
-    name: "."
-    chdir: "{{ python_app_path }}"
-
-- name: Install additional python requirements
-  become: true
-  become_user: "{{ python_user }}"
-  tags:
-    - python-extra-deps
-  ansible.builtin.pip:
-    virtualenv: "{{ python_venv_path }}"
-    name: "{{ python_extra_packages }}"
-    extra_args: "{{ python_extra_packages_pip_extra_args }}"
-  when: python_extra_packages is defined
+    - name: Install additional python requirements
+      tags:
+        - python-extra-deps
+      ansible.builtin.command:
+        cmd: >-
+          uv pip install --python {{ python_venv_path | quote }}
+          {{ python_extra_packages }} {{ python_extra_packages_pip_extra_args }}
+      when: python_extra_packages is defined # currently prodigy/htr only
