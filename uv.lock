@@ -258,7 +258,7 @@ wheels = [
 
 [[package]]
 name = "antsibull-docs"
-version = "2.29.1"
+version = "2.29.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -279,9 +279,9 @@ dependencies = [
     { name = "semantic-version" },
     { name = "sphinx" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/34/33/783eec245daaa5625eae3b24be15af79c42c4d48e54df05961f9df070d92/antsibull_docs-2.29.1.tar.gz", hash = "sha256:4be2fa7a0e430e76a797b2bb2465b891f247d3e2a261242c7e03749237c65458", size = 1950489, upload-time = "2026-11-23T19:29:27.61Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/00/8f/7901e762174e669f5c68be103a2af8ce6005f27cd2076ff46cfe2fec52ba/antsibull_docs-2.29.2.tar.gz", hash = "sha256:c580fba3354591e4fbf7b68ca4f6871eea30554aa02f839ad9d27bdb1e23f1e3", size = 1986914, upload-time = "2026-11-25T20:21:40.929Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fc/35/bb991ba3331b760d091087d34a31909059addd0e0bb15d3738cf33139d07/antsibull_docs-2.29.1-py3-none-any.whl", hash = "sha256:c20d15edd1b297ec6bc9cedd1e14d80ab759281cb0b6dad679a3888edf3d52e3", size = 306288, upload-time = "2026-11-23T19:29:29.484Z" },
+    { url = "https://files.pythonhosted.org/packages/f5/01/9b6c15a30241b5c2016cb98661b40d1d02485f694e08af1770c4f9014cc7/antsibull_docs-2.29.2-py3-none-any.whl", hash = "sha256:d8deac4d744bc6b925ab0807d042dacc9881bba5c0fe4e3dff30bf8bb58ec2a7", size = 306288, upload-time = "2026-11-25T20:21:42.458Z" },
 ]
 
 [[package]]
@@ -481,7 +481,7 @@ requires-dist = [
     { name = "ansible-builder", specifier = "==3.2.0" },
     { name = "ansible-compat", specifier = ">=26.11.1" },
     { name = "ansible-lint", specifier = ">=26.11.1" },
-    { name = "antsibull-docs", marker = "extra == 'docs'", specifier = ">=2.29.1" },
+    { name = "antsibull-docs", marker = "extra == 'docs'", specifier = ">=2.29.2" },
     { name = "furo", marker = "extra == 'docs'", specifier = ">=2025.12.19" },
     { name = "molecule", specifier = "==26.11.1" },
     { name = "molecule-plugins", extras = ["docker"], specifier = "==26.11.0" },

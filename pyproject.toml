@@ -28,7 +28,7 @@ docs = [
     "sphinxcontrib-jquery>=4.1",
     # antsibull-docs generates RST from ``meta/argument_specs.yml`` for
     # local roles surfaced through a shim collection at build time.
-    "antsibull-docs>=2.29.1",
+    "antsibull-docs>=2.29.2",
 ]
 
 [tool.uv]
